@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace ShinobiPrototype.Common.Systems;
 
 // The sea mist over the whole view around the Wave Country bridge, in the grey-white of Zabuza's phase-two mist, but
-// made of two layers of a seamless wispy texture (Assets/SeaMist.png, from scripts/make_mist_texture.py) rolling
+// made of two layers of a seamless texture of thin mist strands (Assets/SeaMist.png, from scripts/make_mist_texture.py) rolling
 // with the wind at different speeds and scales, so it is patchy and moving rather than a flat veil (user,
 // 2026-09-29). Thickest over the sea and the deck, lighter higher up but never gone. It takes the sky's brightness,
 // so it is dim at night, and it is drawn on the ForegroundWater overlay layer so it covers the sea too.
@@ -22,10 +22,11 @@ public sealed class SeaMistOverlay : Overlay
     private static readonly Color Tint = new(200, 214, 224); // Zabuza's phase-two mist
 
     // Two layers for depth: a nearer, larger and faster one over a farther, smaller and slower one.
+    // Drawn at (almost) native size so the strands stay thin and soft (user, 2026-09-29: big blocks, not wisps).
     private static readonly (float Scale, float Speed, float Alpha, float OffsetY)[] Layers =
     {
-        (2.4f, 0.35f, 0.5f, 0f),
-        (3.8f, 0.7f, 0.42f, 97f),
+        (1f, 0.35f, 0.75f, 0f),
+        (1.4f, 0.7f, 0.6f, 197f),
     };
 
     private readonly float[] scroll = new float[Layers.Length];
