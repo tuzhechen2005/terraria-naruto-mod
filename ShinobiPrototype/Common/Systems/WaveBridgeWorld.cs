@@ -17,11 +17,11 @@ using ShinobiPrototype.Content.NPCs;
 namespace ShinobiPrototype.Common.Systems;
 
 // The Wave Country bridge: generated with the world (or built from Tazuna's blueprint in older worlds), finished
-// after the first win over Zabuza and Haku. Also keeps Tazuna at his hut and starts the one-time mist preview.
+// after the first win over Zabuza and Haku. Also keeps Tazuna at his hut. (The mist preview is per character:
+// MistEncounterPlayer.)
 public sealed class WaveBridgeWorld : ModSystem
 {
     public static BridgeSite? Site { get; private set; }
-    public static bool PreviewDone { get; private set; }
     public static bool Finished { get; private set; }
     private static bool tazunaMovedIn;
 
@@ -31,7 +31,6 @@ public sealed class WaveBridgeWorld : ModSystem
     public override void ClearWorld()
     {
         Site = null;
-        PreviewDone = false;
         Finished = false;
         tazunaMovedIn = false;
     }
@@ -41,7 +40,6 @@ public sealed class WaveBridgeWorld : ModSystem
         if (Site is not BridgeSite site)
             return;
         tag["bridge"] = new[] { site.ShoreX, site.Dir, site.WaterY, site.HutMidX, site.HutFloorY, site.HutDoorX };
-        tag["bridgePreview"] = PreviewDone;
         tag["bridgeFinished"] = Finished;
         tag["tazunaMovedIn"] = tazunaMovedIn;
     }
@@ -50,7 +48,6 @@ public sealed class WaveBridgeWorld : ModSystem
     {
         if (tag.GetIntArray("bridge") is { Length: 6 } b)
             Site = new BridgeSite(b[0], b[1], b[2], b[3], b[4], b[5]);
-        PreviewDone = tag.GetBool("bridgePreview");
         Finished = tag.GetBool("bridgeFinished");
         tazunaMovedIn = tag.GetBool("tazunaMovedIn");
     }
@@ -67,7 +64,6 @@ public sealed class WaveBridgeWorld : ModSystem
             writer.Write(site.HutFloorY);
             writer.Write(site.HutDoorX);
         }
-        writer.Write(PreviewDone);
         writer.Write(Finished);
     }
 
@@ -77,7 +73,6 @@ public sealed class WaveBridgeWorld : ModSystem
             ? new BridgeSite(reader.ReadInt32(), reader.ReadSByte(), reader.ReadInt32(),
                 reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32())
             : null;
-        PreviewDone = reader.ReadBoolean();
         Finished = reader.ReadBoolean();
     }
 
@@ -108,7 +103,6 @@ public sealed class WaveBridgeWorld : ModSystem
         bool won = StoryWorld.WaveComplete;
         Site = BridgeBuilder.Build(site, finished: won, sync: true);
         Finished = won;
-        PreviewDone = won;
         SyncWorld();
         return true;
     }
@@ -121,15 +115,12 @@ public sealed class WaveBridgeWorld : ModSystem
         if (!Finished && StoryWorld.WaveComplete)
             FinishBridge(site);
         KeepTazuna(site);
-        if (!PreviewDone && MistActive)
-            CheckPreviewTrigger(site);
     }
 
     private static void FinishBridge(BridgeSite site)
     {
         BridgeBuilder.Finish(site, sync: true);
         Finished = true;
-        PreviewDone = true;
         SyncWorld();
         Announce("大桥完工了。海上的雾，散去了。", new Color(150, 220, 255));
     }
@@ -177,24 +168,6 @@ public sealed class WaveBridgeWorld : ModSystem
     {
         int index = NPC.NewNPC(new EntitySource_WorldEvent(), site.HutMidX * 16 + 8, site.HutFloorY * 16, type);
         return index < Main.maxNPCs ? index : -1;
-    }
-
-    private static void CheckPreviewTrigger(BridgeSite site)
-    {
-        foreach (Player player in Main.ActivePlayers)
-        {
-            if (player.dead)
-                continue;
-            int offset = site.OffsetOf((int)(player.Center.X / 16f));
-            int rowsAbove = site.DeckRow(offset) - (int)(player.Bottom.Y / 16f) + 1;
-            if (!BridgeRules.NearBrokenEnd(offset, rowsAbove))
-                continue;
-
-            PreviewDone = true;
-            SyncWorld();
-            MistPreviewSystem.Broadcast();
-            return;
-        }
     }
 
     // Distance in tiles from a world position to the bridge (0 anywhere over the deck, gap or island).

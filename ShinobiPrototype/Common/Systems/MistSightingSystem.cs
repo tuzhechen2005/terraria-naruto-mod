@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
+using ShinobiPrototype.Common.Players;
 
 namespace ShinobiPrototype.Common.Systems;
 
@@ -61,7 +62,7 @@ public sealed class MistSightingSystem : ModSystem
             usedThisSpell = false;
         float toBreak = player.Distance(new Vector2(site.X(BridgeDesign.UnfinishedEnd) * 16f, site.DeckY * 16f)) / 16f;
         if (MistPreviewSystem.Playing ||
-            !BridgeRules.SightingEligible(WaveBridgeWorld.MistActive, WaveBridgeWorld.PreviewDone, nightOrRain,
+            !BridgeRules.SightingEligible(WaveBridgeWorld.MistActive, player.GetModPlayer<MistEncounterPlayer>().SawPreview, nightOrRain,
                 usedThisSpell, toBreak) ||
             !Main.rand.NextBool(BridgeRules.SightingChanceOneIn))
             return;

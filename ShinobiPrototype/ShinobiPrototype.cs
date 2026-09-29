@@ -11,7 +11,6 @@ public sealed class ShinobiPrototype : Mod
     internal enum Packet : byte
     {
         BuildBridge,      // client -> server: shore X, direction, water Y
-        PlayMistPreview,  // server -> clients
     }
 
     public override void HandlePacket(BinaryReader reader, int whoAmI)
@@ -22,10 +21,6 @@ public sealed class ShinobiPrototype : Mod
                 BridgeSite site = new(reader.ReadInt32(), reader.ReadSByte(), reader.ReadInt32());
                 if (Main.netMode == NetmodeID.Server)
                     BridgeBlueprintNet.BuildOnServer(site, whoAmI);
-                break;
-            case Packet.PlayMistPreview:
-                if (Main.netMode == NetmodeID.MultiplayerClient)
-                    MistPreviewSystem.Play();
                 break;
         }
     }

@@ -53,7 +53,7 @@ public sealed class StoryPlayer : ModPlayer
         if (!InsigniaNoticeShown && !StoryWorld.WaveComplete && Player.CountItem(ModContent.ItemType<MistInsignia>()) >= 3)
         {
             InsigniaNoticeShown = true;
-            Main.NewText(WaveBridgeWorld.Site.HasValue && !WaveBridgeWorld.PreviewDone
+            Main.NewText(WaveBridgeWorld.Site.HasValue && !Player.GetModPlayer<MistEncounterPlayer>().SawPreview
                 ? "已收集三枚雾隐标记。雾隐的人都往海边的大桥去了——去那里看看。挑战卷轴也已经可以在工作台制作了。"
                 : "已收集三枚雾隐标记。现在可在工作台制作波之国挑战卷轴，与再不斩和白决战。", 100, 200, 245);
         }

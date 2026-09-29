@@ -8,26 +8,14 @@ using ShinobiPrototype.Content.NPCs;
 
 namespace ShinobiPrototype.Common.Systems;
 
-// The one-time mist preview at the bridge: Zabuza on the water beyond the broken end, then Haku in her hunter mask,
-// then both vanish. Pure client-side visuals and text, so nothing can be hit and nothing needs syncing beyond the
-// start signal. The server (or single player) decides when it starts.
+// The mist preview at the bridge, once per character (started by MistEncounterPlayer): Zabuza on the water beyond
+// the broken end, then Haku in her hunter mask, then both vanish. Pure client-side visuals and text for the player
+// who triggered it, so nothing can be hit and nothing is synced.
 public sealed class MistPreviewSystem : ModSystem
 {
     private static int tick = -1;
 
     public static float FogBoost => BridgeRules.PreviewFogBoost(tick);
-
-    public static void Broadcast()
-    {
-        if (Main.netMode == NetmodeID.Server)
-        {
-            ModPacket packet = ModContent.GetInstance<ShinobiPrototype>().GetPacket();
-            packet.Write((byte)ShinobiPrototype.Packet.PlayMistPreview);
-            packet.Send();
-            return;
-        }
-        Play();
-    }
 
     public static void Play() => tick = 0;
 

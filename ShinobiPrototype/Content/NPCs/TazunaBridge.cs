@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ShinobiPrototype.Common.Players;
 using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.Items;
 
@@ -57,7 +58,7 @@ public sealed class TazunaBridge : ModNPC
             situational.Add("天黑了，雾更浓了。晚上最好别一个人上桥。");
         if (Main.raining)
             situational.Add("下雨天，雾隐的人最爱出来……你小心点。");
-        if (WaveBridgeWorld.PreviewDone)
+        if (Main.LocalPlayer.GetModPlayer<MistEncounterPlayer>().SawPreview)
             situational.Add("你也看见了吧？雾里那两个人……就是卡多雇来的忍者。桥一天修不完，他们就守在那里。");
         if (Main.LocalPlayer.CountItem(ModContent.ItemType<MistInsignia>()) >= 3)
             situational.Add("你身上那是雾隐的标记？……看来你是认真的。拜托了，忍者。");
