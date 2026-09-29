@@ -316,7 +316,7 @@ internal static class BridgeBuilder
                 WorldGen.PlaceObject(x, y, TileID.HangingLanterns, mute: true);
                 break;
             case Fixture.Door:
-                WorldGen.PlaceTile(x, y - 1, TileID.ClosedDoor, mute: true);
+                PlaceDoor(x, y);
                 break;
             case Fixture.Table:
                 WorldGen.PlaceObject(x, y, TileID.Tables, mute: true);
@@ -342,6 +342,29 @@ internal static class BridgeBuilder
                 WorldGen.PlaceTile(x, y, TileID.BeachPiles, mute: true, style: WorldGen.genRand.Next(3));
                 break;
         }
+    }
+
+    // A three-tall door whose bottom tile is `bottomY`. Which row the placement call anchors on differs between
+    // placement paths, so each candidate is tried until the door is confirmed standing in the doorway; a
+    // misaligned attempt overlaps the floor or the wall above and simply fails.
+    private static void PlaceDoor(int x, int bottomY)
+    {
+        foreach (int anchor in new[] { bottomY - 1, bottomY - 2, bottomY })
+        {
+            if (IsDoorInPlace(x, bottomY))
+                return;
+            WorldGen.PlaceTile(x, anchor, TileID.ClosedDoor, mute: true);
+        }
+        if (!IsDoorInPlace(x, bottomY))
+            WorldGen.PlaceObject(x, bottomY - 2, TileID.ClosedDoor, mute: true);
+    }
+
+    private static bool IsDoorInPlace(int x, int bottomY)
+    {
+        for (int y = bottomY - 2; y <= bottomY; y++)
+            if (!Main.tile[x, y].HasTile || Main.tile[x, y].TileType != TileID.ClosedDoor)
+                return false;
+        return true;
     }
 
     private static void PlaceSign(int x, int bottomY, string text)

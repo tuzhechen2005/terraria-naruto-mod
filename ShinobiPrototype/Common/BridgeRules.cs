@@ -12,8 +12,10 @@ public static class BridgeRules
     public const float SeaFogOnBridge = 1.0f;
     public const float NightOrRainFogMultiplier = 1.4f;
     public const float MaxFogSetting = 2f;
-    public const float FogFullWithinTiles = 40f;
-    public const float FogReachTiles = 300f;
+    // Measured from the shoreline-to-island span: thick over the ramp and hut, gone just past the beach
+    // (user, 2026-09-29: 300 tiles reached far too far inland).
+    public const float FogFullWithinTiles = 20f;
+    public const float FogReachTiles = 70f;
     public const float ScoutSpawnMultiplierInFog = 2f;
 
     // Mist preview timeline, in ticks from the moment a player nears the broken end (about 14 seconds).

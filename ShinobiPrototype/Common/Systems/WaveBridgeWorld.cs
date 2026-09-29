@@ -170,14 +170,14 @@ public sealed class WaveBridgeWorld : ModSystem
         return index < Main.maxNPCs ? index : -1;
     }
 
-    // Distance in tiles from a world position to the bridge (0 anywhere over the deck, gap or island).
+    // Distance in tiles from a world position to the bridge (0 anywhere from the shoreline out to the island).
     public static float DistanceToBridgeTiles(Vector2 worldPosition)
     {
         if (Site is not BridgeSite site)
             return float.MaxValue;
         float tileX = worldPosition.X / 16f;
         float tileY = worldPosition.Y / 16f;
-        float a = site.X(-20);
+        float a = site.X(0);
         float b = site.X(BridgeDesign.IslandEnd);
         float dx = Math.Max(0f, Math.Max(Math.Min(a, b) - tileX, tileX - Math.Max(a, b)));
         float dy = Math.Max(0f, Math.Abs(tileY - site.DeckY) - 20f);

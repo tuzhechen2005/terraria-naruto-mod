@@ -57,6 +57,8 @@ public sealed class BridgeDesign
     public const int HutRoomHeight = 5;
     public const int PorchLength = 3;
     public const int BackPorchLength = 2;
+    public const int LevelBlend = 6;
+    public const int MaxLevelBlend = 24;
     public const int MaxRampSteps = 16;
     public const int SeaMargin = 20;
     public const int TotalReach = IslandEnd + DockLength + SeaMargin;
@@ -91,6 +93,7 @@ public sealed class BridgeDesign
     private readonly Func<int, int> seabedY;
     private readonly bool finished;
     private readonly Dictionary<(int, int), int> index = new();
+    private readonly Dictionary<int, int> leveled = new();
 
     // groundY: first solid row of natural ground on land (offsets <= 0); seabedY: first solid row under the sea.
     public static BridgeDesign Create(int waterY, Func<int, int> groundY, Func<int, int> seabedY, bool finished)
@@ -292,24 +295,37 @@ public sealed class BridgeDesign
     // bridge is finished, so no other town NPC can claim it before then.
     private void BuildHut(int rampEnd)
     {
-        // Room for up to eight steps each side: the beach usually falls away towards the sea.
-        const int stairs = 8;
-        int near = rampEnd - 3 - stairs - PorchLength;
-        int far = near - (HutWidth - 1);
+        // The beach under the hut and both stairways is levelled to the ground at the hut's middle (mounds cut,
+        // dips filled with sand), blending back into the natural slope on either side, so the floor always sits
+        // four tiles up and four steps reach the sand on both sides whatever the beach looks like.
+        // Between the sea-side stairs and the ramp the levelled beach needs one column per tile of height it has to
+        // make up, so the hut moves inland until that fits.
+        const int stairs = HutStilts + 1;
+        int seaGap = LevelBlend;
+        int near = 0, far = 0, baseGround = 0;
+        for (int pass = 0; pass < 3; pass++)
+        {
+            near = rampEnd - 1 - seaGap - stairs - PorchLength;
+            far = near - (HutWidth - 1);
+            baseGround = groundY((near + far) / 2);
+            int need = Math.Abs(groundY(rampEnd - 1) - baseGround) + 1;
+            if (need <= seaGap)
+                break;
+            seaGap = Math.Min(need, MaxLevelBlend);
+        }
         int landEnd = far - BackPorchLength - stairs;
         int seaEnd = near + PorchLength + stairs;
-        int highestGround = int.MaxValue;
-        for (int x = landEnd; x <= seaEnd; x++)
-            highestGround = Math.Min(highestGround, groundY(x));
-        int floor = highestGround - HutStilts - 1;
+        HutMidOffset = (near + far) / 2;
+        int floor = baseGround - HutStilts - 1;
         int ceiling = floor - HutRoomHeight - 1;
         HutFloorY = floor;
-        HutMidOffset = (near + far) / 2;
         HutDoorOffset = near;
-        LandmostOffset = landEnd - 1;
 
         for (int x = landEnd; x <= seaEnd; x++)
-            Clear.Add((x, x, ceiling - 6, groundY(x) - 1));
+            Level(x, baseGround, ceiling - 6);
+        int landmost = BlendOutward(landEnd - 1, -1, baseGround, landEnd - MaxLevelBlend, ceiling - 6);
+        BlendOutward(seaEnd + 1, +1, baseGround, rampEnd - 1, ceiling - 6);
+        LandmostOffset = landmost - 1;
 
         for (int x = far - BackPorchLength; x <= near + PorchLength; x++)
         {
@@ -318,7 +334,7 @@ public sealed class BridgeDesign
             bool stilt = x == far || x == near || x == near + PorchLength || x == far - BackPorchLength ||
                          (x - far) % 4 == 0 && x > far && x < near;
             if (stilt)
-                for (int y = floor + 1; y < groundY(x); y++)
+                for (int y = floor + 1; y < Ground(x); y++)
                     Set(x, y, Part.Beam);
             if (porch)
                 Walls.Add(new Wall(x, floor - 1, Backdrop.Railing));
@@ -364,6 +380,41 @@ public sealed class BridgeDesign
         Stairs(far - BackPorchLength, -1, floor, stairs);
     }
 
+    // Cuts natural ground above `target` (and anything standing on it, from `clearFrom` or thirty rows up, down)
+    // and fills with sand below it, so the column's surface ends up at row `target`.
+    private void Level(int x, int target, int clearFrom)
+    {
+        int natural = groundY(x);
+        Clear.Add((x, x, Math.Min(clearFrom, natural - 30), target - 1));
+        for (int y = target; y < natural; y++)
+            Set(x, y, Part.Sand);
+        leveled[x] = target;
+    }
+
+    // Walks away from the levelled area, moving the surface at most one tile per column towards the natural
+    // ground, until they meet or `limit` is reached. Returns the last column it touched.
+    private int BlendOutward(int from, int step, int start, int limit, int clearFrom)
+    {
+        int current = start;
+        int x = from;
+        for (; step > 0 ? x <= limit : x >= limit; x += step)
+        {
+            int natural = groundY(x);
+            if (natural == current)
+                return x;
+            // The first column stays level with the levelled area (the last stair step sits one tile above it).
+            if (x != from)
+                current += Math.Sign(natural - current);
+            Level(x, current, clearFrom);
+        }
+        return x - step;
+    }
+
+    private int Ground(int x) => leveled.TryGetValue(x, out int y) ? y : groundY(x);
+
+    // The ground row at an offset once the design is built (after the beach is levelled around the hut).
+    public int GroundAfterBuild(int offset) => Ground(offset);
+
     // One-tile steps going away from the porch edge until they meet the ground; each step's top is hammered
     // so the stairs walk smoothly.
     private void Stairs(int porchEdge, int outward, int floor, int maxSteps)
@@ -372,10 +423,10 @@ public sealed class BridgeDesign
         {
             int x = porchEdge + outward * step;
             int top = floor + step - 1;
-            if (top >= groundY(x))
+            if (top >= Ground(x))
                 break;
             Shape slope = outward > 0 ? Shape.RisesLandward : Shape.RisesSeaward;
-            for (int y = top; y < groundY(x); y++)
+            for (int y = top; y < Ground(x); y++)
                 Set(x, y, Part.Wood, y == top ? slope : Shape.Full);
         }
     }

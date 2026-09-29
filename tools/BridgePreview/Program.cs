@@ -7,7 +7,7 @@ bool finished = args.Length > 0 && bool.Parse(args[0]);
 string outPath = args.Length > 1 ? args[1] : "bridge.jsonl";
 const int waterY = 100;
 // Beach rising gently inland from the waterline; sea floor sloping down to 20 tiles deep.
-int Ground(int offset) => offset >= 0 ? waterY : waterY - Math.Min(6, (-offset + 2) / 4);
+int Ground(int offset) => (offset >= 0 ? waterY : waterY - Math.Min(6, (-offset + 2) / 4)) - (args.Length > 2 && offset is >= -16 and <= -8 ? 6 : 0) + (args.Length > 2 && offset is >= -40 and <= -30 ? 4 : 0);
 int Seabed(int offset) => offset <= 0 ? Ground(offset) : waterY + Math.Min(20, 2 + offset / 3);
 
 BridgeDesign design = BridgeDesign.Create(waterY, Ground, Seabed, finished);

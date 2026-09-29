@@ -45,7 +45,7 @@ Check(unfinished.HutFloorY < Ground(unfinished.HutMidOffset), "Hut stands on sti
 Check(unfinished.Placements.Count(p => p.Fixture == Fixture.Door) == 2, "Hut has a door on both sides");
 // Walking up from either side: every column from the ground to the floor climbs at most one tile at a time.
 int TopAt(BridgeDesign d, int o) => d.Cells.Where(c => c.Offset == o && c.Part is Part.Wood or Part.Platform)
-    .Select(c => c.Y).DefaultIfEmpty(Ground(o)).Min();
+    .Select(c => c.Y).DefaultIfEmpty(d.GroundAfterBuild(o)).Min();
 bool Climbable(BridgeDesign d, int from, int to, int step)
 {
     for (int o = from; o != to; o += step)
@@ -53,10 +53,20 @@ bool Climbable(BridgeDesign d, int from, int to, int step)
             return false;
     return true;
 }
-int doorFar = unfinished.Placements.Where(p => p.Fixture == Fixture.Door).Min(p => p.Offset);
-int doorNear = unfinished.HutDoorOffset;
-Check(Climbable(unfinished, unfinished.LandmostOffset, doorFar, +1), "Hut can be climbed from inland without jumping");
-Check(Climbable(unfinished, doorNear + BridgeDesign.PorchLength + 6, doorNear, -1), "Hut can be climbed from the beach side");
+void CheckHutReachable(BridgeDesign d, string terrain)
+{
+    int doorFar = d.Placements.Where(p => p.Fixture == Fixture.Door).Min(p => p.Offset);
+    int doorNear = d.HutDoorOffset;
+    Check(d.GroundAfterBuild(d.HutMidOffset) - d.HutFloorY == BridgeDesign.HutStilts + 1,
+        $"Hut floor sits four tiles above the levelled beach ({terrain})");
+    Check(Climbable(d, d.LandmostOffset, doorFar, +1), $"Hut can be climbed from inland without jumping ({terrain})");
+    Check(Climbable(d, doorNear + BridgeDesign.PorchLength + 6, doorNear, -1),
+        $"Hut can be climbed from the beach side ({terrain})");
+}
+CheckHutReachable(unfinished, "gentle beach");
+// The screenshot case: a sand mound under the sea-side stairs and a dip inland of the hut.
+int Bumpy(int o) => Ground(o) - (o is >= -16 and <= -8 ? 6 : 0) + (o is >= -40 and <= -30 ? 4 : 0);
+CheckHutReachable(BridgeDesign.Create(waterY, Bumpy, Seabed, finished: false), "mound and dip");
 Check(unfinished.Cells.Any(c => c.Part == Part.Shingle), "Hut has a tiled roof");
 Check(!HasFixture(unfinished, Fixture.BridgeSign) && HasFixture(finished, Fixture.BridgeSign),
     "Naruto Bridge sign only once finished");
@@ -71,8 +81,10 @@ Check(Math.Abs(SeaFog(0, false, 1f) - SeaFogOnBridge) < 1e-4 && SeaFogOnBridge >
 Check(SeaFog(0, true, 1f) > SeaFog(0, false, 1f), "Night or rain makes it thicker");
 Check(Math.Abs(SeaFog(0, false, 2f) - 2 * SeaFogOnBridge) < 1e-4 && SeaFog(0, false, 5f) == SeaFog(0, false, 2f),
     "Setting can double the mist, no further");
-Check(SeaFog(200, false, 1f) > 0f && SeaFog(FogReachTiles, true, 1f) == 0f, "Mist reaches out to 300 tiles");
-Check(SeaFog(60, false, 1f) > SeaFog(200, false, 1f), "Mist thins with distance");
+Check(SeaFog(FogFullWithinTiles, false, 1f) == SeaFog(0, false, 1f), "Full mist over the ramp and hut");
+Check(SeaFog(50, false, 1f) > 0f && SeaFog(FogReachTiles, true, 1f) == 0f && FogReachTiles <= 80f,
+    "Mist is gone a little past the beach");
+Check(SeaFog(30, false, 1f) > SeaFog(60, false, 1f), "Mist thins with distance");
 Check(SeaFog(0, false, 0f) == 0f && Math.Abs(SeaFog(0, false, 0.5f) - SeaFogOnBridge / 2) < 1e-4,
     "Setting scales or disables the mist");
 
