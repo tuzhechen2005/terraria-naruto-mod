@@ -14,7 +14,7 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview 或 /m0 god [on|off]";
+    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon 或 /m0 god [on|off]";
     public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
@@ -48,6 +48,20 @@ public sealed class M0Command : ModCommand
             }
             MistPreviewSystem.Play();
             caller.Reply("在本机重放迷雾预告（不改变世界进度）。", Color.LightGreen);
+            return;
+        }
+
+        if (args.Length == 1 && args[0].Equals("sighting", StringComparison.OrdinalIgnoreCase))
+        {
+            MistSightingSystem.StartSighting(WaveBridgeWorld.Site, player, withWhisper: true);
+            caller.Reply("在本机播放一次雾中剪影出没（不改变进度）。在断口附近按正式位置出现，否则出现在你面前约 15 格。", Color.LightGreen);
+            return;
+        }
+
+        if (args.Length == 1 && args[0].Equals("senbon", StringComparison.OrdinalIgnoreCase))
+        {
+            player.GetModPlayer<MistEncounterPlayer>().ThrowWarning(WaveBridgeWorld.Site);
+            caller.Reply("在本机播放一次千本警告（不改变进度）。在断口附近按正式位置出现，否则从你面前约 15 格处飞来。", Color.LightGreen);
             return;
         }
 

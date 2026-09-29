@@ -62,17 +62,35 @@ public sealed class MistSightingSystem : ModSystem
             usedThisSpell = false;
         float toBreak = player.Distance(new Vector2(site.X(BridgeDesign.UnfinishedEnd) * 16f, site.DeckY * 16f)) / 16f;
         if (MistPreviewSystem.Playing ||
-            !BridgeRules.SightingEligible(WaveBridgeWorld.MistActive, player.GetModPlayer<MistEncounterPlayer>().SawPreview, nightOrRain,
-                usedThisSpell, toBreak) ||
+            !BridgeRules.SightingEligible(WaveBridgeWorld.MistActive, player.GetModPlayer<MistEncounterPlayer>().SawPreview,
+                nightOrRain, usedThisSpell, toBreak) ||
             !Main.rand.NextBool(BridgeRules.SightingChanceOneIn))
             return;
 
         usedThisSpell = true;
-        MistFigure figure = Main.rand.NextBool() ? MistFigure.Zabuza : MistFigure.Haku;
-        int offset = Main.rand.Next(BridgeRules.SightingNearOffset, BridgeRules.SightingFarOffset + 1);
-        Vector2 at = new(site.X(offset) * 16f + 8f, site.WaterY * 16f - (figure == MistFigure.Haku ? 24f : 0f));
-        Glimpse(figure, at, -site.Dir, BridgeRules.SightingLength, withWhisper: Main.rand.NextBool());
+        StartSighting(site, player, withWhisper: Main.rand.NextBool());
     }
+
+    // One of the pair, far out on the water past the break; or, when testing away from the bridge (`/m0 sighting`),
+    // about fifteen tiles ahead of the player.
+    internal static void StartSighting(BridgeSite? site, Player player, bool withWhisper)
+    {
+        MistFigure figure = Main.rand.NextBool() ? MistFigure.Zabuza : MistFigure.Haku;
+        float lift = figure == MistFigure.Haku ? 24f : 0f;
+        if (site is BridgeSite bridge && NearBreak(bridge, player))
+        {
+            int offset = Main.rand.Next(BridgeRules.SightingNearOffset, BridgeRules.SightingFarOffset + 1);
+            Glimpse(figure, new Vector2(bridge.X(offset) * 16f + 8f, bridge.WaterY * 16f - lift), -bridge.Dir,
+                BridgeRules.SightingLength, withWhisper);
+            return;
+        }
+        Vector2 ahead = new(player.Center.X + player.direction * 15 * 16f, player.Bottom.Y - lift);
+        Glimpse(figure, ahead, -player.direction, BridgeRules.SightingLength, withWhisper);
+    }
+
+    internal static bool NearBreak(BridgeSite site, Player player) =>
+        player.Distance(new Vector2(site.X(BridgeDesign.UnfinishedEnd) * 16f, site.DeckY * 16f)) / 16f <=
+        BridgeRules.SightingRangeTiles;
 
     internal static void DrawFigures(SpriteBatch spriteBatch)
     {
