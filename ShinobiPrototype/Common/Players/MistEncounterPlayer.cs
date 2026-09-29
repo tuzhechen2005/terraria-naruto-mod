@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -10,18 +12,41 @@ namespace ShinobiPrototype.Common.Players;
 
 // A character's own encounters with the figures in the mist, all triggered on their client:
 // the mist preview the first time they walk out near the broken end, and, once they carry three Mist insignia,
-// a senbon from the fog that sticks in the deck at their feet (no damage). Each happens once per character.
+// a senbon from the fog that sticks in the deck at their feet (no damage). Each happens once per character in each
+// world (a character who saw it in one world sees it again in a new one), remembered by world ID.
 public sealed class MistEncounterPlayer : ModPlayer
 {
     private const int GlimpseTicks = 120;
 
-    public bool SawPreview { get; private set; }
-    public bool Warned { get; private set; }
+    private HashSet<string> previewWorlds = new();
+    private HashSet<string> warnedWorlds = new();
+
+    private static string WorldId => Main.ActiveWorldFileData?.UniqueId.ToString() ?? "";
+
+    public bool SawPreview
+    {
+        get => previewWorlds.Contains(WorldId);
+        private set => Remember(previewWorlds, value);
+    }
+
+    public bool Warned
+    {
+        get => warnedWorlds.Contains(WorldId);
+        private set => Remember(warnedWorlds, value);
+    }
+
+    private static void Remember(HashSet<string> worlds, bool value)
+    {
+        if (value)
+            worlds.Add(WorldId);
+        else
+            worlds.Remove(WorldId);
+    }
 
     public override void Initialize()
     {
-        SawPreview = false;
-        Warned = false;
+        previewWorlds = new HashSet<string>();
+        warnedWorlds = new HashSet<string>();
     }
 
     public override void PostUpdate()
@@ -74,15 +99,16 @@ public sealed class MistEncounterPlayer : ModPlayer
 
     public override void SaveData(TagCompound tag)
     {
-        if (SawPreview)
-            tag["sawMistPreview"] = true;
-        if (Warned)
-            tag["senbonWarned"] = true;
+        if (previewWorlds.Count > 0)
+            tag["mistPreviewWorlds"] = previewWorlds.ToList();
+        if (warnedWorlds.Count > 0)
+            tag["senbonWarnedWorlds"] = warnedWorlds.ToList();
     }
 
+    // Saves from before this was per world stored plain flags; those are dropped, so the scene plays once more.
     public override void LoadData(TagCompound tag)
     {
-        SawPreview = tag.GetBool("sawMistPreview");
-        Warned = tag.GetBool("senbonWarned");
+        previewWorlds = new HashSet<string>(tag.GetList<string>("mistPreviewWorlds"));
+        warnedWorlds = new HashSet<string>(tag.GetList<string>("senbonWarnedWorlds"));
     }
 }

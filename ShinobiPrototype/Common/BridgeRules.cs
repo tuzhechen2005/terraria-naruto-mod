@@ -10,7 +10,10 @@ public static class BridgeRules
     // background and follows the world's light, so nights stay dark. Only the look is borrowed; the player is
     // never in the graveyard biome, so spawns and NPC housing are unaffected. (User, 2026-09-29: the earlier flat
     // grey overlay glowed at night.) At the default 175% setting the bridge by day is about 0.9, night or rain 1.
-    public const float SeaMistPerSetting = 0.5f;
+    // Vanilla starts random lightning once graveyard intensity reaches 0.9, so the mist stays just under it.
+    public const float SeaMistPerSetting = 0.43f;
+    public const float MaxSeaMist = 0.85f;
+    public const float VanillaGraveyardLightning = 0.9f;
     public const float NightOrRainFogMultiplier = 1.2f;
     public const float MaxFogSetting = 2f;
     // Measured from the shoreline-to-island span: thick over the ramp and hut, gone just past the beach
@@ -30,7 +33,7 @@ public static class BridgeRules
     // A little farther out than the scaffolding's end, but close enough to make out a shape.
     public const int PreviewZabuzaOffset = BridgeDesign.HalfBuiltPier + 16;
     public const int PreviewHakuOffset = BridgeDesign.HalfBuiltPier + 20;
-    public const float PreviewMist = 1f;
+    public const float PreviewMist = MaxSeaMist;
 
     // The preview starts when a player walks out near the broken end (on the deck or the scaffold walkway).
     public const int PreviewTriggerFrom = BridgeDesign.UnfinishedEnd - 14;
@@ -87,7 +90,7 @@ public static class BridgeRules
             : 1f - (distanceTiles - FogFullWithinTiles) / (FogReachTiles - FogFullWithinTiles);
         float mist = SeaMistPerSetting * Math.Clamp(setting, 0f, MaxFogSetting) * closeness *
                      (nightOrRain ? NightOrRainFogMultiplier : 1f);
-        return Math.Clamp(mist, 0f, 1f);
+        return Math.Clamp(mist, 0f, MaxSeaMist);
     }
 
     // Mist during the preview: rises quickly, holds, and fades after the pair vanishes.

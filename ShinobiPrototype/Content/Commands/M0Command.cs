@@ -14,7 +14,7 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon 或 /m0 god [on|off]";
+    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist 或 /m0 god [on|off]";
     public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
@@ -51,6 +51,12 @@ public sealed class M0Command : ModCommand
             }
             MistPreviewSystem.Play();
             caller.Reply("在本机重放迷雾预告（不改变世界进度）。", Color.LightGreen);
+            return;
+        }
+
+        if (args.Length == 1 && args[0].Equals("mist", StringComparison.OrdinalIgnoreCase))
+        {
+            caller.Reply(MistDiagnostics(player), Color.LightSkyBlue);
             return;
         }
 
@@ -146,5 +152,27 @@ public sealed class M0Command : ModCommand
         Main.dayTime = dayTime;
         Main.time = time;
         caller.Reply($"时间已调整为 {args[1]}（{(dayTime ? "白天" : "夜晚")}）。", Color.LightGreen);
+    }
+
+    // What the sea mist is doing right now, to tell a design problem from a setting or state problem.
+    private static string MistDiagnostics(Player player)
+    {
+        if (WaveBridgeWorld.Site is null)
+            return "海雾诊断：这个世界没有大桥。";
+        float distance = WaveBridgeWorld.DistanceToBridgeTiles(player.Center);
+        float setting = ShinobiClientConfig.Instance.SeaFogStrength / 100f;
+        float target = WaveBridgeWorld.MistActive
+            ? BridgeRules.SeaMist(distance, !Main.dayTime || Main.raining, setting)
+            : 0f;
+        bool filter = Terraria.Graphics.Effects.Filters.Scene["Graveyard"]?.IsActive() ?? false;
+        return "海雾诊断：" +
+               $"距大桥 {distance:0} 格（{BridgeRules.FogReachTiles:0} 格外无雾）；" +
+               $"海雾{(WaveBridgeWorld.MistActive ? "生效中" : "未生效（大桥已完工或波之国已完成）")}；" +
+               $"{(Main.dayTime ? "白天" : "夜晚")}{(Main.raining ? "、下雨" : "")}；" +
+               $"浓度设置 {setting:P0}；目标强度 {target:0.00}；当前墓地雾强度 {Main.GraveyardVisualIntensity:0.00}；" +
+               $"墓地滤镜{(filter ? "已开启" : "未开启")}；光照模式 {Lighting.Mode}" +
+               (Lighting.Mode is Terraria.Graphics.Light.LightMode.Retro or Terraria.Graphics.Light.LightMode.Trippy
+                   ? "（复古/迷幻模式下屏幕滤镜不显示，请在“设置 → 画面”改为彩色或白色）"
+                   : "");
     }
 }
