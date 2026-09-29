@@ -210,7 +210,7 @@ Configs: {
 
 		SeaFogStrength: {
 			Label: Sea mist strength (%)
-			Tooltip: Thickness of the sea mist around the Wave Country bridge; 0 turns it off
+			Tooltip: Thickness of the sea mist around the Wave Country bridge; 0 turns it off, 200 doubles it
 		}
 
 		ShowSubstitutionHints: {

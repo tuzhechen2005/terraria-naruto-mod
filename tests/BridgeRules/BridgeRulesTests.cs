@@ -66,9 +66,11 @@ Check(finished.Cells.Any(c => c.Part == Part.RedBeam) && HasFixture(finished, Fi
       HasFixture(finished, Fixture.Chest), "Island has a torii gate, the Land of Waves sign and a chest");
 
 // Mist.
-Check(Math.Abs(SeaFog(0, false, 1f) - SeaFogOnBridge) < 1e-4 && SeaFogOnBridge >= 2 * PhaseTwoFog - 1e-4,
-    "On the bridge by day the mist is twice the phase-two mist");
-Check(Math.Abs(SeaFog(0, true, 1f) - SeaFogOnBridge * 1.5f) < 1e-4, "Night or rain makes it 1.5 times thicker");
+Check(Math.Abs(SeaFog(0, false, 1f) - SeaFogOnBridge) < 1e-4 && SeaFogOnBridge >= 3 * PhaseTwoFog,
+    "On the bridge by day the mist is over three times the phase-two mist");
+Check(SeaFog(0, true, 1f) > SeaFog(0, false, 1f), "Night or rain makes it thicker");
+Check(Math.Abs(SeaFog(0, false, 2f) - 2 * SeaFogOnBridge) < 1e-4 && SeaFog(0, false, 5f) == SeaFog(0, false, 2f),
+    "Setting can double the mist, no further");
 Check(SeaFog(200, false, 1f) > 0f && SeaFog(FogReachTiles, true, 1f) == 0f, "Mist reaches out to 300 tiles");
 Check(SeaFog(60, false, 1f) > SeaFog(200, false, 1f), "Mist thins with distance");
 Check(SeaFog(0, false, 0f) == 0f && Math.Abs(SeaFog(0, false, 0.5f) - SeaFogOnBridge / 2) < 1e-4,

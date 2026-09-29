@@ -8,8 +8,10 @@ public static class BridgeRules
 {
     // Mist, relative to the phase-two boss mist (the overlay's 0.3 level).
     public const float PhaseTwoFog = 0.3f;
-    public const float SeaFogOnBridge = 0.6f;   // twice phase two (2026-09-29: "雾太淡")
-    public const float NightOrRainFogMultiplier = 1.5f;
+    // About 3.3 times phase two (user, 2026-09-29: still "雾太淡" at twice). The overlay draws 0.42 x this.
+    public const float SeaFogOnBridge = 1.0f;
+    public const float NightOrRainFogMultiplier = 1.4f;
+    public const float MaxFogSetting = 2f;
     public const float FogFullWithinTiles = 40f;
     public const float FogReachTiles = 300f;
     public const float ScoutSpawnMultiplierInFog = 2f;
@@ -41,7 +43,7 @@ public static class BridgeRules
         float closeness = distanceTiles <= FogFullWithinTiles
             ? 1f
             : 1f - (distanceTiles - FogFullWithinTiles) / (FogReachTiles - FogFullWithinTiles);
-        return SeaFogOnBridge * closeness * (nightOrRain ? NightOrRainFogMultiplier : 1f) * Math.Clamp(setting, 0f, 1f);
+        return SeaFogOnBridge * closeness * (nightOrRain ? NightOrRainFogMultiplier : 1f) * Math.Clamp(setting, 0f, MaxFogSetting);
     }
 
     // Extra fog during the preview: rises quickly, holds, and fades after the pair vanishes.

@@ -22,8 +22,8 @@ public sealed class ShinobiClientConfig : ModConfig
     [DefaultValue(true)]
     public bool ShowSubstitutionHints;
 
-    // Percent of the designed sea-mist thickness around the Wave Country bridge; 0 turns it off.
-    [Range(0, 100)]
+    // Percent of the designed sea-mist thickness around the Wave Country bridge; 0 turns it off, 200 doubles it.
+    [Range(0, 200)]
     [Increment(5)]
     [DefaultValue(100)]
     [Slider]

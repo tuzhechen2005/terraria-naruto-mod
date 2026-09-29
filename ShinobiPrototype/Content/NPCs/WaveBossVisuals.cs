@@ -102,6 +102,7 @@ public sealed class WaveOverlaySystem : ModSystem
         }
         target = Math.Max(target, Math.Max(SeaFogTarget(), MistPreviewSystem.FogBoost));
         fog = MathHelper.Lerp(fog, target, 0.05f);
+        fog = Math.Min(fog, 2f);
         flash = Math.Max(0f, flash - 1f / 45f);
         // Thicker mist, more drifting puffs.
         if (fog > 0.1f && Main.GameUpdateCount % 2 == 0)
@@ -122,7 +123,7 @@ public sealed class WaveOverlaySystem : ModSystem
     {
         Vector2 at = Main.screenPosition + new Vector2(Main.rand.NextFloat(Main.screenWidth), Main.rand.NextFloat(Main.screenHeight));
         Dust puff = Dust.NewDustPerfect(at, DustID.Smoke, new Vector2(Main.rand.NextFloat(0.2f, 0.6f), 0f),
-            200, new Color(200, 214, 224), Main.rand.NextFloat(2f, 3.2f));
+            140, new Color(200, 214, 224), Main.rand.NextFloat(2.6f, 4f));
         puff.noGravity = true;
         puff.noLight = true;
     }
