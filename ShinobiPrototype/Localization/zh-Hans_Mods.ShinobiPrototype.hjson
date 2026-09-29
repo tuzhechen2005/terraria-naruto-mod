@@ -143,6 +143,8 @@ Items: {
 }
 
 NPCs: {
+	DemonBrotherGozu.DisplayName: 鬼之兄弟·伽乌斯
+	DemonBrotherMeizu.DisplayName: 鬼之兄弟·美伊兹
 	TazunaBridge.DisplayName: 造桥工 达兹纳
 
 	Tazuna: {
@@ -213,6 +215,7 @@ Projectiles: {
 }
 
 Dialogue: {
+	DemonBrothersDown: 鬼之兄弟倒下了——雾隐的中忍已经盯上了你们。任务等级上调为 A 级。
 	Whisper1: ？？？：……又是你。
 	Whisper2: ？？？：离这座桥远一点。
 	Whisper3: （雾里传来刀锋拖过石头的声音）

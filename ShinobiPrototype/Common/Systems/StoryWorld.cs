@@ -10,6 +10,7 @@ public sealed class StoryWorld : ModSystem
     public static bool DownedHaku { get; set; }
     public static bool DownedZabuza { get; set; }
     public static bool DownedArenaRival { get; set; }
+    public static bool DownedDemonBrothers { get; set; }
     public static bool WaveComplete => ExamRules.WaveComplete(DownedHaku, DownedZabuza);
 
     public static void CompleteWave()
@@ -23,6 +24,7 @@ public sealed class StoryWorld : ModSystem
         DownedHaku = false;
         DownedZabuza = false;
         DownedArenaRival = false;
+        DownedDemonBrothers = false;
     }
 
     public override void OnWorldUnload()
@@ -30,6 +32,7 @@ public sealed class StoryWorld : ModSystem
         DownedHaku = false;
         DownedZabuza = false;
         DownedArenaRival = false;
+        DownedDemonBrothers = false;
     }
 
     public override void SaveWorldData(TagCompound tag)
@@ -40,6 +43,8 @@ public sealed class StoryWorld : ModSystem
             tag["downedZabuza"] = true;
         if (DownedArenaRival)
             tag["downedArenaRival"] = true;
+        if (DownedDemonBrothers)
+            tag["downedDemonBrothers"] = true;
     }
 
     public override void LoadWorldData(TagCompound tag)
@@ -49,6 +54,7 @@ public sealed class StoryWorld : ModSystem
         DownedHaku = (wave & 1) != 0;
         DownedZabuza = (wave & 2) != 0;
         DownedArenaRival = tag.GetBool("downedArenaRival");
+        DownedDemonBrothers = tag.GetBool("downedDemonBrothers");
     }
 
     public override void NetSend(BinaryWriter writer)
@@ -57,6 +63,7 @@ public sealed class StoryWorld : ModSystem
         if (DownedHaku) flags |= 1;
         if (DownedZabuza) flags |= 2;
         if (DownedArenaRival) flags |= 4;
+        if (DownedDemonBrothers) flags |= 8;
         writer.Write(flags);
     }
 
@@ -68,5 +75,6 @@ public sealed class StoryWorld : ModSystem
         DownedHaku = (wave & 1) != 0;
         DownedZabuza = (wave & 2) != 0;
         DownedArenaRival = (flags & 4) != 0;
+        DownedDemonBrothers = (flags & 8) != 0;
     }
 }

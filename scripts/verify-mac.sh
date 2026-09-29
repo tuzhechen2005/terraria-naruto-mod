@@ -32,7 +32,7 @@ export DOTNET_ROOT="$(dirname "$dotnet_x64")"
 export PATH="$temp_dir:$DOTNET_ROOT:$PATH"
 
 cd "$project_root"
-for suite in ChakraRules BridgeRules WaveLootRules ExamRules ChallengeRules ZabuzaCombatRules DebugModeRules WaveDuoRules; do
+for suite in ChakraRules BridgeRules WaveLootRules DemonBrotherRules ExamRules ChallengeRules ZabuzaCombatRules DebugModeRules WaveDuoRules; do
   "$dotnet_x64" run --project "tests/$suite/$suite.Tests.csproj" --nologo
 done
 "$dotnet_x64" build ShinobiPrototype/ShinobiPrototype.csproj \

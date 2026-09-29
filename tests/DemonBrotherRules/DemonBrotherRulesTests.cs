@@ -1,0 +1,25 @@
+using ShinobiPrototype.Common;
+using static ShinobiPrototype.Common.DemonBrotherRules;
+
+static void Check(bool condition, string name)
+{
+    if (!condition)
+        throw new Exception(name);
+    Console.WriteLine($"PASS {name}");
+}
+
+Check(SpawnAllowed(true, true, false, false, false, true) && SpawnAllowed(true, false, true, false, false, true),
+    "They ambush in rain or in the sea mist");
+Check(!SpawnAllowed(false, true, true, false, false, true), "Not before the player has found a Mist insignia");
+Check(!SpawnAllowed(true, false, false, false, false, true), "Not in clear weather away from the mist");
+Check(!SpawnAllowed(true, true, true, true, false, true), "Not once Wave Country is done");
+Check(!SpawnAllowed(true, true, true, false, true, true), "Only one pair at a time");
+Check(!SpawnAllowed(true, true, true, false, false, false), "Only on the surface");
+
+Check(FlankX(1000f, -1) < 1000f && FlankX(1000f, 1) > 1000f, "The brothers take opposite sides of the player");
+Check(ChainSweepReady(0, 300f, true) && !ChainSweepReady(10, 300f, true) && !ChainSweepReady(0, 300f, false) &&
+      !ChainSweepReady(0, ChainMaxLength + 1f, true) && !ChainSweepReady(0, 20f, true),
+    "Chain sweep needs the cooldown over, the player between them and a sensible gap");
+Check(ChainWarnTicks >= 30, "The chain sweep is telegraphed for at least half a second");
+Check(ChainHurts(true, 200f) && !ChainHurts(false, 200f), "A slack chain does not hurt");
+Check(ChainRushSpeed * ChainRushTicks > ChainMaxLength / 2f, "The rush carries each brother past the middle");

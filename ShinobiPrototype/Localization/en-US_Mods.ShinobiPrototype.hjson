@@ -143,6 +143,8 @@ Items: {
 }
 
 NPCs: {
+	DemonBrotherGozu.DisplayName: "Demon Brother: Gōzu"
+	DemonBrotherMeizu.DisplayName: "Demon Brother: Meizu"
 	TazunaBridge.DisplayName: Tazuna the Bridge Builder
 
 	Tazuna: {
@@ -213,6 +215,7 @@ Projectiles: {
 }
 
 Dialogue: {
+	DemonBrothersDown: The Demon Brothers are down. Mist chunin are hunting you now. The mission is raised to A rank.
 	Whisper1: ???: ...You again.
 	Whisper2: ???: Stay away from this bridge.
 	Whisper3: (From the mist comes the scrape of a blade dragged over stone.)
