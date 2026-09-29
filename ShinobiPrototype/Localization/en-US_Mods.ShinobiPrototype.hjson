@@ -90,7 +90,7 @@ NPCs: {
 	HakuBoss.DisplayName: Haku
 	ZabuzaBoss.DisplayName: Zabuza Momochi
 	ZabuzaBoss.DemonName: Demon of the Mist — Zabuza Momochi
-	WaterClone.DisplayName: Water Clone
+	HakuIceMirror.DisplayName: Demonic Ice Mirror
 	ForestCanopyCandidate.DisplayName: Forest Candidate
 	ForestBurrowCandidate.DisplayName: Ambushing Candidate
 	ArenaRivalBoss.DisplayName: Sand Candidate
@@ -103,8 +103,17 @@ Projectiles: {
 	ZabuzaWaterDragon.DisplayName: Water Dragon Technique
 	ZabuzaWaterNeedle.DisplayName: Water Needle
 	HakuNeedle.DisplayName: Ice Needle
+	ZabuzaThrownSword.DisplayName: Executioner's Blade
+	HakuPrismShard.DisplayName: Thousand Water Needles
 	HakuDashHitbox.DisplayName: Ice Blade Dash
 	ElementalBolt.DisplayName: Basic Elemental Jutsu
 	ArenaSandBolt.DisplayName: Sand Bolt
 	ArenaRushHitbox.DisplayName: Sand Rush
+}
+
+Dialogue: {
+	HakuArrive: "Haku: Master Zabuza, leave this to me."
+	ZabuzaFrenzy: "Zabuza: ...Haku. You were a fool to the very end."
+	HakuFrenzy: "Haku: The reason I exist is gone... then let everything freeze."
+	CageTrapped: "{0} was trapped by the ice mirrors"
 }

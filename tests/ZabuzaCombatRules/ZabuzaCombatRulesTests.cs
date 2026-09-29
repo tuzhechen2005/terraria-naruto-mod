@@ -7,20 +7,17 @@ static void Check(bool actual, string name)
     Console.WriteLine($"PASS {name}");
 }
 
-Check(ZabuzaCombatRules.SlashWidth == 50 && ZabuzaCombatRules.SlashHeight == 14,
-    "Blade collision is narrow and follows the illustrated blade");
-Check(ZabuzaCombatRules.BodyWidth >= 48 && ZabuzaCombatRules.BodyHeight >= 104,
-    "The enlarged boss body is hittable without treating its sword as a body hitbox");
-Check(ZabuzaCombatRules.BossDrawScale >= 1.35f &&
-    ZabuzaCombatRules.DemonDrawMultiplier >= 1.08f,
-    "Both forms are larger and demon form has extra silhouette weight");
+Check(ZabuzaCombatRules.SlashWidth == 60 && ZabuzaCombatRules.SlashHeight == 16 &&
+    ZabuzaCombatRules.SlashBladeOffsetY > 0f,
+    "Blade collision is narrow and sweeps at the player's height");
+Check(ZabuzaCombatRules.BodyHeight is >= 80 and <= 88 && ZabuzaCombatRules.BodyWidth <= 40,
+    "Body is about twice the player's height; the sword is not part of the body hitbox");
+Check(ZabuzaCombatRules.BossDrawScale == 1f,
+    "Pixel art is drawn at 1x with no fractional scaling");
 Check(!ZabuzaCombatRules.DrawBodyAfterimage(true, ZabuzaCombatRules.DashActive, 8f, 12f, 0f) &&
     !ZabuzaCombatRules.DrawBodyAfterimage(true, ZabuzaCombatRules.MistStep, 5f, 6f, -2f) &&
     ZabuzaCombatRules.DrawBodyAfterimage(false, ZabuzaCombatRules.DashActive, 8f, 9f, 0f),
     "Demon form never draws a second full-body silhouette while moving");
-Check(ZabuzaCombatRules.CloneBodyWidth < ZabuzaCombatRules.BodyWidth &&
-    ZabuzaCombatRules.CloneBodyHeight < ZabuzaCombatRules.BodyHeight,
-    "Water clone retains a smaller independent hitbox");
 Check(ZabuzaCombatRules.BossMaxLife >= 1600,
     "Boss survives long enough to expose its multi-pattern phase");
 Check(ZabuzaCombatRules.SlashActiveTicks == 10,
@@ -60,9 +57,8 @@ Check(ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.SlashWindup, 10) == Zabuz
 Check(ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.SlashRecovery, 5) == ZabuzaCombatRules.SlashPose &&
     ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.SlashRecovery, 11) == ZabuzaCombatRules.IdlePose,
     "Visible swing and collision end together");
-Check(ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.WaterWindup, 10) == ZabuzaCombatRules.SealPose &&
-    ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.MistTransition, ZabuzaCombatRules.TransitionGatherTick + 1) == ZabuzaCombatRules.SealPose,
-    "Water and mist-gathering use hand-sign pose");
+Check(ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.WaterWindup, 10) == ZabuzaCombatRules.SealPose,
+    "Water techniques use the hand-sign pose");
 Check(ZabuzaCombatRules.ShouldLeap(ZabuzaCombatRules.Approach, 12, true, 145f) &&
     !ZabuzaCombatRules.ShouldLeap(ZabuzaCombatRules.Approach, 13, true, 145f) &&
     !ZabuzaCombatRules.ShouldLeap(ZabuzaCombatRules.Approach, 12, false, 145f) &&
@@ -83,13 +79,6 @@ Check(ZabuzaCombatRules.IsWindup(ZabuzaCombatRules.DragonWindup) &&
 Check(ZabuzaCombatRules.AimSlope(100f, 200f) <= 0.4f &&
     ZabuzaCombatRules.AimSlope(100f, -200f) >= -0.4f,
     "Water aim cannot fire steeply through floors");
-Check(!ZabuzaCombatRules.ShouldRespawnClone(1199, false) &&
-    !ZabuzaCombatRules.ShouldRespawnClone(1200, true) &&
-    ZabuzaCombatRules.ShouldRespawnClone(1200, false),
-    "Water clone has cooldown and one-clone cap");
-Check(ZabuzaCombatRules.NextCloneCooldown(1300, true) == 0f &&
-    ZabuzaCombatRules.NextCloneCooldown(0, false) == 1f,
-    "Clone respawn cooldown starts after the active clone dies");
 Check(ZabuzaCombatRules.ChooseAttack(false, 1, 240) == ZabuzaCombatRules.FanWindup &&
     ZabuzaCombatRules.ChooseAttack(false, 1, 50) == ZabuzaCombatRules.SlashWindup,
     "Phase one adds a safe-range fan volley");
@@ -150,31 +139,42 @@ Check(!ZabuzaCombatRules.DashHitWall(1, false, true) &&
     ZabuzaCombatRules.DashHitWall(4, false, true) &&
     !ZabuzaCombatRules.DashHitWall(4, false, false),
     "Dash ignores stale takeoff collision then stops at real walls");
-Check(ZabuzaCombatRules.CloneDesiredOffset(100, 200) > 0 &&
-    ZabuzaCombatRules.CloneDesiredOffset(300, 200) < 0 &&
-    Math.Abs(ZabuzaCombatRules.CloneDesiredOffset(100, 200)) >= 200,
-    "Clone positions on the far side of its target");
-Check(ZabuzaCombatRules.CloneCanFire(ZabuzaCombatRules.Approach) &&
-    !ZabuzaCombatRules.CloneCanFire(ZabuzaCombatRules.RainWindup) &&
-    !ZabuzaCombatRules.CloneCanFire(ZabuzaCombatRules.SpiralWindup) &&
-    !ZabuzaCombatRules.CloneCanFire(ZabuzaCombatRules.DashActive),
-    "Clone does not stack needle volleys with major boss patterns");
-Check(ZabuzaCombatRules.CloneAttackPeriodTicks >= 150 &&
-    ZabuzaCombatRules.CloneWindupTicks >= 25,
-    "Clone crossfire has a cooldown and visible preparation");
-Check(ZabuzaCombatRules.MistTransitionTicks >= 100 &&
-    ZabuzaCombatRules.TransitionGatherTick > 20 &&
-    ZabuzaCombatRules.TransitionBurstTick > ZabuzaCombatRules.TransitionGatherTick + 20 &&
-    ZabuzaCombatRules.TransitionCloneTick > ZabuzaCombatRules.TransitionBurstTick,
-    "Demon transformation has separated gather, burst and clone beats");
-Check(ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.MistTransition, 10) == ZabuzaCombatRules.WindupPose &&
-    ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.MistTransition, ZabuzaCombatRules.TransitionGatherTick + 1) == ZabuzaCombatRules.SealPose &&
-    ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.MistTransition, ZabuzaCombatRules.TransitionBurstTick + 1) == ZabuzaCombatRules.SlashPose,
-    "Transformation changes pose at each visual beat");
-Check(ZabuzaCombatRules.TransitionAura(1) < ZabuzaCombatRules.TransitionAura(ZabuzaCombatRules.TransitionGatherTick) &&
-    ZabuzaCombatRules.TransitionAura(ZabuzaCombatRules.TransitionBurstTick) > 0.9f &&
-    ZabuzaCombatRules.TransitionAura(ZabuzaCombatRules.MistTransitionTicks) == 1f,
-    "Purple aura builds rather than appearing at full strength instantly");
+Check(ZabuzaCombatRules.MistTransitionTicks is >= 170 and <= 190 &&
+    ZabuzaCombatRules.TransitionHakuTick < ZabuzaCombatRules.TransitionBurstTick &&
+    ZabuzaCombatRules.TransitionBurstTick < ZabuzaCombatRules.MistTransitionTicks &&
+    ZabuzaCombatRules.TransitionHakuDeadline > ZabuzaCombatRules.MistTransitionTicks,
+    "Transition runs kneel, Haku's entrance, then the roar, with a spawn deadline after it");
+Check(ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.MistTransition, 10) == ZabuzaCombatRules.KneelPose &&
+    ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.MistTransition, ZabuzaCombatRules.TransitionHakuTick + 5) == ZabuzaCombatRules.KneelPose &&
+    ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.MistTransition, ZabuzaCombatRules.TransitionBurstTick) == ZabuzaCombatRules.RoarPose,
+    "Zabuza kneels until the roar");
+Check(ZabuzaCombatRules.TransitionAura(1) < ZabuzaCombatRules.TransitionAura(ZabuzaCombatRules.TransitionHakuTick) &&
+    ZabuzaCombatRules.TransitionAura(ZabuzaCombatRules.TransitionBurstTick) == 1f,
+    "Purple aura builds and bursts with the roar");
+Check(ZabuzaCombatRules.TransitionFog(0) == 0f &&
+    ZabuzaCombatRules.TransitionFog(ZabuzaCombatRules.TransitionHakuTick) == 1f &&
+    ZabuzaCombatRules.TransitionFog(ZabuzaCombatRules.MistTransitionTicks) < 0.5f,
+    "Mist thickens while kneeling and thins after the roar");
+Check(!ZabuzaCombatRules.MayDie(0f) && !ZabuzaCombatRules.MayDie(1f) &&
+    ZabuzaCombatRules.MayDie(2f) && ZabuzaCombatRules.MayDie(3f) &&
+    ZabuzaCombatRules.PhaseOneFloor(1800) == 900,
+    "A lethal hit before the transition leaves Zabuza at half health");
+Check(ZabuzaCombatRules.ChooseFrenzyAttack(1, 200f) == ZabuzaCombatRules.SwordThrowWindup &&
+    ZabuzaCombatRules.ChooseFrenzyAttack(0, 60f) == ZabuzaCombatRules.SlashWindup &&
+    ZabuzaCombatRules.ChooseFrenzyAttack(2, 220f) == ZabuzaCombatRules.DashWindup,
+    "Frenzy rotates slashes, charges and the thrown blade");
+Check(Enumerable.Range(0, 30).All(i =>
+        !ZabuzaCombatRules.UsesWater(ZabuzaCombatRules.ChooseFrenzyAttack(i, 60f + i * 12f))),
+    "Frenzy never uses water techniques");
+Check(!ZabuzaCombatRules.SwordShouldReturn(100f, 10) &&
+    ZabuzaCombatRules.SwordShouldReturn(ZabuzaCombatRules.SwordThrowRange, 10) &&
+    ZabuzaCombatRules.SwordShouldReturn(0f, ZabuzaCombatRules.SwordThrowMaxTicks / 2) &&
+    ZabuzaCombatRules.SwordThrowRange is >= 380f and <= 420f,
+    "Thrown blade flies about 25 tiles, then returns");
+Check(ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.KunaiDash, 3) == ZabuzaCombatRules.UnarmedPose &&
+    ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.SwordCatch, 3) == ZabuzaCombatRules.CatchPose &&
+    ZabuzaCombatRules.PoseForState(ZabuzaCombatRules.SwordThrowRelease, 3) == ZabuzaCombatRules.ThrowPose,
+    "Throw, kunai charge and catch each have their own pose");
 Check(ZabuzaCombatRules.TransitionOpeningAttack == 6 &&
     ZabuzaCombatRules.ChooseAttack(true, ZabuzaCombatRules.TransitionOpeningAttack, 230f) == ZabuzaCombatRules.DashWindup,
     "Demon form opens with its signature charge at range");
@@ -198,7 +198,3 @@ Check(ZabuzaCombatRules.WaterWindupTicks >= 40 &&
     ZabuzaCombatRules.WaterRecoveryTicks >= 38 &&
     ZabuzaCombatRules.FanRecoveryTicks >= 38,
     "Higher ranged cadence retains visible telegraphs and retaliation time");
-Check(ZabuzaCombatRules.CloneAttackPeriodTicks >= 150 &&
-    ZabuzaCombatRules.CloneWindupTicks >= 25 &&
-    !ZabuzaCombatRules.CloneCanFire(ZabuzaCombatRules.SpiralWindup),
-    "More frequent clone shots still respect dense-pattern exclusion");

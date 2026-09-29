@@ -32,7 +32,7 @@ public sealed class ZabuzaSlash : ModProjectile
 
         NPC owner = Main.npc[ownerIndex];
         int direction = Projectile.ai[1] >= 0f ? 1 : -1;
-        Projectile.Center = owner.Center + new Vector2(direction * 45f,
+        Projectile.Center = owner.Center + new Vector2(direction * ZabuzaCombatRules.SlashBladeOffsetX,
             ZabuzaCombatRules.SlashBladeOffsetY);
         Projectile.velocity = Vector2.Zero;
     }

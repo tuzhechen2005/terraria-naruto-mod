@@ -15,11 +15,15 @@ using ShinobiPrototype.Content.Projectiles;
 
 namespace ShinobiPrototype.Content.NPCs;
 
+// ai[0] state, ai[1] state timer, ai[2] locked facing, ai[3] encounter stage:
+// 0 phase one, 1 transition started, 2 Haku present (or transition finished), 3 Haku fell.
 [AutoloadBossHead]
 public sealed class ZabuzaBoss : ModNPC
 {
     private int demonHeadSlot = -1;
     private int hitFlashTicks;
+    private bool frenzyStarted;
+    private int comboSlashes;
     public bool InMistPhase => ZabuzaCombatRules.InMistPhase(NPC.life, NPC.lifeMax);
     public bool LastStand => NPC.ai[3] == 3f;
 
@@ -49,7 +53,7 @@ public sealed class ZabuzaBoss : ModNPC
     {
         NPC.width = ZabuzaCombatRules.BodyWidth;
         NPC.height = ZabuzaCombatRules.BodyHeight;
-        NPC.damage = 0; // Only the sword and water projectile deal damage.
+        NPC.damage = 0; // Only the sword, charges and water projectiles deal damage.
         NPC.defense = 7;
         NPC.lifeMax = ZabuzaCombatRules.BossMaxLife;
         NPC.knockBackResist = 0.05f;
@@ -83,30 +87,43 @@ public sealed class ZabuzaBoss : ModNPC
             NPC.ai[3] = 1f;
             NPC.localAI[1] = 0f;
             NPC.localAI[0] = ZabuzaCombatRules.TransitionOpeningAttack;
+            comboSlashes = 0;
             Enter(ZabuzaCombatRules.MistTransition);
             SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
         }
+        if (LastStand && !frenzyStarted && (int)NPC.ai[0] != ZabuzaCombatRules.MistTransition)
+        {
+            frenzyStarted = true;
+            comboSlashes = 0;
+            Enter(ZabuzaCombatRules.FrenzyAwaken);
+        }
 
         NPC.ai[1]++;
-        NPC.noGravity = (int)NPC.ai[0] is ZabuzaCombatRules.DashActive or ZabuzaCombatRules.DashChainActive;
-        NPC.damage = NPC.noGravity
-            ? WaveDuoRules.SoftenedDamage(InMistPhase ? 48 : 32) : 0;
+        int state = (int)NPC.ai[0];
+        NPC.noGravity = state is ZabuzaCombatRules.DashActive or ZabuzaCombatRules.DashChainActive or
+            ZabuzaCombatRules.KunaiDash;
+        NPC.damage = state == ZabuzaCombatRules.KunaiDash
+            ? WaveDuoRules.SoftenedDamage(WaveDuoRules.KunaiDashDamage)
+            : NPC.noGravity ? WaveDuoRules.SoftenedDamage(InMistPhase ? 48 : 32) : 0;
         Lighting.AddLight(NPC.Center, InMistPhase ? (LastStand ? 0.58f : 0.44f) : 0.16f,
             InMistPhase ? (LastStand ? 0.2f : 0.13f) : 0.21f,
             InMistPhase ? (LastStand ? 0.76f : 0.63f) : 0.26f);
-        NPC.dontTakeDamage = (int)NPC.ai[0] == ZabuzaCombatRules.MistTransition;
+        NPC.dontTakeDamage = state is ZabuzaCombatRules.MistTransition or ZabuzaCombatRules.FrenzyAwaken;
         NPC.alpha = 0;
-        if (HandleMirrorDomain())
+        if (HandleMirrorCage())
             return;
-        switch ((int)NPC.ai[0])
+        switch (state)
         {
             case ZabuzaCombatRules.Approach:
                 MoveToward(target);
                 if (NPC.ai[1] >= ZabuzaCombatRules.ApproachTicks(InMistPhase,
                     Math.Abs(target.Center.X - NPC.Center.X)))
                 {
-                    int next = ZabuzaCombatRules.ChooseAttack(InMistPhase, (int)NPC.localAI[0],
-                        Math.Abs(target.Center.X - NPC.Center.X), NPC.life / (float)NPC.lifeMax);
+                    float gap = Math.Abs(target.Center.X - NPC.Center.X);
+                    int next = LastStand
+                        ? ZabuzaCombatRules.ChooseFrenzyAttack((int)NPC.localAI[0], gap)
+                        : ZabuzaCombatRules.ChooseAttack(InMistPhase, (int)NPC.localAI[0], gap,
+                            NPC.life / (float)NPC.lifeMax);
                     NPC.ai[2] = NPC.direction;
                     Enter(next);
                     if (next == ZabuzaCombatRules.RainWindup)
@@ -115,16 +132,17 @@ public sealed class ZabuzaBoss : ModNPC
                         NPC.localAI[3] = target.Center.Y;
                         NPC.netUpdate = true;
                     }
-                    SoundEngine.PlaySound(next == ZabuzaCombatRules.SlashWindup ? SoundID.Item71 : SoundID.Item8, NPC.Center);
+                    SoundEngine.PlaySound(next is ZabuzaCombatRules.SlashWindup or
+                        ZabuzaCombatRules.SwordThrowWindup ? SoundID.Item71 : SoundID.Item8, NPC.Center);
                 }
                 break;
 
             case ZabuzaCombatRules.SlashWindup:
                 NPC.direction = NPC.spriteDirection = NPC.ai[2] >= 0f ? 1 : -1;
                 NPC.velocity.X *= 0.75f;
-                if (InMistPhase && NPC.ai[1] > ZabuzaCombatRules.SlashWindupTicks - 12)
+                if (InMistPhase && NPC.ai[1] > SlashWindupTicks - 12)
                     NPC.velocity.X = NPC.ai[2] * 2.2f;
-                if (NPC.ai[1] >= ZabuzaCombatRules.SlashWindupTicks)
+                if (NPC.ai[1] >= SlashWindupTicks)
                 {
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
@@ -141,8 +159,21 @@ public sealed class ZabuzaBoss : ModNPC
                 NPC.velocity.X = ZabuzaCombatRules.IsSlashActive((int)NPC.ai[0], NPC.ai[1])
                     ? NPC.ai[2] * (InMistPhase ? 4.2f : 3.4f)
                     : NPC.velocity.X * 0.7f;
+                if (LastStand && comboSlashes < ZabuzaCombatRules.FrenzyComboSlashes - 1 &&
+                    NPC.ai[1] >= ZabuzaCombatRules.SlashActiveTicks + 6)
+                {
+                    comboSlashes++;
+                    NPC.ai[2] = target.Center.X >= NPC.Center.X ? 1f : -1f;
+                    NPC.localAI[0]--; // A combo counts as one attack for pattern selection.
+                    Enter(ZabuzaCombatRules.SlashWindup);
+                    SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
+                    break;
+                }
                 if (NPC.ai[1] >= ZabuzaCombatRules.RecoveryTicks(ZabuzaCombatRules.SlashRecovery, InMistPhase))
+                {
+                    comboSlashes = 0;
                     Enter(ZabuzaCombatRules.Approach);
+                }
                 break;
 
             case ZabuzaCombatRules.WaterWindup:
@@ -151,7 +182,7 @@ public sealed class ZabuzaBoss : ModNPC
                 ShowWaterSeal();
                 if (NPC.ai[1] >= ZabuzaCombatRules.WaterWindupTicks)
                 {
-                    Vector2 spawn = NPC.Center + new Vector2(NPC.ai[2] * 28f, -18f);
+                    Vector2 spawn = NPC.Center + new Vector2(NPC.ai[2] * 28f, -12f);
                     float slope = ZabuzaCombatRules.AimSlope(target.Center.X - spawn.X,
                         target.Center.Y - spawn.Y);
                     if (Main.netMode != NetmodeID.MultiplayerClient)
@@ -176,27 +207,19 @@ public sealed class ZabuzaBoss : ModNPC
                 break;
 
             case ZabuzaCombatRules.MistTransition:
-                NPC.velocity.X *= 0.64f;
-                ShowDemonTransition();
-                if (NPC.ai[1] == ZabuzaCombatRules.TransitionBurstTick)
+                UpdateTransition(target);
+                break;
+
+            case ZabuzaCombatRules.FrenzyAwaken:
+                NPC.velocity.X *= 0.8f;
+                if (NPC.ai[1] == 1f)
                 {
-                    if (NPC.collideY && NPC.velocity.Y == 0f)
-                        NPC.velocity.Y = -5.5f;
-                    NPC.netUpdate = true;
                     SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+                    BossLines.Say(NPC, "ZabuzaFrenzy", new Color(215, 125, 255));
                 }
-                if (NPC.ai[1] >= ZabuzaCombatRules.TransitionCloneTick &&
-                    NPC.ai[3] == 1f && (int)NPC.ai[1] % 30 == 6 &&
-                    Main.netMode != NetmodeID.MultiplayerClient && SpawnHaku())
-                {
-                    NPC.ai[3] = 2f;
-                    NPC.netUpdate = true;
-                }
-                if (NPC.ai[1] >= ZabuzaCombatRules.MistTransitionTicks && NPC.ai[3] >= 2f)
-                {
-                    NPC.dontTakeDamage = false;
+                ShowDemonAura();
+                if (NPC.ai[1] >= ZabuzaCombatRules.FrenzyAwakenTicks)
                     Enter(ZabuzaCombatRules.Approach);
-                }
                 break;
 
             case ZabuzaCombatRules.MistStep:
@@ -226,7 +249,7 @@ public sealed class ZabuzaBoss : ModNPC
                 ShowDragonWindup(target);
                 if (NPC.ai[1] >= ZabuzaCombatRules.DragonWindupTicks)
                 {
-                    Vector2 spawn = NPC.Center + new Vector2(NPC.ai[2] * 32f, -16f);
+                    Vector2 spawn = NPC.Center + new Vector2(NPC.ai[2] * 32f, -12f);
                     Vector2 aim = new(NPC.ai[2],
                         ZabuzaCombatRules.AimSlope(target.Center.X - spawn.X, target.Center.Y - spawn.Y));
                     aim.Normalize();
@@ -345,6 +368,78 @@ public sealed class ZabuzaBoss : ModNPC
                 if (NPC.ai[1] >= ZabuzaCombatRules.RecoveryTicks(ZabuzaCombatRules.DashRecovery, InMistPhase))
                     Enter(ZabuzaCombatRules.Approach);
                 break;
+
+            case ZabuzaCombatRules.SwordThrowWindup:
+                NPC.direction = NPC.spriteDirection = NPC.ai[2] >= 0f ? 1 : -1;
+                NPC.velocity.X *= 0.72f;
+                ShowDashCharge();
+                if (NPC.ai[1] >= ZabuzaCombatRules.SwordThrowWindupTicks)
+                {
+                    NPC.ai[2] = target.Center.X >= NPC.Center.X ? 1f : -1f;
+                    NPC.direction = NPC.spriteDirection = (int)NPC.ai[2];
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Vector2 spawn = NPC.Center + new Vector2(NPC.ai[2] * 30f, -8f);
+                        float slope = ZabuzaCombatRules.AimSlope(target.Center.X - spawn.X,
+                            target.Center.Y - spawn.Y) * 0.5f;
+                        Vector2 velocity = Vector2.Normalize(new Vector2(NPC.ai[2], slope)) *
+                            ZabuzaCombatRules.SwordThrowSpeed;
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), spawn, velocity,
+                            ModContent.ProjectileType<ZabuzaThrownSword>(),
+                            WaveDuoRules.SoftenedDamage(WaveDuoRules.ThrownSwordDamage), 0f,
+                            Main.myPlayer, NPC.whoAmI);
+                    }
+                    SoundEngine.PlaySound(SoundID.Item7, NPC.Center);
+                    NPC.localAI[0]++;
+                    Enter(ZabuzaCombatRules.SwordThrowRelease);
+                }
+                break;
+
+            case ZabuzaCombatRules.SwordThrowRelease:
+                NPC.velocity.X *= 0.8f;
+                if (NPC.ai[1] >= ZabuzaCombatRules.SwordThrowReleaseTicks)
+                    Enter(ZabuzaCombatRules.KunaiWindup);
+                break;
+
+            case ZabuzaCombatRules.KunaiWindup:
+                NPC.ai[2] = target.Center.X >= NPC.Center.X ? 1f : -1f;
+                NPC.direction = NPC.spriteDirection = (int)NPC.ai[2];
+                NPC.velocity.X *= 0.7f;
+                if (!SwordInFlight() && NPC.ai[1] > 2f)
+                {
+                    Enter(ZabuzaCombatRules.SwordCatch);
+                    break;
+                }
+                if (NPC.ai[1] >= ZabuzaCombatRules.KunaiWindupTicks)
+                {
+                    float slope = MathHelper.Clamp((target.Center.Y - NPC.Center.Y) /
+                        Math.Max(Math.Abs(target.Center.X - NPC.Center.X), 90f), -0.25f, 0.25f);
+                    NPC.velocity = Vector2.Normalize(new Vector2(NPC.ai[2], slope)) *
+                        ZabuzaCombatRules.KunaiDashSpeed;
+                    if (NPC.collideY && NPC.velocity.Y > -1.5f)
+                        NPC.velocity.Y = -1.5f;
+                    NPC.netUpdate = true;
+                    SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
+                    Enter(ZabuzaCombatRules.KunaiDash);
+                }
+                break;
+
+            case ZabuzaCombatRules.KunaiDash:
+                if (ZabuzaCombatRules.DashHitWall(NPC.ai[1], NPC.collideX, NPC.collideY) ||
+                    NPC.ai[1] >= ZabuzaCombatRules.KunaiDashTicks)
+                {
+                    NPC.velocity *= 0.35f;
+                    Enter(SwordInFlight() ? ZabuzaCombatRules.KunaiWindup : ZabuzaCombatRules.SwordCatch);
+                }
+                break;
+
+            case ZabuzaCombatRules.SwordCatch:
+                NPC.velocity.X *= 0.75f;
+                if (NPC.ai[1] == 1f)
+                    SoundEngine.PlaySound(SoundID.Item37, NPC.Center);
+                if (NPC.ai[1] >= ZabuzaCombatRules.SwordCatchTicks)
+                    Enter(ZabuzaCombatRules.Approach);
+                break;
         }
 
         if (Math.Abs(NPC.velocity.X) > 0.8f && Math.Abs(NPC.velocity.Y) < 0.8f)
@@ -352,6 +447,77 @@ public sealed class ZabuzaBoss : ModNPC
 
         if (InMistPhase && (int)NPC.ai[0] != ZabuzaCombatRules.MistTransition)
             ShowDemonAura();
+    }
+
+    private int SlashWindupTicks => LastStand
+        ? ZabuzaCombatRules.FrenzySlashWindupTicks : ZabuzaCombatRules.SlashWindupTicks;
+
+    // Kneel in the mist, Haku steps out of a mirror, then the demon roars.
+    private void UpdateTransition(Player target)
+    {
+        float tick = NPC.ai[1];
+        if (tick == 1f)
+        {
+            float away = NPC.Center.X >= target.Center.X ? 1f : -1f;
+            NPC.velocity = new Vector2(away * 6f, -4f);
+            NPC.direction = NPC.spriteDirection = -(int)away;
+            NPC.netUpdate = true;
+        }
+        else if (tick < ZabuzaCombatRules.TransitionBurstTick)
+            NPC.velocity.X *= NPC.collideY ? 0.82f : 0.97f;
+        else
+            NPC.velocity.X *= 0.64f;
+        ShowDemonTransition();
+
+        if (tick >= ZabuzaCombatRules.TransitionHakuTick && NPC.ai[3] == 1f &&
+            Main.netMode != NetmodeID.MultiplayerClient)
+        {
+            if (SpawnHaku() || tick >= ZabuzaCombatRules.TransitionHakuDeadline)
+            {
+                // Without a free NPC slot the fight continues solo rather than stalling.
+                NPC.ai[3] = 2f;
+                NPC.netUpdate = true;
+            }
+        }
+        if (tick == ZabuzaCombatRules.TransitionBurstTick)
+        {
+            if (NPC.collideY && NPC.velocity.Y == 0f)
+                NPC.velocity.Y = -5.5f;
+            NPC.direction = NPC.spriteDirection = target.Center.X >= NPC.Center.X ? 1 : -1;
+            NPC.netUpdate = true;
+            SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
+        }
+        if (tick >= ZabuzaCombatRules.MistTransitionTicks && NPC.ai[3] >= 2f)
+        {
+            NPC.dontTakeDamage = false;
+            Enter(ZabuzaCombatRules.Approach);
+        }
+    }
+
+    public override bool CheckDead()
+    {
+        if (ZabuzaCombatRules.MayDie(NPC.ai[3]))
+            return true;
+        // A single huge hit cannot skip the transition or Haku's entrance.
+        NPC.life = ZabuzaCombatRules.PhaseOneFloor(NPC.lifeMax);
+        NPC.dontTakeDamage = true;
+        NPC.netUpdate = true;
+        return false;
+    }
+
+    public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers)
+    {
+        if (LastStand)
+            modifiers.FinalDamage *= WaveDuoRules.ZabuzaFrenzyDamageTakenMultiplier;
+    }
+
+    private bool SwordInFlight()
+    {
+        int type = ModContent.ProjectileType<ZabuzaThrownSword>();
+        foreach (Projectile projectile in Main.ActiveProjectiles)
+            if (projectile.type == type && (int)projectile.ai[0] == NPC.whoAmI)
+                return true;
+        return false;
     }
 
     private void ShowDemonAura()
@@ -380,31 +546,34 @@ public sealed class ZabuzaBoss : ModNPC
         float tick = NPC.ai[1];
         if (tick < ZabuzaCombatRules.TransitionBurstTick)
         {
-            if ((int)tick % 2 != 0)
-                return;
-            float radius = MathHelper.Lerp(82f, 30f,
-                tick / ZabuzaCombatRules.TransitionBurstTick);
-            for (int i = 0; i < 3; i++)
+            // Mist rolling in around the kneeling swordsman, a thin purple ember inside it.
+            if ((int)tick % 2 == 0)
+                Dust.NewDustPerfect(NPC.Bottom + new Vector2(Main.rand.NextFloat(-90f, 90f), -4f),
+                    DustID.Cloud, new Vector2(Main.rand.NextFloat(-0.6f, 0.6f), -0.4f), 120,
+                    new Color(200, 220, 230), 1.6f).noGravity = true;
+            if (tick > ZabuzaCombatRules.TransitionHakuTick && (int)tick % 3 == 0)
             {
+                float radius = MathHelper.Lerp(70f, 26f,
+                    (tick - ZabuzaCombatRules.TransitionHakuTick) /
+                    (ZabuzaCombatRules.TransitionBurstTick - ZabuzaCombatRules.TransitionHakuTick));
                 Vector2 rim = NPC.Center + Main.rand.NextVector2CircularEdge(radius, radius * 0.8f);
-                Vector2 velocity = Vector2.Normalize(NPC.Center - rim) * 2.4f;
-                Dust.NewDustPerfect(rim, DustID.Shadowflame, velocity, 40,
-                    new Color(205, 95, 255), 1.25f).noGravity = true;
+                Dust.NewDustPerfect(rim, DustID.Shadowflame, Vector2.Normalize(NPC.Center - rim) * 2.2f,
+                    40, new Color(205, 95, 255), 1.2f).noGravity = true;
             }
             return;
         }
         if (tick == ZabuzaCombatRules.TransitionBurstTick)
         {
-            for (int i = 0; i < 32; i++)
+            for (int i = 0; i < 36; i++)
             {
-                Vector2 velocity = (MathHelper.TwoPi * i / 32f).ToRotationVector2() * 5.2f;
+                Vector2 velocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 5.6f;
                 Dust.NewDustPerfect(NPC.Center, DustID.Shadowflame, velocity, 20,
-                    new Color(215, 125, 255), 1.7f).noGravity = true;
+                    new Color(215, 125, 255), 1.8f).noGravity = true;
             }
         }
         else if ((int)tick % 3 == 0)
         {
-            Vector2 point = NPC.Center + Main.rand.NextVector2Circular(40f, 44f);
+            Vector2 point = NPC.Center + Main.rand.NextVector2Circular(34f, 40f);
             Dust.NewDustPerfect(point, DustID.Shadowflame,
                 new Vector2(0f, -2f), 30, new Color(205, 95, 255), 1.35f).noGravity = true;
         }
@@ -414,7 +583,7 @@ public sealed class ZabuzaBoss : ModNPC
     {
         if (Main.netMode == NetmodeID.Server || !Main.rand.NextBool(2))
             return;
-        Vector2 hands = NPC.Center + new Vector2(NPC.direction * 10f, -15f);
+        Vector2 hands = NPC.Center + new Vector2(NPC.direction * 10f, -12f);
         Dust.NewDustPerfect(hands + Main.rand.NextVector2Circular(9f, 9f),
             DustID.Water, Vector2.Zero, 80, new Color(110, 210, 240), 1.1f).noGravity = true;
     }
@@ -428,7 +597,7 @@ public sealed class ZabuzaBoss : ModNPC
             target.Center.Y - NPC.Center.Y);
         float distance = 32f + (NPC.ai[1] - 28f) * 1.4f;
         Vector2 gathering = NPC.Center + new Vector2(NPC.ai[2] * distance,
-            -16f + slope * distance);
+            -12f + slope * distance);
         for (int i = 0; i < 3; i++)
             Dust.NewDustPerfect(gathering + Main.rand.NextVector2Circular(8f, 8f),
                 DustID.Water, Vector2.Zero, 40, new Color(110, 210, 240), 1.4f).noGravity = true;
@@ -438,7 +607,7 @@ public sealed class ZabuzaBoss : ModNPC
     {
         if (Main.netMode == NetmodeID.MultiplayerClient)
             return;
-        Vector2 spawn = NPC.Center + new Vector2(NPC.ai[2] * 34f, -22f);
+        Vector2 spawn = NPC.Center + new Vector2(NPC.ai[2] * 34f, -16f);
         float slope = ZabuzaCombatRules.AimSlope(target.Center.X - spawn.X,
             target.Center.Y - spawn.Y);
         Vector2 aim = new(NPC.ai[2], slope);
@@ -561,7 +730,7 @@ public sealed class ZabuzaBoss : ModNPC
         direction.Normalize();
         NPC.velocity = direction * ZabuzaCombatRules.DashSpeed(InMistPhase,
             NPC.life / (float)NPC.lifeMax) *
-            (LastStand ? WaveDuoRules.ZabuzaLastStandDashMultiplier : 1f);
+            (LastStand ? WaveDuoRules.ZabuzaFrenzyDashMultiplier : 1f);
         if (NPC.collideY && NPC.velocity.Y > -1.5f)
             NPC.velocity.Y = -1.5f;
         NPC.direction = NPC.spriteDirection = (int)NPC.ai[2];
@@ -586,7 +755,7 @@ public sealed class ZabuzaBoss : ModNPC
             return;
         Color color = InMistPhase ? new Color(190, 85, 255) : new Color(145, 220, 255);
         for (int i = 0; i < 3; i++)
-            Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(36f, 42f),
+            Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(30f, 36f),
                 InMistPhase ? DustID.Shadowflame : DustID.Water,
                 new Vector2(-NPC.ai[2] * 1.4f, -0.6f), 60, color, 1.2f).noGravity = true;
     }
@@ -601,16 +770,28 @@ public sealed class ZabuzaBoss : ModNPC
         return -1;
     }
 
-    private bool HandleMirrorDomain()
+    // While Haku's mirror cage holds the player, Zabuza waits outside, translucent.
+    private bool HandleMirrorCage()
     {
-        int index = NPC.ai[3] >= 2f ? FindLinkedHaku() : -1;
-        if (index >= 0 && Main.npc[index].ModNPC is HakuBoss haku && haku.InMirrorDomain)
+        int index = NPC.ai[3] == 2f ? FindLinkedHaku() : -1;
+        if (index >= 0 && Main.npc[index].ModNPC is HakuBoss haku && haku.InCage)
         {
             NPC.localAI[1] = 1f;
-            NPC.velocity *= 0.72f;
             NPC.damage = 0;
-            NPC.alpha = haku.MirrorDomainHidden ? 255 : 0;
-            NPC.dontTakeDamage = haku.MirrorDomainHidden;
+            NPC.alpha = 150;
+            NPC.dontTakeDamage = true;
+            Vector2 fromCenter = NPC.Center - haku.MirrorCenter;
+            float outside = WaveDuoRules.CageRadius + 70f;
+            if (fromCenter.Length() < outside)
+            {
+                float away = fromCenter.X >= 0f ? 1f : -1f;
+                NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, away * 5f, 0.2f);
+                NPC.direction = NPC.spriteDirection = -(int)away;
+                if (NPC.collideX && NPC.velocity.Y == 0f)
+                    NPC.velocity.Y = -8f;
+            }
+            else
+                NPC.velocity.X *= 0.8f;
             return true;
         }
         if (NPC.localAI[1] != 0f)
@@ -628,22 +809,26 @@ public sealed class ZabuzaBoss : ModNPC
         if (FindLinkedHaku() >= 0)
             return true;
         Player target = Main.player[NPC.target];
-        Vector2[] offsets = { new(-NPC.direction * 260f, -70f),
-            new(NPC.direction * 260f, -70f), new(0f, -100f) };
-        foreach (Vector2 offset in offsets)
+        var candidates = WaveDuoRules.HakuSpawnCandidates(NPC.direction);
+        for (int i = 0; i < candidates.Length; i++)
         {
-            Vector2 center = NPC.Center + offset;
-            if (Collision.SolidCollision(center - new Vector2(
-                20f, 38f), 40, 76))
+            var (x, y, relativeToPlayer) = candidates[i];
+            Vector2 center = (relativeToPlayer ? target.Center : NPC.Center) + new Vector2(x, y);
+            bool lastResort = i == candidates.Length - 1;
+            if (!lastResort && Collision.SolidCollision(center - new Vector2(
+                WaveDuoRules.HakuBodyWidth * 0.5f, WaveDuoRules.HakuBodyHeight * 0.5f),
+                WaveDuoRules.HakuBodyWidth, WaveDuoRules.HakuBodyHeight))
                 continue;
-            int index = NPC.NewNPC(NPC.GetSource_FromAI(), (int)center.X, (int)center.Y,
-                ModContent.NPCType<HakuBoss>(), ai2: NPC.whoAmI + 1);
+            int index = NPC.NewNPC(NPC.GetSource_FromAI(), (int)center.X,
+                (int)(center.Y + WaveDuoRules.HakuBodyHeight * 0.5f),
+                ModContent.NPCType<HakuBoss>(), ai0: HakuBoss.EmergeState, ai2: NPC.whoAmI + 1);
             if (index >= 0 && index < Main.maxNPCs)
             {
                 if (Main.netMode == NetmodeID.Server)
                     NetMessage.SendData(MessageID.SyncNPC, number: index);
                 return true;
             }
+            return false; // No free NPC slot; retry next tick.
         }
         return false;
     }
@@ -655,7 +840,7 @@ public sealed class ZabuzaBoss : ModNPC
         NPC.spriteDirection = NPC.direction;
         float gap = Math.Abs(distance);
         float side = NPC.Center.X < target.Center.X ? -1f : 1f;
-        float preferredGap = InMistPhase ? 190f : 170f;
+        float preferredGap = LastStand ? 120f : InMistPhase ? 190f : 170f;
         float desiredX = target.Center.X + side * preferredGap;
         float maxSpeed = gap > 400f ? (InMistPhase ? 9f : 7f) :
             (InMistPhase ? 6.6f : 5.2f);
@@ -689,53 +874,12 @@ public sealed class ZabuzaBoss : ModNPC
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
-        int pose = ZabuzaCombatRules.PoseForState((int)NPC.ai[0], NPC.ai[1],
+        int state = (int)NPC.ai[0];
+        int pose = ZabuzaCombatRules.PoseForState(state, NPC.ai[1],
             Math.Abs(NPC.velocity.X) > 1.1f, Math.Abs(NPC.velocity.Y) > 0.8f,
             (float)NPC.frameCounter);
-        string texture = pose switch
-        {
-            ZabuzaCombatRules.WindupPose => "ZabuzaWindupV2",
-            ZabuzaCombatRules.SlashPose => "ZabuzaSlashV2",
-            ZabuzaCombatRules.SealPose => "ZabuzaSealV2",
-            ZabuzaCombatRules.RunPose => "ZabuzaRunV2",
-            ZabuzaCombatRules.RunMidPose => "ZabuzaRunMidV4",
-            ZabuzaCombatRules.RunAltPose => "ZabuzaRunAltV4",
-            ZabuzaCombatRules.LeapPose => "ZabuzaLeapV2",
-            _ => "ZabuzaIdleV2"
-        };
-        float anchor = pose switch
-        {
-            ZabuzaCombatRules.WindupPose => 0.46f,
-            ZabuzaCombatRules.SlashPose => 0.32f,
-            ZabuzaCombatRules.SealPose => 0.59f,
-            ZabuzaCombatRules.RunPose => 0.69f,
-            ZabuzaCombatRules.RunMidPose => 0.63f,
-            ZabuzaCombatRules.RunAltPose => 0.69f,
-            ZabuzaCombatRules.LeapPose => 0.75f,
-            _ => 0.69f
-        };
-        float motion = NPC.velocity.Y != 0f ? -0.06f :
-            (float)Math.Sin(Main.GlobalTimeWrappedHourly * 7f) * 0.015f;
-        motion += MathHelper.Clamp(NPC.velocity.X * NPC.spriteDirection * 0.009f,
-            -0.055f, 0.055f);
-        float scale = ZabuzaCombatRules.BossDrawScale * (pose == ZabuzaCombatRules.WindupPose
-            ? 1f + Math.Min(NPC.ai[1] / ZabuzaCombatRules.SlashWindupTicks, 1f) * 0.04f
-            : 1f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.008f);
-        float aura = (int)NPC.ai[0] == ZabuzaCombatRules.MistTransition
+        float aura = state == ZabuzaCombatRules.MistTransition
             ? ZabuzaCombatRules.TransitionAura(NPC.ai[1]) : 1f;
-        if (InMistPhase)
-            scale *= MathHelper.Lerp(1f, ZabuzaCombatRules.DemonDrawMultiplier, aura);
-        if (LastStand)
-            scale *= 1.075f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * 10f) * 0.012f;
-        if (ZabuzaCombatRules.DrawBodyAfterimage(InMistPhase, (int)NPC.ai[0], NPC.ai[1],
-            NPC.velocity.X, NPC.velocity.Y))
-        {
-            for (int i = 4; i >= 2; i -= 2)
-                if (NPC.oldPos[i] != Vector2.Zero)
-                    DrawPose(spriteBatch, screenPos, NPC, texture, anchor,
-                        new Color(95, 175, 210) * 0.2f, motion, scale,
-                        NPC.Bottom + NPC.oldPos[i] - NPC.position);
-        }
         Color readable = Color.Lerp(drawColor, Color.White, 0.5f);
         if (InMistPhase)
             readable = Color.Lerp(readable, new Color(235, 195, 255), 0.42f * aura);
@@ -743,8 +887,74 @@ public sealed class ZabuzaBoss : ModNPC
             readable = Color.Lerp(readable, new Color(255, 150, 245), 0.48f);
         if (hitFlashTicks > 0)
             readable = Color.Lerp(readable, Color.White, hitFlashTicks / 7f);
-        return DrawPose(spriteBatch, screenPos, NPC, texture, anchor, readable, motion, scale);
+
+        if (ZabuzaCombatRules.DrawBodyAfterimage(InMistPhase, state, NPC.ai[1],
+            NPC.velocity.X, NPC.velocity.Y))
+            for (int i = 4; i >= 2; i -= 2)
+                if (NPC.oldPos[i] != Vector2.Zero)
+                    DrawBody(spriteBatch, screenPos, pose, new Color(95, 175, 210) * 0.2f,
+                        NPC.Bottom + NPC.oldPos[i] - NPC.position);
+        DrawBody(spriteBatch, screenPos, pose, readable, NPC.Bottom);
+        return false;
     }
+
+    private void DrawBody(SpriteBatch spriteBatch, Vector2 screenPos, int pose, Color color,
+        Vector2 bottom)
+    {
+        (string action, int count, int frame) = FrameFor(pose);
+        if (BossSprites.TryDraw(spriteBatch, "Zabuza", action, frame, count, BossSprites.Zabuza,
+            bottom, NPC.spriteDirection, color * NPC.Opacity, screenPos))
+            return;
+        (string legacy, float anchor) = LegacyPose(pose);
+        DrawPose(spriteBatch, screenPos, NPC, legacy, anchor, color, 0f,
+            ZabuzaCombatRules.BossDrawScale, bottom);
+    }
+
+    private (string Action, int Count, int Frame) FrameFor(int pose)
+    {
+        float t = NPC.ai[1];
+        return pose switch
+        {
+            ZabuzaCombatRules.WindupPose => ("Windup", 3, BossSprites.Progress(t,
+                (int)NPC.ai[0] switch
+                {
+                    ZabuzaCombatRules.DashWindup => ZabuzaCombatRules.DashWindupTicks(InMistPhase),
+                    ZabuzaCombatRules.DashReaim => ZabuzaCombatRules.DashReaimTicks,
+                    ZabuzaCombatRules.SwordThrowWindup => ZabuzaCombatRules.SwordThrowWindupTicks,
+                    _ => SlashWindupTicks
+                }, 3)),
+            ZabuzaCombatRules.SlashPose => ("Slash", 3,
+                BossSprites.Progress(t, ZabuzaCombatRules.SlashActiveTicks, 3)),
+            ZabuzaCombatRules.SealPose => ("Seal", 3, BossSprites.Progress(t, 18f, 3)),
+            ZabuzaCombatRules.RunPose or ZabuzaCombatRules.RunMidPose or ZabuzaCombatRules.RunAltPose =>
+                ("Run", 6, (int)(NPC.frameCounter / (88d / 6d))),
+            ZabuzaCombatRules.LeapPose => ("Leap", 2, NPC.velocity.Y < 0f ? 0 : 1),
+            ZabuzaCombatRules.DashPose => ("Dash", 2, (int)(t / 4f)),
+            ZabuzaCombatRules.KneelPose => ("Kneel", 2, t < 12f ? 0 : 1),
+            ZabuzaCombatRules.RoarPose => ("Roar", 3, BossSprites.Progress(
+                (int)NPC.ai[0] == ZabuzaCombatRules.FrenzyAwaken
+                    ? t : t - ZabuzaCombatRules.TransitionBurstTick, 18f, 3)),
+            ZabuzaCombatRules.ThrowPose => ("Throw", 3,
+                BossSprites.Progress(t, ZabuzaCombatRules.SwordThrowReleaseTicks, 3)),
+            ZabuzaCombatRules.UnarmedPose => ("Unarmed", 6, (int)(NPC.frameCounter / (88d / 6d))),
+            ZabuzaCombatRules.CatchPose => ("Catch", 2, t < 8f ? 0 : 1),
+            _ => ("Idle", 4, BossSprites.Loop(10f, 4))
+        };
+    }
+
+    // Single-pose textures used until the matching animation frames are delivered.
+    private static (string Texture, float Anchor) LegacyPose(int pose) => pose switch
+    {
+        ZabuzaCombatRules.WindupPose or ZabuzaCombatRules.KneelPose => ("ZabuzaWindupV2", 0.46f),
+        ZabuzaCombatRules.SlashPose or ZabuzaCombatRules.RoarPose or ZabuzaCombatRules.ThrowPose =>
+            ("ZabuzaSlashV2", 0.32f),
+        ZabuzaCombatRules.SealPose => ("ZabuzaSealV2", 0.59f),
+        ZabuzaCombatRules.RunPose or ZabuzaCombatRules.UnarmedPose => ("ZabuzaRunV2", 0.69f),
+        ZabuzaCombatRules.RunMidPose => ("ZabuzaRunMidV4", 0.63f),
+        ZabuzaCombatRules.RunAltPose => ("ZabuzaRunAltV4", 0.69f),
+        ZabuzaCombatRules.LeapPose or ZabuzaCombatRules.DashPose => ("ZabuzaLeapV2", 0.75f),
+        _ => ("ZabuzaIdleV2", 0.69f)
+    };
 
     internal static bool DrawPose(SpriteBatch spriteBatch, Vector2 screenPos, NPC npc,
         string pose, float anchorFraction, Color drawColor, float rotation = 0f, float scale = 1f,
@@ -775,6 +985,8 @@ public sealed class ZabuzaBoss : ModNPC
         writer.Write((int)NPC.localAI[0]);
         writer.Write(NPC.localAI[2]);
         writer.Write(NPC.localAI[3]);
+        writer.Write(frenzyStarted);
+        writer.Write((byte)comboSlashes);
     }
 
     public override void ReceiveExtraAI(BinaryReader reader)
@@ -782,6 +994,8 @@ public sealed class ZabuzaBoss : ModNPC
         NPC.localAI[0] = reader.ReadInt32();
         NPC.localAI[2] = reader.ReadSingle();
         NPC.localAI[3] = reader.ReadSingle();
+        frenzyStarted = reader.ReadBoolean();
+        comboSlashes = reader.ReadByte();
     }
 
     public override void HitEffect(NPC.HitInfo hit)
@@ -793,7 +1007,7 @@ public sealed class ZabuzaBoss : ModNPC
         for (int i = 0; i < count; i++)
         {
             Vector2 velocity = Main.rand.NextVector2Circular(3.8f, 3.8f);
-            Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(18f, 30f),
+            Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(14f, 24f),
                 InMistPhase ? DustID.Shadowflame : DustID.Water, velocity, 30,
                 InMistPhase ? new Color(210, 105, 255) : new Color(155, 235, 255),
                 NPC.life <= 0 ? 1.55f : 1.25f).noGravity = true;
@@ -809,8 +1023,8 @@ public sealed class ZabuzaBoss : ModNPC
             Main.npc[haku].netUpdate = true;
             return;
         }
-        if (LastStand)
-            CompleteEncounter();
+        // Haku already fell (or never arrived): this kill completes the encounter.
+        CompleteEncounter(NPC);
     }
 
     internal static void CompleteEncounter(NPC lastBoss)
@@ -827,6 +1041,4 @@ public sealed class ZabuzaBoss : ModNPC
         else
             Main.NewText(message, 100, 220, 160);
     }
-
-    private void CompleteEncounter() => CompleteEncounter(NPC);
 }

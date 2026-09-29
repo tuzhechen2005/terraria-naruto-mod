@@ -24,6 +24,13 @@ public static class ZabuzaCombatRules
     public const int DashReaim = 17;
     public const int DashChainActive = 18;
     public const int DashRecovery = 19;
+    // Frenzy (Haku has fallen).
+    public const int FrenzyAwaken = 20;
+    public const int SwordThrowWindup = 21;
+    public const int SwordThrowRelease = 22;
+    public const int KunaiWindup = 23;
+    public const int KunaiDash = 24;
+    public const int SwordCatch = 25;
     public const int IdlePose = 0;
     public const int WindupPose = 1;
     public const int SlashPose = 2;
@@ -32,15 +39,21 @@ public static class ZabuzaCombatRules
     public const int LeapPose = 5;
     public const int RunMidPose = 6;
     public const int RunAltPose = 7;
-    public const int BodyWidth = 50;
-    public const int BodyHeight = 108;
-    public const int CloneBodyWidth = 36;
-    public const int CloneBodyHeight = 68;
+    public const int KneelPose = 8;
+    public const int RoarPose = 9;
+    public const int ThrowPose = 10;
+    public const int UnarmedPose = 11;
+    public const int CatchPose = 12;
+    public const int DashPose = 13;
+    // About twice the player's height; the sword is a separate hitbox.
+    public const int BodyWidth = 36;
+    public const int BodyHeight = 84;
     public const int BossMaxLife = 1800;
 
-    public const int SlashWidth = 50;
-    public const int SlashHeight = 14;
-    public const float SlashBladeOffsetY = -18f;
+    public const int SlashWidth = 60;
+    public const int SlashHeight = 16;
+    public const float SlashBladeOffsetX = 52f;
+    public const float SlashBladeOffsetY = 20f;
     public const int SlashActiveTicks = 10;
     public const int WaterWidth = 60;
     public const int WaterHeight = 28;
@@ -58,10 +71,11 @@ public static class ZabuzaCombatRules
     public const int WaterWindupTicks = 44;
     public const int SlashRecoveryTicks = 45;
     public const int WaterRecoveryTicks = 42;
-    public const int MistTransitionTicks = 120;
-    public const int TransitionGatherTick = 35;
-    public const int TransitionBurstTick = 78;
-    public const int TransitionCloneTick = 96;
+    // Transition: kneel in the mist, Haku steps out of a mirror, then the demon roars.
+    public const int MistTransitionTicks = 180;
+    public const int TransitionHakuTick = 60;
+    public const int TransitionBurstTick = 120;
+    public const int TransitionHakuDeadline = 300;
     public const int TransitionOpeningAttack = 6;
     public const int MistStepTicks = 30;
     public const int DragonWindupTicks = 62;
@@ -77,16 +91,28 @@ public static class ZabuzaCombatRules
     public const int SpiralIntervalTicks = 8;
     public const int SpiralLastVolleyTick = 88;
     public const int SpiralRecoveryTicks = 58;
-    public const float BossDrawScale = 1.35f;
-    public const float DemonDrawMultiplier = 1.1f;
+    // Sprites are drawn at 1x; pixel art is never scaled by a fractional factor.
+    public const float BossDrawScale = 1f;
     public const int PortraitSize = 44;
     public const float BossBarIconScale = 28f / PortraitSize;
-    public const int CloneRespawnTicks = 1200;
     public const int DashActiveTicks = 18;
     public const int DashReaimTicks = 18;
     public const int DashRecoveryTicks = 44;
-    public const int CloneAttackPeriodTicks = 150;
-    public const int CloneWindupTicks = 30;
+
+    public const int FrenzyAwakenTicks = 60;
+    public const int FrenzySlashWindupTicks = 26;
+    public const int FrenzyComboSlashes = 2;
+    public const int SwordThrowWindupTicks = 34;
+    public const int SwordThrowReleaseTicks = 14;
+    public const float SwordThrowRange = 400f;
+    public const float SwordThrowSpeed = 13f;
+    public const int SwordThrowMaxTicks = 150;
+    public const int SwordWidth = 56;
+    public const int SwordHeight = 56;
+    public const int KunaiWindupTicks = 16;
+    public const int KunaiDashTicks = 16;
+    public const float KunaiDashSpeed = 12.5f;
+    public const int SwordCatchTicks = 22;
 
     public static bool InMistPhase(int life, int lifeMax) => life <= lifeMax / 2;
     public static bool IsWindup(int state) => state is SlashWindup or WaterWindup or DragonWindup or FanWindup or RainWindup or SpiralWindup or DashWindup or DashReaim;
@@ -111,24 +137,37 @@ public static class ZabuzaCombatRules
     public static float TransitionAura(float elapsedTicks) => elapsedTicks switch
     {
         <= 0f => 0.1f,
-        < TransitionGatherTick => 0.1f + 0.5f * elapsedTicks / TransitionGatherTick,
-        < TransitionBurstTick => 0.6f + 0.4f * (elapsedTicks - TransitionGatherTick) /
-            (TransitionBurstTick - TransitionGatherTick),
+        < TransitionHakuTick => 0.1f + 0.2f * elapsedTicks / TransitionHakuTick,
+        < TransitionBurstTick => 0.3f + 0.3f * (elapsedTicks - TransitionHakuTick) /
+            (TransitionBurstTick - TransitionHakuTick),
         _ => 1f
     };
+
+    // Screen mist during the transition: rises while kneeling, clears after the roar.
+    public static float TransitionFog(float elapsedTicks) => elapsedTicks switch
+    {
+        <= 0f => 0f,
+        < TransitionHakuTick => elapsedTicks / TransitionHakuTick,
+        < TransitionBurstTick => 1f,
+        < MistTransitionTicks => 1f - 0.7f * (elapsedTicks - TransitionBurstTick) /
+            (MistTransitionTicks - TransitionBurstTick),
+        _ => 0.3f
+    };
+
+    // Before the transition has run, a lethal hit leaves Zabuza at half health instead.
+    public static bool MayDie(float transitionStage) => transitionStage >= 2f;
+    public static int PhaseOneFloor(int lifeMax) => Math.Max(1, lifeMax / 2);
     public static int DashWindupTicks(bool demonPhase) => demonPhase ? 23 : 31;
     public static float DashSpeed(bool demonPhase, float lifeRatio = 1f) =>
         demonPhase ? (lifeRatio <= 0.25f ? 15f : 13.2f) : 9.2f;
     public static bool DashHitWall(float elapsedTicks, bool collideX, bool collideY) =>
         elapsedTicks > 3f && (collideX || collideY);
-    public static float CloneDesiredOffset(float parentX, float targetX) => parentX < targetX ? 240f : -240f;
-    public static bool CloneCanFire(int bossState) => bossState is not
-        (RainWindup or SpiralWindup or DashWindup or DashActive or DashReaim or DashChainActive or MistTransition);
     public static bool IsSlashActive(int state, float elapsedTicks) =>
         state == SlashRecovery && elapsedTicks <= SlashActiveTicks;
     public static bool DrawBodyAfterimage(bool demonPhase, int state, float elapsedTicks,
         float velocityX, float velocityY) =>
-        !demonPhase && (IsSlashActive(state, elapsedTicks) ||
+        (!demonPhase || state == KunaiDash) && (IsSlashActive(state, elapsedTicks) ||
+            state == KunaiDash ||
             state is DashActive or DashChainActive ||
             (Math.Abs(velocityX) > 4.5f && Math.Abs(velocityY) > 1f));
 
@@ -146,10 +185,14 @@ public static class ZabuzaCombatRules
         SlashWindup => WindupPose,
         SlashRecovery when elapsedTicks <= SlashActiveTicks => SlashPose,
         DashWindup or DashReaim => WindupPose,
-        DashActive or DashChainActive => LeapPose,
-        MistTransition when elapsedTicks < TransitionGatherTick => WindupPose,
-        MistTransition when elapsedTicks < TransitionBurstTick => SealPose,
-        MistTransition => SlashPose,
+        DashActive or DashChainActive => DashPose,
+        MistTransition when elapsedTicks < TransitionBurstTick => KneelPose,
+        MistTransition => RoarPose,
+        FrenzyAwaken => RoarPose,
+        SwordThrowWindup => WindupPose,
+        SwordThrowRelease => ThrowPose,
+        KunaiWindup or KunaiDash => UnarmedPose,
+        SwordCatch => CatchPose,
         WaterWindup or DragonWindup or FanWindup or RainWindup or SpiralWindup => SealPose,
         WaterRecovery when elapsedTicks <= 10f => SealPose,
         DragonRecovery or FanRecovery or RainRecovery or SpiralRecovery when elapsedTicks <= 10f => SealPose,
@@ -161,12 +204,6 @@ public static class ZabuzaCombatRules
 
     public static float AimSlope(float horizontalDistance, float verticalDistance) =>
         Math.Clamp(verticalDistance / Math.Max(Math.Abs(horizontalDistance), 40f), -0.35f, 0.35f);
-
-    public static bool ShouldRespawnClone(float elapsedTicks, bool cloneActive) =>
-        elapsedTicks >= CloneRespawnTicks && !cloneActive;
-
-    public static float NextCloneCooldown(float elapsedTicks, bool cloneActive) =>
-        cloneActive ? 0f : elapsedTicks + 1f;
 
     public static bool ShouldLeap(int state, float elapsedTicks, bool grounded,
         float horizontalDistance, bool mistPhase = false) =>
@@ -233,4 +270,21 @@ public static class ZabuzaCombatRules
         return attacksCompleted % 3 == 1 && horizontalDistance >= 170f
             ? FanWindup : WaterWindup;
     }
+
+    // Frenzy: no water techniques; chained slashes, charges and the thrown blade.
+    public static int ChooseFrenzyAttack(int attacksCompleted, float horizontalDistance)
+    {
+        if (horizontalDistance < 100f)
+            return SlashWindup;
+        if (attacksCompleted % 3 == 1 && horizontalDistance >= 120f)
+            return SwordThrowWindup;
+        return horizontalDistance >= 150f ? DashWindup : SlashWindup;
+    }
+
+    public static bool UsesWater(int state) => state is WaterWindup or DragonWindup or FanWindup or
+        RainWindup or SpiralWindup or MistStep;
+
+    // The thrown blade flies out until its range or time is spent, then homes back.
+    public static bool SwordShouldReturn(float traveled, int elapsedTicks) =>
+        traveled >= SwordThrowRange || elapsedTicks >= SwordThrowMaxTicks / 2;
 }

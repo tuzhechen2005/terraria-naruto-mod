@@ -63,6 +63,17 @@ Finish with a short status and the delivery path. Request ID: {asset_id}.
 """
 
 
+def find_codex() -> Optional[str]:
+    """Codex CLI may be bundled inside the ChatGPT app and absent from Claude Code's PATH."""
+    candidates = [os.environ.get("CODEX_BIN"), shutil.which("codex"),
+                  "/Applications/ChatGPT.app/Contents/Resources/codex",
+                  str(Path.home() / "Applications/ChatGPT.app/Contents/Resources/codex")]
+    for candidate in candidates:
+        if candidate and os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+            return candidate
+    return None
+
+
 def run_job(asset_id: str) -> int:
     request = request_for(asset_id)
     current = read_state(asset_id) or {}
@@ -72,7 +83,7 @@ def run_job(asset_id: str) -> int:
         write_state(asset_id, {**current, "status": "failed", "reason": "Request changed after submission", "finished_at": now()})
         return 1
 
-    codex = shutil.which("codex")
+    codex = find_codex()
     if not codex:
         write_state(asset_id, {**current, "status": "failed", "reason": "Codex CLI not found", "finished_at": now()})
         return 1

@@ -90,7 +90,7 @@ NPCs: {
 	HakuBoss.DisplayName: 白
 	ZabuzaBoss.DisplayName: 桃地再不斩
 	ZabuzaBoss.DemonName: 鬼人·桃地再不斩
-	WaterClone.DisplayName: 水分身
+	HakuIceMirror.DisplayName: 魔镜冰晶
 	ForestCanopyCandidate.DisplayName: 林地考生
 	ForestBurrowCandidate.DisplayName: 潜伏考生
 	ArenaRivalBoss.DisplayName: 砂隐考生
@@ -103,8 +103,17 @@ Projectiles: {
 	ZabuzaWaterDragon.DisplayName: 水遁·水龙弹
 	ZabuzaWaterNeedle.DisplayName: 水遁·水针
 	HakuNeedle.DisplayName: 冰千本
+	ZabuzaThrownSword.DisplayName: 斩首大刀
+	HakuPrismShard.DisplayName: 千杀水翔
 	HakuDashHitbox.DisplayName: 冰刃突进
 	ElementalBolt.DisplayName: 基础遁术
 	ArenaSandBolt.DisplayName: 砂弹
 	ArenaRushHitbox.DisplayName: 流砂突袭
+}
+
+Dialogue: {
+	HakuArrive: 白：再不斩先生，这里交给我。
+	ZabuzaFrenzy: 再不斩：……白。你这家伙，到最后都是个傻瓜。
+	HakuFrenzy: 白：我存在的意义，已经不在了……那就全部冻结吧。
+	CageTrapped: "{0}被魔镜冰晶困住了"
 }

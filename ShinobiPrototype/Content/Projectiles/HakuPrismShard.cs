@@ -20,14 +20,15 @@ public sealed class HakuPrismShard : ModProjectile
         Projectile.hostile = true;
         Projectile.tileCollide = false;
         Projectile.penetrate = 1;
-        Projectile.timeLeft = 112;
+        Projectile.timeLeft = 140;
     }
 
-    public override bool ShouldUpdatePosition() =>
-        Projectile.ai[0] >= WaveDuoRules.PrismWarningTicks;
+    // ai[2] optionally overrides the warning time (Thousand Water Needles uses a longer one).
+    private float WarningTicks => Projectile.ai[2] > 0f ? Projectile.ai[2] : WaveDuoRules.PrismWarningTicks;
 
-    public override bool? CanDamage() =>
-        Projectile.ai[0] >= WaveDuoRules.PrismWarningTicks;
+    public override bool ShouldUpdatePosition() => Projectile.ai[0] >= WarningTicks;
+
+    public override bool? CanDamage() => Projectile.ai[0] >= WarningTicks;
 
     public override void AI()
     {
@@ -40,15 +41,15 @@ public sealed class HakuPrismShard : ModProjectile
         }
 
         Projectile.ai[0]++;
-        Projectile.tileCollide = Projectile.ai[0] >= WaveDuoRules.PrismWarningTicks;
+        Projectile.tileCollide = Projectile.ai[0] >= WarningTicks;
         Projectile.rotation = Projectile.velocity.ToRotation();
         Lighting.AddLight(Projectile.Center, 0.22f, 0.54f, 0.74f);
         if (Main.netMode != NetmodeID.Server &&
-            (Projectile.ai[0] < WaveDuoRules.PrismWarningTicks || Main.rand.NextBool(2)))
+            (Projectile.ai[0] < WarningTicks || Main.rand.NextBool(2)))
         {
             Vector2 point = Projectile.Center + Main.rand.NextVector2Circular(13f, 13f);
             Dust.NewDustPerfect(point, DustID.IceTorch,
-                Projectile.ai[0] < WaveDuoRules.PrismWarningTicks
+                Projectile.ai[0] < WarningTicks
                     ? Vector2.Zero : -Projectile.velocity * 0.12f,
                 25, new Color(175, 245, 255), 1.25f).noGravity = true;
         }
@@ -59,7 +60,7 @@ public sealed class HakuPrismShard : ModProjectile
         Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
         Rectangle source = new(500, 245, 1000, 220);
         Vector2 center = Projectile.Center - Main.screenPosition;
-        float pulse = Projectile.ai[0] < WaveDuoRules.PrismWarningTicks
+        float pulse = Projectile.ai[0] < WarningTicks
             ? 0.75f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * 13f) * 0.18f : 1f;
         Vector2 origin = new Vector2(source.Width, source.Height) * 0.5f;
         Main.spriteBatch.Draw(texture, center + new Vector2(2f, 2f), source,
