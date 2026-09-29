@@ -76,16 +76,16 @@ Check(finished.Cells.Any(c => c.Part == Part.RedBeam) && HasFixture(finished, Fi
       HasFixture(finished, Fixture.Chest), "Island has a torii gate, the Land of Waves sign and a chest");
 
 // Mist.
-Check(Math.Abs(SeaFog(0, false, 1f) - SeaFogOnBridge) < 1e-4 && SeaFogOnBridge >= 3 * PhaseTwoFog,
-    "On the bridge by day the mist is over three times the phase-two mist");
-Check(SeaFog(0, true, 1f) > SeaFog(0, false, 1f), "Night or rain makes it thicker");
-Check(Math.Abs(SeaFog(0, false, 2f) - 2 * SeaFogOnBridge) < 1e-4 && SeaFog(0, false, 5f) == SeaFog(0, false, 2f),
-    "Setting can double the mist, no further");
-Check(SeaFog(FogFullWithinTiles, false, 1f) == SeaFog(0, false, 1f), "Full mist over the ramp and hut");
-Check(SeaFog(50, false, 1f) > 0f && SeaFog(FogReachTiles, true, 1f) == 0f && FogReachTiles <= 80f,
+const float defaultSetting = 1.75f;
+Check(SeaMist(0, false, defaultSetting) is > 0.8f and < 1f, "By day at the default setting the bridge is deep in mist");
+Check(SeaMist(0, true, defaultSetting) == 1f, "Night or rain brings it to full graveyard mist");
+Check(Enumerable.Range(0, 30).All(i => SeaMist(i * 3, true, 2f) <= 1f), "Mist never exceeds vanilla's full graveyard look");
+Check(SeaMist(0, false, 5f) == SeaMist(0, false, 2f), "Setting tops out at 200%");
+Check(SeaMist(FogFullWithinTiles, false, 1f) == SeaMist(0, false, 1f), "Full mist over the ramp and hut");
+Check(SeaMist(50, false, 1f) > 0f && SeaMist(FogReachTiles, true, 1f) == 0f && FogReachTiles <= 80f,
     "Mist is gone a little past the beach");
-Check(SeaFog(30, false, 1f) > SeaFog(60, false, 1f), "Mist thins with distance");
-Check(SeaFog(0, false, 0f) == 0f && Math.Abs(SeaFog(0, false, 0.5f) - SeaFogOnBridge / 2) < 1e-4,
+Check(SeaMist(30, false, 1f) > SeaMist(60, false, 1f), "Mist thins with distance");
+Check(SeaMist(0, false, 0f) == 0f && SeaMist(0, false, 0.5f) < SeaMist(0, false, 1f),
     "Setting scales or disables the mist");
 
 // Mist preview.
@@ -93,7 +93,7 @@ Check(PreviewZabuzaAppear < PreviewZabuzaLine1 && PreviewZabuzaLine1 < PreviewZa
       PreviewZabuzaLine2 < PreviewHakuAppear && PreviewHakuAppear < PreviewHakuLine &&
       PreviewHakuLine < PreviewVanish && PreviewVanish < PreviewLength, "Preview beats happen in order");
 Check(PreviewLength / 60f is >= 12f and <= 16f, "Preview lasts about fourteen seconds");
-Check(PreviewFogBoost(0) == 0f && PreviewFogBoost(300) == PreviewFog && PreviewFogBoost(PreviewLength) == 0f,
+Check(PreviewMistBoost(0) == 0f && PreviewMistBoost(300) == PreviewMist && PreviewMistBoost(PreviewLength) == 0f,
     "Preview mist rises, holds and clears");
 Check(!NearBrokenEnd(10, 1) && NearBrokenEnd(BridgeDesign.UnfinishedEnd, 1) && NearBrokenEnd(PreviewTriggerTo, 1),
     "Preview starts only near the broken end");

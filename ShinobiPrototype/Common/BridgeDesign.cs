@@ -38,6 +38,10 @@ public readonly record struct Placement(int Offset, int Y, Fixture Fixture);
 
 public sealed class BridgeDesign
 {
+    // Bump whenever the layout changes, so a world can tell which design its bridge was built with.
+    // 1: flat deck (first in-game version). 2: stone arches. 3: inland stairs. 4: levelled beach, reliable doors.
+    public const int Version = 4;
+
     // Layout, in tiles along the bridge.
     public const int DeckAboveWater = 7;
     public const int Camber = 3;              // the deck rises this much towards the middle of the full span

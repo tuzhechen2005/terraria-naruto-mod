@@ -35,7 +35,10 @@ public sealed class M0Command : ModCommand
                 return;
             }
             player.Teleport(new Vector2(site.X(0) * 16f, (site.DeckY - 3) * 16f), TeleportationStyleID.RodOfDiscord);
-            caller.Reply("已传送到桥头。", Color.LightGreen);
+            int built = WaveBridgeWorld.BuiltVersion;
+            caller.Reply($"已传送到桥头。本世界大桥版本：{(built > 0 ? $"v{built}" : "未记录（很旧）")}，当前代码：v{BridgeDesign.Version}" +
+                (built == BridgeDesign.Version ? "。" : "——需要新建世界才能看到最新的大桥和小屋。"),
+                built == BridgeDesign.Version ? Color.LightGreen : Color.Orange);
             return;
         }
 

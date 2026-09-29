@@ -6,11 +6,12 @@ namespace ShinobiPrototype.Common;
 // BridgeDesign. Kept free of Terraria types so the rule tests can run them.
 public static class BridgeRules
 {
-    // Mist, relative to the phase-two boss mist (the overlay's 0.3 level).
-    public const float PhaseTwoFog = 0.3f;
-    // About 3.3 times phase two (user, 2026-09-29: still "雾太淡" at twice). The overlay draws 0.42 x this.
-    public const float SeaFogOnBridge = 1.0f;
-    public const float NightOrRainFogMultiplier = 1.4f;
+    // Sea mist is drawn with vanilla's graveyard mist (Main.GraveyardVisualIntensity, 0..1): it sits in the
+    // background and follows the world's light, so nights stay dark. Only the look is borrowed; the player is
+    // never in the graveyard biome, so spawns and NPC housing are unaffected. (User, 2026-09-29: the earlier flat
+    // grey overlay glowed at night.) At the default 175% setting the bridge by day is about 0.9, night or rain 1.
+    public const float SeaMistPerSetting = 0.5f;
+    public const float NightOrRainFogMultiplier = 1.2f;
     public const float MaxFogSetting = 2f;
     // Measured from the shoreline-to-island span: thick over the ramp and hut, gone just past the beach
     // (user, 2026-09-29: 300 tiles reached far too far inland).
@@ -29,7 +30,7 @@ public static class BridgeRules
     // A little farther out than the scaffolding's end, but close enough to make out a shape.
     public const int PreviewZabuzaOffset = BridgeDesign.HalfBuiltPier + 16;
     public const int PreviewHakuOffset = BridgeDesign.HalfBuiltPier + 20;
-    public const float PreviewFog = 1.2f;
+    public const float PreviewMist = 1f;
 
     // The preview starts when a player walks out near the broken end (on the deck or the scaffold walkway).
     public const int PreviewTriggerFrom = BridgeDesign.UnfinishedEnd - 14;
@@ -76,26 +77,28 @@ public static class BridgeRules
         bool nearBreak) =>
         !alreadyWarned && previewDone && mistActive && insignia >= SenbonWarningInsignia && nearBreak;
 
-    // How thick the sea mist is for a player this far (in tiles) from the bridge, before the overlay's own scale.
-    public static float SeaFog(float distanceTiles, bool nightOrRain, float setting)
+    // Graveyard-mist intensity (0..1) for a player this far (in tiles) from the bridge.
+    public static float SeaMist(float distanceTiles, bool nightOrRain, float setting)
     {
         if (distanceTiles >= FogReachTiles || setting <= 0f)
             return 0f;
         float closeness = distanceTiles <= FogFullWithinTiles
             ? 1f
             : 1f - (distanceTiles - FogFullWithinTiles) / (FogReachTiles - FogFullWithinTiles);
-        return SeaFogOnBridge * closeness * (nightOrRain ? NightOrRainFogMultiplier : 1f) * Math.Clamp(setting, 0f, MaxFogSetting);
+        float mist = SeaMistPerSetting * Math.Clamp(setting, 0f, MaxFogSetting) * closeness *
+                     (nightOrRain ? NightOrRainFogMultiplier : 1f);
+        return Math.Clamp(mist, 0f, 1f);
     }
 
-    // Extra fog during the preview: rises quickly, holds, and fades after the pair vanishes.
-    public static float PreviewFogBoost(int tick)
+    // Mist during the preview: rises quickly, holds, and fades after the pair vanishes.
+    public static float PreviewMistBoost(int tick)
     {
         if (tick < 0 || tick >= PreviewLength)
             return 0f;
         if (tick < PreviewZabuzaAppear)
-            return PreviewFog * tick / PreviewZabuzaAppear;
+            return PreviewMist * tick / PreviewZabuzaAppear;
         if (tick < PreviewVanish)
-            return PreviewFog;
-        return PreviewFog * (PreviewLength - tick) / (PreviewLength - PreviewVanish);
+            return PreviewMist;
+        return PreviewMist * (PreviewLength - tick) / (PreviewLength - PreviewVanish);
     }
 }

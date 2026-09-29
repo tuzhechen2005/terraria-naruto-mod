@@ -23,6 +23,8 @@ public sealed class WaveBridgeWorld : ModSystem
 {
     public static BridgeSite? Site { get; private set; }
     public static bool Finished { get; private set; }
+    // Which BridgeDesign.Version built this world's bridge (0 = unknown: built before versions were recorded).
+    public static int BuiltVersion { get; private set; }
     private static bool tazunaMovedIn;
 
     // Mist lifts for good once Wave Country is complete, even before the bridge is physically finished.
@@ -32,6 +34,7 @@ public sealed class WaveBridgeWorld : ModSystem
     {
         Site = null;
         Finished = false;
+        BuiltVersion = 0;
         tazunaMovedIn = false;
     }
 
@@ -41,6 +44,7 @@ public sealed class WaveBridgeWorld : ModSystem
             return;
         tag["bridge"] = new[] { site.ShoreX, site.Dir, site.WaterY, site.HutMidX, site.HutFloorY, site.HutDoorX };
         tag["bridgeFinished"] = Finished;
+        tag["bridgeVersion"] = BuiltVersion;
         tag["tazunaMovedIn"] = tazunaMovedIn;
     }
 
@@ -49,6 +53,7 @@ public sealed class WaveBridgeWorld : ModSystem
         if (tag.GetIntArray("bridge") is { Length: 6 } b)
             Site = new BridgeSite(b[0], b[1], b[2], b[3], b[4], b[5]);
         Finished = tag.GetBool("bridgeFinished");
+        BuiltVersion = tag.GetInt("bridgeVersion");
         tazunaMovedIn = tag.GetBool("tazunaMovedIn");
     }
 
@@ -65,6 +70,7 @@ public sealed class WaveBridgeWorld : ModSystem
             writer.Write(site.HutDoorX);
         }
         writer.Write(Finished);
+        writer.Write(BuiltVersion);
     }
 
     public override void NetReceive(BinaryReader reader)
@@ -74,6 +80,7 @@ public sealed class WaveBridgeWorld : ModSystem
                 reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32())
             : null;
         Finished = reader.ReadBoolean();
+        BuiltVersion = reader.ReadInt32();
     }
 
     public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
@@ -86,7 +93,10 @@ public sealed class WaveBridgeWorld : ModSystem
     {
         progress.Message = "修建波之国大桥";
         if (BridgeBuilder.TryFindWorldSite(out BridgeSite site))
+        {
             Site = BridgeBuilder.Build(site, finished: false, sync: false);
+            BuiltVersion = BridgeDesign.Version;
+        }
     }
 
     // Blueprint builds run on the server (or in single player); already-won worlds get the finished bridge.
@@ -102,6 +112,7 @@ public sealed class WaveBridgeWorld : ModSystem
 
         bool won = StoryWorld.WaveComplete;
         Site = BridgeBuilder.Build(site, finished: won, sync: true);
+        BuiltVersion = BridgeDesign.Version;
         Finished = won;
         SyncWorld();
         return true;

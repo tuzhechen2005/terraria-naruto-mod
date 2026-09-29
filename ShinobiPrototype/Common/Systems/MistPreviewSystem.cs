@@ -15,7 +15,7 @@ public sealed class MistPreviewSystem : ModSystem
 {
     private static int tick = -1;
 
-    public static float FogBoost => BridgeRules.PreviewFogBoost(tick);
+    public static float MistBoost => BridgeRules.PreviewMistBoost(tick);
 
     public static void Play() => tick = 0;
 
