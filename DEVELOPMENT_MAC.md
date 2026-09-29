@@ -10,6 +10,13 @@
 - `./scripts/verify-mac.sh` 运行六组规则测试，并生成完整 `.tmod`。脚本临时设置 tModLoader 所需的 macOS 原生库路径，不修改 Steam 安装文件。
 - 当前生成的模组包位于 `~/Library/Application Support/Terraria/tModLoader/Mods/ShinobiPrototype.tmod`。
 
+## 游戏内 Build + Reload
+
+tModLoader 在游戏内依次查找 `~/.dotnet/dotnet`、`/usr/bin/dotnet` 和 PATH 上的 `dotnet`，不会查找系统标准位置 `/usr/local/share/dotnet/x64`（这里装有 x64 .NET 8 SDK 8.0.425）。因此创建了链接 `~/.dotnet/dotnet → /usr/local/share/dotnet/x64/dotnet`（2026-09-29），游戏内应能检测到 SDK。`~/.dotnet/` 目录本身是 Homebrew ARM dotnet 的缓存目录，不要删除。
+
+- 游戏内构建：Workshop → Develop Mods → Build + Reload（尚待实机确认可用）。
+- 命令行构建（`./scripts/verify-mac.sh`）要求游戏完全退出：即使在游戏里禁用模组，模组菜单仍会占用 `.tmod` 文件，打包会报 TML003。
+
 ## 验证与限制
 
 在项目根目录运行：
