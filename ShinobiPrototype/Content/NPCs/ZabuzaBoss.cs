@@ -105,9 +105,9 @@ public sealed class ZabuzaBoss : ModNPC
         NPC.damage = state == ZabuzaCombatRules.KunaiDash
             ? WaveDuoRules.SoftenedDamage(WaveDuoRules.KunaiDashDamage)
             : NPC.noGravity ? WaveDuoRules.SoftenedDamage(InMistPhase ? 48 : 32) : 0;
-        Lighting.AddLight(NPC.Center, InMistPhase ? (LastStand ? 0.58f : 0.44f) : 0.16f,
-            InMistPhase ? (LastStand ? 0.2f : 0.13f) : 0.21f,
-            InMistPhase ? (LastStand ? 0.76f : 0.63f) : 0.26f);
+        Lighting.AddLight(NPC.Center, InMistPhase ? (LastStand ? 0.72f : 0.56f) : 0.16f,
+            InMistPhase ? (LastStand ? 0.14f : 0.1f) : 0.21f,
+            InMistPhase ? (LastStand ? 0.1f : 0.07f) : 0.26f);
         NPC.dontTakeDamage = state is ZabuzaCombatRules.MistTransition or ZabuzaCombatRules.FrenzyAwaken;
         NPC.alpha = 0;
         if (HandleMirrorCage())
@@ -532,8 +532,8 @@ public sealed class ZabuzaBoss : ModNPC
                 -Main.rand.NextFloat(10f, NPC.height * 0.9f));
             Vector2 velocity = new(-NPC.velocity.X * 0.12f + side * 0.3f,
                 -Main.rand.NextFloat(1.3f, 2.5f));
-            Dust.NewDustPerfect(point, DustID.Shadowflame, velocity, 45,
-                LastStand ? new Color(255, 110, 240) : new Color(205, 95, 255),
+            Dust.NewDustPerfect(point, DustID.RedTorch, velocity, 45,
+                LastStand ? new Color(255, 80, 60) : new Color(220, 45, 35),
                 Main.rand.NextFloat(LastStand ? 1.4f : 1.05f,
                     LastStand ? 1.85f : 1.4f)).noGravity = true;
         }
@@ -557,8 +557,8 @@ public sealed class ZabuzaBoss : ModNPC
                     (tick - ZabuzaCombatRules.TransitionHakuTick) /
                     (ZabuzaCombatRules.TransitionBurstTick - ZabuzaCombatRules.TransitionHakuTick));
                 Vector2 rim = NPC.Center + Main.rand.NextVector2CircularEdge(radius, radius * 0.8f);
-                Dust.NewDustPerfect(rim, DustID.Shadowflame, Vector2.Normalize(NPC.Center - rim) * 2.2f,
-                    40, new Color(205, 95, 255), 1.2f).noGravity = true;
+                Dust.NewDustPerfect(rim, DustID.RedTorch, Vector2.Normalize(NPC.Center - rim) * 2.2f,
+                    40, new Color(220, 45, 35), 1.2f).noGravity = true;
             }
             return;
         }
@@ -567,15 +567,15 @@ public sealed class ZabuzaBoss : ModNPC
             for (int i = 0; i < 36; i++)
             {
                 Vector2 velocity = (MathHelper.TwoPi * i / 36f).ToRotationVector2() * 5.6f;
-                Dust.NewDustPerfect(NPC.Center, DustID.Shadowflame, velocity, 20,
-                    new Color(215, 125, 255), 1.8f).noGravity = true;
+                Dust.NewDustPerfect(NPC.Center, DustID.RedTorch, velocity, 20,
+                    new Color(255, 70, 50), 1.8f).noGravity = true;
             }
         }
         else if ((int)tick % 3 == 0)
         {
             Vector2 point = NPC.Center + Main.rand.NextVector2Circular(34f, 40f);
-            Dust.NewDustPerfect(point, DustID.Shadowflame,
-                new Vector2(0f, -2f), 30, new Color(205, 95, 255), 1.35f).noGravity = true;
+            Dust.NewDustPerfect(point, DustID.RedTorch,
+                new Vector2(0f, -2f), 30, new Color(220, 45, 35), 1.35f).noGravity = true;
         }
     }
 
@@ -753,10 +753,10 @@ public sealed class ZabuzaBoss : ModNPC
     {
         if (Main.netMode == NetmodeID.Server || NPC.ai[1] % 3f != 0f)
             return;
-        Color color = InMistPhase ? new Color(190, 85, 255) : new Color(145, 220, 255);
+        Color color = InMistPhase ? new Color(230, 50, 40) : new Color(145, 220, 255);
         for (int i = 0; i < 3; i++)
             Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(30f, 36f),
-                InMistPhase ? DustID.Shadowflame : DustID.Water,
+                InMistPhase ? DustID.RedTorch : DustID.Water,
                 new Vector2(-NPC.ai[2] * 1.4f, -0.6f), 60, color, 1.2f).noGravity = true;
     }
 
@@ -882,9 +882,9 @@ public sealed class ZabuzaBoss : ModNPC
             ? ZabuzaCombatRules.TransitionAura(NPC.ai[1]) : 1f;
         Color readable = Color.Lerp(drawColor, Color.White, 0.5f);
         if (InMistPhase)
-            readable = Color.Lerp(readable, new Color(235, 195, 255), 0.42f * aura);
+            readable = Color.Lerp(readable, new Color(255, 196, 186), 0.3f * aura);
         if (LastStand)
-            readable = Color.Lerp(readable, new Color(255, 150, 245), 0.48f);
+            readable = Color.Lerp(readable, new Color(255, 160, 150), 0.3f);
         if (hitFlashTicks > 0)
             readable = Color.Lerp(readable, Color.White, hitFlashTicks / 7f);
 
@@ -894,14 +894,44 @@ public sealed class ZabuzaBoss : ModNPC
                 if (NPC.oldPos[i] != Vector2.Zero)
                     DrawBody(spriteBatch, screenPos, pose, new Color(95, 175, 210) * 0.2f,
                         NPC.Bottom + NPC.oldPos[i] - NPC.position);
+        DrawDemonAura(spriteBatch, screenPos);
         DrawBody(spriteBatch, screenPos, pose, readable, NPC.Bottom);
         return false;
+    }
+
+    // Red demon flames rising from the body behind the sprite once the demon awakens.
+    private void DrawDemonAura(SpriteBatch spriteBatch, Vector2 screenPos)
+    {
+        if (!InMistPhase)
+            return;
+        int state = (int)NPC.ai[0];
+        float t = NPC.ai[1];
+        float burstStart = state switch
+        {
+            ZabuzaCombatRules.MistTransition => ZabuzaCombatRules.TransitionBurstTick,
+            ZabuzaCombatRules.FrenzyAwaken => 0f,
+            _ => -1f
+        };
+        if (state == ZabuzaCombatRules.MistTransition && t < burstStart)
+            return;
+        Color color = Color.White * (NPC.Opacity * (LastStand ? 0.95f : 0.82f));
+        if (burstStart >= 0f && t - burstStart < 18f &&
+            BossSprites.TryDraw(spriteBatch, "Zabuza", "AuraBurst",
+                BossSprites.Progress(t - burstStart, 18f, 3), 3, BossSprites.ZabuzaAura,
+                NPC.Bottom, NPC.spriteDirection, color, screenPos))
+            return;
+        BossSprites.TryDraw(spriteBatch, "Zabuza", "Aura", BossSprites.Loop(LastStand ? 4f : 5f, 6), 6,
+            BossSprites.ZabuzaAura, NPC.Bottom, NPC.spriteDirection, color, screenPos);
     }
 
     private void DrawBody(SpriteBatch spriteBatch, Vector2 screenPos, int pose, Color color,
         Vector2 bottom)
     {
         (string action, int count, int frame) = FrameFor(pose);
+        // In the frenzy his bandages are gone: prefer the unmasked variant of each action.
+        if (LastStand && BossSprites.TryDraw(spriteBatch, "Zabuza", "Frenzy" + action, frame, count,
+            BossSprites.Zabuza, bottom, NPC.spriteDirection, color * NPC.Opacity, screenPos))
+            return;
         if (BossSprites.TryDraw(spriteBatch, "Zabuza", action, frame, count, BossSprites.Zabuza,
             bottom, NPC.spriteDirection, color * NPC.Opacity, screenPos))
             return;
@@ -1008,8 +1038,8 @@ public sealed class ZabuzaBoss : ModNPC
         {
             Vector2 velocity = Main.rand.NextVector2Circular(3.8f, 3.8f);
             Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(14f, 24f),
-                InMistPhase ? DustID.Shadowflame : DustID.Water, velocity, 30,
-                InMistPhase ? new Color(210, 105, 255) : new Color(155, 235, 255),
+                InMistPhase ? DustID.RedTorch : DustID.Water, velocity, 30,
+                InMistPhase ? new Color(230, 70, 50) : new Color(155, 235, 255),
                 NPC.life <= 0 ? 1.55f : 1.25f).noGravity = true;
         }
     }
