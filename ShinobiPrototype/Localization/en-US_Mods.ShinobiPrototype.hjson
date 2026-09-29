@@ -116,9 +116,11 @@ Dialogue: {
 	CageTrapped: "{0} was trapped by the ice mirrors"
 }
 
-Buffs.ChakraSickness: {
-	DisplayName: Pill Cooldown
-	Description: Cannot eat another soldier pill yet
+Buffs: {
+	ChakraSickness: {
+		DisplayName: Pill Cooldown
+		Description: Cannot eat another soldier pill yet
+	}
 }
 
 Tiles.ChakraCrystalTile.MapEntry: Chakra Crystal

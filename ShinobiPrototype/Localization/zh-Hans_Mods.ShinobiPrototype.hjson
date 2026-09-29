@@ -116,9 +116,11 @@ Dialogue: {
 	CageTrapped: "{0}被魔镜冰晶困住了"
 }
 
-Buffs.ChakraSickness: {
-	DisplayName: 兵粮丸冷却
-	Description: 暂时不能再服用兵粮丸
+Buffs: {
+	ChakraSickness: {
+		DisplayName: 兵粮丸冷却
+		Description: 暂时不能再服用兵粮丸
+	}
 }
 
 Tiles.ChakraCrystalTile.MapEntry: 查克拉结晶
