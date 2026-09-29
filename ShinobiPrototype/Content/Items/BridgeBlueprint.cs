@@ -9,8 +9,6 @@ namespace ShinobiPrototype.Content.Items;
 // the first use outlines the bridge, a second use in the same place builds it and uses up the blueprint.
 public sealed class BridgeBlueprint : ModItem
 {
-    public override string Texture => "ShinobiPrototype/Content/Items/MissionScroll";
-
     public override void SetDefaults()
     {
         Item.width = 28;

@@ -8,8 +8,6 @@ namespace ShinobiPrototype.Content.Items;
 // 忍者手册: opens the handbook panel (objective, jutsu, chakra pages).
 public sealed class NinjaHandbook : ModItem
 {
-    public override string Texture => "ShinobiPrototype/Content/Items/MissionScroll";
-
     public override void SetDefaults()
     {
         Item.width = 20;

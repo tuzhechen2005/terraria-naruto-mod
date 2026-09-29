@@ -140,6 +140,16 @@ Items: {
 		DisplayName: Haku's Mask
 		Tooltip: The mask of a Mist hunter-nin
 	}
+
+	ZabuzaTrophy: {
+		DisplayName: Zabuza Trophy
+		Tooltip: ""
+	}
+
+	HakuTrophy: {
+		DisplayName: Haku Trophy
+		Tooltip: ""
+	}
 }
 
 NPCs: {

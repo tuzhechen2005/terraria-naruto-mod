@@ -140,6 +140,16 @@ Items: {
 		DisplayName: 白的面具
 		Tooltip: 雾隐追杀部队的面具
 	}
+
+	ZabuzaTrophy: {
+		DisplayName: 再不斩奖杯
+		Tooltip: ""
+	}
+
+	HakuTrophy: {
+		DisplayName: 白奖杯
+		Tooltip: ""
+	}
 }
 
 NPCs: {

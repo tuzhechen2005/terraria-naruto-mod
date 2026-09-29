@@ -38,6 +38,11 @@ internal static class WaveRewards
                     Item.NewItem(lastBoss.GetSource_Loot(), lastBoss.getRect(), type);
             }
 
+        if (Main.rand.NextBool(WaveLootRules.TrophyOneIn))
+            Item.NewItem(lastBoss.GetSource_Loot(), lastBoss.getRect(), ModContent.ItemType<ZabuzaTrophy>());
+        if (Main.rand.NextBool(WaveLootRules.TrophyOneIn))
+            Item.NewItem(lastBoss.GetSource_Loot(), lastBoss.getRect(), ModContent.ItemType<HakuTrophy>());
+
         // First-win rewards go to each character who was there, once per character.
         foreach (Player player in Main.ActivePlayers)
         {
