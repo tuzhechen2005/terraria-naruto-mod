@@ -96,9 +96,25 @@ Items: {
 			Jump or Up to rise, Down to sink; release to hover. No fall damage
 			'''
 	}
+
+	BridgeBlueprint: {
+		DisplayName: Tazuna's Blueprint
+		Tooltip:
+			'''
+			Use on a beach facing the sea: the first use outlines the bridge, a second use in place builds it
+			One bridge per world; clears natural terrain, but will not build over player-placed blocks
+			'''
+	}
 }
 
 NPCs: {
+	TazunaBridge.DisplayName: Tazuna the Bridge Builder
+
+	Tazuna: {
+		DisplayName: Bridge Builder
+		GivenName: Tazuna
+	}
+
 	Kakashi: {
 		DisplayName: Leaf Jonin
 		GivenName: Kakashi
@@ -146,6 +162,11 @@ Projectiles: {
 }
 
 Dialogue: {
+	PreviewZabuza1: "Zabuza: ...So a Leaf brat wants to wade into this too?"
+	PreviewZabuza2: "Zabuza: This bridge will never be finished."
+	PreviewHaku: "Haku: Master Zabuza, it is not yet time."
+	PreviewEnd: The figures in the mist are gone... the Mist ninja are watching this bridge.
+	BridgeOpening: "Zabuza: Let's settle this here, on this bridge."
 	HakuArrive: Haku: Master Zabuza, leave this to me.
 	ZabuzaFrenzy: Zabuza: ...Haku. You were a fool to the very end.
 	HakuFrenzy: Haku: The reason I exist is gone... then let everything freeze.
@@ -176,7 +197,11 @@ Configs: {
 			Tooltip: Pixels to move the chakra bar down (negative moves it up)
 		}
 
-		ShowSubstitutionHints: {
+		SeaFogStrength: {
+		Label: Sea mist strength (%)
+		Tooltip: Thickness of the sea mist around the Wave Country bridge; 0 turns it off
+	}
+	ShowSubstitutionHints: {
 			Label: Show Substitution Jutsu hints
 			Tooltip: When an enemy hits you, explain how to use Substitution (up to 3 times, none after the first success)
 		}

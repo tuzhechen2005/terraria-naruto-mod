@@ -5,6 +5,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common;
 using ShinobiPrototype.Common.Players;
+using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.Items;
 
 namespace ShinobiPrototype.Content.Commands;
@@ -13,7 +14,7 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm> 或 /m0 god [on|off]";
+    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview 或 /m0 god [on|off]";
     public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
@@ -23,6 +24,30 @@ public sealed class M0Command : ModCommand
         {
             int given = GiveAllItems(player);
             caller.Reply($"已发放本模组全部 {given} 种物品（含开发者之翼）。", Color.LightGreen);
+            return;
+        }
+
+        if (args.Length == 1 && args[0].Equals("bridge", StringComparison.OrdinalIgnoreCase))
+        {
+            if (WaveBridgeWorld.Site is not BridgeSite site)
+            {
+                caller.Reply("这个世界还没有大桥。", Color.OrangeRed);
+                return;
+            }
+            player.Teleport(new Vector2(site.X(0) * 16f, (site.DeckY - 3) * 16f), TeleportationStyleID.RodOfDiscord);
+            caller.Reply("已传送到桥头。", Color.LightGreen);
+            return;
+        }
+
+        if (args.Length == 1 && args[0].Equals("preview", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!WaveBridgeWorld.Site.HasValue)
+            {
+                caller.Reply("这个世界还没有大桥。", Color.OrangeRed);
+                return;
+            }
+            MistPreviewSystem.Play();
+            caller.Reply("在本机重放迷雾预告（不改变世界进度）。", Color.LightGreen);
             return;
         }
 

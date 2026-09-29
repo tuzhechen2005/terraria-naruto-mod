@@ -175,6 +175,7 @@ internal sealed class HandbookState : UIState
                "进度\n" +
                $"· 雾隐标记：{insignia}/3（雾隐侦察兵出没于远离出生点的地表，海边更多）\n" +
                $"· 再不斩与白：{(StoryWorld.WaveComplete ? "已击败" : "未击败")}\n" +
+               $"· 海边大桥：{(WaveBridgeWorld.Site is null ? "这个世界还没有（找卡卡西要施工图）" : WaveBridgeWorld.Finished ? "已完工" : "未完工，桥头有造桥工达兹纳")}\n" +
                $"· 中忍考试：{(StoryWorld.WaveComplete ? "已开放" : "击败再不斩与白后开放")}\n\n" +
                "不知道下一步做什么，可以去问卡卡西。";
     }

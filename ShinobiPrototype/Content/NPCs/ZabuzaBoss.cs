@@ -24,6 +24,10 @@ public sealed class ZabuzaBoss : ModNPC
     private int hitFlashTicks;
     private bool frenzyStarted;
     private int comboSlashes;
+    private bool openingChecked;
+
+    // Summoned this close to the Wave Country bridge, he opens with the bridge line.
+    private const float BridgeOpeningRangeTiles = 60f;
     public bool InMistPhase => ZabuzaCombatRules.InMistPhase(NPC.life, NPC.lifeMax);
     public bool LastStand => NPC.ai[3] == 3f;
 
@@ -70,6 +74,13 @@ public sealed class ZabuzaBoss : ModNPC
 
     public override void AI()
     {
+        if (!openingChecked)
+        {
+            openingChecked = true;
+            if (WaveBridgeWorld.DistanceToBridgeTiles(NPC.Center) <= BridgeOpeningRangeTiles)
+                BossLines.Say(NPC, "BridgeOpening", new Color(160, 200, 230));
+        }
+
         if (NPC.target < 0 || NPC.target >= Main.maxPlayers ||
             !Main.player[NPC.target].active || Main.player[NPC.target].dead)
             NPC.TargetClosest();
@@ -447,6 +458,33 @@ public sealed class ZabuzaBoss : ModNPC
 
         if (InMistPhase && (int)NPC.ai[0] != ZabuzaCombatRules.MistTransition)
             ShowDemonAura();
+    }
+
+    // Zabuza stands on water, as in the original fight by the bridge, so he never sinks into the sea.
+    // AI sets noGravity again every tick, so this only holds him up for the current movement step.
+    public override void PostAI()
+    {
+        if (NPC.velocity.Y < 0f)
+            return;
+        int x = (int)(NPC.Center.X / 16f);
+        int y = (int)((NPC.Bottom.Y + 1f) / 16f);
+        if (!WorldGen.InWorld(x, y, 2))
+            return;
+        Tile feet = Main.tile[x, y];
+        if (feet.LiquidAmount == 0 || feet.LiquidType != LiquidID.Water ||
+            feet.HasTile && Main.tileSolid[feet.TileType])
+            return;
+
+        int top = y;
+        while (top > 1 && Main.tile[x, top - 1].LiquidAmount > 0 && Main.tile[x, top - 1].LiquidType == LiquidID.Water)
+            top--;
+        float surface = top * 16f + (255 - Main.tile[x, top].LiquidAmount) / 255f * 16f;
+        if (NPC.Bottom.Y < surface - 2f)
+            return;
+
+        NPC.position.Y = surface - NPC.height;
+        NPC.velocity.Y = 0f;
+        NPC.noGravity = true;
     }
 
     private int SlashWindupTicks => LastStand

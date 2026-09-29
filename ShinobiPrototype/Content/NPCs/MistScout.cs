@@ -4,6 +4,8 @@ using Terraria;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ShinobiPrototype.Common;
+using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.Items;
 
 namespace ShinobiPrototype.Content.NPCs;
@@ -35,7 +37,10 @@ public sealed class MistScout : ModNPC
             Math.Abs(player.Center.X - Main.spawnTileX * 16f) < 850f)
             return 0f;
 
-        return 0.22f;
+        return WaveBridgeWorld.MistActive &&
+               WaveBridgeWorld.DistanceToBridgeTiles(player.Center) < BridgeRules.FogReachTiles
+            ? 0.22f * BridgeRules.ScoutSpawnMultiplierInFog
+            : 0.22f;
     }
 
     public override void AI()

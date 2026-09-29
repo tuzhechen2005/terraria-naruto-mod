@@ -96,9 +96,25 @@ Items: {
 			跳跃或上键升高，下键下降；免疫摔落伤害
 			'''
 	}
+
+	BridgeBlueprint: {
+		DisplayName: 达兹纳的施工图
+		Tooltip:
+			'''
+			站在海滩上面朝大海使用：第一次显示大桥轮廓，原地再用一次开始建造
+			每个世界只能建一座桥；会清除自然地形，遇到自建方块则不会建造
+			'''
+	}
 }
 
 NPCs: {
+	TazunaBridge.DisplayName: 造桥工 达兹纳
+
+	Tazuna: {
+		DisplayName: 造桥工
+		GivenName: 达兹纳
+	}
+
 	Kakashi: {
 		DisplayName: 木叶上忍
 		GivenName: 卡卡西
@@ -146,6 +162,11 @@ Projectiles: {
 }
 
 Dialogue: {
+	PreviewZabuza1: 再不斩：……木叶的小鬼也来蹚这趟浑水了？
+	PreviewZabuza2: 再不斩：这座桥，修不成的。
+	PreviewHaku: 白：再不斩先生，时候还没到。
+	PreviewEnd: 浓雾中的身影消失了……雾隐的人在守着这座桥。
+	BridgeOpening: 再不斩：就在这座桥上，把事情了结吧。
 	HakuArrive: 白：再不斩先生，这里交给我。
 	ZabuzaFrenzy: 再不斩：……白。你这家伙，到最后都是个傻瓜。
 	HakuFrenzy: 白：我存在的意义，已经不在了……那就全部冻结吧。
@@ -176,7 +197,11 @@ Configs: {
 			Tooltip: 向下移动查克拉条的像素数（负数向上）
 		}
 
-		ShowSubstitutionHints: {
+		SeaFogStrength: {
+		Label: 海边雾浓度（%）
+		Tooltip: 波之国大桥附近海雾的浓度；0 为关闭
+	}
+	ShowSubstitutionHints: {
 			Label: 显示替身术教学提示
 			Tooltip: 被敌人击中时提示如何使用替身术（最多 3 次，首次成功后不再出现）
 		}

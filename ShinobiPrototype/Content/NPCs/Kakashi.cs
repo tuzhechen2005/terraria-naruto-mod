@@ -89,6 +89,15 @@ public sealed class Kakashi : ModNPC
             return "哟。你的忍者手册呢？……拿着，别再弄丢了。任务、忍术、查克拉的事都记在里面。\n\n" + objective;
         }
 
+        // Worlds made before the bridge existed: hand over Tazuna's blueprint (again, if it was lost).
+        int blueprint = ModContent.ItemType<BridgeBlueprint>();
+        if (!WaveBridgeWorld.Site.HasValue && !player.HasItem(blueprint))
+        {
+            player.QuickSpawnItem(NPC.GetSource_FromThis(), blueprint);
+            return "哟。造桥的达兹纳托我把这个交给你——他的施工图。这片海边还没有他的桥。" +
+                   "到海滩上面朝大海用一次，看看轮廓；没问题的话原地再用一次，桥就立起来了。\n\n" + objective;
+        }
+
         return $"{Main.rand.Next(greetings)}\n\n{objective}";
     }
 

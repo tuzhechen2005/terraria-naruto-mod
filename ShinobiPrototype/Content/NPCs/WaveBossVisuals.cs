@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common;
+using ShinobiPrototype.Common.Systems;
 
 namespace ShinobiPrototype.Content.NPCs;
 
@@ -75,7 +76,8 @@ internal static class BossLines
     }
 }
 
-// Screen mist during Zabuza's transition and a brief ice flash when Haku goes berserk.
+// Screen mist during Zabuza's transition and mist phase, the sea mist around the Wave Country bridge (same colour,
+// same layer) and a brief ice flash when Haku goes berserk.
 public sealed class WaveOverlaySystem : ModSystem
 {
     private static float fog;
@@ -98,8 +100,29 @@ public sealed class WaveOverlaySystem : ModSystem
             else if (ZabuzaCombatRules.InMistPhase(npc.life, npc.lifeMax) && npc.ai[3] < 3f)
                 target = 0.3f;
         }
+        target = Math.Max(target, Math.Max(SeaFogTarget(), MistPreviewSystem.FogBoost));
         fog = MathHelper.Lerp(fog, target, 0.05f);
         flash = Math.Max(0f, flash - 1f / 45f);
+        if (fog > 0.1f && Main.GameUpdateCount % 3 == 0)
+            DriftPuff();
+    }
+
+    private static float SeaFogTarget()
+    {
+        if (!WaveBridgeWorld.MistActive || Main.LocalPlayer is not { active: true } player)
+            return 0f;
+        return BridgeRules.SeaFog(WaveBridgeWorld.DistanceToBridgeTiles(player.Center),
+            !Main.dayTime || Main.raining, ShinobiClientConfig.Instance.SeaFogStrength / 100f);
+    }
+
+    // Slow grey-white puffs drifting across the view, so the mist reads as moving air rather than a tint.
+    private static void DriftPuff()
+    {
+        Vector2 at = Main.screenPosition + new Vector2(Main.rand.NextFloat(Main.screenWidth), Main.rand.NextFloat(Main.screenHeight));
+        Dust puff = Dust.NewDustPerfect(at, DustID.Smoke, new Vector2(Main.rand.NextFloat(0.2f, 0.6f), 0f),
+            200, new Color(200, 214, 224), Main.rand.NextFloat(2f, 3.2f));
+        puff.noGravity = true;
+        puff.noLight = true;
     }
 
     public override void OnWorldUnload()
@@ -110,6 +133,11 @@ public sealed class WaveOverlaySystem : ModSystem
 
     public override void PostDrawTiles()
     {
+        Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
+            DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
+        MistPreviewSystem.DrawFigures(Main.spriteBatch);
+        Main.spriteBatch.End();
+
         if (fog < 0.01f && flash < 0.01f)
             return;
         Rectangle screen = new(0, 0, Main.screenWidth, Main.screenHeight);

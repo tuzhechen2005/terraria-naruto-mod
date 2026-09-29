@@ -53,7 +53,9 @@ public sealed class StoryPlayer : ModPlayer
         if (!InsigniaNoticeShown && !StoryWorld.WaveComplete && Player.CountItem(ModContent.ItemType<MistInsignia>()) >= 3)
         {
             InsigniaNoticeShown = true;
-            Main.NewText("已收集三枚雾隐标记。现在可在工作台制作波之国挑战卷轴，与再不斩和白决战。", 100, 200, 245);
+            Main.NewText(WaveBridgeWorld.Site.HasValue && !WaveBridgeWorld.PreviewDone
+                ? "已收集三枚雾隐标记。雾隐的人都往海边的大桥去了——去那里看看。挑战卷轴也已经可以在工作台制作了。"
+                : "已收集三枚雾隐标记。现在可在工作台制作波之国挑战卷轴，与再不斩和白决战。", 100, 200, 245);
         }
 
         if (ExamStage == ExamRules.ForestTrial &&
@@ -87,7 +89,10 @@ public sealed class StoryPlayer : ModPlayer
             };
         }
         int insignia = System.Math.Min(3, Player.CountItem(ModContent.ItemType<MistInsignia>()));
-        return $"C 级任务：护送造桥工返回波之国。远离出生点的地表与海边有雾隐侦察兵出没——收集雾隐标记（{insignia}/3），" +
+        string bridge = WaveBridgeWorld.Site.HasValue
+            ? "海边起雾的地方有一座没修完的大桥，造桥工达兹纳就在桥头。"
+            : "这个世界还没有大桥：找卡卡西要达兹纳的施工图。";
+        return $"C 级任务：护送造桥工返回波之国。{bridge}远离出生点的地表与海边有雾隐侦察兵出没——收集雾隐标记（{insignia}/3），" +
                "在工作台制作再不斩挑战卷轴（不消耗），击败再不斩与白。";
     }
 
