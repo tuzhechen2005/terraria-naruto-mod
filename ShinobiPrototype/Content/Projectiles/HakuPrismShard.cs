@@ -11,7 +11,7 @@ namespace ShinobiPrototype.Content.Projectiles;
 
 public sealed class HakuPrismShard : ModProjectile
 {
-    public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuNeedleV2";
+    public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";
 
     public override void SetDefaults()
     {
@@ -58,17 +58,17 @@ public sealed class HakuPrismShard : ModProjectile
     public override bool PreDraw(ref Color lightColor)
     {
         Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-        Rectangle source = new(500, 245, 1000, 220);
+        Rectangle source = new(0, 0, texture.Width, texture.Height);
         Vector2 center = Projectile.Center - Main.screenPosition;
         float pulse = Projectile.ai[0] < WarningTicks
             ? 0.75f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * 13f) * 0.18f : 1f;
         Vector2 origin = new Vector2(source.Width, source.Height) * 0.5f;
         Main.spriteBatch.Draw(texture, center + new Vector2(2f, 2f), source,
             new Color(20, 85, 165, 190), Projectile.rotation, origin,
-            WaveDuoRules.PrismShardDrawScale * 1.14f, SpriteEffects.None, 0f);
+            1f, SpriteEffects.None, 0f);
         Main.spriteBatch.Draw(texture, center, source,
             new Color(220, 250, 255) * pulse, Projectile.rotation, origin,
-            WaveDuoRules.PrismShardDrawScale, SpriteEffects.None, 0f);
+            1f, SpriteEffects.None, 0f);
         return false;
     }
 }

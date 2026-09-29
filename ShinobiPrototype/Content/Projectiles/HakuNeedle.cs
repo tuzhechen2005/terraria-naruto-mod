@@ -9,7 +9,7 @@ namespace ShinobiPrototype.Content.Projectiles;
 
 public sealed class HakuNeedle : ModProjectile
 {
-    public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuNeedleV2";
+    public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";
 
     public override void SetDefaults()
     {
@@ -34,15 +34,15 @@ public sealed class HakuNeedle : ModProjectile
     public override bool PreDraw(ref Color lightColor)
     {
         Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-        Rectangle needle = new(500, 245, 1000, 220);
+        Rectangle needle = new(0, 0, texture.Width, texture.Height);
         Vector2 center = Projectile.Center - Main.screenPosition;
         Vector2 origin = new Vector2(needle.Width, needle.Height) * 0.5f;
         Main.spriteBatch.Draw(texture, center + new Vector2(2f, 2f), needle,
             new Color(25, 90, 170, 210), Projectile.rotation, origin,
-            WaveDuoRules.HakuNeedleDrawScale * 1.12f, SpriteEffects.None, 0f);
+            1f, SpriteEffects.None, 0f);
         Main.spriteBatch.Draw(texture, center, needle,
             new Color(225, 252, 255), Projectile.rotation, origin,
-            WaveDuoRules.HakuNeedleDrawScale, SpriteEffects.None, 0f);
+            1f, SpriteEffects.None, 0f);
         return false;
     }
 }

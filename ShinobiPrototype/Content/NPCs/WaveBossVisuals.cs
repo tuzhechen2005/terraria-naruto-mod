@@ -17,7 +17,7 @@ internal static class BossSprites
 {
     public readonly record struct Canvas(int Width, int Height, int CenterX, int BaselineY);
 
-    public static readonly Canvas Zabuza = new(176, 112, 88, 108);
+    public static readonly Canvas Zabuza = new(224, 112, 112, 108);
     public static readonly Canvas Haku = new(112, 88, 56, 84);
 
     private static string AssetPath(string name) => $"ShinobiPrototype/Content/NPCs/{name}";
