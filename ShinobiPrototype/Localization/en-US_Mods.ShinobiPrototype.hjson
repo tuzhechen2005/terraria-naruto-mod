@@ -1,17 +1,12 @@
 Items: {
 	TrainingKunai: {
 		DisplayName: Training Kunai
-		Tooltip: Restores a little chakra when it hits an enemy
+		Tooltip: Basic gear of a Leaf genin
 	}
 
 	TrainingRasengan: {
 		DisplayName: Rasengan (M0 Test)
 		Tooltip: Spend 35 chakra to dash forward after a brief windup
-	}
-
-	ChakraPalm: {
-		DisplayName: Chakra Palm
-		Tooltip: Spend 18 chakra to dash forward after a brief windup
 	}
 
 	MissionScroll: {
@@ -37,21 +32,6 @@ Items: {
 	M0ZabuzaChallengeScroll: {
 		DisplayName: Zabuza Test Scroll (M0)
 		Tooltip: /m0 test item; summons Zabuza directly
-	}
-
-	ElementalTechnique: {
-		DisplayName: Basic Elemental Jutsu
-		Tooltip: Left click to cast; right click to cycle learned schools. Costs 22 chakra.
-	}
-
-	NinjaProfileScroll: {
-		DisplayName: Ninja Profile Scroll
-		Tooltip: Left click for combat style; right click for chakra nature. Locks after training.
-	}
-
-	NinjutsuManual: {
-		DisplayName: Ninjutsu Manual
-		Tooltip: Left click to choose a school; right click to learn with wood and stars. Cross-school costs more.
 	}
 
 	WaveCountryMedal: {
@@ -83,6 +63,20 @@ Items: {
 		DisplayName: Chunin Headband
 		Tooltip: Exam reward. +3 defense and +4% melee and magic damage when equipped.
 	}
+
+	ChakraPill: {
+		DisplayName: Soldier Pill
+		Tooltip:
+			'''
+			Restores 40 chakra
+			Cannot be eaten again for a short time
+			'''
+	}
+
+	ChakraCrystal: {
+		DisplayName: Chakra Crystal
+		Tooltip: Permanently increases maximum chakra by 20 (up to 200)
+	}
 }
 
 NPCs: {
@@ -101,6 +95,7 @@ NPCs: {
 }
 
 Projectiles: {
+	SubstitutionLog.DisplayName: Substitution Log
 	RasenganHitbox.DisplayName: Chakra Strike
 	ZabuzaSlash.DisplayName: Executioner's Blade Slash
 	ZabuzaWaterWave.DisplayName: Water Style
@@ -110,7 +105,6 @@ Projectiles: {
 	ZabuzaThrownSword.DisplayName: Executioner's Blade
 	HakuPrismShard.DisplayName: Thousand Water Needles
 	HakuDashHitbox.DisplayName: Ice Blade Dash
-	ElementalBolt.DisplayName: Basic Elemental Jutsu
 	ArenaSandBolt.DisplayName: Sand Bolt
 	ArenaRushHitbox.DisplayName: Sand Rush
 }
@@ -121,3 +115,11 @@ Dialogue: {
 	HakuFrenzy: Haku: The reason I exist is gone... then let everything freeze.
 	CageTrapped: "{0} was trapped by the ice mirrors"
 }
+
+Buffs.ChakraSickness: {
+	DisplayName: Pill Cooldown
+	Description: Cannot eat another soldier pill yet
+}
+
+Tiles.ChakraCrystalTile.MapEntry: Chakra Crystal
+Keybinds.Substitution.DisplayName: Substitution Jutsu

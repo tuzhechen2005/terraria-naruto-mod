@@ -58,14 +58,6 @@ public sealed class RasenganHitbox : ModProjectile
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         target.velocity.X += Projectile.ai[0] >= 0 ? 4f : -4f;
-        switch ((int)Projectile.ai[1])
-        {
-            case 1: target.AddBuff(BuffID.OnFire, 120); break;
-            case 2: target.AddBuff(BuffID.Wet, 120); break;
-            case 3: target.velocity.X += Projectile.ai[0] >= 0 ? 3f : -3f; break;
-            case 4: target.AddBuff(BuffID.Slow, 90); break;
-            case 5: target.AddBuff(BuffID.Electrified, 90); break;
-        }
         for (int i = 0; i < 15; i++)
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BlueCrystalShard);
     }

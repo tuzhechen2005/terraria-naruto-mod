@@ -1,17 +1,12 @@
 Items: {
 	TrainingKunai: {
 		DisplayName: 训练苦无
-		Tooltip: 命中敌人时回复少量查克拉
+		Tooltip: 木叶下忍的基础忍具
 	}
 
 	TrainingRasengan: {
 		DisplayName: 螺旋丸（M0 测试）
 		Tooltip: 消耗 35 查克拉，短暂蓄力后贴身突进
-	}
-
-	ChakraPalm: {
-		DisplayName: 查克拉冲击
-		Tooltip: 消耗 18 查克拉，短暂蓄力后贴身突进
 	}
 
 	MissionScroll: {
@@ -37,21 +32,6 @@ Items: {
 	M0ZabuzaChallengeScroll: {
 		DisplayName: 再不斩测试卷轴（M0）
 		Tooltip: /m0 测试专用；直接召唤再不斩
-	}
-
-	ElementalTechnique: {
-		DisplayName: 五遁基础忍术
-		Tooltip: 左键施放当前已学忍术，右键切换已学属性；每次消耗 22 查克拉
-	}
-
-	NinjaProfileScroll: {
-		DisplayName: 忍者身份卷轴
-		Tooltip: 左键选择战斗倾向，右键选择查克拉性质；训练完成后锁定；可用 1 木材补做
-	}
-
-	NinjutsuManual: {
-		DisplayName: 忍术研习手册
-		Tooltip: 左键切换目标属性，右键消耗木材和坠星学习；跨系需要更多坠星
 	}
 
 	WaveCountryMedal: {
@@ -83,6 +63,20 @@ Items: {
 		DisplayName: 中忍护额
 		Tooltip: 中忍考试预选赛奖励；装备后防御 +3，近战与忍术伤害 +4%
 	}
+
+	ChakraPill: {
+		DisplayName: 兵粮丸
+		Tooltip:
+			'''
+			立即回复 40 查克拉
+			之后短时间内无法再次服用
+			'''
+	}
+
+	ChakraCrystal: {
+		DisplayName: 查克拉结晶
+		Tooltip: 永久提升 20 查克拉上限（最多 200）
+	}
 }
 
 NPCs: {
@@ -101,7 +95,8 @@ NPCs: {
 }
 
 Projectiles: {
-	RasenganHitbox.DisplayName: 查克拉冲击
+	SubstitutionLog.DisplayName: 替身木头
+	RasenganHitbox.DisplayName: 螺旋丸
 	ZabuzaSlash.DisplayName: 斩首大刀斩击
 	ZabuzaWaterWave.DisplayName: 水遁
 	ZabuzaWaterDragon.DisplayName: 水遁·水龙弹
@@ -110,7 +105,6 @@ Projectiles: {
 	ZabuzaThrownSword.DisplayName: 斩首大刀
 	HakuPrismShard.DisplayName: 千杀水翔
 	HakuDashHitbox.DisplayName: 冰刃突进
-	ElementalBolt.DisplayName: 基础遁术
 	ArenaSandBolt.DisplayName: 砂弹
 	ArenaRushHitbox.DisplayName: 流砂突袭
 }
@@ -121,3 +115,11 @@ Dialogue: {
 	HakuFrenzy: 白：我存在的意义，已经不在了……那就全部冻结吧。
 	CageTrapped: "{0}被魔镜冰晶困住了"
 }
+
+Buffs.ChakraSickness: {
+	DisplayName: 兵粮丸冷却
+	Description: 暂时不能再服用兵粮丸
+}
+
+Tiles.ChakraCrystalTile.MapEntry: 查克拉结晶
+Keybinds.Substitution.DisplayName: 替身术

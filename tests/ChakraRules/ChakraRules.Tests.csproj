@@ -7,7 +7,7 @@
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="TrainingRulesTests.cs" />
-    <Compile Include="../../ShinobiPrototype/Common/TrainingRules.cs" Link="TrainingRules.cs" />
+    <Compile Include="ChakraRulesTests.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ChakraRules.cs" Link="ChakraRules.cs" />
   </ItemGroup>
 </Project>
