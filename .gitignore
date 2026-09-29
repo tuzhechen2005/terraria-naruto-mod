@@ -3,3 +3,6 @@
 **/.vs/
 *.tmod
 *.csproj.user
+.art-bridge/
+__pycache__/
+*.pyc
