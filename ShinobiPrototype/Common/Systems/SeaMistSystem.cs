@@ -7,10 +7,11 @@ using Terraria.ModLoader;
 
 namespace ShinobiPrototype.Common.Systems;
 
-// The sea mist around the Wave Country bridge: vanilla's graveyard fog clouds, spawned the way vanilla's
-// AmbientWindSystem spawns them in a graveyard, but around the bridge instead (no graveyard biome, so no darkening,
-// graveyard spawns or housing effects). Floor clouds drift along the ground and the deck; airborne clouds drift in
-// chains through open air, including low over the sea. Client-side visuals only.
+// The sea mist around the Wave Country bridge, client-side visuals only, with no graveyard biome involved (no
+// darkening, graveyard spawns or housing effects):
+// - SeaMistOverlay: full-screen drifting puffs using vanilla's graveyard fog-cloud textures (the main mist);
+// - vanilla's graveyard fog clouds spawned the way AmbientWindSystem does in a graveyard, but around the bridge:
+//   floor clouds drifting along the ground and deck, airborne chains in open air and low over the sea.
 public sealed class SeaMistSystem : ModSystem
 {
     // Vanilla's rates in a graveyard: 1 in 120 per ground tile per tick, 1 in 120000 per air tile per tick.
@@ -24,8 +25,21 @@ public sealed class SeaMistSystem : ModSystem
     private static int updates;
     private static IEntitySource source;
 
+    private const string OverlayKey = "ShinobiPrototype:SeaMist";
+    private static SeaMistOverlay overlay;
+
     // Fog density 0..1 near the player right now; the preview thickens it.
     public static float Density { get; private set; }
+
+    public override void Load()
+    {
+        if (Main.dedServ)
+            return;
+        overlay = new SeaMistOverlay();
+        Terraria.Graphics.Effects.Overlays.Scene[OverlayKey] = overlay;
+    }
+
+    public override void Unload() => overlay = null;
 
     public override void OnWorldUnload()
     {
@@ -44,6 +58,12 @@ public sealed class SeaMistSystem : ModSystem
                 !Main.dayTime || Main.raining, ShinobiClientConfig.Instance.SeaFogStrength / 100f);
         target = System.Math.Max(target, MistPreviewSystem.MistBoost);
         Density = MathHelper.Lerp(Density, target, 0.05f);
+        if (overlay != null && Density > 0.01f)
+        {
+            if (overlay.Mode != Terraria.Graphics.Effects.OverlayMode.Active)
+                Terraria.Graphics.Effects.Overlays.Scene.Activate(OverlayKey, player.Center);
+            overlay.Step();
+        }
         float rate = BridgeRules.FogSpawnRate(Density);
         if (rate <= 0.01f)
             return;
