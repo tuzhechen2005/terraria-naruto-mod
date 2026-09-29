@@ -80,13 +80,14 @@ public sealed class HandbookSystem : ModSystem
 
 internal sealed class HandbookState : UIState
 {
-    private enum Page { Mission, Jutsu, Chakra }
+    private enum Page { Mission, Jutsu, Chakra, Lore }
 
     private static readonly (Page Page, string Name)[] Tabs =
     {
         (Page.Mission, "任务"),
         (Page.Jutsu, "忍术"),
         (Page.Chakra, "查克拉"),
+        (Page.Lore, "卷宗"),
     };
 
     private static readonly Color TabIdle = new Color(63, 82, 151) * 0.85f;
@@ -163,6 +164,7 @@ internal sealed class HandbookState : UIState
         {
             Page.Jutsu => JutsuText(),
             Page.Chakra => ChakraText(),
+            Page.Lore => LoreText(),
             _ => MissionText(),
         });
     }
@@ -192,6 +194,22 @@ internal sealed class HandbookState : UIState
                "· 诀窍：看准敌人出手的瞬间再按；按早了会白白浪费查克拉\n" +
                "· 想练习，可以找卡卡西点“练习替身术”\n\n" +
                $"状态：{(substitution.Mastered ? "已掌握" : "尚未成功施展过")}　当前：{status}";
+    }
+
+    // Records unlocked by beating each story boss; the story is told here rather than in cutscenes.
+    private static string LoreText()
+    {
+        if (!StoryWorld.WaveComplete)
+            return "卷宗\n\n（空白）击败剧情中的首领后，这里会记下他们的故事。";
+        return "卷宗 · 波之国\n\n" +
+               "【鬼人·桃地再不斩】雾隐村的叛忍，“雾隐七人众”之一，佩斩首大刀。据说曾在血雾之里的毕业考核中一人屠尽同届考生，" +
+               "此后被称为“鬼人”。政变失败后逃离雾隐，靠做刺客筹集资金，受雇于卡多，前来刺杀造桥工达兹纳。\n\n" +
+               "【白】身负冰遁血继限界的少年。血继限界者在战乱的水之国遭到猎杀，白失去了双亲，在雪中被再不斩捡回。" +
+               "从那天起，他只为再不斩而活，甘愿成为他的“工具”。在大桥上，他以魔镜冰晶困住木叶的忍者，最后替再不斩挡下了致命一击。\n\n" +
+               "【卡多】操纵波之国航运的富商。得知再不斩失手后，他带着浪人赶到桥上，打算连再不斩一起除掉——" +
+               "却没想到，失去了白的鬼人，还剩最后一口气。\n\n" +
+               "【大桥】达兹纳以镇上众人之力修通了大桥。人们为它取名“鸣人大桥”，纪念那些改变了这个国家的忍者。\n\n" +
+               "……听说木叶的中忍考试就要开始了。死亡森林里，据说有蛇出没。";
     }
 
     private static string ChakraText()

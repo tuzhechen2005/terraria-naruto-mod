@@ -1,7 +1,7 @@
 Items: {
 	TrainingKunai: {
 		DisplayName: 训练苦无
-		Tooltip: 木叶下忍的基础忍具
+		Tooltip: 木叶下忍的基础忍具，投掷后不消耗
 	}
 
 	TrainingRasengan: {
@@ -105,6 +105,31 @@ Items: {
 			每个世界只能建一座桥；会清除自然地形，遇到自建方块则不会建造
 			'''
 	}
+
+	WaveBossBag: {
+		DisplayName: 宝藏袋（再不斩与白）
+		Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+	}
+
+	Kubikiribocho: {
+		DisplayName: 斩首大刀
+		Tooltip: 再不斩的巨刀，挥动沉重但威力巨大\n命中时有概率吸取少量生命
+	}
+
+	Senbon: {
+		DisplayName: 千本
+		Tooltip: 一次扇形掷出三根千本，不消耗\n命中时有概率刺中穴位，使敌人减速
+	}
+
+	WaterDragonJutsu: {
+		DisplayName: 水遁·水龙弹之术
+		Tooltip: 结印唤出水龙，追向附近的敌人并穿透多个目标
+	}
+
+	IceMirrorJutsu: {
+		DisplayName: 秘术·魔镜冰晶
+		Tooltip: 在身旁召唤一面冰镜，向敌人扇形掷出千本
+	}
 }
 
 NPCs: {
@@ -157,6 +182,10 @@ NPCs: {
 }
 
 Projectiles: {
+	KunaiThrown.DisplayName: 苦无
+	SenbonThrown.DisplayName: 千本
+	WaterDragonFriendly.DisplayName: 水龙弹
+	IceMirrorMinion.DisplayName: 魔镜冰晶
 	KakashiPracticeKunai.DisplayName: 练习苦无
 	SubstitutionLog.DisplayName: 替身木头
 	RasenganHitbox.DisplayName: 螺旋丸
@@ -191,6 +220,11 @@ Dialogue: {
 }
 
 Buffs: {
+	IceMirrorBuff: {
+		DisplayName: 魔镜冰晶
+		Description: 冰镜会为你作战
+	}
+
 	ChakraSickness: {
 		DisplayName: 兵粮丸冷却
 		Description: 暂时不能再服用兵粮丸
@@ -224,4 +258,9 @@ Configs: {
 			Tooltip: 被敌人击中时提示如何使用替身术（最多 3 次，首次成功后不再出现）
 		}
 	}
+}
+
+BossChecklist.WaveDuo: {
+	DisplayName: 桃地再不斩与白
+	SpawnInfo: 击败远离出生点的地表与海边出没的雾隐侦察兵，收集 3 枚雾隐标记，在工作台用 10 木材制作“再不斩的挑战卷轴”（不消耗）后使用。在海边的大桥附近召唤会有专属海雾与台词。
 }

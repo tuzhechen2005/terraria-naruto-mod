@@ -1217,9 +1217,7 @@ public sealed class ZabuzaBoss : ModNPC
     internal static void CompleteEncounter(NPC lastBoss)
     {
         StoryWorld.CompleteWave();
-        if (Main.netMode != NetmodeID.MultiplayerClient)
-            Item.NewItem(lastBoss.GetSource_Loot(), lastBoss.getRect(),
-                ModContent.ItemType<WaveCountryMedal>());
+        WaveRewards.Settle(lastBoss);
         if (Main.netMode == NetmodeID.Server)
             NetMessage.SendData(MessageID.WorldData);
         const string message = "再不斩与白已被击败。波之国主线完成，中忍考试现已开放。";

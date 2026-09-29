@@ -1,7 +1,7 @@
 Items: {
 	TrainingKunai: {
 		DisplayName: Training Kunai
-		Tooltip: Basic gear of a Leaf genin
+		Tooltip: Basic gear of a Leaf genin; thrown, never used up
 	}
 
 	TrainingRasengan: {
@@ -105,6 +105,31 @@ Items: {
 			One bridge per world; clears natural terrain, but will not build over player-placed blocks
 			'''
 	}
+
+	WaveBossBag: {
+		DisplayName: Treasure Bag (Zabuza and Haku)
+		Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
+	}
+
+	Kubikiribocho: {
+		DisplayName: Executioner's Blade
+		Tooltip: Zabuza's great sword: slow and heavy, but it hits hard\nHits sometimes drain a little life
+	}
+
+	Senbon: {
+		DisplayName: Senbon
+		Tooltip: Throws a fan of three needles; never used up\nHits sometimes strike a pressure point, slowing the enemy
+	}
+
+	WaterDragonJutsu: {
+		DisplayName: "Water Style: Water Dragon Jutsu"
+		Tooltip: Forms seals to raise a water dragon that curls towards nearby enemies and pierces several
+	}
+
+	IceMirrorJutsu: {
+		DisplayName: "Secret Jutsu: Demonic Ice Mirrors"
+		Tooltip: Summons an ice mirror beside you that throws fans of senbon at enemies
+	}
 }
 
 NPCs: {
@@ -157,6 +182,10 @@ NPCs: {
 }
 
 Projectiles: {
+	KunaiThrown.DisplayName: Kunai
+	SenbonThrown.DisplayName: Senbon
+	WaterDragonFriendly.DisplayName: Water Dragon
+	IceMirrorMinion.DisplayName: Ice Mirror
 	KakashiPracticeKunai.DisplayName: Practice Kunai
 	SubstitutionLog.DisplayName: Substitution Log
 	RasenganHitbox.DisplayName: Chakra Strike
@@ -191,6 +220,11 @@ Dialogue: {
 }
 
 Buffs: {
+	IceMirrorBuff: {
+		DisplayName: Demonic Ice Mirrors
+		Description: The ice mirror fights for you
+	}
+
 	ChakraSickness: {
 		DisplayName: Pill Cooldown
 		Description: Cannot eat another soldier pill yet
@@ -224,4 +258,9 @@ Configs: {
 			Tooltip: When an enemy hits you, explain how to use Substitution (up to 3 times, none after the first success)
 		}
 	}
+}
+
+BossChecklist.WaveDuo: {
+	DisplayName: Zabuza Momochi and Haku
+	SpawnInfo: Collect 3 Mist insignia from Mist scouts on the surface far from spawn and by the sea, then craft Zabuza's challenge scroll (with 10 wood, not consumed) at a workbench and use it. Summoned near the seaside bridge, the fight has its own sea mist and lines.
 }
