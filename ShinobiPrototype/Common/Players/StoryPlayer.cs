@@ -30,9 +30,9 @@ public sealed class StoryPlayer : ModPlayer
         kunai.SetDefaults(ModContent.ItemType<TrainingKunai>());
         yield return kunai;
 
-        Item mission = new();
-        mission.SetDefaults(ModContent.ItemType<MissionScroll>());
-        yield return mission;
+        Item handbook = new();
+        handbook.SetDefaults(ModContent.ItemType<NinjaHandbook>());
+        yield return handbook;
 
         Item pills = new();
         pills.SetDefaults(ModContent.ItemType<ChakraPill>());

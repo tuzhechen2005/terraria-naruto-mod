@@ -10,8 +10,8 @@ Items: {
 	}
 
 	MissionScroll: {
-		DisplayName: Genin Mission Scroll
-		Tooltip: Use to view your current objective; can be recrafted with wood
+		DisplayName: Old Mission Scroll
+		Tooltip: Replaced by the Ninja Handbook; turns into one in your inventory
 	}
 
 	MistInsignia: {
@@ -77,9 +77,23 @@ Items: {
 		DisplayName: Chakra Crystal
 		Tooltip: Permanently increases maximum chakra by 20 (up to 200)
 	}
+
+	NinjaHandbook: {
+		DisplayName: Ninja Handbook
+		Tooltip:
+			'''
+			Opens the handbook: current mission, jutsu and chakra
+			Craft another from 1 wood if lost
+			'''
+	}
 }
 
 NPCs: {
+	Kakashi: {
+		DisplayName: Leaf Jonin
+		GivenName: Kakashi
+	}
+
 	MistScout.DisplayName: Mist Scout
 	HakuBoss.DisplayName: Haku
 
@@ -95,6 +109,7 @@ NPCs: {
 }
 
 Projectiles: {
+	KakashiPracticeKunai.DisplayName: Practice Kunai
 	SubstitutionLog.DisplayName: Substitution Log
 	RasenganHitbox.DisplayName: Chakra Strike
 	ZabuzaSlash.DisplayName: Executioner's Blade Slash
@@ -125,3 +140,19 @@ Buffs: {
 
 Tiles.ChakraCrystalTile.MapEntry: Chakra Crystal
 Keybinds.Substitution.DisplayName: Substitution Jutsu
+
+Configs.ShinobiClientConfig: {
+	DisplayName: Shinobi Settings
+	ChakraBarOffsetX: {
+		Label: Chakra bar horizontal offset
+		Tooltip: Pixels to move the chakra bar right (negative moves it left)
+	}
+	ChakraBarOffsetY: {
+		Label: Chakra bar vertical offset
+		Tooltip: Pixels to move the chakra bar down (negative moves it up)
+	}
+	ShowSubstitutionHints: {
+		Label: Show Substitution Jutsu hints
+		Tooltip: When an enemy hits you, explain how to use Substitution (up to 3 times, none after the first success)
+	}
+}

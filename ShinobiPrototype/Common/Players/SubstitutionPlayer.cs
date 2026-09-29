@@ -74,6 +74,22 @@ public sealed class SubstitutionPlayer : ModPlayer
         if (standby <= 0 || Player.whoAmI != Main.myPlayer)
             return false;
 
+        Substitute(info.HitDirection != 0 ? info.HitDirection : -Player.direction);
+        return true;
+    }
+
+    // Kakashi's drill kunai deals no damage, so it asks for the dodge directly instead of going through FreeDodge.
+    public bool TryTrainingDodge(int awayDirection)
+    {
+        if (standby <= 0)
+            return false;
+
+        Substitute(awayDirection);
+        return true;
+    }
+
+    private void Substitute(int awayDirection)
+    {
         standby = 0;
         Mastered = true;
 
@@ -82,7 +98,6 @@ public sealed class SubstitutionPlayer : ModPlayer
             ModContent.ProjectileType<SubstitutionLog>(), 0, 0f, Player.whoAmI);
         Puff(Player.Center);
 
-        int awayDirection = info.HitDirection != 0 ? info.HitDirection : -Player.direction;
         if (FindLanding(awayDirection, out Vector2 landing))
         {
             Player.RemoveAllGrapplingHooks();
@@ -97,7 +112,6 @@ public sealed class SubstitutionPlayer : ModPlayer
         Player.SetImmuneTimeForAllTypes(ChakraRules.SubstitutionImmuneTicks);
         SoundEngine.PlaySound(SoundID.DoubleJump, Player.Center);
         CombatText.NewText(Player.getRect(), new Color(200, 170, 110), "替身术！");
-        return true;
     }
 
     private bool FindLanding(int awayDirection, out Vector2 landing)
@@ -131,7 +145,7 @@ public sealed class SubstitutionPlayer : ModPlayer
             return;
 
         bool fromEnemy = info.DamageSource.SourceNPCIndex >= 0 || info.DamageSource.SourceProjectileType > 0;
-        if (!fromEnemy || !ChakraRules.ShouldShowHint(Mastered, HintsShown, ticksSinceHint,
+        if (!fromEnemy || !ShinobiClientConfig.Instance.ShowSubstitutionHints || !ChakraRules.ShouldShowHint(Mastered, HintsShown, ticksSinceHint,
                 Player.GetModPlayer<ChakraPlayer>().Chakra, Cooldown))
             return;
 

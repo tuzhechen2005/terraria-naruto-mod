@@ -10,8 +10,8 @@ Items: {
 	}
 
 	MissionScroll: {
-		DisplayName: 下忍任务卷轴
-		Tooltip: 使用后查看探索线索与独立进度；丢失后可用 1 木材重新制作
+		DisplayName: 旧版任务卷轴
+		Tooltip: 已由忍者手册取代；放入背包后自动转换
 	}
 
 	MistInsignia: {
@@ -77,9 +77,23 @@ Items: {
 		DisplayName: 查克拉结晶
 		Tooltip: 永久提升 20 查克拉上限（最多 200）
 	}
+
+	NinjaHandbook: {
+		DisplayName: 忍者手册
+		Tooltip:
+			'''
+			使用后打开手册：当前任务、忍术用法、查克拉说明
+			丢失后可用 1 木材重新制作
+			'''
+	}
 }
 
 NPCs: {
+	Kakashi: {
+		DisplayName: 木叶上忍
+		GivenName: 卡卡西
+	}
+
 	MistScout.DisplayName: 雾隐侦察兵
 	HakuBoss.DisplayName: 白
 
@@ -95,6 +109,7 @@ NPCs: {
 }
 
 Projectiles: {
+	KakashiPracticeKunai.DisplayName: 练习苦无
 	SubstitutionLog.DisplayName: 替身木头
 	RasenganHitbox.DisplayName: 螺旋丸
 	ZabuzaSlash.DisplayName: 斩首大刀斩击
@@ -125,3 +140,19 @@ Buffs: {
 
 Tiles.ChakraCrystalTile.MapEntry: 查克拉结晶
 Keybinds.Substitution.DisplayName: 替身术
+
+Configs.ShinobiClientConfig: {
+	DisplayName: 火影模组设置
+	ChakraBarOffsetX: {
+		Label: 查克拉条水平偏移
+		Tooltip: 向右移动查克拉条的像素数（负数向左）
+	}
+	ChakraBarOffsetY: {
+		Label: 查克拉条垂直偏移
+		Tooltip: 向下移动查克拉条的像素数（负数向上）
+	}
+	ShowSubstitutionHints: {
+		Label: 显示替身术教学提示
+		Tooltip: 被敌人击中时提示如何使用替身术（最多 3 次，首次成功后不再出现）
+	}
+}
