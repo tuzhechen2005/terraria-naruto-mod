@@ -25,8 +25,8 @@ public sealed class SeaMistOverlay : Overlay
     // Drawn at (almost) native size so the strands stay thin and soft (user, 2026-09-29: big blocks, not wisps).
     private static readonly (float Scale, float Speed, float Alpha, float OffsetY)[] Layers =
     {
-        (1f, 0.35f, 0.75f, 0f),
-        (1.4f, 0.7f, 0.6f, 197f),
+        (1f, 0.35f, 1f, 0f),
+        (1.4f, 0.7f, 0.85f, 197f),
     };
 
     private readonly float[] scroll = new float[Layers.Length];

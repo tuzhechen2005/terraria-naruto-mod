@@ -41,7 +41,8 @@ def smoothstep(a, b, v):
 # Slow vertical bending so strands undulate instead of running dead straight.
 bend = (noise(5, 3, X, Y) - 0.5) * 60 + (noise(11, 5, X, Y) - 0.5) * 18
 # Strands: few cells across, many down -> long thin horizontal streaks.
-strands = 0.65 * noise(8, 56, X, Y + bend) + 0.35 * noise(18, 100, X, Y + bend * 1.3)
+# (2026-09-29: strands a quarter as thick as the first strand version, which used 56 and 100 cells down.)
+strands = 0.65 * noise(8, 224, X, Y + bend) + 0.35 * noise(18, 400, X, Y + bend * 1.3)
 wisps = smoothstep(0.5, 0.86, strands)
 # Loose clusters with clear air between them.
 clusters = smoothstep(0.3, 0.8, noise(4, 3, X + 300, Y))
@@ -56,7 +57,7 @@ for _ in range(2):
     alpha = (csum[:, 2 * k:] - csum[:, :-2 * k]) / (2 * k)
 
 # A touch of vertical softening so strand edges feather out.
-alpha = (np.roll(alpha, 1, axis=0) + 2 * alpha + np.roll(alpha, -1, axis=0)) / 4
+alpha = (0.5 * np.roll(alpha, 1, axis=0) + 3 * alpha + 0.5 * np.roll(alpha, -1, axis=0)) / 4
 
 rgba = np.zeros((H, W, 4), dtype=np.uint8)
 rgba[..., :3] = 255

@@ -6,8 +6,8 @@ namespace ShinobiPrototype.Common;
 // BridgeDesign. Kept free of Terraria types so the rule tests can run them.
 public static class BridgeRules
 {
-    // Sea mist density 0..1, drawn by SeaMistOverlay: at the default 175% setting the bridge by day is about 0.75,
-    // night or rain 0.9.
+    // Sea mist density 0..1, drawn by SeaMistOverlay: at the default 100% setting the bridge by day is about 0.43,
+    // night or rain about 0.52; the setting goes up to 200%.
     public const float SeaMistPerSetting = 0.43f;
     public const float MaxSeaMist = 1f;
     public const float NightOrRainFogMultiplier = 1.2f;

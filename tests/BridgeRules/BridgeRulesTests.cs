@@ -76,8 +76,8 @@ Check(finished.Cells.Any(c => c.Part == Part.RedBeam) && HasFixture(finished, Fi
       HasFixture(finished, Fixture.Chest), "Island has a torii gate, the Land of Waves sign and a chest");
 
 // Mist.
-const float defaultSetting = 1.75f;
-Check(SeaMist(0, false, defaultSetting) is > 0.7f and < 0.8f, "By day at the default setting the bridge is deep in mist");
+const float defaultSetting = 1f;
+Check(SeaMist(0, false, defaultSetting) is > 0.4f and < 0.5f, "By day at the default setting the bridge is in mist");
 Check(SeaMist(0, true, defaultSetting) > SeaMist(0, false, defaultSetting), "Night or rain thickens it");
 Check(SeaMist(0, true, 2f) <= MaxSeaMist, "Density is capped");
 Check(SeaMist(0, false, 5f) == SeaMist(0, false, 2f), "Setting tops out at 200%");

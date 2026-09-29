@@ -25,7 +25,7 @@ public sealed class ShinobiClientConfig : ModConfig
     // Percent of the designed sea-mist thickness around the Wave Country bridge; 0 turns it off, 200 doubles it.
     [Range(0, 200)]
     [Increment(5)]
-    [DefaultValue(175)]
+    [DefaultValue(100)]
     [Slider]
     public int SeaFogStrength;
 }
