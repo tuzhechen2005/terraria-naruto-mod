@@ -548,7 +548,7 @@ public sealed class HakuBoss : ModNPC
             DrawEmergeMirror(spriteBatch, screenPos);
         if (State is MirrorWindup or MirrorDash)
             DrawIceMirrors(spriteBatch, screenPos);
-        Color color = Color.Lerp(drawColor, Color.White, 0.52f);
+        Color color = BossSprites.Lit(drawColor);
         if (LastStand)
             color = Color.Lerp(color, new Color(185, 245, 255), 0.45f);
         if (State == CageStagger)

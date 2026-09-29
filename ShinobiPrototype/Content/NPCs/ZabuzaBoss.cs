@@ -880,7 +880,7 @@ public sealed class ZabuzaBoss : ModNPC
             (float)NPC.frameCounter);
         float aura = state == ZabuzaCombatRules.MistTransition
             ? ZabuzaCombatRules.TransitionAura(NPC.ai[1]) : 1f;
-        Color readable = Color.Lerp(drawColor, Color.White, 0.5f);
+        Color readable = BossSprites.Lit(drawColor);
         if (InMistPhase)
             readable = Color.Lerp(readable, new Color(255, 196, 186), 0.3f * aura);
         if (LastStand)

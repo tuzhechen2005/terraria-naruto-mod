@@ -7,3 +7,5 @@
 __pycache__/
 *.pyc
 art/reference/
+tools/XnbExtract/bin/
+tools/XnbExtract/obj/

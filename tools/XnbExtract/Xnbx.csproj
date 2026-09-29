@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework><Nullable>disable</Nullable><ImplicitUsings>enable</ImplicitUsings><PlatformTarget>x64</PlatformTarget></PropertyGroup>
+  <ItemGroup><Reference Include="FNA"><HintPath>/Users/tuzhechen/Library/Application Support/Steam/steamapps/common/tModLoader/Libraries/FNA/1.0.0/FNA.dll</HintPath></Reference></ItemGroup>
+</Project>

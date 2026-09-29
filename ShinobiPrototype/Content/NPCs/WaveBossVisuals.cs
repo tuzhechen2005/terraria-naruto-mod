@@ -45,6 +45,14 @@ internal static class BossSprites
         return true;
     }
 
+    // World-lit like vanilla characters, with a floor so a boss never vanishes in the dark.
+    public static Color Lit(Color drawColor, float floor = 0.3f)
+    {
+        int min = (int)(255 * floor);
+        return new Color(Math.Max(drawColor.R, min), Math.Max(drawColor.G, min),
+            Math.Max(drawColor.B, min), drawColor.A);
+    }
+
     public static int Progress(float elapsed, float duration, int frameCount) =>
         Math.Clamp((int)(elapsed * frameCount / Math.Max(1f, duration)), 0, frameCount - 1);
 
