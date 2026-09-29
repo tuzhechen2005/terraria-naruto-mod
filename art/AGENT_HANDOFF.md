@@ -19,7 +19,7 @@
 - 原作造型参考图放在本机 `art/reference/`（已被 `.gitignore` 排除，仓库公开，不上传版权图）。请求单必须列出要看的参考图，并写明“文字与图冲突时以图为准”；不要附外部链接。
 - 生图模型无法直接输出精确尺寸、硬边的像素帧。Codex 的主要交付物是 `source/` 中按动作顺序排好的姿势源图；做不到精确帧时只交付源图也算完成。
 - Claude 用 `scripts/pixelize_frames.py` 把源图拆分、统一缩放、硬化透明、限色并对齐到固定画布；已有精确帧但混有杂块时用 `scripts/clean_frames.py` 清理和重新对齐。两人统一为 1×1 美术像素：再不斩画布 224×112（中线 x=112、脚底 y=108），白 112×88（中线 x=56、脚底 y=84）。
-- 桥接脚本会在 PATH 之外查找 ChatGPT.app 内置的 Codex CLI（`/Applications/ChatGPT.app/Contents/Resources/codex`），也可用 `CODEX_BIN` 指定。
+- 桥接脚本会在 PATH 之外查找 ChatGPT.app 内置的 Codex CLI（新版在 `/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex`，旧版在 `Resources/codex`），也可用 `CODEX_BIN` 指定。
 
 ## Claude 接入
 

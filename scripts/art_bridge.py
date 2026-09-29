@@ -69,6 +69,7 @@ Finish with a short status and the delivery path. Request ID: {asset_id}.
 def find_codex() -> Optional[str]:
     """Codex CLI may be bundled inside the ChatGPT app and absent from Claude Code's PATH."""
     candidates = [os.environ.get("CODEX_BIN"), shutil.which("codex"),
+                  "/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex",
                   "/Applications/ChatGPT.app/Contents/Resources/codex",
                   str(Path.home() / "Applications/ChatGPT.app/Contents/Resources/codex")]
     for candidate in candidates:
