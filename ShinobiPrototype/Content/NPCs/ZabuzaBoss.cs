@@ -781,7 +781,11 @@ public sealed class ZabuzaBoss : ModNPC
         Vector2 toTarget = target.Center - NPC.Center;
         (float x, float y) = ZabuzaCombatRules.DashAim(toTarget.X, toTarget.Y, target.velocity.X, target.velocity.Y, speed);
         NPC.velocity = new Vector2(x, y) * speed;
-        dashTicks = ZabuzaCombatRules.DashActiveTicksFor(toTarget.Length(), speed);
+        dashTicks = ZabuzaCombatRules.DashActiveTicksFor(toTarget.Length(), speed,
+            ZabuzaCombatRules.DashStage(InMistPhase, LastStand));
+        // Through terrain from the very first tick, not only from the next one.
+        NPC.noTileCollide = true;
+        NPC.noGravity = true;
         NPC.ai[2] = x >= 0f ? 1f : -1f;
         NPC.direction = NPC.spriteDirection = (int)NPC.ai[2];
         NPC.noGravity = true;

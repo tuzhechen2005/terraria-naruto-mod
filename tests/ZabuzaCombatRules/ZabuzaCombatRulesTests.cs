@@ -141,11 +141,18 @@ var aimOverhead = ZabuzaCombatRules.DashAim(10f, -400f, 0f, 0f, 11.5f);
 Check(Math.Abs(aimFlat.X - 1f) < 1e-3 && aimUp.Y < -0.6f && aimLead.Y < -0.2f &&
     aimOverhead.Y / Math.Abs(aimOverhead.X) >= -ZabuzaCombatRules.DashMaxSlope - 1e-3,
     "Dash aims at the player in any direction up to about 60 degrees and leads their movement");
-Check(ZabuzaCombatRules.DashActiveTicksFor(300f, 11.5f) * 11.5f > 300f &&
-    ZabuzaCombatRules.DashActiveTicksFor(2000f, 11.5f) == ZabuzaCombatRules.DashMaxActiveTicks &&
-    ZabuzaCombatRules.DashActiveTicksFor(0f, 11.5f) == ZabuzaCombatRules.DashMinActiveTicks,
-    "Dash lasts long enough to reach the player and overshoot, within limits");
-Check(ZabuzaCombatRules.DashSpeed(false) > 9.2f && ZabuzaCombatRules.DashSpeed(true) > 13.2f,
+Check(ZabuzaCombatRules.DashActiveTicksFor(300f, 12.5f) * 12.5f > 300f + 12.5f * 15f,
+    "Dash reaches the player and carries well past them");
+float DashReach(int stage, bool mist, bool frenzy) =>
+    ZabuzaCombatRules.DashActiveTicksFor(0f, ZabuzaCombatRules.DashSpeed(mist), stage) *
+    ZabuzaCombatRules.DashSpeed(mist) * (frenzy ? WaveDuoRules.ZabuzaFrenzyDashMultiplier : 1f);
+Check(DashReach(0, false, false) >= 250f && DashReach(1, true, false) > DashReach(0, false, false) &&
+    DashReach(2, true, true) > DashReach(1, true, false),
+    "Even a point-blank dash covers 250+ px, and reach grows from first form to demon phase to frenzy");
+Check(ZabuzaCombatRules.DashActiveTicksFor(5000f, 12.5f, 0) < ZabuzaCombatRules.DashActiveTicksFor(5000f, 12.5f, 2) &&
+    ZabuzaCombatRules.DashActiveTicksFor(5000f, 12.5f, 2) == ZabuzaCombatRules.DashMaxActiveTicks,
+    "Longest dashes are capped, the cap rising with the stage");
+Check(ZabuzaCombatRules.DashSpeed(false) >= 12.5f && ZabuzaCombatRules.DashSpeed(true) >= 15.5f,
     "Dash is faster than before the rework");
 bool NoJutsuFromCover(int attacks, float gap, bool mist) =>
     !ZabuzaCombatRules.UsesWater(ZabuzaCombatRules.ChooseAttack(mist, attacks, gap, 0.6f, clearShot: false));

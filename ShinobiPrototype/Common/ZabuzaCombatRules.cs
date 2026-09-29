@@ -164,17 +164,28 @@ public static class ZabuzaCombatRules
     // enough to reach the player and overshoot. (Before: nearly flat, stopped by the floor after three ticks, 18
     // ticks long.)
     public static int DashWindupTicks(bool demonPhase) => demonPhase ? 20 : 26;
+    // Second pass (user, 2026-09-29: "too short, even in the first form"): longer and faster at every stage and
+    // growing through the fight. Stage 0 = first form, 1 = demon (mist) phase, 2 = frenzy after Haku falls
+    // (frenzy also multiplies speed by WaveDuoRules.ZabuzaFrenzyDashMultiplier).
     public static float DashSpeed(bool demonPhase, float lifeRatio = 1f) =>
-        demonPhase ? (lifeRatio <= 0.25f ? 16.5f : 14.5f) : 11.5f;
-    public const int DashMinActiveTicks = 14;
-    public const int DashMaxActiveTicks = 34;
-    public const int DashOvershootTicks = 10;
+        demonPhase ? (lifeRatio <= 0.25f ? 17f : 15.5f) : 12.5f;
+    private static readonly int[] OvershootByStage = { 16, 22, 28 };
+    private static readonly int[] MinTicksByStage = { 20, 24, 28 };
+    private static readonly int[] MaxTicksByStage = { 40, 48, 56 };
+    public const int DashMinActiveTicks = 20;
+    public const int DashMaxActiveTicks = 56;
     public const float DashLeadMaxTicks = 18f;
     public const float DashMaxSlope = 1.7f; // tan of about 60 degrees
     public const int FrenzyDashChain = 3;
 
-    public static int DashActiveTicksFor(float distance, float speed) =>
-        Math.Clamp((int)(distance / Math.Max(1f, speed)) + DashOvershootTicks, DashMinActiveTicks, DashMaxActiveTicks);
+    public static int DashStage(bool demonPhase, bool frenzy) => frenzy ? 2 : demonPhase ? 1 : 0;
+
+    public static int DashActiveTicksFor(float distance, float speed, int stage = 0)
+    {
+        stage = Math.Clamp(stage, 0, 2);
+        return Math.Clamp((int)(distance / Math.Max(1f, speed)) + OvershootByStage[stage],
+            MinTicksByStage[stage], MaxTicksByStage[stage]);
+    }
 
     // Unit direction towards where the player will be when the dash arrives.
     public static (float X, float Y) DashAim(float dx, float dy, float targetVelocityX, float targetVelocityY, float speed)
