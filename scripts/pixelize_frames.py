@@ -19,18 +19,44 @@ from PIL import Image
 from scipy import ndimage
 
 
-def components(alpha: np.ndarray, min_area: int):
+def components(alpha: np.ndarray, min_area: int, merge: int = 0, close: int = 3):
     mask = alpha >= 128
-    # Close small gaps so a sword and its wielder stay one pose.
-    mask = ndimage.binary_closing(mask, iterations=3)
-    labels, count = ndimage.label(mask)
+    # Close small gaps so a sword and its wielder stay one pose; `merge` also joins
+    # separate parts of one frame (e.g. flame tongues) that sit close together.
+    grouped = ndimage.binary_closing(mask, iterations=close) if close else mask
+    if merge:
+        grouped = ndimage.binary_dilation(grouped, iterations=merge)
+    labels, count = ndimage.label(grouped)
+    labels = np.where(mask, labels, 0)
     boxes = ndimage.find_objects(labels)
     found = []
     for index, box in enumerate(boxes, start=1):
+        if box is None:
+            continue
         area = int((labels[box] == index).sum())
         if area >= min_area:
             found.append((box, index))
     return labels, found
+
+
+def segment_by_centers(alpha: np.ndarray, centers):
+    """Separate touching poses: seed a vertical strip at each torso center and let each
+    pose grow over connected pixels, so a weapon stays with the hand holding it."""
+    mask = ndimage.binary_closing(alpha >= 128, iterations=1)
+    rows = np.where(mask.any(axis=1))[0]
+    top, bottom = rows[0] + int((rows[-1] - rows[0]) * 0.3), rows[0] + int((rows[-1] - rows[0]) * 0.7)
+    grown = np.zeros(mask.shape, dtype=np.int32)
+    for n, x in enumerate(centers, start=1):
+        grown[top:bottom, max(0, x - 10):x + 10][mask[top:bottom, max(0, x - 10):x + 10]] = n
+    while True:
+        dilated = ndimage.grey_dilation(grown, size=3)
+        fresh = mask & (grown == 0) & (dilated > 0)
+        if not fresh.any():
+            break
+        grown[fresh] = dilated[fresh]
+    grown[alpha < 128] = 0
+    found = [(ndimage.find_objects((grown == n).astype(np.int32))[0], n) for n in range(1, len(centers) + 1)]
+    return grown, found
 
 
 def reading_order(found):
@@ -102,15 +128,23 @@ def main() -> None:
     parser.add_argument("--nearest", action="store_true",
                         help="sample nearest pixels (keeps thin saturated details on pixel-art sources)")
     parser.add_argument("--min-area", type=int, default=1500)
+    parser.add_argument("--merge", type=int, default=0, help="dilation used to group nearby parts")
+    parser.add_argument("--close", type=int, default=3, help="gap closing; 0 when poses nearly touch")
+    parser.add_argument("--centers", default="",
+                        help="torso x of every pose (source px), for sheets whose poses touch")
     parser.add_argument("--preview", default="")
     args = parser.parse_args()
 
     width, height = (int(v) for v in args.canvas.lower().split("x"))
     atlas = np.array(Image.open(args.atlas).convert("RGBA"))
-    labels, found = components(atlas[..., 3], args.min_area)
-    poses = reading_order(found)
+    labels, found = components(atlas[..., 3], args.min_area, args.merge, args.close)
+    if args.centers:
+        labels, found = segment_by_centers(atlas[..., 3], [int(v) for v in args.centers.split(",")])
+    ordered = reading_order(found)
+    # The scale reference is indexed before skipping, so a size-reference pose can be dropped.
+    ref_box = ordered[args.reference_pose][0]
     skip = {int(s) for s in args.skip.split(",") if s.strip()}
-    poses = [p for i, p in enumerate(poses) if i not in skip]
+    poses = [p for i, p in enumerate(ordered) if i not in skip]
 
     plan = []
     for part in args.order.split(","):
@@ -119,7 +153,6 @@ def main() -> None:
     if len(plan) != len(poses):
         raise SystemExit(f"Order expects {len(plan)} poses but found {len(poses)} after skipping.")
 
-    ref_box = poses[args.reference_pose][0]
     ref_height = (ref_box[0].stop - ref_box[0].start) * args.reference_fraction
     scale = args.body_height / ref_height
 
