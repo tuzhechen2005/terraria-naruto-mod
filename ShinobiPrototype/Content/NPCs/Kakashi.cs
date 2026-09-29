@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common.Players;
 using ShinobiPrototype.Common.Systems;
+using ShinobiPrototype.Content.Items;
 
 namespace ShinobiPrototype.Content.NPCs;
 
@@ -61,6 +62,8 @@ public sealed class Kakashi : ModNPC
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
         NPC.knockBackResist = 0.5f;
+        // A touch larger than vanilla town NPCs, so the mentor stands out; drawing stays anchored at the feet.
+        NPC.scale = 1.1f;
     }
 
     public override bool CanTownNPCSpawn(int numTownNPCs) => true;
@@ -75,7 +78,17 @@ public sealed class Kakashi : ModNPC
             "……（合上手里的橙色小书）哟。",
             "抱歉来晚了，我在人生的道路上迷路了。",
         };
-        string objective = Main.LocalPlayer.GetModPlayer<StoryPlayer>().CurrentObjective();
+        Player player = Main.LocalPlayer;
+        string objective = player.GetModPlayer<StoryPlayer>().CurrentObjective();
+
+        // Characters made before the handbook existed (or who lost it) get one from him.
+        int handbook = ModContent.ItemType<NinjaHandbook>();
+        if (!player.HasItem(handbook))
+        {
+            player.QuickSpawnItem(NPC.GetSource_FromThis(), handbook);
+            return "哟。你的忍者手册呢？……拿着，别再弄丢了。任务、忍术、查克拉的事都记在里面。\n\n" + objective;
+        }
+
         return $"{Main.rand.Next(greetings)}\n\n{objective}";
     }
 

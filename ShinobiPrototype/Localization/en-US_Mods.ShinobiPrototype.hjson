@@ -86,6 +86,16 @@ Items: {
 			Craft another from 1 wood if lost
 			'''
 	}
+
+	DevWings: {
+		DisplayName: Developer Wings (M0)
+		Tooltip:
+			'''
+			For development testing; only from /m0 items
+			Fly freely in the air with no time limit; the longer you hold a direction, the faster you go
+			Jump or Up to rise, Down to sink; release to hover. No fall damage
+			'''
+	}
 }
 
 NPCs: {

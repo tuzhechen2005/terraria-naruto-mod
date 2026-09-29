@@ -13,12 +13,19 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0 或 /m0 god [on|off]";
-    public override string Description => "领取 M0 测试道具，或切换仅限单人的临时测试无敌";
+    public override string Usage => "/m0、/m0 items 或 /m0 god [on|off]";
+    public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
     {
         Player player = caller.Player;
+        if (args.Length == 1 && args[0].Equals("items", StringComparison.OrdinalIgnoreCase))
+        {
+            int given = GiveAllItems(player);
+            caller.Reply($"已发放本模组全部 {given} 种物品（含开发者之翼）。", Color.LightGreen);
+            return;
+        }
+
         if (args.Length > 0)
         {
             if (!args[0].Equals("god", StringComparison.OrdinalIgnoreCase) || args.Length > 2)
@@ -51,5 +58,27 @@ public sealed class M0Command : ModCommand
         player.QuickSpawnItem(player.GetSource_Misc("ShinobiM0"), ModContent.ItemType<TrainingKunai>());
         player.QuickSpawnItem(player.GetSource_Misc("ShinobiM0"), ModContent.ItemType<TrainingRasengan>());
         player.QuickSpawnItem(player.GetSource_Misc("ShinobiM0"), ModContent.ItemType<M0ZabuzaChallengeScroll>());
+    }
+
+    // Every item this mod adds, for in-game testing. Legacy items that turn into their replacements are skipped.
+    private int GiveAllItems(Player player)
+    {
+        int given = 0;
+        foreach (ModItem item in Mod.GetContent<ModItem>())
+        {
+            if (item is MissionScroll or HakuChallengeScroll)
+                continue;
+
+            int stack = item switch
+            {
+                ChakraCrystal => ChakraRules.MaxCrystals,
+                ChakraPill => 20,
+                MistInsignia => 3,
+                _ => 1,
+            };
+            player.QuickSpawnItem(player.GetSource_Misc("ShinobiM0"), item.Type, stack);
+            given++;
+        }
+        return given;
     }
 }
