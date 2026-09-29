@@ -19,6 +19,9 @@ REQUESTS = ROOT / "art" / "requests"
 DELIVERIES = ROOT / "art" / "deliveries"
 STATE = ROOT / ".art-bridge"
 ID_PATTERN = re.compile(r"[a-z0-9][a-z0-9-]{1,63}\Z")
+# Model used by the Codex art worker (image generation itself uses ChatGPT's built-in tool).
+CODEX_MODEL = os.environ.get("CODEX_MODEL", "gpt-6-sol")
+CODEX_EFFORT = os.environ.get("CODEX_EFFORT", "medium")
 
 
 def now() -> str:
@@ -66,6 +69,7 @@ Finish with a short status and the delivery path. Request ID: {asset_id}.
 def find_codex() -> Optional[str]:
     """Codex CLI may be bundled inside the ChatGPT app and absent from Claude Code's PATH."""
     candidates = [os.environ.get("CODEX_BIN"), shutil.which("codex"),
+                  "/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex",
                   "/Applications/ChatGPT.app/Contents/Resources/codex",
                   str(Path.home() / "Applications/ChatGPT.app/Contents/Resources/codex")]
     for candidate in candidates:
@@ -94,7 +98,9 @@ def run_job(asset_id: str) -> int:
     try:
         with log_path.open("w", encoding="utf-8") as log:
             result = subprocess.run(
-                [codex, "exec", "--ephemeral", "--sandbox", "workspace-write", "-C", str(ROOT), "-"],
+                [codex, "exec", "--ephemeral", "--sandbox", "workspace-write",
+                 "-m", CODEX_MODEL, "-c", f"model_reasoning_effort=\"{CODEX_EFFORT}\"",
+                 "-C", str(ROOT), "-"],
                 input=prompt_for(asset_id, request),
                 text=True,
                 stdout=log,

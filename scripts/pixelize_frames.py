@@ -130,6 +130,10 @@ def main() -> None:
     parser.add_argument("--min-area", type=int, default=1500)
     parser.add_argument("--merge", type=int, default=0, help="dilation used to group nearby parts")
     parser.add_argument("--close", type=int, default=3, help="gap closing; 0 when poses nearly touch")
+    parser.add_argument("--auto", action="store_true",
+                        help="adjust grouping automatically until the pose count matches --order")
+    parser.add_argument("--scale", type=float, default=0,
+                        help="fixed scale (e.g. 0.25 for sources drawn at 8x of a 2x2 art grid)")
     parser.add_argument("--centers", default="",
                         help="torso x of every pose (source px), for sheets whose poses touch")
     parser.add_argument("--preview", default="")
@@ -138,8 +142,22 @@ def main() -> None:
     width, height = (int(v) for v in args.canvas.lower().split("x"))
     atlas = np.array(Image.open(args.atlas).convert("RGBA"))
     labels, found = components(atlas[..., 3], args.min_area, args.merge, args.close)
+    expected = sum(int(part.split(":")[1]) for part in args.order.split(",")) + \
+        len([v for v in args.skip.split(",") if v.strip()])
     if args.centers:
         labels, found = segment_by_centers(atlas[..., 3], [int(v) for v in args.centers.split(",")])
+    elif args.auto and len(found) != expected:
+        # Join detached parts (a planted sword, a blade in flight) until the pose count fits;
+        # fall back to evenly spaced torso seeds for rows whose poses touch.
+        for merge in range(2, 40, 2):
+            labels, found = components(atlas[..., 3], args.min_area, merge, args.close)
+            if len(found) == expected:
+                break
+        else:
+            cols = np.where((atlas[..., 3] >= 128).any(axis=0))[0]
+            step = (cols[-1] - cols[0]) / expected
+            centers = [int(cols[0] + step * (i + 0.5)) for i in range(expected)]
+            labels, found = segment_by_centers(atlas[..., 3], centers)
     ordered = reading_order(found)
     # The scale reference is indexed before skipping, so a size-reference pose can be dropped.
     ref_box = ordered[args.reference_pose][0]
@@ -154,7 +172,7 @@ def main() -> None:
         raise SystemExit(f"Order expects {len(plan)} poses but found {len(poses)} after skipping.")
 
     ref_height = (ref_box[0].stop - ref_box[0].start) * args.reference_fraction
-    scale = args.body_height / ref_height
+    scale = args.scale or args.body_height / ref_height
 
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
