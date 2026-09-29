@@ -16,12 +16,14 @@ public sealed class BridgeBlueprintNet : ModSystem
     private const int OutlineTicks = 600;
 
     private static BridgeSite? outline;
+    private static BridgeDesign outlineDesign;
     private static bool outlineBlocked;
     private static int outlineTimer;
 
     public static void ShowOutline(BridgeSite site, bool blocked)
     {
         outline = site;
+        outlineDesign = BridgeBuilder.Design(site, StoryWorld.WaveComplete);
         outlineBlocked = blocked;
         outlineTimer = OutlineTicks;
     }
@@ -67,7 +69,8 @@ public sealed class BridgeBlueprintNet : ModSystem
 
     public override void OnWorldUnload() => outline = null;
 
-    // Translucent tiles over the deck, the island top and the hut area; red when something blocks the build.
+    // Every tile of the design as a translucent square, so the player sees the whole bridge, hut and island
+    // before committing; red when something blocks the build.
     public override void PostDrawTiles()
     {
         if (outline is not BridgeSite site)
@@ -76,13 +79,8 @@ public sealed class BridgeBlueprintNet : ModSystem
                       (0.35f + 0.15f * (float)System.Math.Sin(Main.GameUpdateCount * 0.1f));
         Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
             DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
-        for (int offset = BridgeRules.DeckStart; offset <= BridgeRules.DeckLength; offset++)
-            DrawTile(site.X(offset), site.DeckY, color);
-        for (int offset = BridgeRules.IslandStart; offset <= BridgeRules.IslandEnd; offset++)
-            DrawTile(site.X(offset), site.DeckY + BridgeRules.IslandSurfaceBelowDeck(offset), color);
-        int hutNear = BridgeRules.DeckStart - 1;
-        for (int offset = hutNear - BridgeRules.HutWidth - BridgeRules.HutGapFromStairs; offset <= hutNear; offset++)
-            DrawTile(site.X(offset), site.DeckY + 1, color * 0.6f);
+        foreach (Cell cell in outlineDesign.Cells)
+            DrawTile(site.X(cell.Offset), cell.Y, cell.Scaffold ? color * 0.5f : color);
         Main.spriteBatch.End();
     }
 

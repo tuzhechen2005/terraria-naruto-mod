@@ -103,8 +103,10 @@ public sealed class WaveOverlaySystem : ModSystem
         target = Math.Max(target, Math.Max(SeaFogTarget(), MistPreviewSystem.FogBoost));
         fog = MathHelper.Lerp(fog, target, 0.05f);
         flash = Math.Max(0f, flash - 1f / 45f);
-        if (fog > 0.1f && Main.GameUpdateCount % 3 == 0)
-            DriftPuff();
+        // Thicker mist, more drifting puffs.
+        if (fog > 0.1f && Main.GameUpdateCount % 2 == 0)
+            for (int i = 0; i < 1 + (int)(fog * 3f); i++)
+                DriftPuff();
     }
 
     private static float SeaFogTarget()

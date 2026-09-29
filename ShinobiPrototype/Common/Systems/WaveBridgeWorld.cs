@@ -186,8 +186,8 @@ public sealed class WaveBridgeWorld : ModSystem
             if (player.dead)
                 continue;
             int offset = site.OffsetOf((int)(player.Center.X / 16f));
-            int rowsAbove = site.DeckY - (int)(player.Bottom.Y / 16f) + 1;
-            if (!BridgeRules.OnDeck(offset, rowsAbove))
+            int rowsAbove = site.DeckRow(offset) - (int)(player.Bottom.Y / 16f) + 1;
+            if (!BridgeRules.NearBrokenEnd(offset, rowsAbove))
                 continue;
 
             PreviewDone = true;
@@ -204,8 +204,8 @@ public sealed class WaveBridgeWorld : ModSystem
             return float.MaxValue;
         float tileX = worldPosition.X / 16f;
         float tileY = worldPosition.Y / 16f;
-        float a = site.X(BridgeRules.DeckStart);
-        float b = site.X(BridgeRules.IslandEnd);
+        float a = site.X(-20);
+        float b = site.X(BridgeDesign.IslandEnd);
         float dx = Math.Max(0f, Math.Max(Math.Min(a, b) - tileX, tileX - Math.Max(a, b)));
         float dy = Math.Max(0f, Math.Abs(tileY - site.DeckY) - 20f);
         return MathF.Sqrt(dx * dx + dy * dy);

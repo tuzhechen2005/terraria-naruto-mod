@@ -113,6 +113,17 @@ NPCs: {
 	Tazuna: {
 		DisplayName: Bridge Builder
 		GivenName: Tazuna
+
+		TownNPCMood: {
+			Content: 我很满足。
+			NoHome: 我讨厌没有家。
+			FarFromHome: 我离家太远了。
+			LoveSpace: 我非常喜欢有这么大的空间。
+			DislikeCrowded: 我不喜欢这么拥挤。
+			HateCrowded: 我讨厌这么拥挤。
+			LikeNPC_Princess: 我喜欢 {NPCName}。
+			Princess_LovesNPC: 我喜欢 {NPCName}。
+		}
 	}
 
 	Kakashi: {
@@ -162,11 +173,11 @@ Projectiles: {
 }
 
 Dialogue: {
-	PreviewZabuza1: "Zabuza: ...So a Leaf brat wants to wade into this too?"
-	PreviewZabuza2: "Zabuza: This bridge will never be finished."
-	PreviewHaku: "Haku: Master Zabuza, it is not yet time."
+	PreviewZabuza1: Zabuza: ...So a Leaf brat wants to wade into this too?
+	PreviewZabuza2: Zabuza: This bridge will never be finished.
+	PreviewHaku: Haku: Master Zabuza, it is not yet time.
 	PreviewEnd: The figures in the mist are gone... the Mist ninja are watching this bridge.
-	BridgeOpening: "Zabuza: Let's settle this here, on this bridge."
+	BridgeOpening: Zabuza: Let's settle this here, on this bridge.
 	HakuArrive: Haku: Master Zabuza, leave this to me.
 	ZabuzaFrenzy: Zabuza: ...Haku. You were a fool to the very end.
 	HakuFrenzy: Haku: The reason I exist is gone... then let everything freeze.
@@ -198,10 +209,11 @@ Configs: {
 		}
 
 		SeaFogStrength: {
-		Label: Sea mist strength (%)
-		Tooltip: Thickness of the sea mist around the Wave Country bridge; 0 turns it off
-	}
-	ShowSubstitutionHints: {
+			Label: Sea mist strength (%)
+			Tooltip: Thickness of the sea mist around the Wave Country bridge; 0 turns it off
+		}
+
+		ShowSubstitutionHints: {
 			Label: Show Substitution Jutsu hints
 			Tooltip: When an enemy hits you, explain how to use Substitution (up to 3 times, none after the first success)
 		}

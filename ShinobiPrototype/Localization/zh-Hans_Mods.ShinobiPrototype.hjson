@@ -113,6 +113,17 @@ NPCs: {
 	Tazuna: {
 		DisplayName: 造桥工
 		GivenName: 达兹纳
+
+		TownNPCMood: {
+			// Content: 我很满足。
+			// NoHome: 我讨厌没有家。
+			// FarFromHome: 我离家太远了。
+			// LoveSpace: 我非常喜欢有这么大的空间。
+			// DislikeCrowded: 我不喜欢这么拥挤。
+			// HateCrowded: 我讨厌这么拥挤。
+			// LikeNPC_Princess: 我喜欢 {NPCName}。
+			// Princess_LovesNPC: 我喜欢 {NPCName}。
+		}
 	}
 
 	Kakashi: {
@@ -198,10 +209,11 @@ Configs: {
 		}
 
 		SeaFogStrength: {
-		Label: 海边雾浓度（%）
-		Tooltip: 波之国大桥附近海雾的浓度；0 为关闭
-	}
-	ShowSubstitutionHints: {
+			Label: 海边雾浓度（%）
+			Tooltip: 波之国大桥附近海雾的浓度；0 为关闭
+		}
+
+		ShowSubstitutionHints: {
 			Label: 显示替身术教学提示
 			Tooltip: 被敌人击中时提示如何使用替身术（最多 3 次，首次成功后不再出现）
 		}

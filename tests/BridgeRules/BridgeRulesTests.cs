@@ -8,37 +8,65 @@ static void Check(bool condition, string name)
     Console.WriteLine($"PASS {name}");
 }
 
+const int waterY = 100;
+int Ground(int o) => o >= 0 ? waterY : waterY - Math.Min(6, (-o + 2) / 4);
+int Seabed(int o) => o <= 0 ? Ground(o) : waterY + Math.Min(20, 2 + o / 3);
+BridgeDesign unfinished = BridgeDesign.Create(waterY, Ground, Seabed, finished: false);
+BridgeDesign finished = BridgeDesign.Create(waterY, Ground, Seabed, finished: true);
+int Deck(int o) => BridgeDesign.DeckRow(waterY, o);
+
+// Shape of the bridge.
 int cageTiles = (int)Math.Ceiling(WaveDuoRules.CageRadius / 16f);
-Check(Clearance > cageTiles, "Open air above the deck is taller than the ice-mirror cage radius");
-Check(DeckLength > 2 * cageTiles, "Deck is longer than the cage is wide");
-Check(DeckY(100) == 95, "Deck sits five tiles above the water");
-
-Check(HasDeckTile(DeckStart, false) && !HasDeckTile(DeckStart - 1, false), "Deck starts three tiles inland");
-Check(HasDeckTile(DeckLength - JaggedTiles, false), "Deck is continuous up to the jagged end");
-int jagged = Enumerable.Range(FinishFrom, JaggedTiles).Count(o => HasDeckTile(o, false));
-Check(jagged > 0 && jagged < JaggedTiles, "Unfinished end is jagged: some tiles, some holes");
-Check(Enumerable.Range(DeckLength + 1, GapLength).All(o => !HasDeckTile(o, false)), "Gap is open before completion");
-Check(Enumerable.Range(DeckStart, FinishTo - DeckStart + 1).All(o => HasDeckTile(o, true)),
+Check(BridgeDesign.Clearance > cageTiles, "Open air above the deck is taller than the ice-mirror cage radius");
+Check(BridgeDesign.UnfinishedEnd > 2 * cageTiles, "Unfinished deck is longer than the cage is wide");
+Check(Deck(BridgeDesign.IslandStart / 2) < Deck(1) && Deck(0) == BridgeDesign.DeckY(waterY) &&
+      Deck(BridgeDesign.IslandStart) == BridgeDesign.DeckY(waterY), "Deck is cambered: highest mid-span, level at both ends");
+Check(Enumerable.Range(1, BridgeDesign.IslandStart - 1).All(o => Math.Abs(Deck(o) - Deck(o - 1)) <= 1),
+    "Camber never steps more than one tile");
+Check(finished.Cells.Any(c => c.Shape is Shape.CeilingRisesSeaward or Shape.CeilingRisesLandward),
+    "Arches have hammered undersides");
+Check(Enumerable.Range(0, BridgeDesign.IslandStart).All(o => finished.Has(o, Deck(o))),
     "Finished deck is continuous from the shore to the island");
-Check(FinishTo + 1 == IslandStart, "Finished deck lands on the island");
+Check(Enumerable.Range(BridgeDesign.UnfinishedEnd + 1, 5).All(o => !unfinished.Has(o, Deck(o)) ||
+      unfinished.At(o, Deck(o))!.Value.Scaffold), "Before completion the stone deck stops at the break");
+Check(finished.Has(BridgeDesign.IslandStart, Deck(BridgeDesign.IslandStart)), "Island top is level with the deck");
+Check(unfinished.Cells.Any(c => c.Scaffold) && !finished.Cells.Any(c => c.Scaffold),
+    "Scaffolding and crane only before completion");
+Check(Enumerable.Range(1, 4).Select(i => i * BridgeDesign.PierSpacing).All(p => finished.Has(p, waterY + 1)),
+    "Piers stand in the water every 14 tiles");
 
-Check(IsPillar(10, false) && !IsPillar(0, false) && !IsPillar(80, false) && IsPillar(80, true),
-    "Pillars every ten tiles; gap pillars only once finished");
-Check(IslandSurfaceBelowDeck(IslandCenter) == 1 && IslandSurfaceBelowDeck(IslandStart) == DeckAboveWater,
-    "Island is flat at deck height in the middle and meets the water at its ends");
+// Tazuna's hut.
+bool HasFixture(BridgeDesign d, Fixture f) => d.Placements.Any(p => p.Fixture == f);
+Check(HasFixture(unfinished, Fixture.Door) && HasFixture(unfinished, Fixture.Table) && HasFixture(unfinished, Fixture.Chair),
+    "Hut has a door, table and chair from the start");
+Check(!HasFixture(unfinished, Fixture.Lantern) && HasFixture(finished, Fixture.Lantern),
+    "Hut has no light until the bridge is finished, so no NPC can claim it early");
+Check(unfinished.HutFloorY < Ground(unfinished.HutMidOffset), "Hut stands on stilts above the beach");
+Check(unfinished.Cells.Any(c => c.Part == Part.Shingle), "Hut has a tiled roof");
+Check(!HasFixture(unfinished, Fixture.BridgeSign) && HasFixture(finished, Fixture.BridgeSign),
+    "Naruto Bridge sign only once finished");
 
-Check(OnDeck(10, 0) && OnDeck(DeckLength, 3) && !OnDeck(-2, 0) && !OnDeck(10, 6), "Preview trigger zone is the deck over the sea");
+// Island.
+Check(finished.Cells.Any(c => c.Part == Part.RedBeam) && HasFixture(finished, Fixture.IslandSign) &&
+      HasFixture(finished, Fixture.Chest), "Island has a torii gate, the Land of Waves sign and a chest");
 
-Check(Math.Abs(SeaFog(0, false, 1f) - PhaseTwoFog) < 1e-4, "On the bridge by day the mist matches phase two");
-Check(Math.Abs(SeaFog(0, true, 1f) - PhaseTwoFog * 1.5f) < 1e-4, "Night or rain makes it 1.5 times thicker");
-Check(SeaFog(FogReachTiles, true, 1f) == 0f, "No mist beyond 150 tiles");
-Check(SeaFog(40, false, 1f) > SeaFog(100, false, 1f), "Mist thins with distance");
-Check(SeaFog(0, false, 0f) == 0f && Math.Abs(SeaFog(0, false, 0.5f) - PhaseTwoFog / 2) < 1e-4, "Setting scales or disables the mist");
+// Mist.
+Check(Math.Abs(SeaFog(0, false, 1f) - SeaFogOnBridge) < 1e-4 && SeaFogOnBridge >= 2 * PhaseTwoFog - 1e-4,
+    "On the bridge by day the mist is twice the phase-two mist");
+Check(Math.Abs(SeaFog(0, true, 1f) - SeaFogOnBridge * 1.5f) < 1e-4, "Night or rain makes it 1.5 times thicker");
+Check(SeaFog(200, false, 1f) > 0f && SeaFog(FogReachTiles, true, 1f) == 0f, "Mist reaches out to 300 tiles");
+Check(SeaFog(60, false, 1f) > SeaFog(200, false, 1f), "Mist thins with distance");
+Check(SeaFog(0, false, 0f) == 0f && Math.Abs(SeaFog(0, false, 0.5f) - SeaFogOnBridge / 2) < 1e-4,
+    "Setting scales or disables the mist");
 
+// Mist preview.
 Check(PreviewZabuzaAppear < PreviewZabuzaLine1 && PreviewZabuzaLine1 < PreviewZabuzaLine2 &&
       PreviewZabuzaLine2 < PreviewHakuAppear && PreviewHakuAppear < PreviewHakuLine &&
       PreviewHakuLine < PreviewVanish && PreviewVanish < PreviewLength, "Preview beats happen in order");
-Check(PreviewLength / 60f is >= 7f and <= 9f, "Preview lasts about eight seconds");
-Check(PreviewFogBoost(0) == 0f && PreviewFogBoost(200) == PreviewFog && PreviewFogBoost(PreviewLength) == 0f,
+Check(PreviewLength / 60f is >= 12f and <= 16f, "Preview lasts about fourteen seconds");
+Check(PreviewFogBoost(0) == 0f && PreviewFogBoost(300) == PreviewFog && PreviewFogBoost(PreviewLength) == 0f,
     "Preview mist rises, holds and clears");
-Check(PreviewZabuzaOffset > DeckLength && PreviewZabuzaOffset < IslandStart, "Zabuza appears over the water in the gap");
+Check(!NearBrokenEnd(10, 1) && NearBrokenEnd(BridgeDesign.UnfinishedEnd, 1) && NearBrokenEnd(PreviewTriggerTo, 1),
+    "Preview starts only near the broken end");
+Check(PreviewZabuzaOffset > PreviewTriggerTo && PreviewZabuzaOffset < BridgeDesign.IslandStart,
+    "Zabuza appears over the water past the scaffolding");
