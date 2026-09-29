@@ -6,14 +6,12 @@ namespace ShinobiPrototype.Common;
 // BridgeDesign. Kept free of Terraria types so the rule tests can run them.
 public static class BridgeRules
 {
-    // Sea mist is drawn with vanilla's graveyard mist (Main.GraveyardVisualIntensity, 0..1): it sits in the
-    // background and follows the world's light, so nights stay dark. Only the look is borrowed; the player is
-    // never in the graveyard biome, so spawns and NPC housing are unaffected. (User, 2026-09-29: the earlier flat
-    // grey overlay glowed at night.) At the default 175% setting the bridge by day is about 0.9, night or rain 1.
-    // Vanilla starts random lightning once graveyard intensity reaches 0.9, so the mist stays just under it.
+    // Sea mist is vanilla's graveyard fog clouds, spawned around the bridge by SeaMistSystem (user, 2026-09-29:
+    // "only the look of the graveyard fog, no graveyard"). Density 0..1 scales how often clouds spawn relative to a
+    // real graveyard: at the default 175% setting the bridge by day is about 1.2x a graveyard, night or rain 1.4x.
     public const float SeaMistPerSetting = 0.43f;
-    public const float MaxSeaMist = 0.85f;
-    public const float VanillaGraveyardLightning = 0.9f;
+    public const float MaxSeaMist = 1f;
+    public const float GraveyardRatePerDensity = 1.6f;
     public const float NightOrRainFogMultiplier = 1.2f;
     public const float MaxFogSetting = 2f;
     // Measured from the shoreline-to-island span: thick over the ramp and hut, gone just past the beach
@@ -80,7 +78,7 @@ public static class BridgeRules
         bool nearBreak) =>
         !alreadyWarned && previewDone && mistActive && insignia >= SenbonWarningInsignia && nearBreak;
 
-    // Graveyard-mist intensity (0..1) for a player this far (in tiles) from the bridge.
+    // Fog density (0..1) for a player this far (in tiles) from the bridge.
     public static float SeaMist(float distanceTiles, bool nightOrRain, float setting)
     {
         if (distanceTiles >= FogReachTiles || setting <= 0f)
@@ -92,6 +90,9 @@ public static class BridgeRules
                      (nightOrRain ? NightOrRainFogMultiplier : 1f);
         return Math.Clamp(mist, 0f, MaxSeaMist);
     }
+
+    // How many times a graveyard's fog-cloud spawn rate to use at this density.
+    public static float FogSpawnRate(float density) => Math.Clamp(density, 0f, 1f) * GraveyardRatePerDensity;
 
     // Mist during the preview: rises quickly, holds, and fades after the pair vanishes.
     public static float PreviewMistBoost(int tick)

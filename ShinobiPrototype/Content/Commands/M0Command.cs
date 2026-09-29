@@ -161,18 +161,15 @@ public sealed class M0Command : ModCommand
             return "海雾诊断：这个世界没有大桥。";
         float distance = WaveBridgeWorld.DistanceToBridgeTiles(player.Center);
         float setting = ShinobiClientConfig.Instance.SeaFogStrength / 100f;
-        float target = WaveBridgeWorld.MistActive
-            ? BridgeRules.SeaMist(distance, !Main.dayTime || Main.raining, setting)
-            : 0f;
-        bool filter = Terraria.Graphics.Effects.Filters.Scene["Graveyard"]?.IsActive() ?? false;
+        int clouds = 0;
+        foreach (Gore gore in Main.gore)
+            if (gore.active && gore.type is >= GoreID.AmbientFloorCloud1 and <= GoreID.AmbientAirborneCloud3)
+                clouds++;
         return "海雾诊断：" +
                $"距大桥 {distance:0} 格（{BridgeRules.FogReachTiles:0} 格外无雾）；" +
                $"海雾{(WaveBridgeWorld.MistActive ? "生效中" : "未生效（大桥已完工或波之国已完成）")}；" +
                $"{(Main.dayTime ? "白天" : "夜晚")}{(Main.raining ? "、下雨" : "")}；" +
-               $"浓度设置 {setting:P0}；目标强度 {target:0.00}；当前墓地雾强度 {Main.GraveyardVisualIntensity:0.00}；" +
-               $"墓地滤镜{(filter ? "已开启" : "未开启")}；光照模式 {Lighting.Mode}" +
-               (Lighting.Mode is Terraria.Graphics.Light.LightMode.Retro or Terraria.Graphics.Light.LightMode.Trippy
-                   ? "（复古/迷幻模式下屏幕滤镜不显示，请在“设置 → 画面”改为彩色或白色）"
-                   : "");
+               $"浓度设置 {setting:P0}；当前雾密度 {SeaMistSystem.Density:0.00}" +
+               $"（约为墓地的 {BridgeRules.FogSpawnRate(SeaMistSystem.Density):0.0} 倍）；画面中的雾团 {clouds} 个。";
     }
 }

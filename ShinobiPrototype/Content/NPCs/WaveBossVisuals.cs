@@ -76,12 +76,11 @@ internal static class BossLines
     }
 }
 
-// Screen mist during Zabuza's transition and mist phase, a brief ice flash when Haku goes berserk, and the sea
-// mist around the Wave Country bridge (vanilla's graveyard mist, raised while the player is near).
+// Screen mist during Zabuza's transition and mist phase and a brief ice flash when Haku goes berserk. (The sea
+// mist around the Wave Country bridge is SeaMistSystem.)
 public sealed class WaveOverlaySystem : ModSystem
 {
     private static float fog;
-    private static float seaMist;
     private static float flash;
 
     public static void Flash() => flash = 1f;
@@ -102,27 +101,12 @@ public sealed class WaveOverlaySystem : ModSystem
                 target = 0.3f;
         }
         fog = MathHelper.Lerp(fog, target, 0.05f);
-
-        // Sea mist and the preview use vanilla's graveyard mist. Vanilla eases the intensity towards its own
-        // graveyard target each update; raising it afterwards here keeps it for this frame's drawing.
-        seaMist = MathHelper.Lerp(seaMist, Math.Max(SeaMistTarget(), MistPreviewSystem.MistBoost), 0.03f);
-        if (seaMist > Main.GraveyardVisualIntensity)
-            Main.GraveyardVisualIntensity = seaMist;
         flash = Math.Max(0f, flash - 1f / 45f);
-    }
-
-    private static float SeaMistTarget()
-    {
-        if (!WaveBridgeWorld.MistActive || Main.LocalPlayer is not { active: true } player)
-            return 0f;
-        return BridgeRules.SeaMist(WaveBridgeWorld.DistanceToBridgeTiles(player.Center),
-            !Main.dayTime || Main.raining, ShinobiClientConfig.Instance.SeaFogStrength / 100f);
     }
 
     public override void OnWorldUnload()
     {
         fog = 0f;
-        seaMist = 0f;
         flash = 0f;
     }
 

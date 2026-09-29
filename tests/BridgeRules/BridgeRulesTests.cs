@@ -77,10 +77,11 @@ Check(finished.Cells.Any(c => c.Part == Part.RedBeam) && HasFixture(finished, Fi
 
 // Mist.
 const float defaultSetting = 1.75f;
-Check(SeaMist(0, false, defaultSetting) is > 0.7f and < 0.8f, "By day at the default setting the bridge is deep in mist");
-Check(SeaMist(0, true, defaultSetting) == MaxSeaMist, "Night or rain brings it to the strongest mist");
-Check(MaxSeaMist < VanillaGraveyardLightning && PreviewMist <= MaxSeaMist,
-    "Mist never reaches the graveyard intensity where vanilla starts lightning");
+Check(FogSpawnRate(SeaMist(0, false, defaultSetting)) is > 1.1f and < 1.3f,
+    "By day at the default setting the bridge is foggier than a graveyard");
+Check(SeaMist(0, true, defaultSetting) > SeaMist(0, false, defaultSetting), "Night or rain thickens it");
+Check(SeaMist(0, true, 2f) <= MaxSeaMist && FogSpawnRate(5f) == FogSpawnRate(1f), "Density is capped");
+Check(FogSpawnRate(0f) == 0f, "No fog clouds at zero density");
 Check(SeaMist(0, false, 5f) == SeaMist(0, false, 2f), "Setting tops out at 200%");
 Check(SeaMist(FogFullWithinTiles, false, 1f) == SeaMist(0, false, 1f), "Full mist over the ramp and hut");
 Check(SeaMist(50, false, 1f) > 0f && SeaMist(FogReachTiles, true, 1f) == 0f && FogReachTiles <= 80f,
