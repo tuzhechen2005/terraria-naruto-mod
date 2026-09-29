@@ -104,10 +104,6 @@ public sealed class WaveOverlaySystem : ModSystem
         fog = MathHelper.Lerp(fog, target, 0.05f);
         fog = Math.Min(fog, 2f);
         flash = Math.Max(0f, flash - 1f / 45f);
-        // Thicker mist, more drifting puffs.
-        if (fog > 0.1f && Main.GameUpdateCount % 2 == 0)
-            for (int i = 0; i < 1 + (int)(fog * 3f); i++)
-                DriftPuff();
     }
 
     private static float SeaFogTarget()
@@ -116,16 +112,6 @@ public sealed class WaveOverlaySystem : ModSystem
             return 0f;
         return BridgeRules.SeaFog(WaveBridgeWorld.DistanceToBridgeTiles(player.Center),
             !Main.dayTime || Main.raining, ShinobiClientConfig.Instance.SeaFogStrength / 100f);
-    }
-
-    // Slow grey-white puffs drifting across the view, so the mist reads as moving air rather than a tint.
-    private static void DriftPuff()
-    {
-        Vector2 at = Main.screenPosition + new Vector2(Main.rand.NextFloat(Main.screenWidth), Main.rand.NextFloat(Main.screenHeight));
-        Dust puff = Dust.NewDustPerfect(at, DustID.Smoke, new Vector2(Main.rand.NextFloat(0.2f, 0.6f), 0f),
-            140, new Color(200, 214, 224), Main.rand.NextFloat(2.6f, 4f));
-        puff.noGravity = true;
-        puff.noLight = true;
     }
 
     public override void OnWorldUnload()

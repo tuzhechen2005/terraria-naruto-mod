@@ -170,17 +170,18 @@ Projectiles: {
 	HakuDashHitbox.DisplayName: Ice Blade Dash
 	ArenaSandBolt.DisplayName: Sand Bolt
 	ArenaRushHitbox.DisplayName: Sand Rush
+	SenbonWarning.DisplayName: Senbon Warning
 }
 
 Dialogue: {
-	Whisper1: "???: ...You again."
-	Whisper2: "???: Stay away from this bridge."
+	Whisper1: ???: ...You again.
+	Whisper2: ???: Stay away from this bridge.
 	Whisper3: (From the mist comes the scrape of a blade dragged over stone.)
-	Whisper4: "???: The mist swallows everything... you too."
-	SenbonWarning: "???: One more step and you die."
-	PreviewZabuza1: "???: ...So a Leaf brat wants to wade into this too?"
-	PreviewZabuza2: "???: This bridge will never be finished."
-	PreviewHaku: "???: ...It is not yet time. Let us go."
+	Whisper4: ???: The mist swallows everything... you too.
+	SenbonWarning: ???: One more step and you die.
+	PreviewZabuza1: ???: ...So a Leaf brat wants to wade into this too?
+	PreviewZabuza2: ???: This bridge will never be finished.
+	PreviewHaku: ???: ...It is not yet time. Let us go.
 	PreviewEnd: The figures in the mist are gone... the Mist ninja are watching this bridge.
 	BridgeOpening: Zabuza: Let's settle this here, on this bridge.
 	HakuArrive: Haku: Master Zabuza, leave this to me.

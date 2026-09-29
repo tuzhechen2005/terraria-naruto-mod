@@ -170,6 +170,7 @@ Projectiles: {
 	HakuDashHitbox.DisplayName: 冰刃突进
 	ArenaSandBolt.DisplayName: 砂弹
 	ArenaRushHitbox.DisplayName: 流砂突袭
+	// SenbonWarning.DisplayName: Senbon Warning
 }
 
 Dialogue: {
