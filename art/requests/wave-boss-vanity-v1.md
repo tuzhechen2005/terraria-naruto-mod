@@ -1,6 +1,6 @@
 # 素材请求：wave-boss-vanity-v1
 
-- 状态：requested
+- 状态：delivered，已接入（scripts/build_head_equip.py 按原版头部上下浮动生成 20 帧）
 - 提出者及提交号：Claude Code，M1 阶段 3（Boss 面具时装，掉率约 1/7），基于 `0d4533e`
 - 资产类型：物品图标 ×2 ＋ 头部装备外观 ×2
 - 游戏用途：玩家可穿戴的时装头部装备。

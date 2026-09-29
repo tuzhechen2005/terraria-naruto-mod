@@ -12,9 +12,10 @@ internal static class WaveRewards
 {
     private const float FirstWinRangeTiles = 150f;
 
-    // Masks return 0 until their vanity art exists (wave-boss-vanity-v1).
     public static int ItemFor(WaveLoot loot) => loot switch
     {
+        WaveLoot.ZabuzaHeadband => ModContent.ItemType<ZabuzaHeadband>(),
+        WaveLoot.HakuMask => ModContent.ItemType<HakuMask>(),
         WaveLoot.Kubikiribocho => ModContent.ItemType<Kubikiribocho>(),
         WaveLoot.Senbon => ModContent.ItemType<Senbon>(),
         WaveLoot.WaterDragon => ModContent.ItemType<WaterDragonJutsu>(),

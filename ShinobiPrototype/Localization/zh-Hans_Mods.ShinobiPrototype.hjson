@@ -130,6 +130,16 @@ Items: {
 		DisplayName: 秘术·魔镜冰晶
 		Tooltip: 在身旁召唤一面冰镜，向敌人扇形掷出千本
 	}
+
+	ZabuzaHeadband: {
+		DisplayName: 再不斩护额
+		Tooltip: 歪戴的雾隐护额与绷带面罩
+	}
+
+	HakuMask: {
+		DisplayName: 白的面具
+		Tooltip: 雾隐追杀部队的面具
+	}
 }
 
 NPCs: {

@@ -130,6 +130,16 @@ Items: {
 		DisplayName: "Secret Jutsu: Demonic Ice Mirrors"
 		Tooltip: Summons an ice mirror beside you that throws fans of senbon at enemies
 	}
+
+	ZabuzaHeadband: {
+		DisplayName: Zabuza's Headband
+		Tooltip: A Mist headband worn askew, with a bandage mask
+	}
+
+	HakuMask: {
+		DisplayName: Haku's Mask
+		Tooltip: The mask of a Mist hunter-nin
+	}
 }
 
 NPCs: {
