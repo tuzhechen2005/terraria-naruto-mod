@@ -76,14 +76,18 @@ internal static class BossLines
     }
 }
 
-// Screen mist during Zabuza's transition and mist phase and a brief ice flash when Haku goes berserk. (The sea
-// mist around the Wave Country bridge is SeaMistSystem.)
+// How thick Zabuza's transition / mist-phase mist is and the brief ice flash when Haku goes berserk; SeaMistOverlay
+// draws both together with the sea mist. Also draws the mist figures behind that veil.
 public sealed class WaveOverlaySystem : ModSystem
 {
     private static float fog;
     private static float flash;
 
     public static void Flash() => flash = 1f;
+
+    // Drawn by SeaMistOverlay with the sea mist (same veil, sky-lit, over the sea as well).
+    public static float BossMistAlpha => 0.42f * fog;
+    public static float FlashAlpha => 0.5f * flash;
 
     public override void PostUpdateEverything()
     {
@@ -116,18 +120,6 @@ public sealed class WaveOverlaySystem : ModSystem
             DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
         MistPreviewSystem.DrawFigures(Main.spriteBatch);
         MistSightingSystem.DrawFigures(Main.spriteBatch);
-        Main.spriteBatch.End();
-
-        if (fog < 0.01f && flash < 0.01f)
-            return;
-        Rectangle screen = new(0, 0, Main.screenWidth, Main.screenHeight);
-        Main.spriteBatch.Begin();
-        if (fog >= 0.01f)
-            Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, screen,
-                new Color(200, 214, 224) * (0.42f * fog));
-        if (flash >= 0.01f)
-            Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, screen,
-                new Color(170, 235, 255) * (0.5f * flash));
         Main.spriteBatch.End();
     }
 }

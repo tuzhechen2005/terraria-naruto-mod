@@ -39,20 +39,23 @@ public sealed class SeaMistSystem : ModSystem
                 !Main.dayTime || Main.raining, ShinobiClientConfig.Instance.SeaFogStrength / 100f);
         target = System.Math.Max(target, MistPreviewSystem.MistBoost);
         Density = MathHelper.Lerp(Density, target, 0.05f);
-        if (overlay == null || Density <= 0.01f)
+        if (overlay == null)
             return;
-        if (overlay.Mode != OverlayMode.Active)
+        // The same veil also carries Zabuza's transition mist and Haku's ice flash.
+        if (overlay.Mode != OverlayMode.Active && overlay.IsVisible())
             Overlays.Scene.Activate(OverlayKey, player.Center);
-        if (Main.GameUpdateCount % 3 == 0 && Main.rand.NextFloat() < Density * 1.5f)
-            DriftPuff();
+        if (Density > 0.01f && Main.GameUpdateCount % 2 == 0)
+            for (int i = 0; i < 1 + (int)(Density * 2f + Main.rand.NextFloat()); i++)
+                DriftPuff();
     }
 
-    // A slow, faint round puff somewhere in view (lighter than the first version's, user 2026-09-29).
+    // A slow round puff somewhere in view: between the first version's (too heavy) and the faint one that followed
+    // (too faint and too few), per the user on 2026-09-29.
     private static void DriftPuff()
     {
         Vector2 at = Main.screenPosition + new Vector2(Main.rand.NextFloat(Main.screenWidth), Main.rand.NextFloat(Main.screenHeight));
         Dust puff = Dust.NewDustPerfect(at, Terraria.ID.DustID.Smoke, new Vector2(Main.rand.NextFloat(0.2f, 0.6f), 0f),
-            215, new Color(200, 214, 224), Main.rand.NextFloat(2f, 3.2f));
+            170, new Color(200, 214, 224), Main.rand.NextFloat(2f, 3.2f));
         puff.noGravity = true;
     }
 }

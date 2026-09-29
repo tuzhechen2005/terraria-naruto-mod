@@ -6,8 +6,8 @@ using Terraria.Graphics.Effects;
 
 namespace ShinobiPrototype.Common.Systems;
 
-// The sea mist around the Wave Country bridge: the same flat grey-white veil as Zabuza's phase-two mist, over the
-// whole view. Two things keep it from looking wrong at night (user, 2026-09-29): its colour follows the sky's
+// The mist veil over the whole view: the sea mist around the Wave Country bridge and Zabuza's transition /
+// mist-phase mist (whichever is thicker), in the phase-two grey-white, plus Haku's brief ice flash. Two things keep it from looking wrong at night (user, 2026-09-29): its colour follows the sky's
 // brightness (with a floor, so night mist is a dim grey rather than a glowing sheet), and it is drawn on the
 // ForegroundWater overlay layer, so the sea is covered instead of showing through as dark blocks.
 // Thickness follows SeaMistSystem.Density.
@@ -21,7 +21,8 @@ public sealed class SeaMistOverlay : Overlay
     {
     }
 
-    public override bool IsVisible() => SeaMistSystem.Density > 0.01f && !Main.gameMenu;
+    public override bool IsVisible() => !Main.gameMenu && (SeaMistSystem.Density > 0.01f ||
+        (Content.NPCs.WaveOverlaySystem.BossMistAlpha > 0.004f || Content.NPCs.WaveOverlaySystem.FlashAlpha > 0.004f));
 
     public override void Activate(Vector2 position, params object[] args) => Mode = OverlayMode.Active;
 
@@ -40,12 +41,18 @@ public sealed class SeaMistOverlay : Overlay
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        float alpha = System.Math.Min(MaxAlpha, SeaMistSystem.Density);
+        float alpha = System.Math.Max(System.Math.Min(MaxAlpha, SeaMistSystem.Density),
+            Content.NPCs.WaveOverlaySystem.BossMistAlpha);
         Color color = Tint * SkyBrightness();
         color.A = 255;
         Vector2 view = new Vector2(Main.screenWidth, Main.screenHeight) / Main.GameViewMatrix.Zoom;
         Vector2 topLeft = (new Vector2(Main.screenWidth, Main.screenHeight) - view) / 2f;
         Rectangle area = new((int)topLeft.X - 16, (int)topLeft.Y - 16, (int)view.X + 32, (int)view.Y + 32);
-        spriteBatch.Draw(TextureAssets.MagicPixel.Value, area, color * alpha);
+        if (alpha > 0.004f)
+            spriteBatch.Draw(TextureAssets.MagicPixel.Value, area, color * alpha);
+        // The ice flash is a burst of light, so it keeps its brightness at night.
+        float flash = Content.NPCs.WaveOverlaySystem.FlashAlpha;
+        if (flash > 0.004f)
+            spriteBatch.Draw(TextureAssets.MagicPixel.Value, area, new Color(170, 235, 255) * flash);
     }
 }
