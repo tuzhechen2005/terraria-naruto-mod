@@ -25,6 +25,10 @@ public sealed class ZabuzaBoss : ModNPC
     private bool frenzyStarted;
     private int comboSlashes;
     private bool openingChecked;
+    private int dashTicks;
+    private int dashCount;
+    private int stuckTicks;
+    private float lastX;
 
     // Summoned this close to the Wave Country bridge, he opens with the bridge line.
     private const float BridgeOpeningRangeTiles = 60f;
@@ -113,13 +117,17 @@ public sealed class ZabuzaBoss : ModNPC
         int state = (int)NPC.ai[0];
         NPC.noGravity = state is ZabuzaCombatRules.DashActive or ZabuzaCombatRules.DashChainActive or
             ZabuzaCombatRules.KunaiDash;
+        // Dashes go straight through terrain, like the Eye of Cthulhu's; EndDash puts him back on open ground.
+        NPC.noTileCollide = state is ZabuzaCombatRules.DashActive or ZabuzaCombatRules.DashChainActive;
         NPC.damage = state == ZabuzaCombatRules.KunaiDash
             ? WaveDuoRules.SoftenedDamage(WaveDuoRules.KunaiDashDamage)
             : NPC.noGravity ? WaveDuoRules.SoftenedDamage(InMistPhase ? 48 : 32) : 0;
         Lighting.AddLight(NPC.Center, InMistPhase ? (LastStand ? 0.6f : 0.46f) : 0.16f,
             InMistPhase ? (LastStand ? 0.18f : 0.12f) : 0.21f,
             InMistPhase ? (LastStand ? 0.78f : 0.64f) : 0.26f);
-        NPC.dontTakeDamage = state is ZabuzaCombatRules.MistTransition or ZabuzaCombatRules.FrenzyAwaken;
+        NPC.dontTakeDamage = state is ZabuzaCombatRules.MistTransition or ZabuzaCombatRules.FrenzyAwaken ||
+            state == ZabuzaCombatRules.BodyFlicker && NPC.ai[1] >= ZabuzaCombatRules.FlickerVanishTick &&
+            NPC.ai[1] < ZabuzaCombatRules.FlickerReappearTick;
         NPC.alpha = 0;
         if (HandleMirrorCage())
             return;
@@ -127,6 +135,8 @@ public sealed class ZabuzaBoss : ModNPC
         {
             case ZabuzaCombatRules.Approach:
                 MoveToward(target);
+                if (CheckStuck(target))
+                    break;
                 if (NPC.ai[1] >= ZabuzaCombatRules.ApproachTicks(InMistPhase,
                     Math.Abs(target.Center.X - NPC.Center.X)))
                 {
@@ -348,11 +358,11 @@ public sealed class ZabuzaBoss : ModNPC
                 break;
 
             case ZabuzaCombatRules.DashActive:
-                if (ZabuzaCombatRules.DashHitWall(NPC.ai[1], NPC.collideX, NPC.collideY))
-                    EndDash();
-                else if (NPC.ai[1] >= ZabuzaCombatRules.DashActiveTicks)
+            case ZabuzaCombatRules.DashChainActive:
+                if (NPC.ai[1] >= dashTicks)
                 {
-                    if (InMistPhase)
+                    int chain = LastStand ? ZabuzaCombatRules.FrenzyDashChain : InMistPhase ? 2 : 1;
+                    if (dashCount < chain)
                         Enter(ZabuzaCombatRules.DashReaim);
                     else
                         EndDash();
@@ -360,6 +370,8 @@ public sealed class ZabuzaBoss : ModNPC
                 break;
 
             case ZabuzaCombatRules.DashReaim:
+                if (NPC.ai[1] == 1f)
+                    PushOutOfTiles();
                 NPC.velocity *= 0.78f;
                 NPC.ai[2] = target.Center.X >= NPC.Center.X ? 1f : -1f;
                 NPC.direction = NPC.spriteDirection = (int)NPC.ai[2];
@@ -368,10 +380,8 @@ public sealed class ZabuzaBoss : ModNPC
                     StartDash(target, ZabuzaCombatRules.DashChainActive);
                 break;
 
-            case ZabuzaCombatRules.DashChainActive:
-                if (ZabuzaCombatRules.DashHitWall(NPC.ai[1], NPC.collideX, NPC.collideY) ||
-                    NPC.ai[1] >= ZabuzaCombatRules.DashActiveTicks)
-                    EndDash();
+            case ZabuzaCombatRules.BodyFlicker:
+                UpdateBodyFlicker(target);
                 break;
 
             case ZabuzaCombatRules.DashRecovery:
@@ -758,19 +768,20 @@ public sealed class ZabuzaBoss : ModNPC
             SoundEngine.PlaySound(SoundID.Item21, NPC.Center);
     }
 
+    // Aims where the player will be, in any direction up to about 60 degrees off level, and runs long enough to
+    // reach them and overshoot.
     private void StartDash(Player target, int activeState)
     {
-        float horizontal = target.Center.X - NPC.Center.X;
-        NPC.ai[2] = horizontal >= 0f ? 1f : -1f;
-        float slope = MathHelper.Clamp((target.Center.Y - NPC.Center.Y) /
-            Math.Max(Math.Abs(horizontal), 90f), -0.28f, 0.28f);
-        Vector2 direction = new(NPC.ai[2], slope);
-        direction.Normalize();
-        NPC.velocity = direction * ZabuzaCombatRules.DashSpeed(InMistPhase,
-            NPC.life / (float)NPC.lifeMax) *
-            (LastStand ? WaveDuoRules.ZabuzaFrenzyDashMultiplier : 1f);
-        if (NPC.collideY && NPC.velocity.Y > -1.5f)
-            NPC.velocity.Y = -1.5f;
+        if (activeState == ZabuzaCombatRules.DashActive)
+            dashCount = 0;
+        dashCount++;
+        float speed = ZabuzaCombatRules.DashSpeed(InMistPhase, NPC.life / (float)NPC.lifeMax) *
+                      (LastStand ? WaveDuoRules.ZabuzaFrenzyDashMultiplier : 1f);
+        Vector2 toTarget = target.Center - NPC.Center;
+        (float x, float y) = ZabuzaCombatRules.DashAim(toTarget.X, toTarget.Y, target.velocity.X, target.velocity.Y, speed);
+        NPC.velocity = new Vector2(x, y) * speed;
+        dashTicks = ZabuzaCombatRules.DashActiveTicksFor(toTarget.Length(), speed);
+        NPC.ai[2] = x >= 0f ? 1f : -1f;
         NPC.direction = NPC.spriteDirection = (int)NPC.ai[2];
         NPC.noGravity = true;
         NPC.netUpdate = true;
@@ -781,10 +792,114 @@ public sealed class ZabuzaBoss : ModNPC
     private void EndDash()
     {
         NPC.noGravity = false;
+        NPC.noTileCollide = false;
+        PushOutOfTiles();
         NPC.damage = 0;
         NPC.velocity *= 0.4f;
         NPC.localAI[0]++;
         Enter(ZabuzaCombatRules.DashRecovery);
+    }
+
+    // After passing through terrain, step out to the nearest spot where the body fits.
+    private void PushOutOfTiles()
+    {
+        if (!Collision.SolidCollision(NPC.position, NPC.width, NPC.height))
+            return;
+        for (int radius = 1; radius <= 14; radius++)
+            foreach (Vector2 step in new[] { new Vector2(0, -1), new Vector2(-1, 0), new Vector2(1, 0),
+                         new Vector2(-1, -1), new Vector2(1, -1), new Vector2(0, 1) })
+            {
+                Vector2 candidate = NPC.position + step * radius * 16f;
+                if (!Collision.SolidCollision(candidate, NPC.width, NPC.height))
+                {
+                    NPC.position = candidate;
+                    NPC.netUpdate = true;
+                    return;
+                }
+            }
+    }
+
+    // Stuck against terrain (or left far behind): Body Flicker. Only the server (or single player) decides.
+    private bool CheckStuck(Player target)
+    {
+        bool wantsToMove = Math.Abs(target.Center.X - NPC.Center.X) > 90f;
+        bool moved = Math.Abs(NPC.position.X - lastX) >= ZabuzaCombatRules.StuckProgressPerTick;
+        lastX = NPC.position.X;
+        stuckTicks = wantsToMove && !moved ? stuckTicks + 1 : Math.Max(0, stuckTicks - 2);
+        if (Main.netMode == NetmodeID.MultiplayerClient ||
+            !ZabuzaCombatRules.ShouldFlicker(stuckTicks, NPC.Distance(target.Center) / 16f))
+            return false;
+        stuckTicks = 0;
+        Enter(ZabuzaCombatRules.BodyFlicker);
+        return true;
+    }
+
+    // Body Flicker (瞬身): dissolve into mist, reappear on open ground six to ten tiles behind the player, fade in.
+    private void UpdateBodyFlicker(Player target)
+    {
+        float tick = NPC.ai[1];
+        NPC.velocity.X *= 0.6f;
+        if (tick < ZabuzaCombatRules.FlickerVanishTick)
+            NPC.alpha = (int)(255 * tick / ZabuzaCombatRules.FlickerVanishTick);
+        else if (tick < ZabuzaCombatRules.FlickerReappearTick)
+            NPC.alpha = 255;
+        else
+            NPC.alpha = (int)(255 * (1f - (tick - ZabuzaCombatRules.FlickerReappearTick) /
+                (ZabuzaCombatRules.BodyFlickerTicks - ZabuzaCombatRules.FlickerReappearTick)));
+
+        if (tick == 1f)
+        {
+            SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+            FlickerMist();
+        }
+        if (tick == ZabuzaCombatRules.FlickerVanishTick && Main.netMode != NetmodeID.MultiplayerClient &&
+            FindFlickerSpot(target, out Vector2 spot))
+        {
+            NPC.position = spot;
+            NPC.velocity = Vector2.Zero;
+            NPC.direction = NPC.spriteDirection = target.Center.X >= NPC.Center.X ? 1 : -1;
+            NPC.netUpdate = true;
+        }
+        if (tick == ZabuzaCombatRules.FlickerReappearTick)
+        {
+            SoundEngine.PlaySound(SoundID.Splash, NPC.Center);
+            FlickerMist();
+        }
+        if (tick >= ZabuzaCombatRules.BodyFlickerTicks)
+            Enter(ZabuzaCombatRules.Approach);
+    }
+
+    private void FlickerMist()
+    {
+        if (Main.netMode == NetmodeID.Server)
+            return;
+        for (int i = 0; i < 26; i++)
+            Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(NPC.width, NPC.height / 2f),
+                DustID.Smoke, Main.rand.NextVector2Circular(2f, 2f), 90, new Color(190, 215, 230), 2f).noGravity = true;
+        for (int i = 0; i < 12; i++)
+            Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Water);
+    }
+
+    // Open ground behind the player (the side they are not facing), falling back to in front of them.
+    private bool FindFlickerSpot(Player target, out Vector2 spot)
+    {
+        int behind = -target.direction;
+        foreach (int side in new[] { behind, -behind })
+            foreach (int tiles in new[] { 8, 6, 10, 7, 9 })
+            {
+                float x = target.Center.X + side * tiles * 16f - NPC.width / 2f;
+                for (int rows = -6; rows <= 12; rows++)
+                {
+                    Vector2 candidate = new(x, target.Bottom.Y + rows * 16f - NPC.height);
+                    if (Collision.SolidCollision(candidate, NPC.width, NPC.height) ||
+                        !Collision.SolidCollision(candidate + new Vector2(0f, NPC.height), NPC.width, 8))
+                        continue;
+                    spot = candidate;
+                    return true;
+                }
+            }
+        spot = NPC.position;
+        return false;
     }
 
     private void ShowDashCharge()
@@ -1055,6 +1170,8 @@ public sealed class ZabuzaBoss : ModNPC
         writer.Write(NPC.localAI[3]);
         writer.Write(frenzyStarted);
         writer.Write((byte)comboSlashes);
+        writer.Write((byte)dashTicks);
+        writer.Write((byte)dashCount);
     }
 
     public override void ReceiveExtraAI(BinaryReader reader)
@@ -1064,6 +1181,8 @@ public sealed class ZabuzaBoss : ModNPC
         NPC.localAI[3] = reader.ReadSingle();
         frenzyStarted = reader.ReadBoolean();
         comboSlashes = reader.ReadByte();
+        dashTicks = reader.ReadByte();
+        dashCount = reader.ReadByte();
     }
 
     public override void HitEffect(NPC.HitInfo hit)

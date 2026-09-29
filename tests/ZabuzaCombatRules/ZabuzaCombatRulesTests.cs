@@ -134,6 +134,25 @@ Check(ZabuzaCombatRules.DashSpeed(true) > ZabuzaCombatRules.DashSpeed(false) &&
 Check(ZabuzaCombatRules.DashSpeed(true, 0.2f) > ZabuzaCombatRules.DashSpeed(true, 0.5f) &&
     ZabuzaCombatRules.ChooseAttack(true, 9, 230, 0.2f) == ZabuzaCombatRules.DashWindup,
     "Low-life demon form increases charge pressure");
+var aimFlat = ZabuzaCombatRules.DashAim(300f, 0f, 0f, 0f, 11.5f);
+var aimUp = ZabuzaCombatRules.DashAim(200f, -180f, 0f, 0f, 11.5f);
+var aimLead = ZabuzaCombatRules.DashAim(300f, 0f, 0f, -6f, 11.5f);
+var aimOverhead = ZabuzaCombatRules.DashAim(10f, -400f, 0f, 0f, 11.5f);
+Check(Math.Abs(aimFlat.X - 1f) < 1e-3 && aimUp.Y < -0.6f && aimLead.Y < -0.2f &&
+    aimOverhead.Y / Math.Abs(aimOverhead.X) >= -ZabuzaCombatRules.DashMaxSlope - 1e-3,
+    "Dash aims at the player in any direction up to about 60 degrees and leads their movement");
+Check(ZabuzaCombatRules.DashActiveTicksFor(300f, 11.5f) * 11.5f > 300f &&
+    ZabuzaCombatRules.DashActiveTicksFor(2000f, 11.5f) == ZabuzaCombatRules.DashMaxActiveTicks &&
+    ZabuzaCombatRules.DashActiveTicksFor(0f, 11.5f) == ZabuzaCombatRules.DashMinActiveTicks,
+    "Dash lasts long enough to reach the player and overshoot, within limits");
+Check(ZabuzaCombatRules.DashSpeed(false) > 9.2f && ZabuzaCombatRules.DashSpeed(true) > 13.2f,
+    "Dash is faster than before the rework");
+Check(!ZabuzaCombatRules.ShouldFlicker(60, 20f) && ZabuzaCombatRules.ShouldFlicker(ZabuzaCombatRules.StuckTicksBeforeFlicker, 5f) &&
+    ZabuzaCombatRules.ShouldFlicker(0, ZabuzaCombatRules.FlickerFarTiles),
+    "Body Flicker when stuck for two seconds or far from the player");
+Check(ZabuzaCombatRules.FlickerVanishTick < ZabuzaCombatRules.FlickerReappearTick &&
+    ZabuzaCombatRules.FlickerReappearTick < ZabuzaCombatRules.BodyFlickerTicks,
+    "Body Flicker fades out, moves, then fades in");
 Check(!ZabuzaCombatRules.DashHitWall(1, false, true) &&
     ZabuzaCombatRules.DashHitWall(4, true, false) &&
     ZabuzaCombatRules.DashHitWall(4, false, true) &&

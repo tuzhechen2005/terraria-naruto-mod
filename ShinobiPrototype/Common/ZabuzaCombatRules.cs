@@ -31,6 +31,8 @@ public static class ZabuzaCombatRules
     public const int KunaiWindup = 23;
     public const int KunaiDash = 24;
     public const int SwordCatch = 25;
+    // Body Flicker: when stuck or far away he dissolves into mist and reappears behind the player.
+    public const int BodyFlicker = 26;
     public const int IdlePose = 0;
     public const int WindupPose = 1;
     public const int SlashPose = 2;
@@ -157,9 +159,46 @@ public static class ZabuzaCombatRules
     // Before the transition has run, a lethal hit leaves Zabuza at half health instead.
     public static bool MayDie(float transitionStage) => transitionStage >= 2f;
     public static int PhaseOneFloor(int lifeMax) => Math.Max(1, lifeMax / 2);
-    public static int DashWindupTicks(bool demonPhase) => demonPhase ? 23 : 31;
+    // Dash, rebuilt after "the dash never hits" (user, 2026-09-29): aimed in any direction up to about 60 degrees
+    // off level, leading the player's movement, passing through terrain like the Eye of Cthulhu, and lasting long
+    // enough to reach the player and overshoot. (Before: nearly flat, stopped by the floor after three ticks, 18
+    // ticks long.)
+    public static int DashWindupTicks(bool demonPhase) => demonPhase ? 20 : 26;
     public static float DashSpeed(bool demonPhase, float lifeRatio = 1f) =>
-        demonPhase ? (lifeRatio <= 0.25f ? 15f : 13.2f) : 9.2f;
+        demonPhase ? (lifeRatio <= 0.25f ? 16.5f : 14.5f) : 11.5f;
+    public const int DashMinActiveTicks = 14;
+    public const int DashMaxActiveTicks = 34;
+    public const int DashOvershootTicks = 10;
+    public const float DashLeadMaxTicks = 18f;
+    public const float DashMaxSlope = 1.7f; // tan of about 60 degrees
+    public const int FrenzyDashChain = 3;
+
+    public static int DashActiveTicksFor(float distance, float speed) =>
+        Math.Clamp((int)(distance / Math.Max(1f, speed)) + DashOvershootTicks, DashMinActiveTicks, DashMaxActiveTicks);
+
+    // Unit direction towards where the player will be when the dash arrives.
+    public static (float X, float Y) DashAim(float dx, float dy, float targetVelocityX, float targetVelocityY, float speed)
+    {
+        float distance = MathF.Sqrt(dx * dx + dy * dy);
+        float lead = Math.Clamp(distance / Math.Max(1f, speed), 0f, DashLeadMaxTicks);
+        float x = dx + targetVelocityX * lead;
+        float y = dy + targetVelocityY * lead;
+        if (Math.Abs(x) < 1f)
+            x = x >= 0f ? 1f : -1f;
+        y = Math.Clamp(y, -Math.Abs(x) * DashMaxSlope, Math.Abs(x) * DashMaxSlope);
+        float length = MathF.Sqrt(x * x + y * y);
+        return (x / length, y / length);
+    }
+
+    public const int BodyFlickerTicks = 50;
+    public const int FlickerVanishTick = 20;
+    public const int FlickerReappearTick = 30;
+    public const int StuckTicksBeforeFlicker = 120;
+    public const float StuckProgressPerTick = 0.6f;
+    public const float FlickerFarTiles = 60f;
+
+    public static bool ShouldFlicker(int stuckTicks, float distanceTiles) =>
+        stuckTicks >= StuckTicksBeforeFlicker || distanceTiles >= FlickerFarTiles;
     public static bool DashHitWall(float elapsedTicks, bool collideX, bool collideY) =>
         elapsedTicks > 3f && (collideX || collideY);
     public static bool IsSlashActive(int state, float elapsedTicks) =>
@@ -197,6 +236,7 @@ public static class ZabuzaCombatRules
         WaterRecovery when elapsedTicks <= 10f => SealPose,
         DragonRecovery or FanRecovery or RainRecovery or SpiralRecovery when elapsedTicks <= 10f => SealPose,
         MistStep => LeapPose,
+        BodyFlicker => SealPose,
         _ when airborne => LeapPose,
         _ when moving => RunFrame(distanceTraveled),
         _ => IdlePose
