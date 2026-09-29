@@ -9,20 +9,15 @@ using ShinobiPrototype.Content.Items;
 namespace ShinobiPrototype.Content.NPCs;
 
 // Tazuna after the win: an ordinary town NPC who first moves into his finished hut by the bridge.
-// Borrows the Merchant's sprite until his own art exists.
+// Art: tazuna-npc-v1 (scripts/build_npc_sheet.py), 12-frame NpcSheet layout.
 [AutoloadHead]
 public sealed class Tazuna : ModNPC
 {
     private const string ShopName = "Shop";
 
-    public override string Texture => $"Terraria/Images/NPC_{NPCID.Merchant}";
-    public override string HeadTexture => $"Terraria/Images/NPC_Head_2";
-
     public override void SetStaticDefaults()
     {
-        Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Merchant];
-        NPCID.Sets.ExtraFramesCount[Type] = NPCID.Sets.ExtraFramesCount[NPCID.Merchant];
-        NPCID.Sets.AttackFrameCount[Type] = NPCID.Sets.AttackFrameCount[NPCID.Merchant];
+        Main.npcFrameCount[Type] = NpcSheet.FrameCount;
         NPCID.Sets.DangerDetectRange[Type] = 500;
         NPCID.Sets.AttackType[Type] = 0;
         NPCID.Sets.AttackTime[Type] = 60;
@@ -42,8 +37,9 @@ public sealed class Tazuna : ModNPC
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
         NPC.knockBackResist = 0.5f;
-        AnimationType = NPCID.Merchant;
     }
+
+    public override void FindFrame(int frameHeight) => NpcSheet.Animate(NPC, frameHeight);
 
     public override bool CanTownNPCSpawn(int numTownNPCs) => StoryWorld.WaveComplete;
 

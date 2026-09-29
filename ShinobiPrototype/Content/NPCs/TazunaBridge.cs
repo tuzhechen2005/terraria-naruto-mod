@@ -10,14 +10,14 @@ namespace ShinobiPrototype.Content.NPCs;
 
 // Tazuna before the win: stands in his hut by the unfinished bridge, cannot be hurt (like the Dungeon's Old Man)
 // and is not a town NPC. WaveBridgeWorld re-places him when missing and removes him once the bridge is finished.
-// Borrows the Merchant's sprite until his own art exists.
+// Shares the town Tazuna's sprite sheet.
 public sealed class TazunaBridge : ModNPC
 {
-    public override string Texture => $"Terraria/Images/NPC_{NPCID.Merchant}";
+    public override string Texture => "ShinobiPrototype/Content/NPCs/Tazuna";
 
     public override void SetStaticDefaults()
     {
-        Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.Merchant];
+        Main.npcFrameCount[Type] = NpcSheet.FrameCount;
         NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, new NPCID.Sets.NPCBestiaryDrawModifiers { Hide = true });
     }
 
@@ -75,5 +75,5 @@ public sealed class TazunaBridge : ModNPC
         NPC.spriteDirection = NPC.direction;
     }
 
-    public override void FindFrame(int frameHeight) => NPC.frame.Y = 0;
+    public override void FindFrame(int frameHeight) => NPC.frame.Y = NpcSheet.IdleFrame * frameHeight;
 }
