@@ -6,7 +6,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common.Players;
 using ShinobiPrototype.Common.Systems;
-using ShinobiPrototype.Content.Projectiles;
 
 namespace ShinobiPrototype.Content.NPCs;
 
@@ -111,8 +110,7 @@ public sealed class Kakashi : ModNPC
         player.SetTalkNPC(-1);
         Main.npcChatText = "";
         CombatText.NewText(NPC.getRect(), Color.White, "看好了——");
-        Projectile.NewProjectile(NPC.GetSource_FromThis(), NPC.Center, Vector2.Zero,
-            ModContent.ProjectileType<KakashiPracticeKunai>(), 0, 0f, player.whoAmI, NPC.whoAmI);
+        player.GetModPlayer<SubstitutionDrillPlayer>().Start(NPC.whoAmI);
     }
 
     public override void TownNPCAttackStrength(ref int damage, ref float knockback)
@@ -142,6 +140,10 @@ public sealed class Kakashi : ModNPC
 
     public override void FindFrame(int frameHeight)
     {
+        // Overriding FindFrame skips vanilla's town-NPC framing, which is also what turns the sprite to face
+        // the way he walks; without this he always faces left and walks backwards when heading right.
+        NPC.spriteDirection = NPC.direction;
+
         int frame;
         if (NPC.ai[0] == SittingState)
             frame = SitFrame;

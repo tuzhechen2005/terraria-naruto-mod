@@ -38,3 +38,17 @@ Check(offsets[0] == (8, 0), "Landing tries level ground away from the attacker f
 Check(offsets.Take(offsets.Length / 2).All(o => o.X > 0) && offsets.Skip(offsets.Length / 2).All(o => o.X < 0),
     "Away side is tried before the attacker's side");
 Check(LandingOffsets(-1)[0] == (-8, 0), "Direction flips with the hit");
+
+Check(SubstitutionCostFor(true) == 0 && SubstitutionCostFor(false) == SubstitutionCost, "Drill substitutions are free");
+Check(SubstitutionCooldownFor(true) < SubstitutionCooldownFor(false), "Drill cooldown is shorter");
+Check(SubstitutionCooldownFor(true) < PracticeGapMinTicks, "Jutsu is ready again before the next drill kunai");
+Check(CheckSubstitution(0, 0, SubstitutionCostFor(true)) == Activation.Ready, "Drill works with empty chakra");
+Check(PracticeWindupMinTicks < PracticeWindupMaxTicks && PracticeGapMinTicks < PracticeGapMaxTicks,
+    "Drill timing varies between throws");
+float flightTicks = PracticeDistanceMinTiles * 16f / PracticeKunaiSpeed;
+Check(flightTicks > SubstitutionWindowTicks, "Closest kunai is in the air longer than the standby window, so it can be read");
+Check(JudgePracticeHit(true, 5) == PracticeOutcome.Substituted, "Standby at impact is a success");
+Check(JudgePracticeHit(false, 30) == PracticeOutcome.TooEarly, "Pressed recently but expired: too early");
+Check(JudgePracticeHit(false, PracticeEarlyWindowTicks + 1) == PracticeOutcome.TooLate, "No recent press: too late");
+Check(PracticeVerdict(8, 8) != PracticeVerdict(4, 8) && PracticeVerdict(4, 8) != PracticeVerdict(1, 8),
+    "Drill summary depends on the score");

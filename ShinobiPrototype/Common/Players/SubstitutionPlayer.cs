@@ -15,6 +15,7 @@ public sealed class SubstitutionPlayer : ModPlayer
 {
     private int standby;
     private int ticksSinceHint;
+    private int ticksSinceActivation;
 
     public int Cooldown { get; private set; }
     public bool Mastered { get; private set; }
@@ -27,6 +28,7 @@ public sealed class SubstitutionPlayer : ModPlayer
         Mastered = false;
         HintsShown = 0;
         ticksSinceHint = ChakraRules.SubstitutionHintSpacingTicks;
+        ticksSinceActivation = ChakraRules.PracticeEarlyWindowTicks + 1;
     }
 
     public override void ProcessTriggers(TriggersSet triggersSet)
@@ -43,6 +45,8 @@ public sealed class SubstitutionPlayer : ModPlayer
             Cooldown--;
         if (ticksSinceHint < ChakraRules.SubstitutionHintSpacingTicks)
             ticksSinceHint++;
+        if (ticksSinceActivation <= ChakraRules.PracticeEarlyWindowTicks)
+            ticksSinceActivation++;
     }
 
     private void TryActivate()
@@ -51,7 +55,9 @@ public sealed class SubstitutionPlayer : ModPlayer
             return;
 
         ChakraPlayer chakra = Player.GetModPlayer<ChakraPlayer>();
-        switch (ChakraRules.CheckSubstitution(chakra.Chakra, Cooldown))
+        bool drilling = Player.GetModPlayer<SubstitutionDrillPlayer>().Active;
+        int cost = ChakraRules.SubstitutionCostFor(drilling);
+        switch (ChakraRules.CheckSubstitution(chakra.Chakra, Cooldown, cost))
         {
             case ChakraRules.Activation.CoolingDown:
                 CombatText.NewText(Player.getRect(), Color.LightGray, $"替身术冷却中 {Cooldown / 60f:0.0}s");
@@ -61,9 +67,11 @@ public sealed class SubstitutionPlayer : ModPlayer
                 return;
         }
 
-        chakra.TrySpend(ChakraRules.SubstitutionCost);
+        if (cost > 0)
+            chakra.TrySpend(cost);
         standby = ChakraRules.SubstitutionWindowTicks;
-        Cooldown = ChakraRules.SubstitutionCooldownTicks;
+        Cooldown = ChakraRules.SubstitutionCooldownFor(drilling);
+        ticksSinceActivation = 0;
         SoundEngine.PlaySound(SoundID.Item7, Player.Center);
         for (int i = 0; i < 6; i++)
             Dust.NewDust(Player.position, Player.width, Player.height, DustID.Smoke, 0f, -1f, 120, default, 0.9f);
@@ -78,14 +86,13 @@ public sealed class SubstitutionPlayer : ModPlayer
         return true;
     }
 
-    // Kakashi's drill kunai deals no damage, so it asks for the dodge directly instead of going through FreeDodge.
-    public bool TryTrainingDodge(int awayDirection)
+    // Kakashi's drill kunai deal no damage, so they ask for the dodge directly instead of going through FreeDodge.
+    public ChakraRules.PracticeOutcome TakeDrillKunai(int awayDirection)
     {
-        if (standby <= 0)
-            return false;
-
-        Substitute(awayDirection);
-        return true;
+        ChakraRules.PracticeOutcome outcome = ChakraRules.JudgePracticeHit(standby > 0, ticksSinceActivation);
+        if (outcome == ChakraRules.PracticeOutcome.Substituted)
+            Substitute(awayDirection);
+        return outcome;
     }
 
     private void Substitute(int awayDirection)

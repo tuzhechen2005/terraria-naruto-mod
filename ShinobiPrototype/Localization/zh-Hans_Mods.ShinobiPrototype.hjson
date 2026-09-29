@@ -92,6 +92,17 @@ NPCs: {
 	Kakashi: {
 		DisplayName: 木叶上忍
 		GivenName: 卡卡西
+
+		TownNPCMood: {
+			// Content: 我很满足。
+			// NoHome: 我讨厌没有家。
+			// FarFromHome: 我离家太远了。
+			// LoveSpace: 我非常喜欢有这么大的空间。
+			// DislikeCrowded: 我不喜欢这么拥挤。
+			// HateCrowded: 我讨厌这么拥挤。
+			// LikeNPC_Princess: 我喜欢 {NPCName}。
+			// Princess_LovesNPC: 我喜欢 {NPCName}。
+		}
 	}
 
 	MistScout.DisplayName: 雾隐侦察兵
@@ -141,18 +152,23 @@ Buffs: {
 Tiles.ChakraCrystalTile.MapEntry: 查克拉结晶
 Keybinds.Substitution.DisplayName: 替身术
 
-Configs.ShinobiClientConfig: {
-	DisplayName: 火影模组设置
-	ChakraBarOffsetX: {
-		Label: 查克拉条水平偏移
-		Tooltip: 向右移动查克拉条的像素数（负数向左）
-	}
-	ChakraBarOffsetY: {
-		Label: 查克拉条垂直偏移
-		Tooltip: 向下移动查克拉条的像素数（负数向上）
-	}
-	ShowSubstitutionHints: {
-		Label: 显示替身术教学提示
-		Tooltip: 被敌人击中时提示如何使用替身术（最多 3 次，首次成功后不再出现）
+Configs: {
+	ShinobiClientConfig: {
+		DisplayName: 火影模组设置
+
+		ChakraBarOffsetX: {
+			Label: 查克拉条水平偏移
+			Tooltip: 向右移动查克拉条的像素数（负数向左）
+		}
+
+		ChakraBarOffsetY: {
+			Label: 查克拉条垂直偏移
+			Tooltip: 向下移动查克拉条的像素数（负数向上）
+		}
+
+		ShowSubstitutionHints: {
+			Label: 显示替身术教学提示
+			Tooltip: 被敌人击中时提示如何使用替身术（最多 3 次，首次成功后不再出现）
+		}
 	}
 }
