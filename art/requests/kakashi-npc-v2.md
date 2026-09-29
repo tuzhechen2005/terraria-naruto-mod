@@ -1,6 +1,6 @@
 # 素材请求：kakashi-npc-v2
 
-- 状态：requested
+- 状态：delivered，已接入（Claude 去掉投掷收手帧的游离碎块，整体提亮 25%、饱和 +20%；桥接在交付后因 Codex 用量上限报 failed，不影响交付文件）
 - 提出者及提交号：Claude Code，M1 阶段 2 返工，基于 `fc70a9e`
 - 资产类型：角色姿态（城镇 NPC 动作组），替换 `kakashi-npc-v1`
 - **用户实机反馈（v1 的问题）**：人太瘦太细；走路姿势很怪。对比图：`art/reference/kakashi_v1_vs_guide.png`（左：原版向导；中、右：v1 卡卡西待机与步行帧，均放大 4 倍）。
