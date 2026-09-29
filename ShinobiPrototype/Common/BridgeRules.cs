@@ -24,8 +24,9 @@ public static class BridgeRules
     public const int PreviewHakuAppear = 420;
     public const int PreviewHakuLine = 480;
     public const int PreviewVanish = 760;
-    public const int PreviewZabuzaOffset = BridgeDesign.HalfBuiltPier + 10;
-    public const int PreviewHakuOffset = BridgeDesign.HalfBuiltPier + 14;
+    // A little farther out than the scaffolding's end, but close enough to make out a shape.
+    public const int PreviewZabuzaOffset = BridgeDesign.HalfBuiltPier + 16;
+    public const int PreviewHakuOffset = BridgeDesign.HalfBuiltPier + 20;
     public const float PreviewFog = 1.2f;
 
     // The preview starts when a player walks out near the broken end (on the deck or the scaffold walkway).
@@ -34,6 +35,44 @@ public static class BridgeRules
 
     public static bool NearBrokenEnd(int offset, int rowsAboveDeck) =>
         offset >= PreviewTriggerFrom && offset <= PreviewTriggerTo && rowsAboveDeck >= 0 && rowsAboveDeck <= 5;
+
+    // Figures in the mist: a dark silhouette whose strength drifts between these, with only a trace of detail.
+    public const float FigureMinVisibility = 0.2f;
+    public const float FigureMaxVisibility = 0.6f;
+    public const float FigureDetail = 0.13f;
+    public const int FigurePulseTicks = 150;
+
+    // Sightings after the preview: at night or in rain, near the break, at most once per night (or rain).
+    public const int SightingLength = 240;
+    public const int SightingWhisperTick = 60;
+    public const int SightingChanceOneIn = 600;       // per tick while eligible: about ten seconds on average
+    public const float SightingRangeTiles = 40f;
+    public const int SightingNearOffset = BridgeDesign.HalfBuiltPier + 10;
+    public const int SightingFarOffset = BridgeDesign.HalfBuiltPier + 22;
+
+    // The senbon warning once a player carries three Mist insignia.
+    public const int SenbonWarningInsignia = 3;
+    public const int SenbonStuckTicks = 180;
+    public const float SenbonSpeed = 14f;
+    public const int SenbonThrowerOffset = BridgeDesign.HalfBuiltPier + 14;
+
+    // How visible a mist figure is `tick` ticks into an appearance lasting `length`, fading in and out over `fade`.
+    public static float FigureVisibility(int tick, int length, int fade)
+    {
+        if (tick < 0 || tick >= length)
+            return 0f;
+        float envelope = Math.Min(1f, Math.Min(tick, length - tick) / (float)Math.Max(1, fade));
+        float pulse = 0.5f + 0.5f * (float)Math.Sin(tick * 2 * Math.PI / FigurePulseTicks);
+        return envelope * (FigureMinVisibility + (FigureMaxVisibility - FigureMinVisibility) * pulse);
+    }
+
+    public static bool SightingEligible(bool mistActive, bool previewDone, bool nightOrRain, bool usedThisSpell,
+        float distanceToBreakTiles) =>
+        mistActive && previewDone && nightOrRain && !usedThisSpell && distanceToBreakTiles <= SightingRangeTiles;
+
+    public static bool SenbonWarningDue(bool alreadyWarned, bool previewDone, bool mistActive, int insignia,
+        bool nearBreak) =>
+        !alreadyWarned && previewDone && mistActive && insignia >= SenbonWarningInsignia && nearBreak;
 
     // How thick the sea mist is for a player this far (in tiles) from the bridge, before the overlay's own scale.
     public static float SeaFog(float distanceTiles, bool nightOrRain, float setting)

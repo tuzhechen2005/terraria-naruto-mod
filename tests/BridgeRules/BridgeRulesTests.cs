@@ -85,5 +85,24 @@ Check(PreviewFogBoost(0) == 0f && PreviewFogBoost(300) == PreviewFog && PreviewF
     "Preview mist rises, holds and clears");
 Check(!NearBrokenEnd(10, 1) && NearBrokenEnd(BridgeDesign.UnfinishedEnd, 1) && NearBrokenEnd(PreviewTriggerTo, 1),
     "Preview starts only near the broken end");
-Check(PreviewZabuzaOffset > PreviewTriggerTo && PreviewZabuzaOffset < BridgeDesign.IslandStart,
-    "Zabuza appears over the water past the scaffolding");
+Check(PreviewZabuzaOffset > PreviewTriggerTo + 10 && PreviewHakuOffset < BridgeDesign.IslandStart,
+    "The pair appear over the water a little beyond the scaffolding, short of the island");
+
+// Figures in the mist.
+float peak = Enumerable.Range(0, 2000).Max(t => FigureVisibility(t, 2000, 60));
+Check(peak <= FigureMaxVisibility + 1e-4 && peak > FigureMaxVisibility - 0.05f, "A mist figure is never fully clear");
+Check(Enumerable.Range(100, 1800).All(t => FigureVisibility(t, 2000, 60) >= FigureMinVisibility - 1e-4),
+    "Once faded in, a figure never quite disappears until it leaves");
+Check(FigureVisibility(0, 200, 30) == 0f && FigureVisibility(200, 200, 30) == 0f, "Figures fade in and out");
+Check(FigureDetail is > 0f and < 0.2f, "Only a trace of detail shows through the silhouette");
+
+Check(SightingEligible(true, true, true, false, 20) && !SightingEligible(true, false, true, false, 20) &&
+      !SightingEligible(true, true, false, false, 20) && !SightingEligible(true, true, true, true, 20) &&
+      !SightingEligible(false, true, true, false, 20) && !SightingEligible(true, true, true, false, 60),
+    "Sightings: after the preview, before the win, at night or in rain, near the break, once per night");
+Check(SightingNearOffset > PreviewTriggerTo && SightingFarOffset < BridgeDesign.IslandStart,
+    "Sightings stand on the water past the scaffolding, short of the island");
+
+Check(SenbonWarningDue(false, true, true, 3, true) && !SenbonWarningDue(true, true, true, 3, true) &&
+      !SenbonWarningDue(false, true, true, 2, true) && !SenbonWarningDue(false, true, true, 3, false) &&
+      !SenbonWarningDue(false, false, true, 3, true), "Senbon warning: once, with three insignia, near the break");

@@ -41,32 +41,35 @@ public sealed class MistPreviewSystem : ModSystem
         switch (tick)
         {
             case BridgeRules.PreviewZabuzaAppear:
-                Puff(ZabuzaBottom(site));
+                MistFigures.Puff(ZabuzaBottom(site));
                 break;
             case BridgeRules.PreviewZabuzaLine1:
-                Say(ZabuzaBottom(site), "PreviewZabuza1", ZabuzaColor);
+                MistFigures.Say(ZabuzaBottom(site), "PreviewZabuza1");
                 break;
             case BridgeRules.PreviewZabuzaLine2:
-                Say(ZabuzaBottom(site), "PreviewZabuza2", ZabuzaColor);
+                MistFigures.Say(ZabuzaBottom(site), "PreviewZabuza2");
                 break;
             case BridgeRules.PreviewHakuAppear:
-                Puff(HakuBottom(site));
+                MistFigures.Puff(HakuBottom(site));
                 break;
             case BridgeRules.PreviewHakuLine:
-                Say(HakuBottom(site), "PreviewHaku", HakuColor);
+                MistFigures.Say(HakuBottom(site), "PreviewHaku");
                 break;
             case BridgeRules.PreviewVanish:
-                Puff(ZabuzaBottom(site));
-                Puff(HakuBottom(site));
+                MistFigures.Puff(ZabuzaBottom(site));
+                MistFigures.Puff(HakuBottom(site));
                 Main.NewText(Language.GetTextValue("Mods.ShinobiPrototype.Dialogue.PreviewEnd"), 190, 200, 210);
                 break;
         }
+        if (Visibility(BridgeRules.PreviewZabuzaAppear) > 0f)
+            MistFigures.Veil(ZabuzaBottom(site));
+        if (Visibility(BridgeRules.PreviewHakuAppear) > 0f)
+            MistFigures.Veil(HakuBottom(site));
         if (++tick >= BridgeRules.PreviewLength)
             tick = -1;
     }
 
-    private static readonly Color ZabuzaColor = new(160, 200, 230);
-    private static readonly Color HakuColor = new(175, 240, 255);
+    public static bool Playing => tick >= 0;
 
     private static Vector2 ZabuzaBottom(BridgeSite site) =>
         new(site.X(BridgeRules.PreviewZabuzaOffset) * 16f + 8f, site.WaterY * 16f);
@@ -74,45 +77,17 @@ public sealed class MistPreviewSystem : ModSystem
     private static Vector2 HakuBottom(BridgeSite site) =>
         new(site.X(BridgeRules.PreviewHakuOffset) * 16f + 8f, site.WaterY * 16f - 24f);
 
-    private static void Say(Vector2 bottom, string key, Color color)
-    {
-        string text = Language.GetTextValue($"Mods.ShinobiPrototype.Dialogue.{key}");
-        int colon = text.IndexOf('：');
-        Rectangle area = new((int)bottom.X - 20, (int)bottom.Y - 90, 40, 90);
-        CombatText.NewText(area, color, colon >= 0 ? text[(colon + 1)..] : text, dramatic: true);
-        Main.NewText(text, color);
-    }
-
-    private static void Puff(Vector2 bottom)
-    {
-        for (int i = 0; i < 30; i++)
-            Dust.NewDustPerfect(bottom + new Vector2(Main.rand.NextFloat(-24f, 24f), -Main.rand.NextFloat(0f, 90f)),
-                DustID.Smoke, Main.rand.NextVector2Circular(1.5f, 1.5f), 100, new Color(210, 220, 230), 2f).noGravity = true;
-    }
+    private static float Visibility(int appear) =>
+        BridgeRules.FigureVisibility(tick - appear, BridgeRules.PreviewVanish + 10 - appear, 25);
 
     // Called by the overlay before it lays the mist on top, so the pair shows through the fog.
     internal static void DrawFigures(SpriteBatch spriteBatch)
     {
         if (tick < 0 || WaveBridgeWorld.Site is not BridgeSite site)
             return;
-        int facing = -site.Dir;
-        float zabuza = Fade(BridgeRules.PreviewZabuzaAppear);
-        float haku = Fade(BridgeRules.PreviewHakuAppear);
-        if (zabuza > 0f)
-            BossSprites.TryDraw(spriteBatch, "Zabuza", "Idle", BossSprites.Loop(8f, 4), 4, BossSprites.Zabuza,
-                ZabuzaBottom(site), facing, Tint(ZabuzaBottom(site)) * zabuza, Main.screenPosition);
-        if (haku > 0f)
-            BossSprites.TryDraw(spriteBatch, "Haku", "Idle", BossSprites.Loop(8f, 4), 4, BossSprites.Haku,
-                HakuBottom(site), facing, Tint(HakuBottom(site)) * haku, Main.screenPosition);
+        MistFigures.Draw(spriteBatch, MistFigure.Zabuza, ZabuzaBottom(site), -site.Dir,
+            Visibility(BridgeRules.PreviewZabuzaAppear));
+        MistFigures.Draw(spriteBatch, MistFigure.Haku, HakuBottom(site), -site.Dir,
+            Visibility(BridgeRules.PreviewHakuAppear));
     }
-
-    private static float Fade(int appear)
-    {
-        float fadeIn = MathHelper.Clamp((tick - appear) / 20f, 0f, 1f);
-        float fadeOut = MathHelper.Clamp((BridgeRules.PreviewVanish + 10 - tick) / 10f, 0f, 1f);
-        return fadeIn * fadeOut;
-    }
-
-    private static Color Tint(Vector2 bottom) =>
-        BossSprites.Lit(Lighting.GetColor((int)(bottom.X / 16f), (int)(bottom.Y / 16f) - 2), 0.5f);
 }

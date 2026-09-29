@@ -173,9 +173,14 @@ Projectiles: {
 }
 
 Dialogue: {
-	PreviewZabuza1: Zabuza: ...So a Leaf brat wants to wade into this too?
-	PreviewZabuza2: Zabuza: This bridge will never be finished.
-	PreviewHaku: Haku: Master Zabuza, it is not yet time.
+	Whisper1: "???: ...You again."
+	Whisper2: "???: Stay away from this bridge."
+	Whisper3: (From the mist comes the scrape of a blade dragged over stone.)
+	Whisper4: "???: The mist swallows everything... you too."
+	SenbonWarning: "???: One more step and you die."
+	PreviewZabuza1: "???: ...So a Leaf brat wants to wade into this too?"
+	PreviewZabuza2: "???: This bridge will never be finished."
+	PreviewHaku: "???: ...It is not yet time. Let us go."
 	PreviewEnd: The figures in the mist are gone... the Mist ninja are watching this bridge.
 	BridgeOpening: Zabuza: Let's settle this here, on this bridge.
 	HakuArrive: Haku: Master Zabuza, leave this to me.

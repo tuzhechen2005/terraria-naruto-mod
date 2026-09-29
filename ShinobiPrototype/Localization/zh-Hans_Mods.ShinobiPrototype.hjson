@@ -173,9 +173,14 @@ Projectiles: {
 }
 
 Dialogue: {
-	PreviewZabuza1: 再不斩：……木叶的小鬼也来蹚这趟浑水了？
-	PreviewZabuza2: 再不斩：这座桥，修不成的。
-	PreviewHaku: 白：再不斩先生，时候还没到。
+	Whisper1: ？？？：……又是你。
+	Whisper2: ？？？：离这座桥远一点。
+	Whisper3: （雾里传来刀锋拖过石头的声音）
+	Whisper4: ？？？：雾会吞掉一切……包括你。
+	SenbonWarning: ？？？：再往前，就是送死了。
+	PreviewZabuza1: ？？？：……木叶的小鬼也来蹚这趟浑水了？
+	PreviewZabuza2: ？？？：这座桥，修不成的。
+	PreviewHaku: ？？？：……时候还没到。我们走吧。
 	PreviewEnd: 浓雾中的身影消失了……雾隐的人在守着这座桥。
 	BridgeOpening: 再不斩：就在这座桥上，把事情了结吧。
 	HakuArrive: 白：再不斩先生，这里交给我。

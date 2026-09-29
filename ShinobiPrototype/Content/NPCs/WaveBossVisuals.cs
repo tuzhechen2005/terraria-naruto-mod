@@ -139,6 +139,7 @@ public sealed class WaveOverlaySystem : ModSystem
         Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
             DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
         MistPreviewSystem.DrawFigures(Main.spriteBatch);
+        MistSightingSystem.DrawFigures(Main.spriteBatch);
         Main.spriteBatch.End();
 
         if (fog < 0.01f && flash < 0.01f)
