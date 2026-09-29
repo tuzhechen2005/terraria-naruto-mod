@@ -348,6 +348,9 @@ public sealed class HakuBoss : ModNPC
         }
         if (t == WaveDuoRules.HakuEmergeLineTick)
             BossLines.Say(NPC, "HakuArrive", new Color(175, 240, 255));
+            // Each client speaks for its own player: only someone who met the boy in the forest hears this.
+            if (Main.LocalPlayer.GetModPlayer<Common.Players.MistEncounterPlayer>().MetForestBoy)
+                BossLines.Say(NPC, "HakuForestRecall", new Color(175, 240, 255));
         ShowIceAura(2);
         if (t >= WaveDuoRules.HakuEmergeTicks)
             Enter(Approach);

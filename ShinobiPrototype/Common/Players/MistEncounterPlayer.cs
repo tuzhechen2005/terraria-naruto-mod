@@ -20,6 +20,12 @@ public sealed class MistEncounterPlayer : ModPlayer
 
     private HashSet<string> previewWorlds = new();
     private HashSet<string> warnedWorlds = new();
+    private HashSet<string> forestWorlds = new();
+
+    // Met the boy gathering herbs in the forest (unmasked Haku) in this world.
+    public bool MetForestBoy => forestWorlds.Contains(WorldId);
+
+    public void MeetForestBoy() => Remember(forestWorlds, true);
 
     private static string WorldId => Main.ActiveWorldFileData?.UniqueId.ToString() ?? "";
 
@@ -47,6 +53,7 @@ public sealed class MistEncounterPlayer : ModPlayer
     {
         previewWorlds = new HashSet<string>();
         warnedWorlds = new HashSet<string>();
+        forestWorlds = new HashSet<string>();
     }
 
     public override void PostUpdate()
@@ -103,6 +110,8 @@ public sealed class MistEncounterPlayer : ModPlayer
             tag["mistPreviewWorlds"] = previewWorlds.ToList();
         if (warnedWorlds.Count > 0)
             tag["senbonWarnedWorlds"] = warnedWorlds.ToList();
+        if (forestWorlds.Count > 0)
+            tag["forestBoyWorlds"] = forestWorlds.ToList();
     }
 
     // Saves from before this was per world stored plain flags; those are dropped, so the scene plays once more.
@@ -110,5 +119,6 @@ public sealed class MistEncounterPlayer : ModPlayer
     {
         previewWorlds = new HashSet<string>(tag.GetList<string>("mistPreviewWorlds"));
         warnedWorlds = new HashSet<string>(tag.GetList<string>("senbonWarnedWorlds"));
+        forestWorlds = new HashSet<string>(tag.GetList<string>("forestBoyWorlds"));
     }
 }

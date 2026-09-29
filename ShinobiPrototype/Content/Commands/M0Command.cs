@@ -14,7 +14,7 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers 或 /m0 god [on|off]";
+    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest 或 /m0 god [on|off]";
     public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
@@ -51,6 +51,19 @@ public sealed class M0Command : ModCommand
             }
             MistPreviewSystem.Play();
             caller.Reply("在本机重放迷雾预告（不改变世界进度）。", Color.LightGreen);
+            return;
+        }
+
+        if (args.Length == 1 && args[0].Equals("forest", StringComparison.OrdinalIgnoreCase))
+        {
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                caller.Reply("召唤采药少年只在单人模式可用。", Color.OrangeRed);
+                return;
+            }
+            NPC.NewNPC(player.GetSource_Misc("ShinobiM0"), (int)player.Center.X + player.direction * 14 * 16,
+                (int)player.Bottom.Y, ModContent.NPCType<Content.NPCs.HakuForest>());
+            caller.Reply("前方的林子里，有个少年在采药。", Color.LightGreen);
             return;
         }
 

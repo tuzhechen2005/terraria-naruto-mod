@@ -143,6 +143,7 @@ Items: {
 }
 
 NPCs: {
+	HakuForest.DisplayName: Herb-Gathering Youth
 	DemonBrotherGozu.DisplayName: "Demon Brother: Gōzu"
 	DemonBrotherMeizu.DisplayName: "Demon Brother: Meizu"
 	TazunaBridge.DisplayName: Tazuna the Bridge Builder
@@ -215,6 +216,7 @@ Projectiles: {
 }
 
 Dialogue: {
+	HakuForestRecall: "Haku: ...We met in the forest, didn't we? What a pity."
 	DemonBrothersDown: The Demon Brothers are down. Mist chunin are hunting you now. The mission is raised to A rank.
 	Whisper1: ???: ...You again.
 	Whisper2: ???: Stay away from this bridge.
