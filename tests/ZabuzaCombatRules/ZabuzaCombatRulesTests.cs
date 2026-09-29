@@ -147,6 +147,13 @@ Check(ZabuzaCombatRules.DashActiveTicksFor(300f, 11.5f) * 11.5f > 300f &&
     "Dash lasts long enough to reach the player and overshoot, within limits");
 Check(ZabuzaCombatRules.DashSpeed(false) > 9.2f && ZabuzaCombatRules.DashSpeed(true) > 13.2f,
     "Dash is faster than before the rework");
+bool NoJutsuFromCover(int attacks, float gap, bool mist) =>
+    !ZabuzaCombatRules.UsesWater(ZabuzaCombatRules.ChooseAttack(mist, attacks, gap, 0.6f, clearShot: false));
+Check(Enumerable.Range(0, 16).All(a => NoJutsuFromCover(a, 300f, true) && NoJutsuFromCover(a, 300f, false) &&
+    NoJutsuFromCover(a, 120f, true)), "From behind cover he never casts water jutsu that blocks would stop");
+Check(ZabuzaCombatRules.ChooseAttack(true, 3, 300f, 0.6f, clearShot: false) == ZabuzaCombatRules.DashWindup &&
+    ZabuzaCombatRules.ChooseFrenzyAttack(1, 300f, clearShot: false) == ZabuzaCombatRules.DashWindup,
+    "From behind cover at range he dashes through the terrain instead");
 Check(!ZabuzaCombatRules.ShouldFlicker(60, 20f) && ZabuzaCombatRules.ShouldFlicker(ZabuzaCombatRules.StuckTicksBeforeFlicker, 5f) &&
     ZabuzaCombatRules.ShouldFlicker(0, ZabuzaCombatRules.FlickerFarTiles),
     "Body Flicker when stuck for two seconds or far from the player");

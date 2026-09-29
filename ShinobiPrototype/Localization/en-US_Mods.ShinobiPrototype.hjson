@@ -122,12 +122,12 @@ Items: {
 	}
 
 	WaterDragonJutsu: {
-		DisplayName: "Water Style: Water Dragon Jutsu"
+		DisplayName: Water Style: Water Dragon Jutsu
 		Tooltip: Forms seals to raise a water dragon that curls towards nearby enemies and pierces several
 	}
 
 	IceMirrorJutsu: {
-		DisplayName: "Secret Jutsu: Demonic Ice Mirrors"
+		DisplayName: Secret Jutsu: Demonic Ice Mirrors
 		Tooltip: Summons an ice mirror beside you that throws fans of senbon at enemies
 	}
 
@@ -154,8 +154,8 @@ Items: {
 
 NPCs: {
 	HakuForest.DisplayName: Herb-Gathering Youth
-	DemonBrotherGozu.DisplayName: "Demon Brother: Gōzu"
-	DemonBrotherMeizu.DisplayName: "Demon Brother: Meizu"
+	DemonBrotherGozu.DisplayName: Demon Brother: Gōzu
+	DemonBrotherMeizu.DisplayName: Demon Brother: Meizu
 	TazunaBridge.DisplayName: Tazuna the Bridge Builder
 
 	Tazuna: {
@@ -226,7 +226,7 @@ Projectiles: {
 }
 
 Dialogue: {
-	HakuForestRecall: "Haku: ...We met in the forest, didn't we? What a pity."
+	HakuForestRecall: Haku: ...We met in the forest, didn't we? What a pity.
 	DemonBrothersDown: The Demon Brothers are down. Mist chunin are hunting you now. The mission is raised to A rank.
 	Whisper1: ???: ...You again.
 	Whisper2: ???: Stay away from this bridge.
@@ -285,7 +285,9 @@ Configs: {
 	}
 }
 
-BossChecklist.WaveDuo: {
-	DisplayName: Zabuza Momochi and Haku
-	SpawnInfo: Collect 3 Mist insignia from Mist scouts on the surface far from spawn and by the sea, then craft Zabuza's challenge scroll (with 10 wood, not consumed) at a workbench and use it. Summoned near the seaside bridge, the fight has its own sea mist and lines.
+BossChecklist: {
+	WaveDuo: {
+		DisplayName: Zabuza Momochi and Haku
+		SpawnInfo: Collect 3 Mist insignia from Mist scouts on the surface far from spawn and by the sea, then craft Zabuza's challenge scroll (with 10 wood, not consumed) at a workbench and use it. Summoned near the seaside bridge, the fight has its own sea mist and lines.
+	}
 }

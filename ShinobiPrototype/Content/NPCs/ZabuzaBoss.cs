@@ -141,10 +141,11 @@ public sealed class ZabuzaBoss : ModNPC
                     Math.Abs(target.Center.X - NPC.Center.X)))
                 {
                     float gap = Math.Abs(target.Center.X - NPC.Center.X);
+                    bool clearShot = ClearShot(target);
                     int next = LastStand
-                        ? ZabuzaCombatRules.ChooseFrenzyAttack((int)NPC.localAI[0], gap)
+                        ? ZabuzaCombatRules.ChooseFrenzyAttack((int)NPC.localAI[0], gap, clearShot)
                         : ZabuzaCombatRules.ChooseAttack(InMistPhase, (int)NPC.localAI[0], gap,
-                            NPC.life / (float)NPC.lifeMax);
+                            NPC.life / (float)NPC.lifeMax, clearShot);
                     NPC.ai[2] = NPC.direction;
                     Enter(next);
                     if (next == ZabuzaCombatRules.RainWindup)
@@ -819,13 +820,18 @@ public sealed class ZabuzaBoss : ModNPC
             }
     }
 
-    // Stuck against terrain (or left far behind): Body Flicker. Only the server (or single player) decides.
+    private bool ClearShot(Player target) =>
+        Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1);
+
+    // Stuck against terrain, cut off from the player by blocks, or left far behind: Body Flicker. Only the server
+    // (or single player) decides.
     private bool CheckStuck(Player target)
     {
         bool wantsToMove = Math.Abs(target.Center.X - NPC.Center.X) > 90f;
         bool moved = Math.Abs(NPC.position.X - lastX) >= ZabuzaCombatRules.StuckProgressPerTick;
         lastX = NPC.position.X;
-        stuckTicks = wantsToMove && !moved ? stuckTicks + 1 : Math.Max(0, stuckTicks - 2);
+        bool blocked = wantsToMove && !moved || !ClearShot(target);
+        stuckTicks = blocked ? stuckTicks + 1 : Math.Max(0, stuckTicks - 2);
         if (Main.netMode == NetmodeID.MultiplayerClient ||
             !ZabuzaCombatRules.ShouldFlicker(stuckTicks, NPC.Distance(target.Center) / 16f))
             return false;

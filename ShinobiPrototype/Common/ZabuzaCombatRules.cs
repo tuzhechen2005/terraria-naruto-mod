@@ -272,11 +272,16 @@ public static class ZabuzaCombatRules
 
     // The boss cycles attacks by phase and spacing; no dense or ranged attack is
     // selected point blank. Low-life demon form increases charge frequency.
+    // clearShot: nothing solid between Zabuza and the player. Water jutsu stop at blocks, so from behind cover he
+    // dashes (the dash passes through terrain) or closes in with the blade instead (user, 2026-09-29: hiding behind
+    // a rock let him spam blocked jutsu forever).
     public static int ChooseAttack(bool mistPhase, int attacksCompleted, float horizontalDistance,
-        float lifeRatio = 1f)
+        float lifeRatio = 1f, bool clearShot = true)
     {
         if (horizontalDistance < 85f)
             return SlashWindup;
+        if (!clearShot)
+            return horizontalDistance >= 150f ? DashWindup : SlashWindup;
         if (mistPhase)
         {
             if (lifeRatio <= 0.25f && attacksCompleted > 0 && attacksCompleted % 3 == 0 &&
@@ -312,10 +317,12 @@ public static class ZabuzaCombatRules
     }
 
     // Frenzy: no water techniques; chained slashes, charges and the thrown blade.
-    public static int ChooseFrenzyAttack(int attacksCompleted, float horizontalDistance)
+    public static int ChooseFrenzyAttack(int attacksCompleted, float horizontalDistance, bool clearShot = true)
     {
         if (horizontalDistance < 100f)
             return SlashWindup;
+        if (!clearShot)
+            return horizontalDistance >= 150f ? DashWindup : SlashWindup;
         if (attacksCompleted % 3 == 1 && horizontalDistance >= 120f)
             return SwordThrowWindup;
         return horizontalDistance >= 150f ? DashWindup : SlashWindup;
