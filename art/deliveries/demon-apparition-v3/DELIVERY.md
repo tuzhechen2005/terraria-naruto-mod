@@ -1,0 +1,13 @@
+# Delivery: demon-apparition-v3
+
+- status: delivered
+- request ID: `demon-apparition-v3`
+- Delivered files:
+  - `source/demon-apparition-v3-generated.png` — selected built-in imagegen master, 1024×1536 px, RGBA with genuine graded transparency.
+  - `demon-apparition-v3-source-sheet-8x.png` — 8× nearest-neighbor source sheet, 3328×1952 px, RGBA with binary transparency; each 80×120 art-pixel cell occupies 640×960 px.
+  - `demon-apparition-v3-game-sheet.png` — game-size sprite sheet, 416×244 px, RGBA with binary transparency; each cell is 80×120 px with 4 px transparent gutters.
+  - `demon-apparition-v3-zabuza-preview-2x.png` — optional composite preview behind the named C-style Zabuza reference, 160×240 px, RGBA with binary transparency.
+- Layout: Top row has one solid cyan 80×120 reference rectangle followed by loop frames 1–4. Bottom row has one solid cyan reference rectangle followed by emergence frames 1–3; the last cell is transparent and unused. The loop shifts the outer smoke and flickers eye colors. The emergence builds from the lower chakra flames into the face.
+- Prompt summary: Used the named in-game screenshot as the positive reference for a smoke-formed purple apparition and the v2 sheet as a negative reference for excessive mask detail. Requested one transparent, tall, narrow, frontal pixel-art ghost with simple upward eyes, jagged brow sockets, a broad upturned fanged grin, two thin upcurving Hannya horns, and connected side flames around a transparent player space. Palette: near-black purple, violet, bright purple, sparse pink-white; no red, character, rigid mask rim, anatomy, or background. Generated with the built-in `image_gen__imagegen` tool, then reduced to hard-edged color clusters and animated into the sheet.
+- Checks performed: Inspected the named reference screenshot, v2 sheet, C-style Zabuza sprite, generated master, game-size sheet, and 2× composite preview. Verified frontal direction, horn/eye/mouth silhouette, bottom chakra columns, central player space, seven distinct frames, frame order, two solid cyan reference cells, transparent gutters and unused cell, dimensions, and binary alpha on all derived PNGs. The game-size and 8× sheets use nearest-neighbor scaling and no antialiasing; the selected generated master retains its original graded alpha.
+- Remaining game-side checks: Composite the game-size sheet behind Zabuza in tModLoader and confirm scale, vertical alignment, draw layer, visibility against actual backgrounds, the four-frame loop timing, and three-frame emergence timing. Adjust draw position or timing after in-game review.
