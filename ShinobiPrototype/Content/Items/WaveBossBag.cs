@@ -11,8 +11,6 @@ namespace ShinobiPrototype.Content.Items;
 // normal-mode win, plus some money. (The expert-only accessory is still to be decided with the user.)
 public sealed class WaveBossBag : ModItem
 {
-    public override string Texture => $"Terraria/Images/Item_{ItemID.EyeOfCthulhuBossBag}";
-
     public override void SetStaticDefaults()
     {
         ItemID.Sets.BossBag[Type] = true;

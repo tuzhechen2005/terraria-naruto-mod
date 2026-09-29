@@ -12,8 +12,6 @@ public sealed class Kubikiribocho : ModItem
     private const int HealChanceOneIn = 5;
     private const int Heal = 2;
 
-    public override string Texture => "ShinobiPrototype/Content/Projectiles/ZabuzaThrownSword";
-
     public override void SetDefaults()
     {
         Item.damage = 26;

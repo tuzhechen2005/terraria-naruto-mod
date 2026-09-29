@@ -9,8 +9,6 @@ namespace ShinobiPrototype.Content.Items.Weapons;
 // passes through several. Uses mana. First pass (2026-09-29).
 public sealed class WaterDragonJutsu : ModItem
 {
-    public override string Texture => "ShinobiPrototype/Content/Items/MissionScroll";
-
     public override void SetDefaults()
     {
         Item.damage = 28;

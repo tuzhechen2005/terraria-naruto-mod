@@ -13,8 +13,6 @@ public sealed class Senbon : ModItem
     private const int Needles = 3;
     private const float SpreadRadians = 0.1f;
 
-    public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";
-
     public override void SetDefaults()
     {
         Item.damage = 10;

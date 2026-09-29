@@ -80,14 +80,24 @@ public sealed class HandbookSystem : ModSystem
 
 internal sealed class HandbookState : UIState
 {
-    private enum Page { Mission, Jutsu, Chakra, Lore }
+    private enum Page { Mission, Jutsu, Chakra, Rewards, Paths, Lore }
 
     private static readonly (Page Page, string Name)[] Tabs =
     {
         (Page.Mission, "任务"),
         (Page.Jutsu, "忍术"),
         (Page.Chakra, "查克拉"),
+        (Page.Rewards, "本章奖励"),
+        (Page.Paths, "忍道"),
         (Page.Lore, "卷宗"),
+    };
+
+    private static readonly (string Icon, string Path, string Ultimate, string Teaser)[] Paths =
+    {
+        ("Style_Sharingan", "写轮眼", "轮回眼 · 完全体须佐能乎", "看穿一切的眼睛。"),
+        ("Style_EightGates", "八门", "死门 · 夜凯", "燃尽生命的青春。"),
+        ("Style_Byakugan", "白眼 · 柔拳", "转生眼", "看透经络的眼睛。"),
+        ("Style_Sage", "仙术 · 九尾", "尾兽模式", "与自然和尾兽共鸣。"),
     };
 
     private static readonly Color TabIdle = new Color(63, 82, 151) * 0.85f;
@@ -96,13 +106,14 @@ internal sealed class HandbookState : UIState
     private readonly List<(Page Page, UITextPanel<string> Panel)> tabPanels = new();
     private UIPanel panel;
     private UIText body;
+    private HandbookIconGrid icons;
     private Page page = Page.Mission;
     private int refreshTimer;
 
     public override void OnInitialize()
     {
         panel = new UIPanel();
-        panel.Width.Set(600f, 0f);
+        panel.Width.Set(660f, 0f);
         panel.Height.Set(420f, 0f);
         panel.HAlign = 0.5f;
         panel.VAlign = 0.5f;
@@ -115,9 +126,9 @@ internal sealed class HandbookState : UIState
         for (int i = 0; i < Tabs.Length; i++)
         {
             Page target = Tabs[i].Page;
-            UITextPanel<string> tab = new(Tabs[i].Name, 0.9f);
-            tab.Width.Set(90f, 0f);
-            tab.Left.Set(120f + i * 96f, 0f);
+            UITextPanel<string> tab = new(Tabs[i].Name, 0.8f);
+            tab.Width.Set(84f, 0f);
+            tab.Left.Set(110f + i * 88f, 0f);
             tab.OnLeftClick += (_, _) =>
             {
                 page = target;
@@ -144,6 +155,12 @@ internal sealed class HandbookState : UIState
         body.Width.Set(0f, 1f);
         body.Height.Set(-52f, 1f);
         panel.Append(body);
+
+        icons = new HandbookIconGrid();
+        icons.Top.Set(56f, 0f);
+        icons.Width.Set(0f, 1f);
+        icons.Height.Set(120f, 0f);
+        panel.Append(icons);
     }
 
     public override void Update(GameTime gameTime)
@@ -160,11 +177,22 @@ internal sealed class HandbookState : UIState
         refreshTimer = 0;
         foreach ((Page target, UITextPanel<string> tab) in tabPanels)
             tab.BackgroundColor = target == page ? TabActive : TabIdle;
+        icons?.Set(page switch
+        {
+            Page.Rewards => RewardIcons(),
+            Page.Paths => PathIcons(),
+            _ => System.Array.Empty<HandbookIconGrid.Entry>(),
+        });
+        body?.Top.Set(icons == null || icons.IsEmpty ? 52f : 186f, 0f);
+        body?.Height.Set(icons == null || icons.IsEmpty ? -52f : -186f, 1f);
+        body?.Recalculate();
         body?.SetText(page switch
         {
             Page.Jutsu => JutsuText(),
             Page.Chakra => ChakraText(),
             Page.Lore => LoreText(),
+            Page.Rewards => RewardsText(),
+            Page.Paths => PathsText(),
             _ => MissionText(),
         });
     }
@@ -194,6 +222,48 @@ internal sealed class HandbookState : UIState
                "· 诀窍：看准敌人出手的瞬间再按；按早了会白白浪费查克拉\n" +
                "· 想练习，可以找卡卡西点“练习替身术”\n\n" +
                $"状态：{(substitution.Mastered ? "已掌握" : "尚未成功施展过")}　当前：{status}";
+    }
+
+    private static IEnumerable<HandbookIconGrid.Entry> RewardIcons()
+    {
+        RewardCollectionPlayer collection = Main.LocalPlayer.GetModPlayer<RewardCollectionPlayer>();
+        foreach (int type in RewardCollectionPlayer.WaveRewards)
+        {
+            Main.instance.LoadItem(type);
+            yield return new HandbookIconGrid.Entry(Terraria.GameContent.TextureAssets.Item[type].Value,
+                Lang.GetItemNameValue(type), collection.HasSeen(type));
+        }
+    }
+
+    private static string RewardsText()
+    {
+        RewardCollectionPlayer collection = Main.LocalPlayer.GetModPlayer<RewardCollectionPlayer>();
+        int seen = 0;
+        foreach (int type in RewardCollectionPlayer.WaveRewards)
+            if (collection.HasSeen(type))
+                seen++;
+        return $"波之国 · 再不斩与白：已收集 {seen}/{RewardCollectionPlayer.WaveRewards.Length}\n\n" +
+               "· 每次击败必得一把职业武器（近战、远程、魔法、召唤各一把），有时会多给一把\n" +
+               "· 两件面具时装各约 1/7 掉落\n" +
+               "· 每个角色第一次击败时，另得查克拉结晶与波之国功绩牌\n" +
+               "· 专家模式下改为每人一个宝藏袋";
+    }
+
+    private static IEnumerable<HandbookIconGrid.Entry> PathIcons()
+    {
+        foreach ((string icon, string path, string ultimate, _) in Paths)
+            yield return new HandbookIconGrid.Entry(
+                ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>($"ShinobiPrototype/Assets/Handbook/{icon}",
+                    ReLogic.Content.AssetRequestMode.ImmediateLoad).Value, path, Unlocked: false, Tiers: 3);
+    }
+
+    private static string PathsText()
+    {
+        string lines = "";
+        foreach ((_, string path, string ultimate, string teaser) in Paths)
+            lines += $"· {path}：{teaser}终点——{ultimate}\n";
+        return "忍道：跨职业的修行路线，一次只能走一条的核心，各有三阶。取得第一阶后，这里会点亮。\n\n" + lines +
+               "\n第一阶都在中忍考试到木叶崩溃之间取得。";
     }
 
     // Records unlocked by beating each story boss; the story is told here rather than in cutscenes.

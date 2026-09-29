@@ -12,8 +12,6 @@ namespace ShinobiPrototype.Content.Items.Weapons;
 // fans of senbon at enemies. One minion slot per mirror. First pass (2026-09-29).
 public sealed class IceMirrorJutsu : ModItem
 {
-    public override string Texture => "ShinobiPrototype/Content/Items/MissionScroll";
-
     public override void SetStaticDefaults()
     {
         ItemID.Sets.GamepadWholeScreenUseRange[Type] = true;
