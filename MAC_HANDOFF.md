@@ -1,5 +1,7 @@
 # Shinobi Prototype：迁移到 Mac 开发交接
 
+> 此文档保留 Windows 迁移时的原始记录。Mac 环境已完成准备并成功打包；当前状态与命令见 [DEVELOPMENT_MAC.md](DEVELOPMENT_MAC.md)。游戏内验收仍未完成。
+
 更新于 2026-09-28。本文用于把当前 Windows 上的 tModLoader 模组项目交给 Mac 继续开发；它不表示已经在 Mac 上构建或试玩通过。
 
 ## 需要带走什么
