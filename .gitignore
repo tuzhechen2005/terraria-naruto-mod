@@ -6,3 +6,4 @@
 .art-bridge/
 __pycache__/
 *.pyc
+art/reference/
