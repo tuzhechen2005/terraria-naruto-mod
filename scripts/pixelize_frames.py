@@ -54,17 +54,19 @@ def reading_order(found):
     return ordered
 
 
-def pixelize(rgba: np.ndarray, scale: float, colors: int, pixel: int = 2) -> Image.Image:
+def pixelize(rgba: np.ndarray, scale: float, colors: int, pixel: int = 2,
+             resample=Image.LANCZOS) -> Image.Image:
     image = Image.fromarray(rgba, "RGBA")
     art_w = max(1, round(image.width * scale / pixel))
     art_h = max(1, round(image.height * scale / pixel))
-    small = image.resize((art_w, art_h), Image.LANCZOS)
+    small = image.resize((art_w, art_h), resample)
     data = np.array(small)
     opaque = data[..., 3] >= 128
     data[..., 3] = np.where(opaque, 255, 0)
-    rgb = Image.fromarray(data[..., :3], "RGB").quantize(colors, method=Image.MEDIANCUT,
-                                                          dither=Image.NONE).convert("RGB")
-    data[..., :3] = np.array(rgb)
+    if colors > 0:  # 0 keeps the source palette (already-limited pixel art).
+        rgb = Image.fromarray(data[..., :3], "RGB").quantize(colors, method=Image.MEDIANCUT,
+                                                              dither=Image.NONE).convert("RGB")
+        data[..., :3] = np.array(rgb)
     data[~opaque] = 0
     small = Image.fromarray(data, "RGBA")
     return small.resize((art_w * pixel, art_h * pixel), Image.NEAREST)
@@ -97,6 +99,8 @@ def main() -> None:
     parser.add_argument("--skip", default="", help="comma-separated pose indices to drop")
     parser.add_argument("--colors", type=int, default=24)
     parser.add_argument("--pixel", type=int, default=2, help="screen pixels per art pixel")
+    parser.add_argument("--nearest", action="store_true",
+                        help="sample nearest pixels (keeps thin saturated details on pixel-art sources)")
     parser.add_argument("--min-area", type=int, default=1500)
     parser.add_argument("--preview", default="")
     args = parser.parse_args()
@@ -125,7 +129,8 @@ def main() -> None:
     for (box, index), (action, n) in zip(poses, plan):
         crop = atlas[box].copy()
         crop[labels[box] != index] = 0
-        frame = np.array(pixelize(crop, scale, args.colors, args.pixel))
+        frame = np.array(pixelize(crop, scale, args.colors, args.pixel,
+                                  Image.NEAREST if args.nearest else Image.LANCZOS))
         canvas = np.zeros((height, width, 4), dtype=np.uint8)
         center = body_center_x(frame)
         left = int(round((args.center_x - center) / args.pixel) * args.pixel)

@@ -88,8 +88,12 @@ Items: {
 NPCs: {
 	MistScout.DisplayName: 雾隐侦察兵
 	HakuBoss.DisplayName: 白
-	ZabuzaBoss.DisplayName: 桃地再不斩
-	ZabuzaBoss.DemonName: 鬼人·桃地再不斩
+
+	ZabuzaBoss: {
+		DisplayName: 桃地再不斩
+		DemonName: 鬼人·桃地再不斩
+	}
+
 	HakuIceMirror.DisplayName: 魔镜冰晶
 	ForestCanopyCandidate.DisplayName: 林地考生
 	ForestBurrowCandidate.DisplayName: 潜伏考生

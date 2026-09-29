@@ -88,8 +88,12 @@ Items: {
 NPCs: {
 	MistScout.DisplayName: Mist Scout
 	HakuBoss.DisplayName: Haku
-	ZabuzaBoss.DisplayName: Zabuza Momochi
-	ZabuzaBoss.DemonName: Demon of the Mist — Zabuza Momochi
+
+	ZabuzaBoss: {
+		DisplayName: Zabuza Momochi
+		DemonName: Demon of the Mist — Zabuza Momochi
+	}
+
 	HakuIceMirror.DisplayName: Demonic Ice Mirror
 	ForestCanopyCandidate.DisplayName: Forest Candidate
 	ForestBurrowCandidate.DisplayName: Ambushing Candidate
@@ -112,8 +116,8 @@ Projectiles: {
 }
 
 Dialogue: {
-	HakuArrive: "Haku: Master Zabuza, leave this to me."
-	ZabuzaFrenzy: "Zabuza: ...Haku. You were a fool to the very end."
-	HakuFrenzy: "Haku: The reason I exist is gone... then let everything freeze."
+	HakuArrive: Haku: Master Zabuza, leave this to me.
+	ZabuzaFrenzy: Zabuza: ...Haku. You were a fool to the very end.
+	HakuFrenzy: Haku: The reason I exist is gone... then let everything freeze.
 	CageTrapped: "{0} was trapped by the ice mirrors"
 }

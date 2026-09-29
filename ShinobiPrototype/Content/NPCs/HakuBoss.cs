@@ -543,7 +543,8 @@ public sealed class HakuBoss : ModNPC
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
-        if (State == EmergeState)
+        bool emergeArt = State == EmergeState && BossSprites.Has("Haku_Emerge_0");
+        if (State == EmergeState && !emergeArt)
             DrawEmergeMirror(spriteBatch, screenPos);
         if (State is MirrorWindup or MirrorDash)
             DrawIceMirrors(spriteBatch, screenPos);
@@ -555,7 +556,8 @@ public sealed class HakuBoss : ModNPC
         color *= NPC.Opacity;
 
         (string action, int count, int frame) = FrameFor();
-        if (BossSprites.TryDraw(spriteBatch, "Haku", action, frame, count, BossSprites.Haku,
+        if (BossSprites.TryDraw(spriteBatch, "Haku", action, frame, count,
+            emergeArt ? BossSprites.HakuEmerge : BossSprites.Haku,
             NPC.Bottom, NPC.spriteDirection, color, screenPos))
             return false;
 

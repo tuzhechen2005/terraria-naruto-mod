@@ -19,8 +19,11 @@ internal static class BossSprites
 
     public static readonly Canvas Zabuza = new(224, 112, 112, 108);
     public static readonly Canvas Haku = new(112, 88, 56, 84);
+    public static readonly Canvas HakuEmerge = new(160, 96, 80, 92); // frames include the mirror
 
     private static string AssetPath(string name) => $"ShinobiPrototype/Content/NPCs/{name}";
+
+    public static bool Has(string name) => ModContent.HasAsset(AssetPath(name));
 
     public static bool TryDraw(SpriteBatch spriteBatch, string prefix, string action, int frame,
         int frameCount, Canvas canvas, Vector2 worldBottom, int direction, Color color,
