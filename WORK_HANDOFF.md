@@ -8,6 +8,7 @@
 - 当前开发基线：M9 波之国再不斩与白双首领战，规格见 `specs/M9_波之国双首领战.spec.md`。
 - 本次会话目标：建立 Claude Code / Codex 共用规则和同目录切换机制，现已完成。用户明确要求切换给 Claude Code；目前没有正在进行的游戏功能开发任务。
 - 2026-09-28（Claude Code）：与用户讨论并定稿全模组进度结构，写入 `specs/总纲_主线与支线结构.spec.md`（未提交，未改代码）。原版 Boss 保留、月总为阶段门槛、主线必打链、疾风传解锁、职业+流派、独立查克拉、尾兽/通灵兽支线均以该文件为准；其“待定事项”和“与现有规格的冲突”两节是后续讨论与改稿入口。
+- 2026-09-29（Claude Code）：总纲加入写轮眼完整路线、四流派终极形态、查克拉恢复与结晶规则、替身术、“术”代替法杖；`specs/M1_波之国下忍篇.spec.md` 已按新框架重写（尚未改代码）。GitHub 公开仓库：https://github.com/tuzhechen2005/terraria-naruto-mod 。下一步：按新 M1 规格改代码；随后重写 M2（删除原创砂隐考生：ArenaRivalBoss、ArenaChallengeScroll、ArenaRushHitbox、ArenaSandBolt 及相关规则、测试）。
 
 ## 用户已明确的设计方向
 
