@@ -1,0 +1,4 @@
+displayName = Shinobi Prototype
+author = 徐吉良
+version = 0.3.3
+buildIgnore = *.csproj, *.user, bin\*, obj\*, .vs\*

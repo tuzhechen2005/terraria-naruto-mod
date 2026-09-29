@@ -1,0 +1,73 @@
+using System;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
+using ShinobiPrototype.Common;
+using ShinobiPrototype.Content.NPCs;
+
+namespace ShinobiPrototype.Content.Projectiles;
+
+public sealed class HakuPrismShard : ModProjectile
+{
+    public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuNeedleV2";
+
+    public override void SetDefaults()
+    {
+        Projectile.width = 24;
+        Projectile.height = 14;
+        Projectile.hostile = true;
+        Projectile.tileCollide = false;
+        Projectile.penetrate = 1;
+        Projectile.timeLeft = 112;
+    }
+
+    public override bool ShouldUpdatePosition() =>
+        Projectile.ai[0] >= WaveDuoRules.PrismWarningTicks;
+
+    public override bool? CanDamage() =>
+        Projectile.ai[0] >= WaveDuoRules.PrismWarningTicks;
+
+    public override void AI()
+    {
+        int owner = (int)Projectile.ai[1] - 1;
+        if (owner < 0 || owner >= Main.maxNPCs || !Main.npc[owner].active ||
+            Main.npc[owner].type != ModContent.NPCType<HakuBoss>())
+        {
+            Projectile.Kill();
+            return;
+        }
+
+        Projectile.ai[0]++;
+        Projectile.tileCollide = Projectile.ai[0] >= WaveDuoRules.PrismWarningTicks;
+        Projectile.rotation = Projectile.velocity.ToRotation();
+        Lighting.AddLight(Projectile.Center, 0.22f, 0.54f, 0.74f);
+        if (Main.netMode != NetmodeID.Server &&
+            (Projectile.ai[0] < WaveDuoRules.PrismWarningTicks || Main.rand.NextBool(2)))
+        {
+            Vector2 point = Projectile.Center + Main.rand.NextVector2Circular(13f, 13f);
+            Dust.NewDustPerfect(point, DustID.IceTorch,
+                Projectile.ai[0] < WaveDuoRules.PrismWarningTicks
+                    ? Vector2.Zero : -Projectile.velocity * 0.12f,
+                25, new Color(175, 245, 255), 1.25f).noGravity = true;
+        }
+    }
+
+    public override bool PreDraw(ref Color lightColor)
+    {
+        Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+        Rectangle source = new(500, 245, 1000, 220);
+        Vector2 center = Projectile.Center - Main.screenPosition;
+        float pulse = Projectile.ai[0] < WaveDuoRules.PrismWarningTicks
+            ? 0.75f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * 13f) * 0.18f : 1f;
+        Vector2 origin = new Vector2(source.Width, source.Height) * 0.5f;
+        Main.spriteBatch.Draw(texture, center + new Vector2(2f, 2f), source,
+            new Color(20, 85, 165, 190), Projectile.rotation, origin,
+            WaveDuoRules.PrismShardDrawScale * 1.14f, SpriteEffects.None, 0f);
+        Main.spriteBatch.Draw(texture, center, source,
+            new Color(220, 250, 255) * pulse, Projectile.rotation, origin,
+            WaveDuoRules.PrismShardDrawScale, SpriteEffects.None, 0f);
+        return false;
+    }
+}

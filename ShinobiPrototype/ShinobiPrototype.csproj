@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>ShinobiPrototype</AssemblyName>
+    <LangVersion>latest</LangVersion>
+    <TargetFramework>net8.0</TargetFramework>
+    <TmlTargetsPath Condition="'$(TmlTargetsPath)' == ''">$(HOME)/Library/Application Support/Steam/steamapps/common/tModLoader/tMLMod.targets</TmlTargetsPath>
+  </PropertyGroup>
+  <Import Project="$(TmlTargetsPath)" />
+</Project>

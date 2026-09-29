@@ -1,0 +1,110 @@
+Items: {
+	TrainingKunai: {
+		DisplayName: Training Kunai
+		Tooltip: Restores a little chakra when it hits an enemy
+	}
+
+	TrainingRasengan: {
+		DisplayName: Rasengan (M0 Test)
+		Tooltip: Spend 35 chakra to dash forward after a brief windup
+	}
+
+	ChakraPalm: {
+		DisplayName: Chakra Palm
+		Tooltip: Spend 18 chakra to dash forward after a brief windup
+	}
+
+	MissionScroll: {
+		DisplayName: Genin Mission Scroll
+		Tooltip: Use to view your current objective; can be recrafted with wood
+	}
+
+	MistInsignia: {
+		DisplayName: Mist Insignia
+		Tooltip: A Mist scout's token, used to make a challenge scroll
+	}
+
+	HakuChallengeScroll: {
+		DisplayName: Legacy Haku Challenge Scroll
+		Tooltip: Merged into the Wave Country duo battle; converts to a Zabuza scroll in your inventory
+	}
+
+	ZabuzaChallengeScroll: {
+		DisplayName: Zabuza Challenge Scroll
+		Tooltip: Starts the Wave Country duo battle in an open area; Haku joins at half health; not consumed
+	}
+
+	M0ZabuzaChallengeScroll: {
+		DisplayName: Zabuza Test Scroll (M0)
+		Tooltip: /m0 test item; summons Zabuza directly
+	}
+
+	ElementalTechnique: {
+		DisplayName: Basic Elemental Jutsu
+		Tooltip: Left click to cast; right click to cycle learned schools. Costs 22 chakra.
+	}
+
+	NinjaProfileScroll: {
+		DisplayName: Ninja Profile Scroll
+		Tooltip: Left click for combat style; right click for chakra nature. Locks after training.
+	}
+
+	NinjutsuManual: {
+		DisplayName: Ninjutsu Manual
+		Tooltip: Left click to choose a school; right click to learn with wood and stars. Cross-school costs more.
+	}
+
+	WaveCountryMedal: {
+		DisplayName: Wave Country Medal
+		Tooltip: Proof of defeating Zabuza. +2 defense when equipped.
+	}
+
+	ExamAdmissionScroll: {
+		DisplayName: Chunin Exam Admission
+		Tooltip: Register for the forest trial after Wave Country. Recraft with wood and iron or lead.
+	}
+
+	HeavenScroll: {
+		DisplayName: Heaven Scroll
+		Tooltip: Held by surface jungle candidates. Combine with the Earth Scroll for arena entry.
+	}
+
+	EarthScroll: {
+		DisplayName: Earth Scroll
+		Tooltip: Held by underground jungle candidates. Combine with the Heaven Scroll for arena entry.
+	}
+
+	ArenaChallengeScroll: {
+		DisplayName: Chunin Preliminary Challenge
+		Tooltip: Summons the Sand candidate in an open area. Not consumed.
+	}
+
+	ChuninHeadband: {
+		DisplayName: Chunin Headband
+		Tooltip: Exam reward. +3 defense and +4% melee and magic damage when equipped.
+	}
+}
+
+NPCs: {
+	MistScout.DisplayName: Mist Scout
+	HakuBoss.DisplayName: Haku
+	ZabuzaBoss.DisplayName: Zabuza Momochi
+	ZabuzaBoss.DemonName: Demon of the Mist — Zabuza Momochi
+	WaterClone.DisplayName: Water Clone
+	ForestCanopyCandidate.DisplayName: Forest Candidate
+	ForestBurrowCandidate.DisplayName: Ambushing Candidate
+	ArenaRivalBoss.DisplayName: Sand Candidate
+}
+
+Projectiles: {
+	RasenganHitbox.DisplayName: Chakra Strike
+	ZabuzaSlash.DisplayName: Executioner's Blade Slash
+	ZabuzaWaterWave.DisplayName: Water Style
+	ZabuzaWaterDragon.DisplayName: Water Dragon Technique
+	ZabuzaWaterNeedle.DisplayName: Water Needle
+	HakuNeedle.DisplayName: Ice Needle
+	HakuDashHitbox.DisplayName: Ice Blade Dash
+	ElementalBolt.DisplayName: Basic Elemental Jutsu
+	ArenaSandBolt.DisplayName: Sand Bolt
+	ArenaRushHitbox.DisplayName: Sand Rush
+}
