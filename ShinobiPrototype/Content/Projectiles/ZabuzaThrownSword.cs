@@ -61,11 +61,11 @@ public sealed class ZabuzaThrownSword : ModProjectile
         Projectile.rotation += 0.45f * Math.Sign(Projectile.velocity.X == 0f ? 1f : Projectile.velocity.X);
         if (Projectile.localAI[1] % 12 == 1)
             SoundEngine.PlaySound(SoundID.Item7, Projectile.Center);
-        Lighting.AddLight(Projectile.Center, 0.6f, 0.12f, 0.08f);
+        Lighting.AddLight(Projectile.Center, 0.45f, 0.15f, 0.62f);
         if (Main.netMode != NetmodeID.Server && Main.rand.NextBool(2))
             Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(20f, 20f),
-                DustID.RedTorch, -Projectile.velocity * 0.1f, 60,
-                new Color(255, 70, 50), 1.1f).noGravity = true;
+                DustID.Shadowflame, -Projectile.velocity * 0.1f, 60,
+                new Color(190, 100, 255), 1.1f).noGravity = true;
     }
 
     public override bool PreDraw(ref Color lightColor)

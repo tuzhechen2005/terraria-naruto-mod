@@ -54,4 +54,4 @@
 - 用户反馈定稿画风放进游戏“不像同一个世界”。用 `tools/XnbExtract` 解出原版贴图，`scripts/terraria_scene_preview.py` 摆进同一场景对比（本地图：`art/reference/terraria/`，已忽略，不上传）。原因：原版 2×2 大像素、约 2.5–4 头身块状比例、明亮饱和配色与同色相描边；我们是 1×1 细像素、约 6 头身写实比例、灰暗配色；另外 Boss 被往白色拉亮 50%，不吃世界光照。
 - 已完成：Boss 改为随世界光照变暗（保留 30% 亮度下限），代码已提交；因游戏开着未能打包，**需退出游戏后运行 `./scripts/verify-mac.sh`**。
 - 已试：自动把现有帧转 2×2（`scripts/terraria_native.py`）——轮廓干净但比例仍写实，脸和面具红纹丢失，不采用；Codex 原生风格样稿 `style-test-v3`（白达标，再不斩偏乱）、`style-test-v4`（再不斩干净但发灰、辨识度下降）。对比总图：`art/reference/terraria/style_options_ABCD.png`。
-- **待用户决定**：是否按原生风格（2×2、约 4 头身、明亮配色）重画全部 93 帧；若决定重画，以白 v3 为画风标准、再不斩在 v3/v4 之间再迭代一张后批量生成。当前游戏内素材保持定稿版不变。
+- 用户已选定原生风格（C 版再不斩、v7 白）与紫色烟雾般若鬼影；全部素材已按此重画并接入、合并回 main（见 M10 规格）。实机效果尚待用户查看。美术桥接默认使用 `gpt-6-sol`（medium），Codex CLI 新路径见 `art/AGENT_HANDOFF.md`。
