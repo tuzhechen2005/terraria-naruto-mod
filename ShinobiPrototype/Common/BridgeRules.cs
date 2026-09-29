@@ -6,12 +6,10 @@ namespace ShinobiPrototype.Common;
 // BridgeDesign. Kept free of Terraria types so the rule tests can run them.
 public static class BridgeRules
 {
-    // Sea mist is vanilla's graveyard fog clouds, spawned around the bridge by SeaMistSystem (user, 2026-09-29:
-    // "only the look of the graveyard fog, no graveyard"). Density 0..1 scales how often clouds spawn relative to a
-    // real graveyard: at the default 175% setting the bridge by day is about 1.2x a graveyard, night or rain 1.4x.
+    // Sea mist density 0..1, drawn by SeaMistOverlay: at the default 175% setting the bridge by day is about 0.75,
+    // night or rain 0.9.
     public const float SeaMistPerSetting = 0.43f;
     public const float MaxSeaMist = 1f;
-    public const float GraveyardRatePerDensity = 1.6f;
     public const float NightOrRainFogMultiplier = 1.2f;
     public const float MaxFogSetting = 2f;
     // Measured from the shoreline-to-island span: thick over the ramp and hut, gone just past the beach
@@ -90,9 +88,6 @@ public static class BridgeRules
                      (nightOrRain ? NightOrRainFogMultiplier : 1f);
         return Math.Clamp(mist, 0f, MaxSeaMist);
     }
-
-    // How many times a graveyard's fog-cloud spawn rate to use at this density.
-    public static float FogSpawnRate(float density) => Math.Clamp(density, 0f, 1f) * GraveyardRatePerDensity;
 
     // Mist during the preview: rises quickly, holds, and fades after the pair vanishes.
     public static float PreviewMistBoost(int tick)

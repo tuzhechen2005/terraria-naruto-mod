@@ -1,49 +1,41 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.Graphics.Effects;
-using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace ShinobiPrototype.Common.Systems;
 
-// Full-screen sea mist: large, slow puffs using vanilla's graveyard fog-cloud textures, spread over the whole view
-// (sky, sea, bridge) and drifting with the wind. Each puff takes the world light where it floats, so the mist is
-// dim at night instead of glowing. Drawn on the ForegroundWater overlay layer, so it covers the sea as well.
-// Thickness follows SeaMistSystem.Density (distance to the bridge, night or rain, the setting, the preview).
+// The sea mist over the whole view around the Wave Country bridge, in the grey-white of Zabuza's phase-two mist, but
+// made of two layers of a seamless wispy texture (Assets/SeaMist.png, from scripts/make_mist_texture.py) rolling
+// with the wind at different speeds and scales, so it is patchy and moving rather than a flat veil (user,
+// 2026-09-29). Thickest over the sea and the deck, lighter higher up but never gone. It takes the sky's brightness,
+// so it is dim at night, and it is drawn on the ForegroundWater overlay layer so it covers the sea too.
+// Thickness follows SeaMistSystem.Density.
 public sealed class SeaMistOverlay : Overlay
 {
-    private const int PuffCount = 60;
-    private const float Margin = 260f;
-    private const int FadeInTicks = 90;
-    private static readonly Color Tint = new(222, 228, 234);
-    private static readonly int[] Textures =
+    private const int StripTexels = 4;
+    private const int RowsAboveDeck = 30;
+    private const float HighMist = 0.45f;
+    private const float DeepMist = 0.3f;
+    private static readonly Color Tint = new(200, 214, 224); // Zabuza's phase-two mist
+
+    // Two layers for depth: a nearer, larger and faster one over a farther, smaller and slower one.
+    private static readonly (float Scale, float Speed, float Alpha, float OffsetY)[] Layers =
     {
-        GoreID.AmbientAirborneCloud1, GoreID.AmbientAirborneCloud3, GoreID.AmbientFloorCloud1,
-        GoreID.AmbientFloorCloud2, GoreID.AmbientFloorCloud3,
+        (2.4f, 0.35f, 0.5f, 0f),
+        (3.8f, 0.7f, 0.42f, 97f),
     };
 
-    private struct Puff
-    {
-        public Vector2 Position;
-        public float Speed;
-        public float Scale;
-        public float Alpha;
-        public float Phase;
-        public int Texture;
-        public int Age;
-        public bool Flip;
-    }
-
-    private readonly List<Puff> puffs = new();
+    private readonly float[] scroll = new float[Layers.Length];
+    private Asset<Texture2D> texture;
 
     public SeaMistOverlay() : base(EffectPriority.VeryLow, RenderLayers.ForegroundWater)
     {
     }
 
-    public override bool IsVisible() => SeaMistSystem.Density > 0.01f && !Main.gameMenu;
+    public override bool IsVisible() => SeaMistSystem.Density > 0.01f && !Main.gameMenu && WaveBridgeWorld.Site.HasValue;
 
     public override void Activate(Vector2 position, params object[] args) => Mode = OverlayMode.Active;
 
@@ -53,65 +45,77 @@ public sealed class SeaMistOverlay : Overlay
     {
     }
 
-    private static Rectangle ViewArea()
-    {
-        Vector2 size = new Vector2(Main.screenWidth, Main.screenHeight) / Main.GameViewMatrix.Zoom;
-        Vector2 topLeft = Main.screenPosition + (new Vector2(Main.screenWidth, Main.screenHeight) - size) / 2f;
-        return new Rectangle((int)(topLeft.X - Margin), (int)(topLeft.Y - Margin),
-            (int)(size.X + 2 * Margin), (int)(size.Y + 2 * Margin));
-    }
-
-    // Moves the puffs with the wind and replaces any that leave the view, entering from the upwind side.
     internal void Step()
     {
-        Rectangle area = ViewArea();
         float wind = Main.WindForVisuals;
-        int windDir = wind >= 0f ? 1 : -1;
-        while (puffs.Count < PuffCount)
-            puffs.Add(NewPuff(area, anywhere: true, windDir));
-
-        for (int i = 0; i < puffs.Count; i++)
-        {
-            Puff puff = puffs[i];
-            puff.Age++;
-            puff.Position.X += puff.Speed * (0.35f + System.Math.Abs(wind)) * windDir;
-            puff.Position.Y += 0.12f * (float)System.Math.Sin((puff.Age + puff.Phase) * 0.01f);
-            if (!area.Contains(puff.Position.ToPoint()))
-                puff = NewPuff(area, anywhere: false, windDir);
-            puffs[i] = puff;
-        }
+        float direction = wind >= 0f ? 1f : -1f;
+        for (int i = 0; i < Layers.Length; i++)
+            scroll[i] += Layers[i].Speed * (0.4f + System.Math.Abs(wind)) * direction;
     }
 
-    private static Puff NewPuff(Rectangle area, bool anywhere, int windDir)
+    // How much mist a world row carries: full from just above the deck down to the sea, easing to a lighter mist
+    // higher up (never gone) and a little lighter below the sea surface.
+    private static float Profile(float worldY, BridgeSite site)
     {
-        float x = anywhere ? Main.rand.NextFloat(area.Left, area.Right)
-            : windDir > 0 ? area.Left + Main.rand.NextFloat(40f) : area.Right - Main.rand.NextFloat(40f);
-        return new Puff
+        float top = (site.DeckY - RowsAboveDeck) * 16f;
+        float full = (site.DeckY - 3) * 16f;
+        float surface = (site.WaterY + 2) * 16f;
+        if (worldY <= top)
+            return HighMist;
+        if (worldY < full)
         {
-            Position = new Vector2(x, Main.rand.NextFloat(area.Top, area.Bottom)),
-            Speed = Main.rand.NextFloat(0.25f, 0.6f),
-            Scale = Main.rand.NextFloat(2.6f, 5.2f),
-            Alpha = Main.rand.NextFloat(0.16f, 0.3f),
-            Phase = Main.rand.NextFloat(1000f),
-            Texture = Main.rand.Next(Textures),
-            Age = anywhere ? FadeInTicks : 0,
-            Flip = Main.rand.NextBool(),
-        };
+            float t = (worldY - top) / (full - top);
+            return HighMist + (1f - HighMist) * t * t;
+        }
+        if (worldY <= surface)
+            return 1f;
+        return System.Math.Max(DeepMist, 1f - (worldY - surface) / (6 * 16f));
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
+        if (WaveBridgeWorld.Site is not BridgeSite site)
+            return;
+        texture ??= ModContent.Request<Texture2D>("ShinobiPrototype/Assets/SeaMist");
+        if (!texture.IsLoaded)
+            return;
+
         float density = System.Math.Clamp(SeaMistSystem.Density / 0.9f, 0f, 1.1f);
-        foreach (Puff puff in puffs)
+        Color sky = Main.ColorOfTheSkies.MultiplyRGB(Tint);
+        Vector2 view = new Vector2(Main.screenWidth, Main.screenHeight) / Main.GameViewMatrix.Zoom;
+        float viewLeft = Main.screenPosition.X + (Main.screenWidth - view.X) / 2f - 32f;
+        float viewTop = Main.screenPosition.Y + (Main.screenHeight - view.Y) / 2f - 32f;
+        float viewWidth = view.X + 64f;
+        float viewBottom = viewTop + view.Y + 64f;
+
+        spriteBatch.End();
+        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearWrap,
+            DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+
+        Texture2D mist = texture.Value;
+        for (int layer = 0; layer < Layers.Length; layer++)
         {
-            Main.instance.LoadGore(puff.Texture);
-            Texture2D texture = TextureAssets.Gore[puff.Texture].Value;
-            Point tile = puff.Position.ToTileCoordinates();
-            Color light = WorldGen.InWorld(tile.X, tile.Y) ? Lighting.GetColor(tile.X, tile.Y) : Color.White;
-            float fade = System.Math.Min(1f, puff.Age / (float)FadeInTicks);
-            Color color = light.MultiplyRGB(Tint) * (puff.Alpha * density * fade);
-            spriteBatch.Draw(texture, puff.Position - Main.screenPosition, null, color, 0f, texture.Size() / 2f,
-                puff.Scale, puff.Flip ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
+            (float scale, _, float layerAlpha, float offsetY) = Layers[layer];
+            float stripHeight = StripTexels * scale;
+            float u = (viewLeft + scroll[layer]) / scale;
+            int sourceX = (int)System.Math.Floor(u);
+            float shift = (u - sourceX) * scale;
+            int sourceWidth = (int)(viewWidth / scale) + 3;
+            float firstStrip = (float)System.Math.Floor(viewTop / stripHeight) * stripHeight;
+            for (float y = firstStrip; y < viewBottom; y += stripHeight)
+            {
+                float alpha = Profile(y + stripHeight / 2f, site) * layerAlpha * density;
+                if (alpha < 0.005f)
+                    continue;
+                int sourceY = (int)((y + offsetY) / scale);
+                Rectangle source = new(sourceX, sourceY, sourceWidth, StripTexels);
+                Vector2 position = new(viewLeft - shift - Main.screenPosition.X, y - Main.screenPosition.Y);
+                spriteBatch.Draw(mist, position, source, sky * alpha, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            }
         }
+
+        spriteBatch.End();
+        spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState,
+            DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.TransformationMatrix);
     }
 }
