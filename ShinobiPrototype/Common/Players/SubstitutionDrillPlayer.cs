@@ -6,14 +6,18 @@ using ShinobiPrototype.Content.Projectiles;
 
 namespace ShinobiPrototype.Common.Players;
 
-// Kakashi's substitution drill: his shadow clones throw kunai from hiding, one at a time, from either side and after
-// an unpredictable pause. The drill runs only on the local client; the kunai never deal damage.
+// Kakashi's substitution drill: he throws kunai at the player one at a time, each after an unpredictable aim.
+// He only starts a throw when the player is in range and the jutsu is off cooldown. Runs on the local client
+// only; the kunai never deal damage.
 public sealed class SubstitutionDrillPlayer : ModPlayer
 {
+    private const int PromptIntervalTicks = 120;
+
     private int kakashi = -1;
     private int thrown;
     private int substituted;
     private int gap;
+    private int promptCooldown;
     private bool kunaiInFlight;
 
     public bool Active => kakashi >= 0;
@@ -22,14 +26,23 @@ public sealed class SubstitutionDrillPlayer : ModPlayer
 
     public void Start(int kakashiIndex)
     {
+        if (Active)
+            Stop();
+
         kakashi = kakashiIndex;
         thrown = 0;
         substituted = 0;
         kunaiInFlight = false;
-        gap = ChakraRules.PracticeGapMaxTicks;
-        Main.NewText($"卡卡西：我的影分身会从暗处扔 {ChakraRules.PracticeThrows} 支苦无，左右都有，时机不定。" +
-                     "看到寒光就盯住它，在苦无快到身上时按替身术。练习期间替身术不耗查克拉，冷却也很短。", 255, 220, 120);
+        gap = ChakraRules.PracticeGapMinTicks;
+        promptCooldown = 0;
+        Mentor.DrillTarget = Player.whoAmI;
+        Main.NewText($"卡卡西：我会朝你扔 {ChakraRules.PracticeThrows} 支苦无，瞄准的时间每次都不一样。" +
+                     $"站到离我 {ChakraRules.PracticeMinRangeTiles}–{ChakraRules.PracticeMaxRangeTiles} 格的地方，" +
+                     "盯住苦无，在它快到身上时按替身术。练习期间替身术不耗查克拉、冷却很短；冷却没好我不会出手。",
+            255, 220, 120);
     }
+
+    private Kakashi Mentor => (Kakashi)Main.npc[kakashi].ModNPC;
 
     public override void PostUpdate()
     {
@@ -37,14 +50,20 @@ public sealed class SubstitutionDrillPlayer : ModPlayer
             return;
 
         NPC mentor = Main.npc[kakashi];
-        if (Player.dead || !mentor.active || mentor.type != ModContent.NPCType<Kakashi>() ||
-            Player.Distance(mentor.Center) > ChakraRules.PracticeLeashTiles * 16f)
+        if (!mentor.active || mentor.type != ModContent.NPCType<Kakashi>())
         {
             kakashi = -1;
+            return;
+        }
+        if (Player.dead || Player.Distance(mentor.Center) > ChakraRules.PracticeLeashTiles * 16f)
+        {
+            Stop();
             Main.NewText("卡卡西：跑那么远，练习就先到这里吧。", 255, 220, 120);
             return;
         }
 
+        if (promptCooldown > 0)
+            promptCooldown--;
         if (kunaiInFlight)
             return;
         if (thrown >= ChakraRules.PracticeThrows)
@@ -52,33 +71,39 @@ public sealed class SubstitutionDrillPlayer : ModPlayer
             Finish(mentor);
             return;
         }
-        if (--gap <= 0)
-            Throw();
-    }
 
-    private void Throw()
-    {
-        int side = Main.rand.NextBool() ? 1 : -1;
-        Vector2 spot = PickSpot(side);
-        if (!Collision.CanHitLine(spot, 1, 1, Player.Center, 1, 1))
+        int cooldown = Player.GetModPlayer<SubstitutionPlayer>().Cooldown;
+        switch (ChakraRules.CheckPracticeThrow(Player.Distance(mentor.Center) / 16f, cooldown))
         {
-            Vector2 other = PickSpot(-side);
-            if (Collision.CanHitLine(other, 1, 1, Player.Center, 1, 1))
-                spot = other;
+            case ChakraRules.PracticeReadiness.TooClose:
+                Prompt(mentor, $"离远一点（{ChakraRules.PracticeMinRangeTiles} 格以上）");
+                return;
+            case ChakraRules.PracticeReadiness.TooFar:
+                Prompt(mentor, "再靠近一点");
+                return;
+            case ChakraRules.PracticeReadiness.CoolingDown:
+                return;
         }
 
-        int windup = Main.rand.Next(ChakraRules.PracticeWindupMinTicks, ChakraRules.PracticeWindupMaxTicks + 1);
-        Projectile.NewProjectile(Player.GetSource_Misc("SubstitutionDrill"), spot, Vector2.Zero,
-            ModContent.ProjectileType<KakashiPracticeKunai>(), 0, 0f, Player.whoAmI, windup);
-        kunaiInFlight = true;
-        thrown++;
+        if (--gap <= 0)
+            Throw(mentor);
     }
 
-    private Vector2 PickSpot(int side)
+    private void Prompt(NPC mentor, string text)
     {
-        int distance = Main.rand.Next(ChakraRules.PracticeDistanceMinTiles, ChakraRules.PracticeDistanceMaxTiles + 1);
-        int rise = Main.rand.Next(1, 4);
-        return Player.Center + new Vector2(side * distance * 16f, -rise * 16f);
+        if (promptCooldown > 0)
+            return;
+        promptCooldown = PromptIntervalTicks;
+        CombatText.NewText(mentor.getRect(), Color.White, text);
+    }
+
+    private void Throw(NPC mentor)
+    {
+        int windup = Main.rand.Next(ChakraRules.PracticeWindupMinTicks, ChakraRules.PracticeWindupMaxTicks + 1);
+        Projectile.NewProjectile(Player.GetSource_Misc("SubstitutionDrill"), Mentor.DrillHand, Vector2.Zero,
+            ModContent.ProjectileType<KakashiPracticeKunai>(), 0, 0f, Player.whoAmI, windup, 0f, kakashi);
+        kunaiInFlight = true;
+        thrown++;
     }
 
     public void Resolve(ChakraRules.PracticeOutcome outcome)
@@ -102,9 +127,19 @@ public sealed class SubstitutionDrillPlayer : ModPlayer
 
     private void Finish(NPC mentor)
     {
-        kakashi = -1;
         string verdict = ChakraRules.PracticeVerdict(substituted, thrown);
+        Stop();
         Main.NewText($"卡卡西：{thrown} 支里替身成功 {substituted} 支。{verdict}", 255, 220, 120);
         CombatText.NewText(mentor.getRect(), Color.White, $"{substituted}/{thrown}");
+    }
+
+    private void Stop()
+    {
+        if (kakashi >= 0 && Main.npc[kakashi].active && Main.npc[kakashi].ModNPC is Kakashi mentor)
+        {
+            mentor.DrillTarget = -1;
+            mentor.DrillAiming = false;
+        }
+        kakashi = -1;
     }
 }

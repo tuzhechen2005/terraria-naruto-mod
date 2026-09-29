@@ -30,6 +30,14 @@ public sealed class Kakashi : ModNPC
 
     private static int nextTip;
 
+    // Substitution drill (local client only): the player being drilled, whether a kunai is being aimed,
+    // and how long the release pose still shows.
+    public int DrillTarget { get; set; } = -1;
+    public bool DrillAiming { get; set; }
+    public int DrillReleaseTicks { get; set; }
+
+    public Vector2 DrillHand => NPC.Center + new Vector2(NPC.direction * 12f, -6f);
+
     public override void SetStaticDefaults()
     {
         Main.npcFrameCount[Type] = FrameCount;
@@ -113,6 +121,19 @@ public sealed class Kakashi : ModNPC
         player.GetModPlayer<SubstitutionDrillPlayer>().Start(NPC.whoAmI);
     }
 
+    // During a drill he stops wandering and faces the player; gravity and collision still run outside the AI.
+    public override bool PreAI()
+    {
+        if (DrillReleaseTicks > 0)
+            DrillReleaseTicks--;
+        if (DrillTarget < 0 || !Main.player[DrillTarget].active)
+            return true;
+
+        NPC.velocity.X *= 0.8f;
+        NPC.direction = Main.player[DrillTarget].Center.X >= NPC.Center.X ? 1 : -1;
+        return false;
+    }
+
     public override void TownNPCAttackStrength(ref int damage, ref float knockback)
     {
         damage = 14;
@@ -145,7 +166,11 @@ public sealed class Kakashi : ModNPC
         NPC.spriteDirection = NPC.direction;
 
         int frame;
-        if (NPC.ai[0] == SittingState)
+        if (DrillAiming)
+            frame = ThrowFirst;
+        else if (DrillReleaseTicks > 0)
+            frame = ThrowFirst + (DrillReleaseTicks > 8 ? 1 : 2);
+        else if (NPC.ai[0] == SittingState)
             frame = SitFrame;
         else if (NPC.ai[0] == ThrowingState)
         {

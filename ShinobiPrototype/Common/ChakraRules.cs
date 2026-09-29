@@ -29,23 +29,25 @@ public static class ChakraRules
     public const int SubstitutionMaxHints = 3;
     public const int SubstitutionHintSpacingTicks = 1800;
 
-    // Kakashi's drill: shadow clones throw kunai from hiding at unpredictable moments. During the drill the jutsu
-    // is free and recovers quickly, so the only thing being practised is timing.
+    // Kakashi's drill: he throws kunai at the player one at a time, after an unpredictable aim. During the drill the
+    // jutsu is free and recovers quickly, and he never throws while it is cooling down, so only timing is practised.
     public const int PracticeThrows = 8;
     public const int PracticeCooldownTicks = 48;
     public const int PracticeGapMinTicks = 60;
     public const int PracticeGapMaxTicks = 150;
     public const int PracticeWindupMinTicks = 18;
     public const int PracticeWindupMaxTicks = 60;
-    public const int PracticeDistanceMinTiles = 14;
-    public const int PracticeDistanceMaxTiles = 18;
-    public const float PracticeKunaiSpeed = 9f;
+    public const int PracticeMinRangeTiles = 10;
+    public const int PracticeMaxRangeTiles = 25;
+    public const float PracticeKunaiSpeed = 6.5f;
     public const int PracticeEarlyWindowTicks = 90;
     public const int PracticeLeashTiles = 50;
 
     public enum Activation { Ready, CoolingDown, NotEnoughChakra }
 
     public enum PracticeOutcome { Substituted, TooEarly, TooLate, Evaded }
+
+    public enum PracticeReadiness { Ready, TooClose, TooFar, CoolingDown }
 
     public static int MaxChakra(int crystals) =>
         BaseMaxChakra + CrystalBonus * Math.Clamp(crystals, 0, MaxCrystals);
@@ -67,6 +69,17 @@ public static class ChakraRules
 
     public static int SubstitutionCooldownFor(bool practising) =>
         practising ? PracticeCooldownTicks : SubstitutionCooldownTicks;
+
+    // Whether Kakashi may start the next throw: the player must be in range and the jutsu off cooldown.
+    public static PracticeReadiness CheckPracticeThrow(float distanceTiles, int cooldown) =>
+        distanceTiles < PracticeMinRangeTiles ? PracticeReadiness.TooClose :
+        distanceTiles > PracticeMaxRangeTiles ? PracticeReadiness.TooFar :
+        cooldown > 0 ? PracticeReadiness.CoolingDown :
+        PracticeReadiness.Ready;
+
+    // A kunai already aimed is only released once the jutsu is ready, so an early press is never punished twice.
+    public static bool MayReleasePracticeKunai(int aimedTicks, int windupTicks, int cooldown) =>
+        aimedTicks >= windupTicks && cooldown == 0;
 
     // A drill kunai reached the player: a standby dodges it; a press shortly before means the timing was early.
     public static PracticeOutcome JudgePracticeHit(bool standingBy, int ticksSinceActivation) =>

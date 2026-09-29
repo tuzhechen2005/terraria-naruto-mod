@@ -45,8 +45,15 @@ Check(SubstitutionCooldownFor(true) < PracticeGapMinTicks, "Jutsu is ready again
 Check(CheckSubstitution(0, 0, SubstitutionCostFor(true)) == Activation.Ready, "Drill works with empty chakra");
 Check(PracticeWindupMinTicks < PracticeWindupMaxTicks && PracticeGapMinTicks < PracticeGapMaxTicks,
     "Drill timing varies between throws");
-float flightTicks = PracticeDistanceMinTiles * 16f / PracticeKunaiSpeed;
+float flightTicks = PracticeMinRangeTiles * 16f / PracticeKunaiSpeed;
 Check(flightTicks > SubstitutionWindowTicks, "Closest kunai is in the air longer than the standby window, so it can be read");
+Check(CheckPracticeThrow(PracticeMinRangeTiles - 1, 0) == PracticeReadiness.TooClose, "Kakashi waits when the player is too close");
+Check(CheckPracticeThrow(PracticeMaxRangeTiles + 1, 0) == PracticeReadiness.TooFar, "Kakashi waits when the player is too far");
+Check(CheckPracticeThrow(15, 1) == PracticeReadiness.CoolingDown, "No new throw while substitution cools down");
+Check(CheckPracticeThrow(15, 0) == PracticeReadiness.Ready, "Throws when in range and ready");
+Check(!MayReleasePracticeKunai(40, 30, 5) && MayReleasePracticeKunai(40, 30, 0) && !MayReleasePracticeKunai(10, 30, 0),
+    "An aimed kunai waits for both its windup and the cooldown");
+Check(PracticeMaxRangeTiles < PracticeLeashTiles, "Too-far waiting happens before the drill is abandoned");
 Check(JudgePracticeHit(true, 5) == PracticeOutcome.Substituted, "Standby at impact is a success");
 Check(JudgePracticeHit(false, 30) == PracticeOutcome.TooEarly, "Pressed recently but expired: too early");
 Check(JudgePracticeHit(false, PracticeEarlyWindowTicks + 1) == PracticeOutcome.TooLate, "No recent press: too late");
