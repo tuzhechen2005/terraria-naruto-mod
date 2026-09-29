@@ -42,6 +42,21 @@ Check(HasFixture(unfinished, Fixture.Door) && HasFixture(unfinished, Fixture.Tab
 Check(!HasFixture(unfinished, Fixture.Lantern) && HasFixture(finished, Fixture.Lantern),
     "Hut has no light until the bridge is finished, so no NPC can claim it early");
 Check(unfinished.HutFloorY < Ground(unfinished.HutMidOffset), "Hut stands on stilts above the beach");
+Check(unfinished.Placements.Count(p => p.Fixture == Fixture.Door) == 2, "Hut has a door on both sides");
+// Walking up from either side: every column from the ground to the floor climbs at most one tile at a time.
+int TopAt(BridgeDesign d, int o) => d.Cells.Where(c => c.Offset == o && c.Part is Part.Wood or Part.Platform)
+    .Select(c => c.Y).DefaultIfEmpty(Ground(o)).Min();
+bool Climbable(BridgeDesign d, int from, int to, int step)
+{
+    for (int o = from; o != to; o += step)
+        if (TopAt(d, o + step) < TopAt(d, o) - 1)
+            return false;
+    return true;
+}
+int doorFar = unfinished.Placements.Where(p => p.Fixture == Fixture.Door).Min(p => p.Offset);
+int doorNear = unfinished.HutDoorOffset;
+Check(Climbable(unfinished, unfinished.LandmostOffset, doorFar, +1), "Hut can be climbed from inland without jumping");
+Check(Climbable(unfinished, doorNear + BridgeDesign.PorchLength + 6, doorNear, -1), "Hut can be climbed from the beach side");
 Check(unfinished.Cells.Any(c => c.Part == Part.Shingle), "Hut has a tiled roof");
 Check(!HasFixture(unfinished, Fixture.BridgeSign) && HasFixture(finished, Fixture.BridgeSign),
     "Naruto Bridge sign only once finished");

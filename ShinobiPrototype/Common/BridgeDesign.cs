@@ -56,6 +56,7 @@ public sealed class BridgeDesign
     public const int HutStilts = 3;
     public const int HutRoomHeight = 5;
     public const int PorchLength = 3;
+    public const int BackPorchLength = 2;
     public const int MaxRampSteps = 16;
     public const int SeaMargin = 20;
     public const int TotalReach = IslandEnd + DockLength + SeaMargin;
@@ -285,32 +286,37 @@ public sealed class BridgeDesign
         return end;
     }
 
-    // Tazuna's house: a fisherman's hut on stilts with a porch and wooden stairs, dynasty-wood walls, paper
-    // (shoji) and glass windows, and a blue-tiled gable roof. It has a door, table and chair but no light until
-    // the bridge is finished, so no other town NPC can claim it before then.
+    // Tazuna's house: a fisherman's hut on stilts, with a porch, door and wooden stairs on both sides so it can be
+    // walked through from the beach or from inland without any mobility gear; dynasty-wood walls, paper (shoji)
+    // and glass windows, and a blue-tiled gable roof. It has doors, a table and a chair but no light until the
+    // bridge is finished, so no other town NPC can claim it before then.
     private void BuildHut(int rampEnd)
     {
-        const int stairs = HutStilts + 1;
+        // Room for up to eight steps each side: the beach usually falls away towards the sea.
+        const int stairs = 8;
         int near = rampEnd - 3 - stairs - PorchLength;
         int far = near - (HutWidth - 1);
+        int landEnd = far - BackPorchLength - stairs;
+        int seaEnd = near + PorchLength + stairs;
         int highestGround = int.MaxValue;
-        for (int x = far; x <= near + PorchLength + stairs; x++)
+        for (int x = landEnd; x <= seaEnd; x++)
             highestGround = Math.Min(highestGround, groundY(x));
         int floor = highestGround - HutStilts - 1;
         int ceiling = floor - HutRoomHeight - 1;
         HutFloorY = floor;
         HutMidOffset = (near + far) / 2;
         HutDoorOffset = near;
-        LandmostOffset = far - 3;
+        LandmostOffset = landEnd - 1;
 
-        for (int x = far - 2; x <= near + PorchLength + stairs; x++)
+        for (int x = landEnd; x <= seaEnd; x++)
             Clear.Add((x, x, ceiling - 6, groundY(x) - 1));
 
-        for (int x = far; x <= near + PorchLength; x++)
+        for (int x = far - BackPorchLength; x <= near + PorchLength; x++)
         {
-            bool porch = x > near;
+            bool porch = x > near || x < far;
             Set(x, floor, porch ? Part.Platform : Part.Wood);
-            bool stilt = x == far || x == near || x == near + PorchLength || (x - far) % 4 == 0;
+            bool stilt = x == far || x == near || x == near + PorchLength || x == far - BackPorchLength ||
+                         (x - far) % 4 == 0 && x > far && x < near;
             if (stilt)
                 for (int y = floor + 1; y < groundY(x); y++)
                     Set(x, y, Part.Beam);
@@ -318,19 +324,22 @@ public sealed class BridgeDesign
                 Walls.Add(new Wall(x, floor - 1, Backdrop.Railing));
         }
 
+        // Side walls keep a three-tile doorway at floor level on both sides.
         for (int y = ceiling + 1; y < floor; y++)
         {
-            Set(far, y, Part.DynastyWood);
             if (y < floor - 3)
+            {
+                Set(far, y, Part.DynastyWood);
                 Set(near, y, Part.DynastyWood);
+            }
             for (int x = far + 1; x < near; x++)
             {
-                bool window = y is var r && r >= floor - 4 && r <= floor - 3 &&
-                              (x - far) % 5 is 2 or 3;
+                bool window = y >= floor - 4 && y <= floor - 3 && (x - far) % 5 is 2 or 3;
                 Walls.Add(new Wall(x, y, window ? Backdrop.Glass : Backdrop.ShojiWall));
             }
         }
         Placements.Add(new Placement(near, floor - 1, Fixture.Door));
+        Placements.Add(new Placement(far, floor - 1, Fixture.Door));
         Placements.Add(new Placement(far + 3, floor - 1, Fixture.Table));
         Placements.Add(new Placement(far + 5, floor - 1, Fixture.Chair));
         if (finished)
@@ -350,15 +359,24 @@ public sealed class BridgeDesign
             }
         }
 
-        // Wooden stairs from the beach up to the porch.
-        for (int step = 1; step <= stairs; step++)
+        // Wooden stairs from the beach up to each porch.
+        Stairs(near + PorchLength, +1, floor, stairs);
+        Stairs(far - BackPorchLength, -1, floor, stairs);
+    }
+
+    // One-tile steps going away from the porch edge until they meet the ground; each step's top is hammered
+    // so the stairs walk smoothly.
+    private void Stairs(int porchEdge, int outward, int floor, int maxSteps)
+    {
+        for (int step = 1; step <= maxSteps; step++)
         {
-            int x = near + PorchLength + step;
+            int x = porchEdge + outward * step;
             int top = floor + step - 1;
             if (top >= groundY(x))
                 break;
+            Shape slope = outward > 0 ? Shape.RisesLandward : Shape.RisesSeaward;
             for (int y = top; y < groundY(x); y++)
-                Set(x, y, Part.Wood, y == top ? Shape.RisesLandward : Shape.Full);
+                Set(x, y, Part.Wood, y == top ? slope : Shape.Full);
         }
     }
 
