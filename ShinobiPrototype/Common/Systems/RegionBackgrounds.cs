@@ -1,4 +1,9 @@
+using System.Collections.Generic;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace ShinobiPrototype.Common.Systems;
@@ -35,10 +40,48 @@ public static class RegionBackgrounds
 
 public abstract class RegionBackground : ModSurfaceBackgroundStyle
 {
+    // Ground rows of the close layers, read from the textures once (BackgroundLayoutRules.GroundRow).
+    private static readonly Dictionary<int, int> groundRows = new();
+
     protected abstract string Region { get; }
 
-    private int Layer(string layer) =>
-        BackgroundTextureLoader.GetBackgroundSlot(Mod, $"Backgrounds/{Region}{layer}");
+    public override void Unload() => groundRows.Clear();
+
+    private int Layer(string layer)
+    {
+        int slot = BackgroundTextureLoader.GetBackgroundSlot(Mod, $"Backgrounds/{Region}{layer}");
+        return EnsureSize(slot, layer) ? slot : -1;
+    }
+
+    // tModLoader records a background's size while the mod loads, on a worker thread; a texture still loading then
+    // is recorded as 0 × 0, and its layer draws nothing (middle) or throws (close: a DivideByZeroException in
+    // DrawCloseBackground, which ends the whole surface background for that frame). Take the size from the texture
+    // once it has loaded.
+    private bool EnsureSize(int slot, string layer)
+    {
+        if (Main.backgroundWidth[slot] > 0 && Main.backgroundHeight[slot] > 0)
+            return true;
+        Asset<Texture2D> texture = TextureAssets.Background[slot];
+        if (!texture.IsLoaded)
+            return false;
+        Main.backgroundWidth[slot] = texture.Width();
+        Main.backgroundHeight[slot] = texture.Height();
+        Mod.Logger.Info($"Background {Region}{layer} was registered as 0 x 0; size taken from the loaded texture.");
+        return true;
+    }
+
+    private static int GroundRow(int slot)
+    {
+        if (!groundRows.TryGetValue(slot, out int row))
+        {
+            Texture2D texture = TextureAssets.Background[slot].Value;
+            Color[] pixels = new Color[texture.Width * texture.Height];
+            texture.GetData(pixels);
+            byte[] alpha = System.Array.ConvertAll(pixels, pixel => pixel.A);
+            groundRows[slot] = row = BackgroundLayoutRules.GroundRow(alpha, texture.Width, texture.Height);
+        }
+        return row;
+    }
 
     // Fade this style in and every other one out, as vanilla does between biomes.
     public override void ModifyFarFades(float[] fades, float transitionSpeed)
@@ -51,7 +94,14 @@ public abstract class RegionBackground : ModSurfaceBackgroundStyle
 
     public override int ChooseMiddleTexture() => Layer("Mid");
 
-    public override int ChooseCloseTexture(ref float scale, ref double parallax, ref float a, ref float b) => Layer("Close");
+    // Drawn where vanilla draws its own close layers, with the art's ground on the horizon (BackgroundLayoutRules).
+    public override int ChooseCloseTexture(ref float scale, ref double parallax, ref float a, ref float b)
+    {
+        int slot = Layer("Close");
+        if (slot >= 0)
+            b += BackgroundLayoutRules.CloseOffset(Main.screenHeight, Main.worldSurface, GroundRow(slot));
+        return slot;
+    }
 }
 
 public sealed class KonohaBackground : RegionBackground { protected override string Region => RegionBackgrounds.Konoha; }

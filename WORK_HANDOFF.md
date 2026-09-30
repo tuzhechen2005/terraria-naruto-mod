@@ -39,6 +39,7 @@
 **2026-09-30 夜间（用户睡前授权，只做不需生图、不需拍板的代码与规划）**
 
 - 修复：砂隐 / 妙木山 / 雾隐背景不显示——原版在 `BiomeMedium` 之前就选定沙漠、发光蘑菇、海洋背景，已把地区背景与木叶生物群系提到 `BiomeHigh`（反编译 `Main.GetPreferredBGStyleForPlayer` 确认）。
+- 修复（用户实机反馈：只看到远景，木叶缺火影楼、砂隐缺村子）：`client.log` 有 `DivideByZeroException` 于 `SurfaceBackgroundStylesLoader.DrawCloseBackground`。tML 在工作线程登记背景尺寸时部分贴图尚未加载，宽高记为 0：中景画成 0×0、近景除零并中断整帧地表背景。`RegionBackground` 取贴图时补宽高（补时写日志 “registered as 0 x 0”）。另外 tML 的近景公式比原版低（少前景层 -150、相机基准不同），且我们的近景图地面线比原版森林近景（第 342 行）低，`BackgroundLayoutRules.CloseOffset` 在 `ChooseCloseTexture` 的 b 上补回，地面行运行时从贴图读取。测试套件 `tests/BackgroundRules`。仍待实机确认。
 - 木叶装饰：挂画（原版 3×3 风景画样式 63/66/67/69/76/77/79/94）、学校武器架、门口陶盆草药、广场长椅、“阿”“吽”牌子；布局测试新增物件重叠检查（发现并修复学校书架与灯笼冲突）；导出钩子报告放置失败的物件，现 0 缺失。
 - **待用户确认的规划草案**：`specs/M2_中忍考试篇_规划草案.spec.md`（主线、M1→M2 衔接、大蛇丸遭遇战与木叶崩溃设计、代码架构、美术清单，末尾 8 条待确认）；`specs/流派系统_草案.spec.md`（四流派第一阶的被动与奥义、共用规则，末尾 5 条待确认）。
 - 框架代码（无具体玩法）：`Common/ThresholdRetreatRules.cs`（打到阈值退场）、`Common/StyleCoreRules.cs`、`Content/Items/StyleCores/StyleCore.cs`（抽象基类）、`Common/Players/StyleCorePlayer.cs`、“流派奥义”键（默认 V，待确认）。测试 `tests/StyleCoreRules`。
