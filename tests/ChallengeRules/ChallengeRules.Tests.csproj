@@ -9,5 +9,9 @@
   <ItemGroup>
     <Compile Include="ChallengeRulesTests.cs" />
     <Compile Include="../../ShinobiPrototype/Common/ChallengeRules.cs" Link="ChallengeRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/BridgeRules.cs" Link="BridgeRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/BridgeDesign.cs" Link="BridgeDesign.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/WaveDuoRules.cs" Link="WaveDuoRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ZabuzaCombatRules.cs" Link="ZabuzaCombatRules.cs" />
   </ItemGroup>
 </Project>

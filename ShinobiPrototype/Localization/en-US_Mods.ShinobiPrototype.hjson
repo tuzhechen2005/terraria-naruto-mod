@@ -26,7 +26,7 @@ Items: {
 
 	ZabuzaChallengeScroll: {
 		DisplayName: Zabuza Challenge Scroll
-		Tooltip: Starts the Wave Country duo battle in an open area; Haku joins at half health; not consumed
+		Tooltip: Only works around the seaside bridge; starts the Wave Country duo battle\nHaku joins when Zabuza is at half health\nNot consumed
 	}
 
 	M0ZabuzaChallengeScroll: {
@@ -376,7 +376,7 @@ Configs: {
 BossChecklist: {
 	WaveDuo: {
 		DisplayName: Zabuza Momochi and Haku
-		SpawnInfo: Follow the mission from Kakashi and Tazuna: meet Tazuna, defeat the Demon Brothers, hear his confession, break Zabuza's water prison at a surface lake to free Kakashi, then see Zabuza in the mist at the broken bridge. Collect 3 Mist insignia and craft Zabuza's challenge scroll (with 10 wood, not consumed) at a workbench and use it. Summoned near the seaside bridge, the fight has its own sea mist and lines.
+		SpawnInfo: Follow the mission from Kakashi and Tazuna: meet Tazuna, defeat the Demon Brothers, hear his confession, break Zabuza's water prison at a surface lake to free Kakashi, then see Zabuza in the mist at the broken bridge. Collect 3 Mist insignia and craft Zabuza's challenge scroll (with 10 wood, not consumed) at a workbench and use it. It only works around the seaside bridge.
 	}
 }
 
