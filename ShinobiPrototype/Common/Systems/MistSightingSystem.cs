@@ -61,7 +61,7 @@ public sealed class MistSightingSystem : ModSystem
         if (!nightOrRain)
             usedThisSpell = false;
         float toBreak = player.Distance(new Vector2(site.X(BridgeDesign.UnfinishedEnd) * 16f, site.DeckY * 16f)) / 16f;
-        if (MistPreviewSystem.Playing ||
+        if (MistPreviewSystem.Playing || !StoryRules.TeasersAllowed(StoryWorld.ZabuzaFought) ||
             !BridgeRules.SightingEligible(WaveBridgeWorld.MistActive, player.GetModPlayer<MistEncounterPlayer>().SawPreview,
                 nightOrRain, usedThisSpell, toBreak) ||
             !Main.rand.NextBool(BridgeRules.SightingChanceOneIn))

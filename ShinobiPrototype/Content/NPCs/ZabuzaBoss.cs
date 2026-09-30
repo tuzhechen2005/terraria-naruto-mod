@@ -57,6 +57,16 @@ public sealed class ZabuzaBoss : ModNPC
         NPCID.Sets.TrailingMode[Type] = 0;
     }
 
+    // Once he has shown himself the figures in the mist are over for this world (StoryRules.TeasersAllowed).
+    public override void OnSpawn(Terraria.DataStructures.IEntitySource source)
+    {
+        if (Main.netMode == NetmodeID.MultiplayerClient || StoryWorld.ZabuzaFought)
+            return;
+        StoryWorld.ZabuzaFought = true;
+        if (Main.netMode == NetmodeID.Server)
+            NetMessage.SendData(MessageID.WorldData);
+    }
+
     public override void SetDefaults()
     {
         NPC.width = ZabuzaCombatRules.BodyWidth;

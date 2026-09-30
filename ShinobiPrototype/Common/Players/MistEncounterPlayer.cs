@@ -60,6 +60,7 @@ public sealed class MistEncounterPlayer : ModPlayer
     public override void PostUpdate()
     {
         if (Player.whoAmI != Main.myPlayer || Player.dead || MistPreviewSystem.Playing ||
+            !StoryRules.TeasersAllowed(StoryWorld.ZabuzaFought) ||
             !WaveBridgeWorld.MistActive || WaveBridgeWorld.Site is not BridgeSite site)
             return;
 
@@ -69,7 +70,7 @@ public sealed class MistEncounterPlayer : ModPlayer
         if (!SawPreview)
         {
             // Until the lake ambush the bridge only has fog; the pair in the mist appears after Zabuza's "death".
-            if (!nearBreak || !StoryRules.PreviewAllowed(StoryWorld.LakeDone))
+            if (!nearBreak || !StoryRules.PreviewAllowed(StoryWorld.LakeDone, StoryWorld.ZabuzaFought))
                 return;
             SawPreview = true;
             MistPreviewSystem.Play();

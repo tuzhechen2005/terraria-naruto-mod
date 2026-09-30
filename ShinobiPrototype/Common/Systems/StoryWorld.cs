@@ -17,6 +17,8 @@ public sealed class StoryWorld : ModSystem
     public static bool MetTazuna { get; set; }
     public static bool TazunaConfessed { get; set; }
     public static bool LakeDone { get; set; }
+    // Zabuza has been summoned in this world: the mist teasers are over (StoryRules.TeasersAllowed).
+    public static bool ZabuzaFought { get; set; }
     public static bool WaveComplete => ExamRules.WaveComplete(DownedHaku, DownedZabuza);
 
     public static void CompleteWave()
@@ -34,6 +36,7 @@ public sealed class StoryWorld : ModSystem
         MetTazuna = false;
         TazunaConfessed = false;
         LakeDone = false;
+        ZabuzaFought = false;
     }
 
     public override void OnWorldUnload()
@@ -45,6 +48,7 @@ public sealed class StoryWorld : ModSystem
         MetTazuna = false;
         TazunaConfessed = false;
         LakeDone = false;
+        ZabuzaFought = false;
     }
 
     public override void SaveWorldData(TagCompound tag)
@@ -63,6 +67,8 @@ public sealed class StoryWorld : ModSystem
             tag["tazunaConfessed"] = true;
         if (LakeDone)
             tag["lakeDone"] = true;
+        if (ZabuzaFought)
+            tag["zabuzaFought"] = true;
     }
 
     public override void LoadWorldData(TagCompound tag)
@@ -76,6 +82,7 @@ public sealed class StoryWorld : ModSystem
         MetTazuna = tag.GetBool("metTazuna");
         TazunaConfessed = tag.GetBool("tazunaConfessed");
         LakeDone = tag.GetBool("lakeDone");
+        ZabuzaFought = tag.GetBool("zabuzaFought");
     }
 
     public override void NetSend(BinaryWriter writer)
@@ -88,6 +95,7 @@ public sealed class StoryWorld : ModSystem
         if (MetTazuna) flags |= 16;
         if (TazunaConfessed) flags |= 32;
         if (LakeDone) flags |= 64;
+        if (ZabuzaFought) flags |= 128;
         writer.Write(flags);
     }
 
@@ -103,6 +111,7 @@ public sealed class StoryWorld : ModSystem
         MetTazuna = (flags & 16) != 0;
         TazunaConfessed = (flags & 32) != 0;
         LakeDone = (flags & 64) != 0;
+        ZabuzaFought = (flags & 128) != 0;
     }
 
     // Talking to Tazuna happens on a client; the server records it and sends the world data back out.

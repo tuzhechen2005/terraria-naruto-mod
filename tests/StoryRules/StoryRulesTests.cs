@@ -23,9 +23,13 @@ Check(Stage(false, false, false, false, true, true, false) == WaveStage.Showdown
 
 Check(ReadyForLake(true, 100) && ReadyForLake(false, 200) && !ReadyForLake(false, 180),
     "Ready: the Eye down or 200 max life");
-Check(!PreviewAllowed(false) && PreviewAllowed(true), "The mist preview waits for the lake");
-Check(!ScrollCraftable(false, false, true) && !ScrollCraftable(false, true, false) && ScrollCraftable(false, true, true) &&
-      ScrollCraftable(true, false, false), "Scroll recipe: after the lake and the preview, always once done");
+Check(!PreviewAllowed(false, false) && PreviewAllowed(true, false), "The mist preview waits for the lake");
+Check(!PreviewAllowed(true, true) && !TeasersAllowed(true) && TeasersAllowed(false),
+    "Once Zabuza has been fought, no more figures in the mist");
+Check(!ScrollCraftable(false, false, true, false) && !ScrollCraftable(false, true, false, false) &&
+      ScrollCraftable(false, true, true, false) && ScrollCraftable(true, false, false, false),
+    "Scroll recipe: after the lake and the preview, always once done");
+Check(ScrollCraftable(false, true, false, true), "A character who missed the preview can still craft once Zabuza has been fought");
 
 Check(IsLake(2000, 4200, 20, 5), "A wide pond inland is a lake");
 Check(!IsLake(200, 4200, 60, 30) && !IsLake(4000, 4200, 60, 30), "The oceans are not lakes");

@@ -35,12 +35,17 @@ public static class StoryRules
         return metTazuna ? WaveStage.Scout : WaveStage.FindTazuna;
     }
 
-    // The mist preview at the broken end waits for the lake: until then the bridge only has fog.
-    public static bool PreviewAllowed(bool lakeDone) => lakeDone;
+    // The mist preview at the broken end waits for the lake: until then the bridge only has fog. Once Zabuza has been
+    // summoned in this world he has shown himself, so the mist teasers (preview, sightings, whispers, the senbon
+    // warning) stop for good (user, 2026-09-30).
+    public static bool PreviewAllowed(bool lakeDone, bool zabuzaFought) => lakeDone && !zabuzaFought;
 
-    // The challenge scroll recipe: after the lake and this character's preview; free again once Wave Country is done.
-    public static bool ScrollCraftable(bool waveComplete, bool lakeDone, bool sawPreview) =>
-        waveComplete || (lakeDone && sawPreview);
+    public static bool TeasersAllowed(bool zabuzaFought) => !zabuzaFought;
+
+    // The challenge scroll recipe: after the lake and this character's preview; free once Zabuza has been fought here
+    // (so nobody is left without the preview that can no longer play) and once Wave Country is done.
+    public static bool ScrollCraftable(bool waveComplete, bool lakeDone, bool sawPreview, bool zabuzaFought) =>
+        waveComplete || zabuzaFought || (lakeDone && sawPreview);
 
     // A lake, not the sea: this far from either world edge (vanilla oceans reach about 380 tiles in).
     public const int OceanMarginTiles = 380;

@@ -50,7 +50,7 @@ public sealed class ZabuzaChallengeScroll : ModItem
         // Craftable once the lake ambush is over and this character has seen the pair in the mist at the bridge.
         Condition story = new(Mod.GetLocalization("Conditions.WaveScroll"), () =>
             StoryRules.ScrollCraftable(StoryWorld.WaveComplete, StoryWorld.LakeDone,
-                Main.LocalPlayer.GetModPlayer<MistEncounterPlayer>().SawPreview));
+                Main.LocalPlayer.GetModPlayer<MistEncounterPlayer>().SawPreview, StoryWorld.ZabuzaFought));
         CreateRecipe().AddIngredient<MistInsignia>(3).AddIngredient(ItemID.Wood, 10)
             .AddTile(TileID.WorkBenches).AddCondition(story).Register();
     }

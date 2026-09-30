@@ -112,7 +112,7 @@ public sealed class StoryPlayer : ModPlayer
 
     public WaveStage WaveStage => StoryRules.Stage(StoryWorld.WaveComplete, StoryWorld.MetTazuna,
         StoryWorld.DownedDemonBrothers, StoryWorld.TazunaConfessed, StoryWorld.LakeDone,
-        Player.GetModPlayer<MistEncounterPlayer>().SawPreview, ReadyForLake);
+        Player.GetModPlayer<MistEncounterPlayer>().SawPreview || StoryWorld.ZabuzaFought, ReadyForLake);
 
     public bool ReadyForLake => StoryRules.ReadyForLake(NPC.downedBoss1, Player.statLifeMax);
 
