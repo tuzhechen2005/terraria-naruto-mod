@@ -47,6 +47,17 @@ public sealed class KonohaWorld : ModSystem
         return false;
     }
 
+    // The middle of a building at street level, for the quest tracker.
+    public static Vector2? BuildingWhere(string name)
+    {
+        if (Site is not KonohaSite site)
+            return null;
+        foreach (KBuilding building in Design.Buildings)
+            if (building.Name == name)
+                return new Vector2(site.X((building.X0 + building.X1) / 2) * 16f, site.GroundY * 16f);
+        return null;
+    }
+
     // World position of the Third Hokage's feet in his office.
     public static Vector2? HokageFeet =>
         Site is KonohaSite site

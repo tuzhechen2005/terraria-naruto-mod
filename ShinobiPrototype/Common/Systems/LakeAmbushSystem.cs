@@ -167,7 +167,18 @@ public sealed class LakeAmbushSystem : ModSystem
         int dx = found.CenterX - px;
         return Math.Abs(dx) < 30
             ? "你身边就有一片湖。"
-            : $"离你最近的湖在{StoryRules.Direction(dx)}边约 {Math.Abs(dx)} 格。";
+            : $"离你最近的湖在{StoryRules.Direction(dx)}边。";
+    }
+
+    // The nearest lake's middle, for the quest tracker.
+    public static Microsoft.Xna.Framework.Vector2? NearestLake(Player player)
+    {
+        int px = (int)(player.Center.X / 16f);
+        Lake? nearest = null;
+        foreach (Lake lake in lakes)
+            if (nearest is not Lake best || Math.Abs(lake.CenterX - px) < Math.Abs(best.CenterX - px))
+                nearest = lake;
+        return nearest is Lake found ? new Microsoft.Xna.Framework.Vector2(found.CenterX * 16f, found.SurfaceY * 16f) : null;
     }
 
     // Mist over the lake while the scene plays, for the local player.

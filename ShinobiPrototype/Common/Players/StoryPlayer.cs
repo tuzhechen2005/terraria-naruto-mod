@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -112,6 +113,50 @@ public sealed class StoryPlayer : ModPlayer
             default:
                 return "中忍考试篇完成：我爱罗倒下的那一刻，木叶崩溃开始了。（M3 开发中）";
         }
+    }
+
+    // The quest tracker (off by default; ShinobiClientConfig.QuestTracker): a short name for the objective and where
+    // it is, when there is one place to go.
+    public (string Title, Vector2? Where) Tracker()
+    {
+        if (StoryWorld.WaveComplete || StoryWorld.DownedGaara)
+        {
+            ChuninExamPlayer exam = Player.GetModPlayer<ChuninExamPlayer>();
+            return exam.Stage switch
+            {
+                ExamStage.Recommend => ("去找卡卡西", NpcWhere(ModContent.NPCType<Content.NPCs.Kakashi>())),
+                ExamStage.Written => ("第一试：忍者学校", KonohaWorld.BuildingWhere("忍者学校")),
+                ExamStage.ForestGate => ("第二试：演习场入口", ExamSiteWorld.Where(ExamSiteWorld.Gate)),
+                ExamStage.ForestHunt when ChuninExamRules.HasBoth(Player.CountItem(ModContent.ItemType<HeavenScroll>()),
+                    Player.CountItem(ModContent.ItemType<EarthScroll>())) => ("第二试：进中央塔", ExamSiteWorld.Where(ExamSiteWorld.Tower)),
+                ExamStage.ForestHunt => ("第二试：夺取另一卷（丛林地表）", null),
+                ExamStage.Prelims => ("预选赛：中央塔大厅", ExamSiteWorld.Where(ExamSiteWorld.Tower)),
+                ExamStage.Training => ("修整：击败骷髅王或生命达到 400", null),
+                ExamStage.Finals => ("正式赛：考试会场", ExamSiteWorld.Where(ExamSiteWorld.Stadium)),
+                ExamStage.NoVillage => ("中忍考试需要新世界", null),
+                _ => ("木叶崩溃（开发中）", null),
+            };
+        }
+        Vector2? bridge = WaveBridgeWorld.Site is BridgeSite site
+            ? new Vector2((site.HutMidX != 0 ? site.HutMidX : site.ShoreX) * 16f, site.DeckY * 16f)
+            : null;
+        return WaveStage switch
+        {
+            WaveStage.FindTazuna => ("去桥头找达兹纳", bridge),
+            WaveStage.Scout => ("击败雾隐侦察兵", null),
+            WaveStage.ReportToTazuna => ("回桥头问达兹纳", bridge),
+            WaveStage.GetStronger => ("变强：击败克苏鲁之眼或生命达到 200", null),
+            WaveStage.Lake => ("去地表的湖边", LakeAmbushSystem.NearestLake(Player)),
+            _ => ("去断桥", bridge),
+        };
+    }
+
+    private static Vector2? NpcWhere(int type)
+    {
+        foreach (NPC npc in Main.ActiveNPCs)
+            if (npc.type == type)
+                return npc.Center;
+        return null;
     }
 
     public WaveStage WaveStage => StoryRules.Stage(StoryWorld.WaveComplete, StoryWorld.MetTazuna,

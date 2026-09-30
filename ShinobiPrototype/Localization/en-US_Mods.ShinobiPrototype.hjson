@@ -423,6 +423,11 @@ Configs: {
 			Tooltip: Use Naruto-styled surface backgrounds in the Leaf, Wave Country, the Sand and other regions; off keeps vanilla backgrounds
 		}
 
+		QuestTracker: {
+			Label: Quest tracker
+			Tooltip: Show the current objective under the chakra bar, with the direction and distance to it (off by default: hints are as quiet as vanilla's)
+		}
+
 		ShowSubstitutionHints: {
 			Label: Show Substitution Jutsu hints
 			Tooltip: When an enemy hits you, explain how to use Substitution (up to 3 times, none after the first success)
@@ -434,6 +439,26 @@ BossChecklist: {
 	WaveDuo: {
 		DisplayName: Zabuza Momochi and Haku
 		SpawnInfo: Follow the mission from Kakashi and Tazuna: meet Tazuna, defeat the Demon Brothers, hear his confession, break Zabuza's water prison at a surface lake to free Kakashi, then see Zabuza in the mist at the broken bridge. Collect 3 Mist insignia and craft Zabuza's challenge scroll (with 10 wood, not consumed) at a workbench and use it. It only works around the seaside bridge.
+	}
+
+	Orochimaru: {
+		DisplayName: Orochimaru (Forest of Death)
+		SpawnInfo: During the second Chunin Exam test, after the Eater of Worlds or Brain of Cthulhu (or at 300 max life), he finds you on the jungle surface while you carry a scroll. Afterwards, summon him on the jungle surface with a Shed Snake Skin (3 Vines, 10 Jungle Spores, 5 Stingers at an anvil). He leaves at half life.
+	}
+
+	Dosu: {
+		DisplayName: Dosu Kinuta
+		SpawnInfo: Enter the central tower of the Forest of Death with both scrolls and the prelims begin. Afterwards, use a Sound Ninja Token (5 iron or lead bars, 5 Shadow Scales or Tissue Samples at an anvil) in the tower hall.
+	}
+
+	Gaara: {
+		DisplayName: Gaara of the Sand
+		SpawnInfo: Once past the prelims and Skeletron (or at 400 max life), walk into the stadium outside the Leaf's wall and the finals begin. Afterwards, use a Sand Gourd (50 Sand, 10 Bones at an anvil) on the stadium field.
+	}
+
+	Neji: {
+		DisplayName: Neji Hyuga
+		SpawnInfo: Once the finals have begun, Kakashi passes on Neji's challenge; use it on the stadium field.
 	}
 }
 

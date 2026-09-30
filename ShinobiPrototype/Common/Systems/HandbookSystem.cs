@@ -81,11 +81,12 @@ public sealed class HandbookSystem : ModSystem
 
 internal sealed class HandbookState : UIState
 {
-    private enum Page { Mission, Jutsu, Chakra, Rewards, Paths, Lore }
+    private enum Page { Mission, Bosses, Jutsu, Chakra, Rewards, Paths, Lore }
 
     private static readonly (Page Page, string Name)[] Tabs =
     {
         (Page.Mission, "任务"),
+        (Page.Bosses, "首领"),
         (Page.Jutsu, "忍术"),
         (Page.Chakra, "查克拉"),
         (Page.Rewards, "本章奖励"),
@@ -114,7 +115,7 @@ internal sealed class HandbookState : UIState
     public override void OnInitialize()
     {
         panel = new UIPanel();
-        panel.Width.Set(660f, 0f);
+        panel.Width.Set(720f, 0f);
         panel.Height.Set(420f, 0f);
         panel.HAlign = 0.5f;
         panel.VAlign = 0.5f;
@@ -128,8 +129,8 @@ internal sealed class HandbookState : UIState
         {
             Page target = Tabs[i].Page;
             UITextPanel<string> tab = new(Tabs[i].Name, 0.8f);
-            tab.Width.Set(84f, 0f);
-            tab.Left.Set(110f + i * 88f, 0f);
+            tab.Width.Set(76f, 0f);
+            tab.Left.Set(104f + i * 80f, 0f);
             tab.OnLeftClick += (_, _) =>
             {
                 page = target;
@@ -194,6 +195,7 @@ internal sealed class HandbookState : UIState
             Page.Lore => LoreText(),
             Page.Rewards => RewardsText(),
             Page.Paths => PathsText(),
+            Page.Bosses => BossesText(),
             _ => MissionText(),
         });
     }
@@ -233,6 +235,20 @@ internal sealed class HandbookState : UIState
                $"· 正式赛：{(StoryWorld.DownedGaara ? "已结束" : stage == ExamStage.Finals ? "可以参加" : "未开始")}\n" +
                $"· 立志：{vow}（取得流派核心后，找火影楼里的三代火影）\n\n" +
                "不知道下一步做什么，可以去问卡卡西。";
+    }
+
+    // Every Naruto boss: where and how, when, what it drops, and whether it has fallen here (master spec,
+    // "可玩性与引导"; the same information goes to the Boss Checklist mod).
+    private static string BossesText()
+    {
+        static string Done(bool downed) => downed ? "【已击败】" : "【未击败】";
+        return "首领（每个首领都能用召唤物重复挑战；剧情只负责第一次）\n\n" +
+               $"{Done(StoryWorld.DownedDemonBrothers)}鬼之兄弟 —— 带着雾隐标记进大桥一带的海雾，第一次必定伏击；之后下雨时可能再遇。掉雾隐标记。\n" +
+               $"{Done(StoryWorld.WaveComplete)}再不斩与白 —— 克苏鲁之眼后。雾隐标记 ×3 + 木材合成再不斩挑战卷轴，在大桥一带使用。掉职业武器、面具、查克拉结晶。\n" +
+               $"{Done(StoryWorld.OrochimaruMet)}大蛇丸（遭遇战）—— 世吞或克脑后（或生命 ≥ 300）。中忍考试第二试中在丛林地表遇到；之后用蛇的蜕皮（藤蔓、丛林孢子、毒刺，铁砧）在丛林地表召唤。打到一半他会离开。掉写轮眼试管（约 1/4）。\n" +
+               $"{Done(StoryWorld.DownedDosu)}音忍·多斯 —— 预选赛，中央塔大厅。之后用音忍的对战牌（铁锭或铅锭、暗影鳞片或组织样本，铁砧）在大厅召唤。\n" +
+               $"{Done(StoryWorld.DownedGaara)}我爱罗 —— 骷髅王后（或生命 ≥ 400）。正式赛，考试会场；之后用砂隐的葫芦（沙块、骨头，铁砧）在会场召唤。每个角色首杀必掉八门遁甲之卷与小李的负重护腿。\n" +
+               $"{Done(StoryWorld.DownedNeji)}日向宁次 —— 正式赛开始后，用卡卡西转交的切磋书在会场召唤。掉白眼（约 1/4）。";
     }
 
     private static string JutsuText()

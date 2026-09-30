@@ -53,16 +53,18 @@ public sealed class ExamSiteWorld : ModSystem
                 yield return s;
     }
 
-    // "(东边约 350 格)" for objective texts.
+    // "（在东边）" for objective texts: a rough direction, as vanilla would give it (master spec, "可玩性与引导");
+    // the exact distance is the quest tracker's, when the player turns it on.
     public static string Hint(ExamSite? site, Player player)
     {
         if (site is not ExamSite s)
             return "";
         int dx = s.CenterX - (int)(player.Center.X / 16f);
-        if (Math.Abs(dx) < 20)
-            return "（就在附近）";
-        return $"（{(dx < 0 ? "西" : "东")}边约 {Math.Abs(dx) / 10 * 10} 格）";
+        return Math.Abs(dx) < 20 ? "（就在附近）" : $"（在{(dx < 0 ? "西" : "东")}边）";
     }
+
+    public static Vector2? Where(ExamSite? site) =>
+        site is ExamSite s ? new Vector2((s.CenterX + 0.5f) * 16f, s.GroundY * 16f) : null;
 
     public static string GateHint(Player player) => Hint(Gate, player);
     public static string TowerHint(Player player) => Hint(Tower, player);

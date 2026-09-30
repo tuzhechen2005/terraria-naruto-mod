@@ -29,6 +29,7 @@ public sealed class ChuninExamPlayer : ModPlayer
     public void ClaimGaaraFirstWin() => GaaraFirstWin = true;
 
     private bool wasDay = true;
+    private ExamStage? lastStage;
 
     public ExamProgress Progress => new(Recommended, WrittenPassed, Issued, TowerReached, PrelimsPassed);
 
@@ -130,6 +131,10 @@ public sealed class ChuninExamPlayer : ModPlayer
             return;
 
         ExamStage stage = Stage;
+        // A line when the finals open, as quiet as vanilla's progress messages.
+        if (lastStage == ExamStage.Training && stage == ExamStage.Finals)
+            Main.NewText("木叶的街上贴出了告示：中忍考试正式赛，即将开始。", new Color(255, 220, 150));
+        lastStage = stage;
         if (stage == ExamStage.ForestGate && ExamSiteWorld.Gate is ExamSite gate &&
             gate.DistanceTiles(Player.Center) <= ChuninExamRules.GateReachTiles)
         {

@@ -32,4 +32,9 @@ public sealed class ShinobiClientConfig : ModConfig
     // Naruto region backgrounds (the Leaf, Wave Country, the Sand, ...) in place of vanilla's surface backgrounds.
     [DefaultValue(true)]
     public bool RegionBackgrounds;
+
+    // A line under the chakra bar with the current objective and how far it is (off by default: hints are meant to be
+    // as quiet as vanilla's; master spec, "可玩性与引导").
+    [DefaultValue(false)]
+    public bool QuestTracker;
 }

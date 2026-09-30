@@ -20,11 +20,24 @@ public sealed class ShinobiPrototype : Mod
         ExamSync,         // client -> server: a player's Chunin Exam progress (ChuninExamPlayer)
     }
 
-    // Boss Checklist (optional mod): list Zabuza and Haku just after the Eye of Cthulhu (2.0).
+    // Boss Checklist (optional mod): list Zabuza and Haku just after the Eye of Cthulhu (2.0), and the Chūnin Exam
+    // fights where they fall among vanilla's bosses (Eater/Brain 3.0, Skeletron 5.0).
     public override void PostSetupContent()
     {
         if (!ModLoader.TryGetMod("BossChecklist", out Mod checklist))
             return;
+        LogExamBoss(checklist, "MiniBoss", "Orochimaru", 3.2f, () => StoryWorld.OrochimaruMet,
+            ModContent.NPCType<Content.NPCs.Orochimaru>(), ModContent.ItemType<Content.Items.SnakeSkin>(),
+            ModContent.ItemType<Content.Items.StyleCores.SharinganCore1>());
+        LogExamBoss(checklist, "MiniBoss", "Dosu", 3.5f, () => StoryWorld.DownedDosu,
+            ModContent.NPCType<Content.NPCs.Dosu>(), ModContent.ItemType<Content.Items.SoundNinjaToken>());
+        LogExamBoss(checklist, "Boss", "Gaara", 5.2f, () => StoryWorld.DownedGaara,
+            ModContent.NPCType<Content.NPCs.Gaara>(), ModContent.ItemType<Content.Items.SandGourd>(),
+            ModContent.ItemType<Content.Items.StyleCores.EightGatesCore>(), ModContent.ItemType<Content.Items.Taijutsu.LeeLegWeights>(),
+            ModContent.ItemType<Content.Items.ChuninHeadband>());
+        LogExamBoss(checklist, "Boss", "Neji", 5.3f, () => StoryWorld.DownedNeji,
+            ModContent.NPCType<Content.NPCs.Neji>(), ModContent.ItemType<Content.Items.NejiChallengeScroll>(),
+            ModContent.ItemType<Content.Items.StyleCores.ByakuganCore>());
         int zabuza = ModContent.NPCType<Content.NPCs.ZabuzaBoss>();
         int haku = ModContent.NPCType<Content.NPCs.HakuBoss>();
         checklist.Call("LogBoss", this, "WaveDuo", 2.1f, (Func<bool>)(() => StoryWorld.WaveComplete),
@@ -44,6 +57,18 @@ public sealed class ShinobiPrototype : Mod
                     ModContent.ItemType<Content.Items.Weapons.IceMirrorJutsu>(),
                 },
             });
+    }
+
+    private void LogExamBoss(Mod checklist, string kind, string key, float progression, Func<bool> downed, int npc, int spawnItem,
+        params int[] collectibles)
+    {
+        checklist.Call($"Log{kind}", this, key, progression, downed, npc, new Dictionary<string, object>
+        {
+            ["displayName"] = Language.GetText($"Mods.ShinobiPrototype.BossChecklist.{key}.DisplayName"),
+            ["spawnInfo"] = Language.GetText($"Mods.ShinobiPrototype.BossChecklist.{key}.SpawnInfo"),
+            ["spawnItems"] = spawnItem,
+            ["collectibles"] = new List<int>(collectibles),
+        });
     }
 
     public override void HandlePacket(BinaryReader reader, int whoAmI)
