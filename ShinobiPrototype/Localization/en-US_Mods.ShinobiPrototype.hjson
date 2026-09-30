@@ -163,14 +163,22 @@ NPCs: {
 		GivenName: Tazuna
 
 		TownNPCMood: {
-			Content: 我很满足。
-			NoHome: 我讨厌没有家。
-			FarFromHome: 我离家太远了。
-			LoveSpace: 我非常喜欢有这么大的空间。
-			DislikeCrowded: 我不喜欢这么拥挤。
-			HateCrowded: 我讨厌这么拥挤。
-			LikeNPC_Princess: 我喜欢 {NPCName}。
-			Princess_LovesNPC: 我喜欢 {NPCName}。
+			Content: "Comfortable enough. Care for a drink?"
+			NoHome: "I build bridges! The least you can do is give me a roof!"
+			FarFromHome: "Too far from my bridge. I do not like it."
+			LoveSpace: "Room to spare! I could lay out blueprints in here."
+			DislikeCrowded: "Too many people. I can hardly breathe."
+			HateCrowded: "This packed? I would rather sleep at the bridgehead!"
+			LikeBiome: "The {BiomeName} is fine, as long as I can see the sea."
+			LoveBiome: "In the {BiomeName} I can hear the waves. That is home."
+			DislikeBiome: "The {BiomeName}? Not a drop of water. How do you build a bridge here!"
+			HateBiome: "I cannot stand the {BiomeName}."
+			LikeNPC: "{NPCName} is someone you can count on."
+			LoveNPC: "With {NPCName} beside me, I fear nothing."
+			DislikeNPC: "{NPCName} and all that dealing... reminds me of Gato."
+			HateNPC: "Keep {NPCName} away from my bridge!"
+			LikeNPC_Princess: "What a lovely child {NPCName} is."
+			Princess_LovesNPC: "I love {NPCName}!"
 		}
 	}
 
@@ -179,14 +187,22 @@ NPCs: {
 		GivenName: Kakashi
 
 		TownNPCMood: {
-			Content: 我很满足。
-			NoHome: 我讨厌没有家。
-			FarFromHome: 我离家太远了。
-			LoveSpace: 我非常喜欢有这么大的空间。
-			DislikeCrowded: 我不喜欢这么拥挤。
-			HateCrowded: 我讨厌这么拥挤。
-			LikeNPC_Princess: 我喜欢 {NPCName}。
-			Princess_LovesNPC: 我喜欢 {NPCName}。
+			Content: "Not bad here. I can read in peace."
+			NoHome: "A ninja can sleep outdoors... but a roof would be nice."
+			FarFromHome: "I am a little far from home. It makes me uneasy."
+			LoveSpace: "Plenty of room. Good for reading alone."
+			DislikeCrowded: "A bit crowded. Ninja like it quiet."
+			HateCrowded: "So crowded there is nowhere left to read."
+			LikeBiome: "The {BiomeName} reminds me of the Leaf."
+			LoveBiome: "The {BiomeName} is a fine place."
+			DislikeBiome: "The {BiomeName}? Too hot. My mask is soaked."
+			HateBiome: "I really cannot stand the {BiomeName}."
+			LikeNPC: "{NPCName} is a good sort."
+			LoveNPC: "With {NPCName} around, I can relax."
+			DislikeNPC: "{NPCName}... is a little loud."
+			HateNPC: "I cannot stay near {NPCName}."
+			LikeNPC_Princess: "{NPCName} has plenty of spirit."
+			Princess_LovesNPC: "I love {NPCName}!"
 		}
 	}
 

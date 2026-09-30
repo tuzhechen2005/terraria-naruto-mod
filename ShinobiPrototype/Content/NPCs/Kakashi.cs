@@ -47,6 +47,7 @@ public sealed class Kakashi : ModNPC
         NPCID.Sets.AttackTime[Type] = 24;
         NPCID.Sets.AttackAverageChance[Type] = 20;
         NPCID.Sets.HatOffsetY[Type] = 4;
+        SetHappiness();
     }
 
     public override void SetDefaults()
@@ -67,6 +68,16 @@ public sealed class Kakashi : ModNPC
     }
 
     public override bool CanTownNPCSpawn(int numTownNPCs) => true;
+
+    // Likes the forest (like the Leaf), dislikes the desert; likes Tazuna, finds the Party Girl a bit loud.
+    private void SetHappiness()
+    {
+        NPC.Happiness
+            .SetBiomeAffection<Terraria.GameContent.Personalities.ForestBiome>(Terraria.GameContent.Personalities.AffectionLevel.Like)
+            .SetBiomeAffection<Terraria.GameContent.Personalities.DesertBiome>(Terraria.GameContent.Personalities.AffectionLevel.Dislike)
+            .SetNPCAffection<Tazuna>(Terraria.GameContent.Personalities.AffectionLevel.Like)
+            .SetNPCAffection(NPCID.PartyGirl, Terraria.GameContent.Personalities.AffectionLevel.Dislike);
+    }
 
     public override List<string> SetNPCNameList() => new() { this.GetLocalizedValue("GivenName") };
 

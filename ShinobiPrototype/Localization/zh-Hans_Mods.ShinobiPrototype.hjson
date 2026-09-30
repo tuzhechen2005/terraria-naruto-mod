@@ -163,14 +163,22 @@ NPCs: {
 		GivenName: 达兹纳
 
 		TownNPCMood: {
-			// Content: 我很满足。
-			// NoHome: 我讨厌没有家。
-			// FarFromHome: 我离家太远了。
-			// LoveSpace: 我非常喜欢有这么大的空间。
-			// DislikeCrowded: 我不喜欢这么拥挤。
-			// HateCrowded: 我讨厌这么拥挤。
-			// LikeNPC_Princess: 我喜欢 {NPCName}。
-			// Princess_LovesNPC: 我喜欢 {NPCName}。
+			Content: "住得挺舒服。来，喝一杯？"
+			NoHome: "我可是造桥的，总得给我个屋顶吧！"
+			FarFromHome: "离我的桥太远了，心里不踏实。"
+			LoveSpace: "宽敞！这么大的地方，都能画施工图了。"
+			DislikeCrowded: "人太多了，挤得我喘不过气。"
+			HateCrowded: "挤成这样，我宁可回桥头去住！"
+			LikeBiome: "{BiomeName}不错，看得见海就好。"
+			LoveBiome: "住在{BiomeName}，能听见海浪声。这才叫家啊。"
+			DislikeBiome: "{BiomeName}？连一滴水都没有，怎么造桥！"
+			HateBiome: "我受不了{BiomeName}。"
+			LikeNPC: "{NPCName}是个靠得住的人。"
+			LoveNPC: "有{NPCName}在身边，我什么都不怕。"
+			DislikeNPC: "{NPCName}那副做生意的样子……让我想起卡多。"
+			HateNPC: "别让{NPCName}靠近我的桥！"
+			LikeNPC_Princess: "{NPCName}这孩子真讨人喜欢。"
+			Princess_LovesNPC: "我很喜欢{NPCName}！"
 		}
 	}
 
@@ -179,14 +187,22 @@ NPCs: {
 		GivenName: 卡卡西
 
 		TownNPCMood: {
-			// Content: 我很满足。
-			// NoHome: 我讨厌没有家。
-			// FarFromHome: 我离家太远了。
-			// LoveSpace: 我非常喜欢有这么大的空间。
-			// DislikeCrowded: 我不喜欢这么拥挤。
-			// HateCrowded: 我讨厌这么拥挤。
-			// LikeNPC_Princess: 我喜欢 {NPCName}。
-			// Princess_LovesNPC: 我喜欢 {NPCName}。
+			Content: "嗯，住得还不错。可以安心看书了。"
+			NoHome: "忍者露宿也不是不行……不过有个屋顶会更好。"
+			FarFromHome: "离家太远了，有点不放心。"
+			LoveSpace: "地方宽敞，适合一个人静静看书。"
+			DislikeCrowded: "人有点多。忍者还是喜欢清静。"
+			HateCrowded: "这么挤，连看书的地方都没有了。"
+			LikeBiome: "{BiomeName}让我想起木叶。"
+			LoveBiome: "{BiomeName}真是个好地方。"
+			DislikeBiome: "{BiomeName}？……太热了，面罩里都是汗。"
+			HateBiome: "我实在受不了{BiomeName}。"
+			LikeNPC: "{NPCName}是个不错的人。"
+			LoveNPC: "有{NPCName}在，我很放心。"
+			DislikeNPC: "{NPCName}……有点吵。"
+			HateNPC: "我没法和{NPCName}待在一起。"
+			LikeNPC_Princess: "{NPCName}很有精神啊。"
+			Princess_LovesNPC: "我很喜欢{NPCName}！"
 		}
 	}
 

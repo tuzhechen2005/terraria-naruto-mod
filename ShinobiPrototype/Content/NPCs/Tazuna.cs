@@ -18,6 +18,12 @@ public sealed class Tazuna : ModNPC
     public override void SetStaticDefaults()
     {
         Main.npcFrameCount[Type] = NpcSheet.FrameCount;
+        // Loves the sea, dislikes the desert; likes Kakashi; dealers remind him of Gato.
+        NPC.Happiness
+            .SetBiomeAffection<Terraria.GameContent.Personalities.OceanBiome>(Terraria.GameContent.Personalities.AffectionLevel.Love)
+            .SetBiomeAffection<Terraria.GameContent.Personalities.DesertBiome>(Terraria.GameContent.Personalities.AffectionLevel.Dislike)
+            .SetNPCAffection<Kakashi>(Terraria.GameContent.Personalities.AffectionLevel.Like)
+            .SetNPCAffection(NPCID.Merchant, Terraria.GameContent.Personalities.AffectionLevel.Dislike);
         NPCID.Sets.DangerDetectRange[Type] = 500;
         NPCID.Sets.AttackType[Type] = 0;
         NPCID.Sets.AttackTime[Type] = 60;
