@@ -9,3 +9,7 @@ __pycache__/
 art/reference/
 tools/XnbExtract/bin/
 tools/XnbExtract/obj/
+# Naruto OST tracks for local play only: copyrighted, never commit or publish them (see specs/M10, 2026-09-29).
+Sound_Track/
+ShinobiPrototype/Assets/Music/
+.DS_Store

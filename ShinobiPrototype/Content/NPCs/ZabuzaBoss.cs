@@ -73,7 +73,7 @@ public sealed class ZabuzaBoss : ModNPC
         NPC.aiStyle = -1;
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
-        Music = MusicID.Boss1;
+        Music = WaveMusic.OrBossMusic(WaveMusic.NeedToBeStrong);
     }
 
     public override void AI()
@@ -113,6 +113,7 @@ public sealed class ZabuzaBoss : ModNPC
             Enter(ZabuzaCombatRules.FrenzyAwaken);
         }
 
+        Music = WaveMusic.OrBossMusic(InMistPhase ? WaveMusic.StrongAndStrike : WaveMusic.NeedToBeStrong);
         NPC.ai[1]++;
         int state = (int)NPC.ai[0];
         NPC.noGravity = state is ZabuzaCombatRules.DashActive or ZabuzaCombatRules.DashChainActive or
@@ -1213,6 +1214,7 @@ public sealed class ZabuzaBoss : ModNPC
 
     public override void OnKill()
     {
+        LeaveBody(NPC, Projectiles.WaveCorpse.Zabuza);
         int haku = FindLinkedHaku();
         if (haku >= 0)
         {
@@ -1224,9 +1226,20 @@ public sealed class ZabuzaBoss : ModNPC
         CompleteEncounter(NPC);
     }
 
+    // The fallen stay where they dropped until the epilogue ends (server or single player spawns the body).
+    internal static void LeaveBody(NPC boss, int who)
+    {
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            return;
+        Projectile.NewProjectile(boss.GetSource_Death(), boss.Center, Vector2.Zero,
+            ModContent.ProjectileType<Projectiles.WaveCorpse>(), 0, 0f, Main.myPlayer, who, boss.direction);
+    }
+
     internal static void CompleteEncounter(NPC lastBoss)
     {
         StoryWorld.CompleteWave();
+        if (Main.netMode != NetmodeID.MultiplayerClient)
+            WaveEpilogueSystem.Begin(hakuFellFirst: lastBoss.type == ModContent.NPCType<ZabuzaBoss>(), lastBoss.Center);
         WaveRewards.Settle(lastBoss);
         if (Main.netMode == NetmodeID.Server)
             NetMessage.SendData(MessageID.WorldData);

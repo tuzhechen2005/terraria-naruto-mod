@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common;
+using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.Projectiles;
 
 namespace ShinobiPrototype.Content.NPCs;
@@ -80,7 +81,7 @@ public sealed class HakuBoss : ModNPC
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
         NPC.BossBar = ModContent.GetInstance<HakuBossBar>();
-        Music = MusicID.Boss1;
+        Music = WaveMusic.OrBossMusic(WaveMusic.StrongAndStrike);
     }
 
     public override void AI()
@@ -669,6 +670,7 @@ public sealed class HakuBoss : ModNPC
 
     public override void OnKill()
     {
+        ZabuzaBoss.LeaveBody(NPC, Projectiles.WaveCorpse.Haku);
         NPC parent = LinkedZabuza();
         if (parent != null)
         {

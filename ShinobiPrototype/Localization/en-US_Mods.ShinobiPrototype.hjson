@@ -263,6 +263,7 @@ NPCs: {
 }
 
 Projectiles: {
+	WaveCorpse.DisplayName: Fallen
 	KunaiThrown.DisplayName: Kunai
 	SenbonThrown.DisplayName: Senbon
 	WaterDragonFriendly.DisplayName: Water Dragon
@@ -284,6 +285,16 @@ Projectiles: {
 }
 
 Dialogue: {
+	EpilogueZabuza1: "Zabuza: ...Haku."
+	EpilogueZabuza2: "Zabuza: You fool... right to the end, you took the blow for me."
+	EpilogueZabuza3: "Zabuza: I always called you a tool... but, Haku..."
+	EpilogueZabuza4: "Zabuza: At least... let me lie beside you."
+	EpilogueZabuza5: "Zabuza: If I could... I would go where you are going..."
+	EpilogueHaku1: "Haku: Master Zabuza... I'm sorry. I could not be your blade."
+	EpilogueHaku2: "Haku: That day, you found me in the snow..."
+	EpilogueHaku3: "Haku: Being your tool... made me happy."
+	EpilogueSnow: It has begun to snow. In the village where Haku was born, it snows all year round.
+	EpilogueRest: The demon and his boy sleep together in the snow.
 	HakuForestRecall: Haku: ...We met in the forest, didn't we? What a pity.
 	DemonBrothersDown: The Demon Brothers are down. Mist chunin are hunting you now. The mission is raised to A rank.
 	Whisper1: ???: ...You again.

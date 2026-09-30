@@ -15,6 +15,7 @@ public sealed class ShinobiPrototype : Mod
     {
         BuildBridge,      // client -> server: shore X, direction, water Y
         WaveFirstWin,     // server -> one client: grant that character's first-win rewards
+        WaveEpilogue,     // server -> clients: both bosses have fallen (haku fell first, where)
     }
 
     // Boss Checklist (optional mod): list Zabuza and Haku just after the Eye of Cthulhu (2.0).
@@ -47,6 +48,12 @@ public sealed class ShinobiPrototype : Mod
     {
         switch ((Packet)reader.ReadByte())
         {
+            case Packet.WaveEpilogue:
+                bool hakuFirst = reader.ReadBoolean();
+                Microsoft.Xna.Framework.Vector2 where = reader.ReadVector2();
+                if (Main.netMode == NetmodeID.MultiplayerClient)
+                    WaveEpilogueSystem.Start(hakuFirst, where);
+                break;
             case Packet.WaveFirstWin:
                 if (Main.netMode == NetmodeID.MultiplayerClient)
                     Main.LocalPlayer.GetModPlayer<Common.Players.WaveRewardPlayer>().ReceiveFirstWin();
