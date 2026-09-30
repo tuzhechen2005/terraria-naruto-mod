@@ -103,10 +103,15 @@ public static class ChuninExamRules
     public static bool SquadDropsScroll(int squadsBeaten, float roll) =>
         squadsBeaten >= SquadPity || roll < SquadScrollChance;
 
-    // The Rain genin ambush the first time the character is on the jungle surface while hunting; the three carry the
-    // other scroll. Candidates only spawn for someone hunting a scroll.
-    public static bool RainAmbushDue(ExamStage stage, bool ambushDone, bool onJungleSurface, bool rainAlive) =>
-        stage == ExamStage.ForestHunt && !ambushDone && onJungleSurface && !rainAlive;
+    // The Rain genin close the second test (user, 2026-09-30): once the character has beaten a candidate squad, they
+    // lie in wait on the road to the tower, and the three carry the other scroll (in the anime Team 7 took its Earth
+    // scroll from them by the tower). Candidates are the main source; the Rain genin are the sure one.
+    public const int RainAmbushTowerTiles = 150;
+
+    public static bool RainAmbushDue(ExamStage stage, bool ambushDone, int squadsBeaten, bool onJungleSurface,
+        float tilesFromTower, bool rainAlive) =>
+        stage == ExamStage.ForestHunt && !ambushDone && squadsBeaten >= 1 && onJungleSurface &&
+        tilesFromTower <= RainAmbushTowerTiles && !rainAlive;
 
     public const int RainAmbushWarnTicks = 150;
     public const int RainAmbushRetryTicks = 60 * 60;

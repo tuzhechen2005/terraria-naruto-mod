@@ -69,6 +69,16 @@ Items: {
 		Tooltip: Once the finals have begun, use it on the stadium field to spar with Neji Hyuga\nNot consumed
 	}
 
+	SoundNinjaToken: {
+		DisplayName: Sound Ninja Token
+		Tooltip: Use it in the central tower hall of the Forest of Death to fight Dosu again\nNot consumed
+	}
+
+	SandGourd: {
+		DisplayName: Sand Gourd
+		Tooltip: Use it on the stadium field outside the Leaf's wall to fight Gaara again\nNot consumed
+	}
+
 	ChakraPill: {
 		DisplayName: Soldier Pill
 		Tooltip:

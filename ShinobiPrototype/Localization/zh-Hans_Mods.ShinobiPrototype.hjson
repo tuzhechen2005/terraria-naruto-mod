@@ -69,6 +69,16 @@ Items: {
 		Tooltip: 正式赛开始后，在考试会场的场地上使用，与日向宁次切磋\n不会被消耗
 	}
 
+	SoundNinjaToken: {
+		DisplayName: 音忍的对战牌
+		Tooltip: 在死亡森林中央塔的大厅使用，与音忍多斯再战\n不会被消耗
+	}
+
+	SandGourd: {
+		DisplayName: 砂隐的葫芦
+		Tooltip: 在木叶城墙外考试会场的场地上使用，与我爱罗再战\n不会被消耗
+	}
+
 	ChakraPill: {
 		DisplayName: 兵粮丸
 		Tooltip:

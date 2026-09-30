@@ -83,6 +83,9 @@ public static class ExamBossRules
     public const int WindBlastDamage = 30;
     public const float WindBlastKnockback = 14f;
     public const int NeckBiteDamage = 42;
+    // The Five Elements Seal: the chakra stops coming back for a while (natural and on-hit recovery; pills still work).
+    public const int FiveSealDamage = 24;
+    public const int FiveSealTicks = 480;
     public const int SnakeLife = 220;
     public const int SnakeDamage = 26;
     // Summons: once above half life, once more on the way down (the fight ends at half).

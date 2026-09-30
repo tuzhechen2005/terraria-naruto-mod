@@ -58,10 +58,16 @@ Check(Issue(0) != Issue(1), "Either scroll can be handed out");
 Check(HasBoth(1, 1) && !HasBoth(1, 0) && !HasBoth(0, 2), "Both scrolls are needed");
 Check(!SquadDropsScroll(1, 0.9f) && SquadDropsScroll(1, 0.1f) && SquadDropsScroll(SquadPity, 0.99f),
     "A squad carries the scroll by chance, the fifth always");
-Check(RainAmbushDue(ExamStage.ForestHunt, false, true, false) && !RainAmbushDue(ExamStage.ForestHunt, true, true, false) &&
-      !RainAmbushDue(ExamStage.ForestGate, false, true, false) && !RainAmbushDue(ExamStage.ForestHunt, false, false, false) &&
-      !RainAmbushDue(ExamStage.ForestHunt, false, true, true),
+Check(RainAmbushDue(ExamStage.ForestHunt, false, 1, true, 100f, false) &&
+      !RainAmbushDue(ExamStage.ForestHunt, true, 1, true, 100f, false) &&
+      !RainAmbushDue(ExamStage.ForestGate, false, 1, true, 100f, false) &&
+      !RainAmbushDue(ExamStage.ForestHunt, false, 1, false, 100f, false) &&
+      !RainAmbushDue(ExamStage.ForestHunt, false, 1, true, 100f, true),
     "The Rain genin ambush once, on the jungle surface, while hunting");
+Check(!RainAmbushDue(ExamStage.ForestHunt, false, 0, true, 100f, false),
+    "The Rain genin wait until a candidate squad has been beaten");
+Check(!RainAmbushDue(ExamStage.ForestHunt, false, 3, true, RainAmbushTowerTiles + 1, false),
+    "The Rain genin lie in wait on the road to the tower, not anywhere in the forest");
 Check(CandidatesSpawn(ExamStage.ForestHunt, true) && !CandidatesSpawn(ExamStage.Prelims, true) && !CandidatesSpawn(ExamStage.ForestHunt, false),
     "Candidates only come for someone hunting on the jungle surface");
 

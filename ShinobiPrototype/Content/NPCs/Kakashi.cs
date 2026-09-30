@@ -117,8 +117,7 @@ public sealed class Kakashi : ModNPC
         {
             exam.Recommend();
             player.QuickSpawnItem(NPC.GetSource_FromThis(), recommendation);
-            return "辛苦了。……该回木叶了。\n\n对了——中忍考试就要开始了。我推荐了你。去不去，你自己决定。" +
-                   "\n\n" + player.GetModPlayer<StoryPlayer>().CurrentObjective();
+            return RecommendationLine + "\n\n" + player.GetModPlayer<StoryPlayer>().CurrentObjective();
         }
         if (exam.Stage == ExamStage.Written && !player.HasItem(recommendation))
         {
@@ -136,6 +135,52 @@ public sealed class Kakashi : ModNPC
             return "辛苦了。……本来该回木叶了，可这片土地上没有木叶。中忍考试只能在有木叶的世界里参加。\n\n" + objective;
 
         return $"{Main.rand.Next(greetings)}\n\n{objective}";
+    }
+
+    public const string RecommendationLine =
+        "哟，辛苦了。……好了，回村子吧。啊对了——中忍考试，我把你的名字报上去了。去不去随你。";
+
+    // Once the Wave epilogue ends: the server (or single player) flickers him in beside the nearest player who has
+    // not had the recommendation yet; each such player nearby gets the line and the recommendation on their client.
+    public static void ArriveAfterEpilogue(Vector2 where)
+    {
+        const float reach = 200f * 16f;
+        int type = ModContent.NPCType<Kakashi>();
+        if (Main.netMode != NetmodeID.MultiplayerClient)
+        {
+            Player closest = null;
+            foreach (Player player in Main.ActivePlayers)
+                if (!player.dead && player.Distance(where) < reach &&
+                    player.GetModPlayer<ChuninExamPlayer>().Stage == ExamStage.Recommend &&
+                    (closest == null || player.Distance(where) < closest.Distance(where)))
+                    closest = player;
+            if (closest != null)
+                foreach (NPC npc in Main.ActiveNPCs)
+                    if (npc.type == type)
+                    {
+                        npc.Bottom = closest.Bottom + new Vector2(-closest.direction * 48f, 0f);
+                        npc.velocity = Vector2.Zero;
+                        npc.direction = npc.spriteDirection = closest.direction;
+                        npc.netUpdate = true;
+                        break;
+                    }
+        }
+        if (Main.dedServ)
+            return;
+        Player local = Main.LocalPlayer;
+        ChuninExamPlayer exam = local.GetModPlayer<ChuninExamPlayer>();
+        if (!local.active || local.dead || local.Distance(where) > reach || exam.Stage != ExamStage.Recommend)
+            return;
+        exam.Recommend();
+        local.QuickSpawnItem(local.GetSource_Misc("KakashiRecommendation"), ModContent.ItemType<ExamAdmissionScroll>());
+        Main.NewText("卡卡西：" + RecommendationLine, new Color(200, 210, 230));
+        foreach (NPC npc in Main.ActiveNPCs)
+            if (npc.type == type)
+            {
+                for (int i = 0; i < 20; i++)
+                    Dust.NewDust(npc.position, npc.width, npc.height, DustID.Smoke, 0f, -1f, 100, default, 1.4f);
+                CombatText.NewText(npc.getRect(), new Color(200, 210, 230), "哟，辛苦了。", dramatic: true);
+            }
     }
 
     public override void SetChatButtons(ref string button, ref string button2)

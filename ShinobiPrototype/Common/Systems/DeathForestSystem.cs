@@ -9,9 +9,10 @@ using ShinobiPrototype.Content.NPCs;
 
 namespace ShinobiPrototype.Common.Systems;
 
-// The Rain genin's ambush in the Forest of Death (specs/M2_中忍考试篇.spec.md 3.2): the first time a character hunting
-// the other scroll is on the jungle surface, a warning, then three Rain genin close in. If the character escapes or
-// falls, the three leave and try again later. Run by the server (or single player) from each player's synced progress.
+// The Rain genin's ambush in the Forest of Death (specs/M2_中忍考试篇.spec.md 3.2): once a character hunting the other
+// scroll has beaten a candidate squad and nears the central tower, a warning, then three Rain genin close in. If the
+// character escapes or falls, the three leave and try again later. Run by the server (or single player) from each
+// player's synced progress.
 public sealed class DeathForestSystem : ModSystem
 {
     private static int cooldown;
@@ -48,8 +49,10 @@ public sealed class DeathForestSystem : ModSystem
             if (player.dead)
                 continue;
             ChuninExamPlayer exam = player.GetModPlayer<ChuninExamPlayer>();
-            if (!ChuninExamRules.RainAmbushDue(exam.Stage, exam.RainAmbushDone, player.ZoneJungle && player.ZoneOverworldHeight,
-                    rainAlive))
+            float fromTower = ExamSiteWorld.Tower is ExamSite tower ? tower.DistanceTiles(player.Center) : float.MaxValue;
+            if (!ChuninExamRules.RainAmbushDue(exam.Stage, exam.RainAmbushDone,
+                    exam.CandidatesBeaten / ChuninExamRules.SquadSize, player.ZoneJungle && player.ZoneOverworldHeight,
+                    fromTower, rainAlive))
                 continue;
             target = player.whoAmI;
             warnTicks = ChuninExamRules.RainAmbushWarnTicks;

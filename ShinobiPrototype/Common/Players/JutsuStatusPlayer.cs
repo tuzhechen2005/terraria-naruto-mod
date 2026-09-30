@@ -8,13 +8,15 @@ namespace ShinobiPrototype.Common.Players;
 
 // What the exam fights do to the player (ExamBossRules), all on the player's own client, where the hits land:
 // bound in Gaara's sand coffin, frozen by Orochimaru's killing intent (substitution breaks both), ears ringing from
-// Dosu's drill (left and right swap), chakra points sealed by Neji (less maximum chakra; three seals stop substitution).
+// Dosu's drill (left and right swap), chakra points sealed by Neji (less maximum chakra; three seals stop substitution),
+// chakra recovery stopped by Orochimaru's Five Elements Seal.
 public sealed class JutsuStatusPlayer : ModPlayer
 {
     public int BindTicks { get; private set; }
     public int FearTicks { get; private set; }
     public int TinnitusTicks { get; private set; }
     public int Seals { get; private set; }
+    public int RegenSealTicks { get; private set; }
     private int sealTicks;
 
     public bool Bound => ExamBossRules.BreaksOnSubstitution(BindTicks, FearTicks);
@@ -23,7 +25,7 @@ public sealed class JutsuStatusPlayer : ModPlayer
 
     public override void Initialize()
     {
-        BindTicks = FearTicks = TinnitusTicks = Seals = sealTicks = 0;
+        BindTicks = FearTicks = TinnitusTicks = Seals = sealTicks = RegenSealTicks = 0;
     }
 
     public override void OnRespawn() => Initialize();
@@ -54,6 +56,13 @@ public sealed class JutsuStatusPlayer : ModPlayer
             SubstitutionSealed ? "点穴——查克拉被封住了！" : $"点穴 ×{Seals}");
     }
 
+    // Orochimaru's Five Elements Seal.
+    public void SealRegen(int ticks)
+    {
+        RegenSealTicks = System.Math.Max(RegenSealTicks, ticks);
+        CombatText.NewText(Player.getRect(), new Color(190, 150, 230), "五行封印——查克拉停住了！");
+    }
+
     // Substitution got the player out.
     public void Break()
     {
@@ -69,6 +78,8 @@ public sealed class JutsuStatusPlayer : ModPlayer
             FearTicks--;
         if (TinnitusTicks > 0)
             TinnitusTicks--;
+        if (RegenSealTicks > 0)
+            RegenSealTicks--;
         if (sealTicks > 0 && --sealTicks == 0)
             Seals = 0;
     }
@@ -102,6 +113,8 @@ public sealed class JutsuStatusPlayer : ModPlayer
             g *= 0.5f;
             b *= 0.5f;
         }
+        if (RegenSealTicks > 0 && Main.rand.NextBool(4))
+            Dust.NewDust(Player.position, Player.width, Player.height, Terraria.ID.DustID.PurpleTorch, 0f, -1f);
         if (Seals > 0 && Main.rand.NextBool(8))
             Dust.NewDust(Player.position, Player.width, Player.height, Terraria.ID.DustID.BlueTorch, 0f, -1f);
     }

@@ -35,7 +35,9 @@ public sealed class ChakraPlayer : ModPlayer
         if (hitWindowTicks > 0 && --hitWindowTicks == 0)
             hitRestoredThisWindow = 0;
 
-        chakra = System.Math.Clamp(chakra + ChakraRules.RegenPerTick(recoveryDelay), 0f, MaxChakra);
+        // Orochimaru's Five Elements Seal stops recovery for a while (pills still work).
+        float regen = Player.GetModPlayer<JutsuStatusPlayer>().RegenSealTicks > 0 ? 0f : ChakraRules.RegenPerTick(recoveryDelay);
+        chakra = System.Math.Clamp(chakra + regen, 0f, MaxChakra);
     }
 
     public bool TrySpend(int amount)
@@ -63,6 +65,7 @@ public sealed class ChakraPlayer : ModPlayer
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         if (Player.whoAmI != Main.myPlayer || target.friendly || target.immortal || target.lifeMax <= 5 ||
+            Player.GetModPlayer<JutsuStatusPlayer>().RegenSealTicks > 0 ||
             NPCID.Sets.CountsAsCritter[target.type])
             return;
 

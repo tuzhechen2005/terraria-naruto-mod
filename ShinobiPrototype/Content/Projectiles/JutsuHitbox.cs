@@ -25,6 +25,7 @@ public enum JutsuKind : byte
     SixtyFour,     // Neji: every point sealed
     SnakeHand,     // Orochimaru: shoots out and comes back
     WindBlast,     // Orochimaru: throws the player back
+    FiveSeal,      // Orochimaru: chakra stops recovering
 }
 
 public sealed class JutsuHitbox : ModProjectile
@@ -48,7 +49,7 @@ public sealed class JutsuHitbox : ModProjectile
 
     public static int Lifetime(JutsuKind kind) => kind switch
     {
-        JutsuKind.Strike or JutsuKind.EchoDrill or JutsuKind.GentleFist => 12,
+        JutsuKind.Strike or JutsuKind.EchoDrill or JutsuKind.GentleFist or JutsuKind.FiveSeal => 12,
         JutsuKind.SoundWave or JutsuKind.WindBlast => 40,
         JutsuKind.SandShuriken => 120,
         JutsuKind.SandWave => 90,
@@ -129,6 +130,11 @@ public sealed class JutsuHitbox : ModProjectile
                     Dust.NewDustPerfect(at, DustID.IceTorch, Vector2.Zero, 0, default, 1.4f).noGravity = true;
                 }
                 break;
+            case JutsuKind.FiveSeal:
+                for (int i = 0; i < 4; i++)
+                    Dust.NewDustPerfect(Main.rand.NextVector2FromRectangle(box), DustID.PurpleTorch, Vector2.Zero, 0, default, 1.5f)
+                        .noGravity = true;
+                break;
             case JutsuKind.SnakeHand:
                 Dust.NewDustPerfect(Main.rand.NextVector2FromRectangle(box), DustID.Venom, Vector2.Zero, 0, default, 1.2f).noGravity = true;
                 break;
@@ -153,6 +159,9 @@ public sealed class JutsuHitbox : ModProjectile
             case JutsuKind.SixtyFour:
                 for (int i = 0; i < ExamBossRules.SealMaxStacks; i++)
                     status.Seal();
+                break;
+            case JutsuKind.FiveSeal:
+                status.SealRegen(ExamBossRules.FiveSealTicks);
                 break;
         }
     }

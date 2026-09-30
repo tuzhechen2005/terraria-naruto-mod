@@ -14,8 +14,8 @@ namespace ShinobiPrototype.Content.NPCs;
 
 // Orochimaru in the Forest of Death (specs/M2_中忍考试篇.spec.md section 5), a fight that cannot be won: he comes as a
 // Grass candidate, drops the disguise and freezes the player with killing intent (substitution breaks it), then Hidden
-// Shadow Snake Hands, a snake dash round behind the player, the Great Breakthrough gust, summoned snakes and the long
-// neck. At half life he stops taking damage, says his line and sinks away as snakes (ThresholdRetreatRules), leaving
+// Shadow Snake Hands, a snake dash round behind the player, the Great Breakthrough gust, the Five Elements Seal (chakra
+// stops recovering), summoned snakes and the long neck. At half life he stops taking damage, says his line and sinks away as snakes (ThresholdRetreatRules), leaving
 // his shed skin to call him back. The Sharingan vial waits on the style spec.
 public sealed class Orochimaru : ExamBoss
 {
@@ -28,6 +28,7 @@ public sealed class Orochimaru : ExamBoss
     private const float NeckWindup = 6f;
     private const float Recovery = 7f;
     private const float Exit = 8f;
+    private const float SealWindup = 9f;
 
     private const int DisguiseTicks = 110;
     private const int IntentTick = 80;
@@ -165,6 +166,23 @@ public sealed class Orochimaru : ExamBoss
                 }
                 break;
 
+            case SealWindup:
+                // He closes in with the seal glowing on his fingertips, then presses it on.
+                Face(target.Center.X);
+                NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * 6f, 0.15f);
+                Telegraph(DustID.PurpleTorch, 14f);
+                if (Timer == 1f)
+                    Say("五行封印！", new Color(190, 150, 230));
+                if (Timer >= 34f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+                    if (Deciding)
+                        JutsuHitbox.Spawn(NPC, JutsuKind.FiveSeal, NPC.Center + new Vector2(NPC.direction * 30f, 0f),
+                            new Vector2(NPC.direction * 4f, 0f), 48, 52, ExamBossRules.FiveSealDamage);
+                    Enter(Recovery);
+                }
+                break;
+
             case Recovery:
                 NPC.velocity.X *= 0.85f;
                 if (Timer >= 40f)
@@ -186,8 +204,11 @@ public sealed class Orochimaru : ExamBoss
         Face(target.Center.X);
         NPC.ai[2] = target.Center.X;
         NPC.ai[3] = target.Center.Y;
-        switch (Main.rand.Next(4))
+        switch (Main.rand.Next(5))
         {
+            case 4:
+                Enter(SealWindup);
+                break;
             case 0:
                 Enter(HandsWindup);
                 break;

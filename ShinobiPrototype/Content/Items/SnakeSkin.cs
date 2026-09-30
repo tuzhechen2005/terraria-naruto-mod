@@ -6,8 +6,9 @@ using ShinobiPrototype.Content.NPCs;
 
 namespace ShinobiPrototype.Content.Items;
 
-// Orochimaru's shed skin (specs/M2_中忍考试篇.spec.md section 5): used on the jungle surface it calls him back for
-// another try. Not used up. Placeholder art: vanilla leather.
+// Orochimaru's shed skin (specs/M2_中忍考试篇.spec.md section 5): used on the jungle surface it calls him. He leaves one
+// behind, and it can be made, so a character who missed him or never got him to half can still try. Not used up.
+// Placeholder art: vanilla leather.
 public sealed class SnakeSkin : ModItem
 {
     public override string Texture => $"Terraria/Images/Item_{ItemID.Leather}";
@@ -32,6 +33,12 @@ public sealed class SnakeSkin : ModItem
             Main.NewText("蛇蜕上还留着那股气味……要在丛林的地表才能把他引出来。", 190, 150, 230);
         return false;
     }
+
+    public override void SetStaticDefaults() => ItemID.Sets.SortingPriorityBossSpawns[Type] = 11;
+
+    public override void AddRecipes() =>
+        CreateRecipe().AddIngredient(ItemID.Vine, 3).AddIngredient(ItemID.JungleSpores, 10).AddIngredient(ItemID.Stinger, 5)
+            .AddTile(TileID.Anvils).Register();
 
     public override bool? UseItem(Player player)
     {

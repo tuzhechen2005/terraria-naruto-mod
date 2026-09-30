@@ -80,7 +80,11 @@ public sealed class WaveEpilogueSystem : ModSystem
                 Snow(rate);
         }
         if (++tick >= WaveEpilogueRules.Length(hakuFirst))
+        {
             tick = -1;
+            // Then Kakashi turns up beside the player with the Chūnin Exam recommendation (M2 spec, section 2).
+            Content.NPCs.Kakashi.ArriveAfterEpilogue(origin);
+        }
     }
 
     // Lines with a speaker ("Name：...") float over that body; narration goes to chat only.
