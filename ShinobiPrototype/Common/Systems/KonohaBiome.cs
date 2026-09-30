@@ -12,10 +12,10 @@ namespace ShinobiPrototype.Common.Systems;
 // NPC likes to live.
 public sealed class KonohaBiome : ModBiome
 {
-    public override SceneEffectPriority Priority => SceneEffectPriority.BiomeLow;
+    // High enough that the village's own background wins over a desert or snow biome reaching into it.
+    public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
 
     public override string BestiaryIcon => "ShinobiPrototype/Content/Items/NinjaHandbook";
-    public override string BackgroundPath => base.BackgroundPath;
 
     public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle =>
         RegionBackgrounds.Style(RegionBackgrounds.Konoha);

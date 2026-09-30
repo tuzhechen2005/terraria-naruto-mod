@@ -68,7 +68,9 @@ public abstract class RegionScene : ModSceneEffect
     protected abstract string Region { get; }
     protected abstract bool InRegion(Player player);
 
-    public override SceneEffectPriority Priority => SceneEffectPriority.BiomeMedium;
+    // BiomeHigh: vanilla picks the ocean, glowing mushroom and desert backgrounds ahead of any mod style below it
+    // (Main.GetPreferredBGStyleForPlayer), so at BiomeMedium the Sand, Myoboku and Mist backgrounds never showed.
+    public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh;
     public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => RegionBackgrounds.Style(Region);
 
     public override bool IsSceneEffectActive(Player player) =>
