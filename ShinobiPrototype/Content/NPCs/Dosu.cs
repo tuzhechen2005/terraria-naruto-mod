@@ -26,6 +26,17 @@ public sealed class Dosu : ExamBoss
     protected override int Defense => ExamBossRules.DosuDefense;
     protected override (string Name, string Title) Intro => ("音忍·多斯", "音隐村的下忍，大蛇丸的部下");
 
+    protected override string SpritePrefix => "Dosu";
+
+    protected override (string Action, int Frames, int TicksPerFrame, bool Loop) Pose => State switch
+    {
+        DrillWindup => ("DrillWindup", 2, 12, true),
+        DrillRecovery when Timer < 14f => ("Drill", 2, 7, false),
+        WaveWindup => ("Wave", 1, 10, true),
+        WaveRecovery when Timer < 24f => ("Wave", 3, 8, false),
+        _ => Moving("Walk", "Idle"),
+    };
+
     protected override void Fight(Player target)
     {
         float distance = System.Math.Abs(target.Center.X - NPC.Center.X);

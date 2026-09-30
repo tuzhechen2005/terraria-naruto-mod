@@ -40,10 +40,37 @@ public sealed class Gaara : ExamBoss
     private float Tempo => ExamBossRules.GaaraTempo(Phase);
     private Vector2 CoffinAt => new(NPC.ai[2], NPC.ai[3]);
 
+    protected override string SpritePrefix => "Gaara";
+
+    private static readonly BossSprites.Canvas BeastCanvas = new(176, 104, 64, 100);
+
+    private protected override BossSprites.Canvas CanvasFor(string action) =>
+        action.StartsWith("Beast") ? BeastCanvas : PersonCanvas;
+
+    private int shieldTicks;
+
+    protected override (string Action, int Frames, int TicksPerFrame, bool Loop) Pose => Phase == 3
+        ? State switch
+        {
+            ArmWindup => ("Beast_Arm", 3, 12, false),
+            BulletWindup => ("Beast_Bullet", 3, 11, false),
+            _ => ("Beast_Idle", 4, 10, true),
+        }
+        : State switch
+        {
+            ShurikenWindup or CoffinWarn => ("Cast", 3, 10, false),
+            CoffinHold => ("Cast", 1, 10, true),
+            WaveWindup => ("Wave", 3, 13, false),
+            _ when shieldTicks > 0 => ("Shield", 2, 6, false),
+            _ => Phase == 2 ? ("Cracked_Idle", 4, 10, true) : Moving("Walk", "Idle"),
+        };
+
     protected override void Fight(Player target)
     {
         NPC.color = Tint;
         NPC.scale = Phase == 3 ? 1.3f : 1.15f;
+        if (shieldTicks > 0)
+            shieldTicks--;
         if (Phase != shownPhase)
         {
             shownPhase = Phase;
@@ -200,6 +227,7 @@ public sealed class Gaara : ExamBoss
         if (!ExamBossRules.ShieldBlocks(Phase, NPC.direction, side, State == Recovery))
             return;
         modifiers.FinalDamage *= ExamBossRules.ShieldDamageMultiplier;
+        shieldTicks = 20;
         if (Main.netMode != NetmodeID.Server)
         {
             for (int i = 0; i < 8; i++)

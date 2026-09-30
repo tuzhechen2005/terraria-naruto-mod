@@ -27,6 +27,19 @@ public sealed class Neji : ExamBoss
     protected override int Defense => ExamBossRules.NejiDefense;
     protected override (string Name, string Title) Intro => ("日向宁次", "日向分家的天才，“命运早已注定”");
 
+    protected override string SpritePrefix => "Neji";
+
+    protected override (string Action, int Frames, int TicksPerFrame, bool Loop) Pose => State switch
+    {
+        Palms => ("Palm", 3, 4, true),
+        RotationWindup or Rotation => ("Rotation", 4, 4, true),
+        SixtyFourWarn => ("SixtyFour_Windup", 2, 12, true),
+        Recovery when Timer < 24f && lastWasSixtyFour => ("SixtyFour_Strike", 3, 4, true),
+        _ => Moving("Run", "Idle"),
+    };
+
+    private bool lastWasSixtyFour;
+
     protected override void Fight(Player target)
     {
         float distance = Math.Abs(target.Center.X - NPC.Center.X);
@@ -98,6 +111,7 @@ public sealed class Neji : ExamBoss
                 {
                     Say("八卦六十四掌！", new Color(190, 220, 255));
                     SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
+                    lastWasSixtyFour = true;
                     if (Deciding)
                         JutsuHitbox.Spawn(NPC, JutsuKind.SixtyFour, NPC.Center, Vector2.Zero,
                             ExamBossRules.SixtyFourRadiusPx * 2, ExamBossRules.SixtyFourRadiusPx * 2, ExamBossRules.SixtyFourDamage);
@@ -108,7 +122,10 @@ public sealed class Neji : ExamBoss
             case Recovery:
                 NPC.velocity.X *= 0.85f;
                 if (Timer >= 45f)
+                {
+                    lastWasSixtyFour = false;
                     Enter(Approach);
+                }
                 break;
         }
     }
