@@ -5,14 +5,13 @@ using ShinobiPrototype.Common.Players;
 
 namespace ShinobiPrototype.Content.Items.StyleCores;
 
-// The tier-one cores obtainable in the Chūnin Exams (specs/流派系统.spec.md section 3). Placeholder art: vanilla
-// item icons until m2-style-items-v1 is in.
+// The tier-one cores obtainable in the Chūnin Exams (specs/流派系统.spec.md section 3). Icons from m2-style-items-v1;
+// the Byakugan keeps a vanilla placeholder until byakugan-icon-v2.
 
 // The Sharingan in a vial (one tomoe), from Orochimaru in the Forest of Death: a wider substitution window, and
 // Foresight, which takes the next hit with a free substitution.
 public sealed class SharinganCore1 : StyleCore
 {
-    public override string Texture => $"Terraria/Images/Item_{ItemID.BlackLens}";
     public override StyleSchool School => StyleSchool.Sharingan;
     public override int Tier => 1;
     public override int TechniqueCooldown => StyleCoreRules.ForesightCooldownTicks;
@@ -28,7 +27,6 @@ public sealed class SharinganCore1 : StyleCore
 // The Eight Inner Gates (first three), from Gaara: taijutsu strikes faster, and each press opens another gate.
 public sealed class EightGatesCore : StyleCore
 {
-    public override string Texture => $"Terraria/Images/Item_{ItemID.FeralClaws}";
     public override StyleSchool School => StyleSchool.EightGates;
     public override int Tier => 1;
     public override int TechniqueCooldown => 30;

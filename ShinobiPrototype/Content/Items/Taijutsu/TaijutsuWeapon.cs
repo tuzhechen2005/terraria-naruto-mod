@@ -61,7 +61,6 @@ public abstract class TaijutsuWeapon : ModItem
 // Training wraps: the first taijutsu weapon, made at a workbench.
 public sealed class TrainingWraps : TaijutsuWeapon
 {
-    public override string Texture => $"Terraria/Images/Item_{ItemID.Silk}";
     protected override int Damage => 14;
     protected override int UseTime => 15;
     protected override float PressureSpeed => 10f;
@@ -81,7 +80,6 @@ public sealed class TrainingWraps : TaijutsuWeapon
 // Rock Lee's leg weights, from Gaara: faster, harder, further.
 public sealed class LeeLegWeights : TaijutsuWeapon
 {
-    public override string Texture => $"Terraria/Images/Item_{ItemID.HermesBoots}";
     protected override int Damage => 30;
     protected override int UseTime => 12;
     protected override float PressureSpeed => 12f;

@@ -138,7 +138,7 @@ public sealed class Kakashi : ModNPC
     }
 
     public const string RecommendationLine =
-        "哟，辛苦了。……好了，回村子吧。啊对了——中忍考试，我把你的名字报上去了。去不去随你。";
+        "哟，辛苦了。……好了，回村子吧。啊对了——中忍考试，我把你的名字报上去了。嘛……要是怕了，现在后悔也还来得及。";
 
     // Once the Wave epilogue ends: the server (or single player) flickers him in beside the nearest player who has
     // not had the recommendation yet; each such player nearby gets the line and the recommendation on their client.
