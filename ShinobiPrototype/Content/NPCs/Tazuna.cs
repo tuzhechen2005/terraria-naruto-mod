@@ -61,6 +61,7 @@ public sealed class Tazuna : ModNPC
         "卡多一倒，他的手下全跑光了。这个国家总算能喘口气了。",
         "要木材？我这儿多的是，造桥剩下的。",
         "听说木叶要办中忍考试？你也要去吧，加油啊。",
+        "回去替我谢谢那个木叶的老头子（三代）。这趟任务，我可是只付了 C 级的钱啊。",
     });
 
     public override void SetChatButtons(ref string button, ref string button2) =>

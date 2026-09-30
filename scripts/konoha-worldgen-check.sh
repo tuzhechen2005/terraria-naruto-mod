@@ -1,6 +1,7 @@
 #!/bin/sh
 # Build the mod into a private tModLoader save directory (so it works while the game is open), let a headless server
-# generate a new world, dump the Hidden Leaf Village (KonohaDump) and render it with vanilla textures.
+# generate a new world, dump the Hidden Leaf Village and the Chunin Exam landmarks (KonohaDump) and render them with
+# vanilla textures.
 #
 #   ./scripts/konoha-worldgen-check.sh <work_dir> [seed] [size 1|2|3]
 #
@@ -43,3 +44,10 @@ if [ ! -s "$dump" ]; then
   exit 1
 fi
 python3 "$project_root/scripts/render_konoha_world.py" "$dump" "$work/$name.png"
+# The Chunin Exam landmarks (ExamSiteWorld), when the world has them.
+for kind in Gate Tower Stadium; do
+  if [ -s "$work/$name-$kind.jsonl" ]; then
+    echo "== $kind"
+    python3 "$project_root/scripts/render_konoha_world.py" "$work/$name-$kind.jsonl" "$work/$name-$kind.png"
+  fi
+done

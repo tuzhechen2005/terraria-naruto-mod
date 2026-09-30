@@ -1,11 +1,14 @@
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ShinobiPrototype.Common;
 using ShinobiPrototype.Common.Players;
 using ShinobiPrototype.Common.Systems;
 
 namespace ShinobiPrototype.Content.Items;
 
+// Kakashi's recommendation for the Chūnin Exams (specs/M2_中忍考试篇.spec.md): he hands it over once Wave Country is
+// done, and again if it is lost. Used inside the Academy it opens the written test.
 public sealed class ExamAdmissionScroll : ModItem
 {
     public override void SetDefaults()
@@ -16,21 +19,26 @@ public sealed class ExamAdmissionScroll : ModItem
         Item.useTime = 25;
         Item.useAnimation = 25;
         Item.rare = ItemRarityID.Blue;
-        Item.UseSound = SoundID.Item4;
     }
 
     public override bool CanUseItem(Player player)
     {
-        if (!StoryWorld.WaveComplete)
-        {
-            if (player.whoAmI == Main.myPlayer)
-                Main.NewText("白和再不斩都击败后，才能报名中忍考试。", 250, 150, 100);
+        if (player.whoAmI != Main.myPlayer)
             return false;
-        }
-        if (player.GetModPlayer<StoryPlayer>().ExamStage != 0)
+        ChuninExamPlayer exam = player.GetModPlayer<ChuninExamPlayer>();
+        string refusal = exam.Stage switch
         {
-            if (player.whoAmI == Main.myPlayer)
-                Main.NewText("你已经报名。使用任务卷轴查看当前考试目标。", 100, 200, 245);
+            ExamStage.Locked => "先完成波之国的任务。",
+            ExamStage.NoVillage => "这个世界没有木叶隐村，中忍考试需要新建的世界。",
+            ExamStage.Written when !exam.CanSitWritten => "你在第十题放弃了。等明天天亮再来重考。",
+            ExamStage.Written when !KonohaWorld.InBuilding("忍者学校", player.Center) =>
+                "第一试在木叶的忍者学校举行（阿吽之门往西）。进了学校再用。",
+            ExamStage.Written => null,
+            _ => "第一试已经合格了。手册的任务页写着下一步。",
+        };
+        if (refusal != null)
+        {
+            Main.NewText(refusal, 250, 200, 120);
             return false;
         }
         return true;
@@ -38,16 +46,8 @@ public sealed class ExamAdmissionScroll : ModItem
 
     public override bool? UseItem(Player player)
     {
-        if (player.whoAmI == Main.myPlayer && player.GetModPlayer<StoryPlayer>().RegisterExam())
-            Main.NewText("中忍考试报名完成。前往丛林：地表寻天卷轴，地下寻地卷轴。", 100, 220, 160);
+        if (player.whoAmI == Main.myPlayer)
+            WrittenExamSystem.Open();
         return true;
-    }
-
-    public override void AddRecipes()
-    {
-        CreateRecipe().AddIngredient(ItemID.Wood, 5).AddIngredient(ItemID.IronBar)
-            .AddTile(TileID.WorkBenches).Register();
-        CreateRecipe().AddIngredient(ItemID.Wood, 5).AddIngredient(ItemID.LeadBar)
-            .AddTile(TileID.WorkBenches).Register();
     }
 }

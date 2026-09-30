@@ -40,28 +40,23 @@ Items: {
 	}
 
 	ExamAdmissionScroll: {
-		DisplayName: Chunin Exam Admission
-		Tooltip: Register for the forest trial after Wave Country. Recraft with wood and iron or lead.
+		DisplayName: Chunin Exam Recommendation
+		Tooltip: Kakashi's recommendation for the Chunin Exams\nUse it inside the Konoha Academy to sit the first test (the written exam)\nIf lost, ask Kakashi for another
 	}
 
 	HeavenScroll: {
 		DisplayName: Heaven Scroll
-		Tooltip: Held by surface jungle candidates. Combine with the Earth Scroll for arena entry.
+		Tooltip: One of the second test's two scrolls\nBring it with the Earth Scroll into the tower in the Forest of Death
 	}
 
 	EarthScroll: {
 		DisplayName: Earth Scroll
-		Tooltip: Held by underground jungle candidates. Combine with the Heaven Scroll for arena entry.
-	}
-
-	ArenaChallengeScroll: {
-		DisplayName: Chunin Preliminary Challenge
-		Tooltip: Summons the Sand candidate in an open area. Not consumed.
+		Tooltip: One of the second test's two scrolls\nBring it with the Heaven Scroll into the tower in the Forest of Death
 	}
 
 	ChuninHeadband: {
 		DisplayName: Chunin Headband
-		Tooltip: Exam reward. +3 defense and +4% melee and magic damage when equipped.
+		Tooltip: Proof of passing the Chunin Exams\n+3 defense and +4% melee and magic damage when equipped
 	}
 
 	ChakraPill: {
@@ -261,15 +256,16 @@ NPCs: {
 	}
 
 	HakuIceMirror.DisplayName: Demonic Ice Mirror
-	ForestCanopyCandidate.DisplayName: Forest Candidate
-	ForestBurrowCandidate.DisplayName: Ambushing Candidate
-	ArenaRivalBoss.DisplayName: Sand Candidate
+	ForestCanopyCandidate.DisplayName: Exam Candidate
+	RainGenin.DisplayName: Rain Genin
+	Hiruzen.DisplayName: Sarutobi Hiruzen (Third Hokage)
 }
 
 Projectiles: {
 	WaveCorpse.DisplayName: Fallen
 	KunaiThrown.DisplayName: Kunai
 	SenbonThrown.DisplayName: Senbon
+	ExamSenbon.DisplayName: Senbon
 	WaterDragonFriendly.DisplayName: Water Dragon
 	IceMirrorMinion.DisplayName: Ice Mirror
 	KakashiPracticeKunai.DisplayName: Practice Kunai
@@ -284,8 +280,6 @@ Projectiles: {
 	ZabuzaThrownSword.DisplayName: Executioner's Blade
 	HakuPrismShard.DisplayName: Thousand Water Needles
 	HakuDashHitbox.DisplayName: Ice Blade Dash
-	ArenaSandBolt.DisplayName: Sand Bolt
-	ArenaRushHitbox.DisplayName: Sand Rush
 	SenbonWarning.DisplayName: Senbon Warning
 }
 

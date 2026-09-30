@@ -30,6 +30,29 @@ public sealed class KonohaWorld : ModSystem
     public static bool InKonoha(Vector2 worldPosition) =>
         Site is KonohaSite site && site.Contains((int)(worldPosition.X / 16f), (int)(worldPosition.Y / 16f));
 
+    private static KonohaDesign design;
+
+    // The layout the village was built from (the same for every world of this version).
+    public static KonohaDesign Design => design ??= KonohaDesign.Create();
+
+    // Inside a building's outline (walls to roof, ground floor up), e.g. "忍者学校" for the written test.
+    public static bool InBuilding(string name, Vector2 worldPosition)
+    {
+        if (Site is not KonohaSite site)
+            return false;
+        int x = (int)(worldPosition.X / 16f) - site.CenterX, y = (int)(worldPosition.Y / 16f) - site.GroundY;
+        foreach (KBuilding building in Design.Buildings)
+            if (building.Name == name && x >= building.X0 && x <= building.X1 && y >= building.Top && y < 0)
+                return true;
+        return false;
+    }
+
+    // World position of the Third Hokage's feet in his office.
+    public static Vector2? HokageFeet =>
+        Site is KonohaSite site
+            ? new Vector2((site.X(Design.HokageSpot.Dx) + 0.5f) * 16f, (site.Y(Design.HokageSpot.Dy) + 1) * 16f)
+            : null;
+
     public override void ClearWorld()
     {
         Site = null;
@@ -48,6 +71,7 @@ public sealed class KonohaWorld : ModSystem
         progress.Message = "建造木叶隐村";
         Site = KonohaBuilder.Build(Main.spawnTileX);
         BuiltVersion = KonohaDesign.Version;
+        ExamSiteWorld.Generate(progress);
     }
 
     public override void SaveWorldData(TagCompound tag)

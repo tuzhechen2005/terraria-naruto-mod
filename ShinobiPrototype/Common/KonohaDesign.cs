@@ -11,11 +11,18 @@ public enum KMat : byte
 {
     Grass, Dirt, Slab, Brick, RedBrick, Stucco, Marble, DynastyWood, Wood, RedShingle, BlueShingle, Plating,
     Beam, Platform, LivingWood,
+    // Appended for the exam sites in the jungle (ExamSiteDesign).
+    JungleGrass, Mud, RichMahogany,
 }
 
 public enum KShape : byte { Full, Half, TopRisesEast, TopRisesWest }
 
-public enum KWall : byte { Planks, Stucco, Shoji, Marble, RedBrick, Wood, Brick, Palm, RedStucco, Fence, DoorLeaf }
+public enum KWall : byte
+{
+    Planks, Stucco, Shoji, Marble, RedBrick, Wood, Brick, Palm, RedStucco, Fence, DoorLeaf,
+    // Appended for the exam sites (ExamSiteDesign).
+    MetalFence, Slab, Mahogany,
+}
 
 public enum KFix : byte
 {
@@ -63,6 +70,9 @@ public sealed class KonohaDesign
     public readonly List<KPlace> Places = new();
     public readonly List<KRoom> Rooms = new();
     public readonly List<KBuilding> Buildings = new();
+
+    // Where the Third Hokage stands in his office (the row his feet rest on is HokageSpot.Dy + 1).
+    public (int Dx, int Dy) HokageSpot { get; private set; }
 
     public IEnumerable<KCell> Cells => cells.Values;
     public IEnumerable<KWallCell> Walls
@@ -382,6 +392,7 @@ public sealed class KonohaDesign
         Places.Add(new KPlace(x1 - 3, ceiling + 1, KFix.Lantern));
         Places.Add(new KPlace(x0 + 4, floorRow - 1, KFix.Bookcase));
         Places.Add(new KPlace(x0 + 8, floorRow - 1, KFix.Sign, "火影办公室"));
+        HokageSpot = (x1 - 9, floorRow - 1);
         // Rounded shoulders down the tower's sides.
         for (int s = 0; s < 4; s++)
         {

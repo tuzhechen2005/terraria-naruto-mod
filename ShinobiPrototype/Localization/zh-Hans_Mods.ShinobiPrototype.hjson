@@ -40,28 +40,23 @@ Items: {
 	}
 
 	ExamAdmissionScroll: {
-		DisplayName: 中忍考试报名书
-		Tooltip: 完成波之国篇后使用，报名丛林试炼；可用木材与铁锭或铅锭补做
+		DisplayName: 中忍考试推荐书
+		Tooltip: 卡卡西推荐你参加中忍考试的推荐书\n在木叶的忍者学校里使用，参加第一试（笔试）\n遗失了可以再找卡卡西要
 	}
 
 	HeavenScroll: {
-		DisplayName: 天之卷轴
-		Tooltip: 丛林地表考生持有；与地之卷轴一起制作预选赛挑战书
+		DisplayName: 天之卷
+		Tooltip: 中忍考试第二试的卷轴之一\n与地之卷一起带进死亡森林的中央塔
 	}
 
 	EarthScroll: {
-		DisplayName: 地之卷轴
-		Tooltip: 地下丛林考生持有；与天之卷轴一起制作预选赛挑战书
-	}
-
-	ArenaChallengeScroll: {
-		DisplayName: 中忍预选赛挑战书
-		Tooltip: 在开阔地召唤砂隐考生；不会被消耗
+		DisplayName: 地之卷
+		Tooltip: 中忍考试第二试的卷轴之一\n与天之卷一起带进死亡森林的中央塔
 	}
 
 	ChuninHeadband: {
 		DisplayName: 中忍护额
-		Tooltip: 中忍考试预选赛奖励；装备后防御 +3，近战与忍术伤害 +4%
+		Tooltip: 通过中忍考试的证明\n装备后防御 +3，近战与魔法伤害 +4%
 	}
 
 	ChakraPill: {
@@ -261,15 +256,16 @@ NPCs: {
 	}
 
 	HakuIceMirror.DisplayName: 魔镜冰晶
-	ForestCanopyCandidate.DisplayName: 林地考生
-	ForestBurrowCandidate.DisplayName: 潜伏考生
-	ArenaRivalBoss.DisplayName: 砂隐考生
+	ForestCanopyCandidate.DisplayName: 考生
+	RainGenin.DisplayName: 雨隐下忍
+	Hiruzen.DisplayName: 猿飞日斩（三代火影）
 }
 
 Projectiles: {
 	WaveCorpse.DisplayName: 倒下的身影
 	KunaiThrown.DisplayName: 苦无
 	SenbonThrown.DisplayName: 千本
+	ExamSenbon.DisplayName: 千本
 	WaterDragonFriendly.DisplayName: 水龙弹
 	IceMirrorMinion.DisplayName: 魔镜冰晶
 	KakashiPracticeKunai.DisplayName: 练习苦无
@@ -284,8 +280,6 @@ Projectiles: {
 	ZabuzaThrownSword.DisplayName: 斩首大刀
 	HakuPrismShard.DisplayName: 千杀水翔
 	HakuDashHitbox.DisplayName: 冰刃突进
-	ArenaSandBolt.DisplayName: 砂弹
-	ArenaRushHitbox.DisplayName: 流砂突袭
 	// SenbonWarning.DisplayName: Senbon Warning
 }
 

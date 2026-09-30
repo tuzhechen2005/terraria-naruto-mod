@@ -8,6 +8,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="ExamRulesTests.cs" />
-    <Compile Include="../../ShinobiPrototype/Common/ExamRules.cs" Link="ExamRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ChuninExamRules.cs" Link="ChuninExamRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/WrittenExamBank.cs" Link="WrittenExamBank.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/VowRules.cs" Link="VowRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/StyleCoreRules.cs" Link="StyleCoreRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ExamSiteDesign.cs" Link="ExamSiteDesign.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/KonohaDesign.cs" Link="KonohaDesign.cs" />
   </ItemGroup>
 </Project>

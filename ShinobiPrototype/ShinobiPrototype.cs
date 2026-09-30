@@ -17,6 +17,7 @@ public sealed class ShinobiPrototype : Mod
         WaveFirstWin,     // server -> one client: grant that character's first-win rewards
         WaveEpilogue,     // server -> clients: both bosses have fallen (haku fell first, where)
         TazunaTalk,       // client -> server: a player talked to Tazuna (whether he confessed)
+        ExamSync,         // client -> server: a player's Chunin Exam progress (ChuninExamPlayer)
     }
 
     // Boss Checklist (optional mod): list Zabuza and Haku just after the Eye of Cthulhu (2.0).
@@ -63,6 +64,10 @@ public sealed class ShinobiPrototype : Mod
                 bool confessed = reader.ReadBoolean();
                 if (Main.netMode == NetmodeID.Server)
                     StoryWorld.ApplyTazunaTalk(confessed);
+                break;
+            case Packet.ExamSync:
+                byte who = reader.ReadByte();
+                Main.player[who].GetModPlayer<Common.Players.ChuninExamPlayer>().Read(reader);
                 break;
             case Packet.BuildBridge:
                 BridgeSite site = new(reader.ReadInt32(), reader.ReadSByte(), reader.ReadInt32());

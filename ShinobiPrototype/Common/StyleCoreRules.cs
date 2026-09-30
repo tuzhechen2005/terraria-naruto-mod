@@ -1,7 +1,7 @@
 namespace ShinobiPrototype.Common;
 
 // The four schools of the master spec (流派): a core accessory carries a school at a tier; only one core may be worn
-// (see specs/流派系统_草案.spec.md). The per-school passives and techniques wait on the user's decisions; this is only
+// (see specs/流派系统.spec.md). The per-school passives and techniques wait on the user's decisions; this is only
 // the shared frame. Kept free of Terraria types so the rule tests can run it.
 public enum StyleSchool : byte { None, Sharingan, EightGates, Byakugan, Sage }
 

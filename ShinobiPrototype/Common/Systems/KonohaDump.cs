@@ -50,14 +50,29 @@ public sealed class KonohaDump : ModSystem
 
     private static void Write(string path)
     {
-        StringBuilder sb = new();
         if (KonohaWorld.Site is not KonohaSite site)
         {
             File.WriteAllText(path, "{\"k\":\"error\",\"msg\":\"no village\"}\n");
             return;
         }
-        int half = KonohaDesign.HalfWidth + KonohaDesign.Blend + 10;
-        int top = site.GroundY - 60, bottom = site.GroundY + 20;
+        KonohaDesign design = KonohaDesign.Create();
+        WriteRegion(path, site, KonohaDesign.HalfWidth + KonohaDesign.Blend + 10, 60, 20, design.Rooms, design.Places);
+        // The Chūnin Exam landmarks, each in its own file next to the village's.
+        foreach (ExamSite exam in ExamSiteWorld.All())
+        {
+            ExamSiteDesign d = ExamSiteDesign.Create(exam.Kind);
+            int half = d.HalfWidth + d.Blend + 6;
+            WorldGen.RangeFrame(exam.CenterX - half, exam.GroundY - d.ClearHeight - 2, exam.CenterX + half, exam.GroundY + 22);
+            WriteRegion(path.Replace(".jsonl", $"-{exam.Kind}.jsonl"), exam.Origin, half, d.ClearHeight, 20,
+                System.Array.Empty<KRoom>(), d.Places);
+        }
+    }
+
+    private static void WriteRegion(string path, KonohaSite site, int half, int above, int below,
+        System.Collections.Generic.IEnumerable<KRoom> rooms, System.Collections.Generic.IEnumerable<KPlace> places)
+    {
+        StringBuilder sb = new();
+        int top = site.GroundY - above, bottom = site.GroundY + below;
         sb.Append(CultureInfo.InvariantCulture,
             $"{{\"k\":\"meta\",\"cx\":{site.CenterX},\"gy\":{site.GroundY},\"x0\":{site.CenterX - half},\"x1\":{site.CenterX + half},\"y0\":{top},\"y1\":{bottom},\"spawnX\":{Main.spawnTileX},\"spawnY\":{Main.spawnTileY},\"w\":{Main.maxTilesX},\"h\":{Main.maxTilesY}}}\n");
         for (int x = site.CenterX - half; x <= site.CenterX + half; x++)
@@ -76,8 +91,7 @@ public sealed class KonohaDump : ModSystem
                 sb.Append("}\n");
             }
 
-        KonohaDesign design = KonohaDesign.Create();
-        foreach (KRoom room in design.Rooms)
+        foreach (KRoom room in rooms)
         {
             int x = site.X((room.X0 + room.X1) / 2), y = site.Y(room.Bottom);
             bool check = WorldGen.StartRoomCheck(x, y);
@@ -91,7 +105,7 @@ public sealed class KonohaDump : ModSystem
             sb.Append($"{{\"k\":\"room\",\"b\":\"{room.Building}\",\"x0\":{site.X(room.X0)},\"x1\":{site.X(room.X1)},\"top\":{site.Y(room.Top)},\"bottom\":{site.Y(room.Bottom)},\"check\":{(check ? 1 : 0)},\"needs\":{(needs ? 1 : 0)},\"score\":{score}}}\n");
         }
         // Did every designed fixture actually go in? Placement fails silently when something is in the way.
-        foreach (KPlace place in design.Places)
+        foreach (KPlace place in places)
         {
             int x = site.X(place.Dx), y = site.Y(place.Dy);
             int? expected = ExpectedTile(place.Fix);

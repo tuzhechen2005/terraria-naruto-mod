@@ -7,7 +7,7 @@ using ShinobiPrototype.Common.Players;
 namespace ShinobiPrototype.Content.Items.StyleCores;
 
 // A style core (流派核心): an accessory carrying one school at one tier, with a passive and a chakra technique on the
-// style key. Only one may be worn. The concrete cores wait on specs/流派系统_草案.spec.md being confirmed.
+// style key. Only one may be worn. The concrete cores wait on specs/流派系统.spec.md being confirmed.
 public abstract class StyleCore : ModItem
 {
     public abstract StyleSchool School { get; }

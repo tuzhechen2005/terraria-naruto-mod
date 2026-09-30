@@ -5,7 +5,7 @@ namespace ShinobiPrototype.Common.Systems;
 public sealed class ShinobiKeybinds : ModSystem
 {
     public static ModKeybind Substitution { get; private set; }
-    // The worn style core's technique (specs/流派系统_草案.spec.md; default key awaiting the user's decision).
+    // The worn style core's technique (specs/流派系统.spec.md; default key awaiting the user's decision).
     public static ModKeybind StyleTechnique { get; private set; }
 
     public override void Load()

@@ -1,16 +1,19 @@
 using Terraria;
 using Terraria.GameInput;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.Items.StyleCores;
 
 namespace ShinobiPrototype.Common.Players;
 
-// Which style core the player wears this tick, and its technique on the style key (cooldown, chakra).
+// Which style core the player wears this tick, and its technique on the style key (cooldown, chakra); and the school
+// the character vowed to (立志, specs/流派系统.spec.md section 6).
 public sealed class StyleCorePlayer : ModPlayer
 {
     public StyleCore Worn { get; set; }
     public int Cooldown { get; private set; }
+    public StyleSchool Vow { get; set; }
 
     public StyleSchool School => Worn?.School ?? StyleSchool.None;
 
@@ -42,4 +45,12 @@ public sealed class StyleCorePlayer : ModPlayer
         Cooldown = core.TechniqueCooldown;
         core.UseTechnique(Player);
     }
+
+    public override void SaveData(TagCompound tag)
+    {
+        if (Vow != StyleSchool.None)
+            tag["vow"] = (byte)Vow;
+    }
+
+    public override void LoadData(TagCompound tag) => Vow = (StyleSchool)tag.GetByte("vow");
 }

@@ -6,6 +6,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.UI;
+using ShinobiPrototype.Common;
 using ShinobiPrototype.Common.Players;
 using ShinobiPrototype.Content.Items;
 
@@ -200,6 +201,8 @@ internal sealed class HandbookState : UIState
     private static string MissionText()
     {
         Player player = Main.LocalPlayer;
+        if (StoryWorld.WaveComplete || StoryWorld.DownedGaara)
+            return ExamText(player);
         int insignia = System.Math.Min(3, player.CountItem(ModContent.ItemType<MistInsignia>()));
         return player.GetModPlayer<StoryPlayer>().CurrentObjective() + "\n\n" +
                "进度\n" +
@@ -207,6 +210,28 @@ internal sealed class HandbookState : UIState
                $"· 再不斩与白：{(StoryWorld.WaveComplete ? "已击败" : "未击败")}\n" +
                $"· 海边大桥：{(WaveBridgeWorld.Site is null ? "这个世界还没有（找卡卡西要施工图）" : WaveBridgeWorld.Finished ? "已完工" : "未完工，桥头有造桥工达兹纳")}\n" +
                $"· 中忍考试：{(StoryWorld.WaveComplete ? "已开放" : "击败再不斩与白后开放")}\n\n" +
+               "不知道下一步做什么，可以去问卡卡西。";
+    }
+
+    // The Chūnin Exams (specs/M2_中忍考试篇.spec.md).
+    private static string ExamText(Player player)
+    {
+        ChuninExamPlayer exam = player.GetModPlayer<ChuninExamPlayer>();
+        ExamStage stage = exam.Stage;
+        string Mark(ExamStage from) => stage > from ? "合格" : stage == from ? "进行中" : "未开始";
+        string forest = stage < ExamStage.ForestGate ? "未开始"
+            : stage > ExamStage.ForestHunt ? "合格"
+            : exam.Issued == ExamScroll.None ? "进行中（去入口领卷）"
+            : $"进行中（持有{(exam.Issued == ExamScroll.Heaven ? "天之卷" : "地之卷")}，已击败考生 {exam.CandidatesBeaten / ChuninExamRules.SquadSize} 队）";
+        string vow = VowRules.SchoolName(player.GetModPlayer<StyleCorePlayer>().Vow);
+        return "中忍考试\n\n" + player.GetModPlayer<StoryPlayer>().CurrentObjective() + "\n\n" +
+               "进度\n" +
+               $"· 推荐：{(exam.Recommended ? "卡卡西已推荐" : "未推荐")}\n" +
+               $"· 第一试·笔试：{Mark(ExamStage.Written)}\n" +
+               $"· 第二试·死亡森林：{forest}\n" +
+               $"· 预选赛：{Mark(ExamStage.Prelims)}\n" +
+               $"· 正式赛：{(StoryWorld.DownedGaara ? "已结束" : stage == ExamStage.Finals ? "可以参加" : "未开始")}\n" +
+               $"· 立志：{vow}（取得流派核心后，找火影楼里的三代火影）\n\n" +
                "不知道下一步做什么，可以去问卡卡西。";
     }
 

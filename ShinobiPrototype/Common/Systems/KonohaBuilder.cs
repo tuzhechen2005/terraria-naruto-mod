@@ -51,13 +51,14 @@ internal static class KonohaBuilder
         return rows[rows.Count / 2];
     }
 
-    private static int Surface(int x)
+    internal static int Surface(int x)
     {
         for (int y = (int)(Main.worldSurface * 0.3); y < Main.worldSurface + 30; y++)
         {
             Tile tile = Main.tile[x, y];
             if (tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType] &&
-                tile.TileType is not (TileID.Trees or TileID.LivingWood or TileID.LeafBlock) || tile.LiquidAmount > 0)
+                tile.TileType is not (TileID.Trees or TileID.LivingWood or TileID.LeafBlock or TileID.LivingMahogany or
+                    TileID.LivingMahoganyLeaves or TileID.Cloud or TileID.RainCloud) || tile.LiquidAmount > 0)
                 return y;
         }
         return (int)Main.worldSurface;
@@ -106,7 +107,7 @@ internal static class KonohaBuilder
         }
     }
 
-    private static void PlaceCell(KonohaSite site, KCell cell)
+    internal static void PlaceCell(KonohaSite site, KCell cell)
     {
         int x = site.X(cell.Dx), y = site.Y(cell.Dy);
         Tile tile = Main.tile[x, y];
@@ -137,10 +138,13 @@ internal static class KonohaBuilder
         KMat.Plating => TileID.MarbleBlock,
         KMat.Beam => TileID.WoodenBeam,
         KMat.Platform => TileID.Platforms,
+        KMat.JungleGrass => TileID.JungleGrass,
+        KMat.Mud => TileID.Mud,
+        KMat.RichMahogany => TileID.RichMahogany,
         _ => TileID.LivingWood,
     };
 
-    private static ushort WallFor(KWall wall) => wall switch
+    internal static ushort WallFor(KWall wall) => wall switch
     {
         KWall.Planks => WallID.Planked,
         KWall.Stucco => WallID.YellowStucco,
@@ -152,13 +156,16 @@ internal static class KonohaBuilder
         KWall.RedStucco => WallID.RedStucco,
         KWall.Fence => WallID.WoodenFence,
         KWall.DoorLeaf => WallID.RichMaogany,
+        KWall.MetalFence => WallID.MetalFence,
+        KWall.Slab => WallID.StoneSlab,
+        KWall.Mahogany => WallID.RichMaogany,
         _ => WallID.Wood,
     };
 
     // Landscapes and maps from vanilla's 3x3 wall hangings (the low styles of that tile are boss trophies).
     private static readonly int[] PaintingStyles = { 63, 66, 67, 69, 76, 77, 79, 94 };
 
-    private static void PlaceFixture(KonohaSite site, KPlace place)
+    internal static void PlaceFixture(KonohaSite site, KPlace place)
     {
         int x = site.X(place.Dx), y = site.Y(place.Dy);
         switch (place.Fix)

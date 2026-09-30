@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -14,7 +15,7 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 lake、/m0 story <1-5> 或 /m0 god [on|off]";
+    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage] 或 /m0 god [on|off]";
     public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
@@ -93,6 +94,12 @@ public sealed class M0Command : ModCommand
             StoryWorld.LakeDone = stage >= 5;
             caller.Reply($"任务阶段已设为 {stage}（1 找达兹纳、2 侦察、3 回找达兹纳、4 变强/湖边、5 断桥）。\n" +
                          player.GetModPlayer<StoryPlayer>().CurrentObjective(), Color.LightGreen);
+            return;
+        }
+
+        if (args.Length >= 1 && args[0].Equals("exam", StringComparison.OrdinalIgnoreCase))
+        {
+            Exam(caller, player, args.Length > 1 ? args[1] : null);
             return;
         }
 
@@ -202,6 +209,74 @@ public sealed class M0Command : ModCommand
             given++;
         }
         return given;
+    }
+
+    // The Chunin Exams: show the stage, jump to a stage (single player), or go to one of the exam places.
+    private static void Exam(CommandCaller caller, Player player, string arg)
+    {
+        ChuninExamPlayer exam = player.GetModPlayer<ChuninExamPlayer>();
+        if (arg == null)
+        {
+            string sites = string.Join("、", ExamSiteWorld.All().Select(s => $"{s.Kind}@{s.CenterX},{s.GroundY}"));
+            caller.Reply($"中忍考试：阶段 {exam.Stage}；场地 {(sites.Length > 0 ? sites : "无（旧世界或没有木叶）")}，" +
+                         $"版本 v{ExamSiteWorld.BuiltVersion}/v{ExamSiteDesign.Version}。\n可用阶段：" +
+                         string.Join(" ", Enum.GetNames<ExamStage>()), Color.LightSkyBlue);
+            return;
+        }
+        Vector2? target = arg.ToLowerInvariant() switch
+        {
+            "gate" => SiteTop(ExamSiteWorld.Gate),
+            "tower" => SiteTop(ExamSiteWorld.Tower),
+            "stadium" => SiteTop(ExamSiteWorld.Stadium),
+            "academy" => BuildingDoor("忍者学校"),
+            "hokage" => KonohaWorld.HokageFeet - new Vector2(0f, 24f),
+            _ => null,
+        };
+        if (target is Vector2 where)
+        {
+            player.Teleport(where - new Vector2(player.width / 2f, player.height), TeleportationStyleID.RodOfDiscord);
+            caller.Reply($"已传送到 {arg}。", Color.LightGreen);
+            return;
+        }
+        if (arg is "gate" or "tower" or "stadium" or "academy" or "hokage")
+        {
+            caller.Reply("这个世界没有这个场地（需要新建世界）。", Color.OrangeRed);
+            return;
+        }
+        if (!Enum.TryParse(arg, true, out ExamStage stage))
+        {
+            caller.Reply("没有这个阶段。输入 /m0 exam 查看可用阶段。", Color.OrangeRed);
+            return;
+        }
+        if (Main.netMode != NetmodeID.SinglePlayer)
+        {
+            caller.Reply("设置考试阶段只在单人模式可用。", Color.OrangeRed);
+            return;
+        }
+        if (stage > ExamStage.Recommend)
+            StoryWorld.CompleteWave();
+        StoryWorld.DownedGaara = stage == ExamStage.Done;
+        exam.SetStageForTesting(stage);
+        if (stage == ExamStage.Written && !player.HasItem(ModContent.ItemType<ExamAdmissionScroll>()))
+            player.QuickSpawnItem(player.GetSource_Misc("ShinobiM0"), ModContent.ItemType<ExamAdmissionScroll>());
+        if (stage == ExamStage.ForestHunt && !player.HasItem(ModContent.ItemType<HeavenScroll>()))
+            player.QuickSpawnItem(player.GetSource_Misc("ShinobiM0"), ModContent.ItemType<HeavenScroll>());
+        caller.Reply($"考试阶段已设为 {stage}，当前判定为 {exam.Stage}。\n" + player.GetModPlayer<StoryPlayer>().CurrentObjective(),
+            Color.LightGreen);
+    }
+
+    private static Vector2? SiteTop(ExamSite? site) =>
+        site is ExamSite s ? new Vector2((s.CenterX + 0.5f) * 16f, s.GroundY * 16f - 8f) : null;
+
+    // Just outside the building's west wall, on the ground.
+    private static Vector2? BuildingDoor(string name)
+    {
+        if (KonohaWorld.Site is not KonohaSite site)
+            return null;
+        foreach (KBuilding building in KonohaWorld.Design.Buildings)
+            if (building.Name == name)
+                return new Vector2((site.X(building.X0) + 2.5f) * 16f, site.GroundY * 16f - 8f);
+        return null;
     }
 
     private static void SetTime(CommandCaller caller, string[] args)

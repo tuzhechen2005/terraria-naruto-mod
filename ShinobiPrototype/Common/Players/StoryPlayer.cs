@@ -13,13 +13,8 @@ public sealed class StoryPlayer : ModPlayer
 {
     // Whether the "three insignia collected" notice has been shown. Nothing here gates exploration or bosses.
     public bool InsigniaNoticeShown { get; private set; }
-    public int ExamStage { get; private set; }
 
-    public override void Initialize()
-    {
-        InsigniaNoticeShown = false;
-        ExamStage = ExamRules.NotRegistered;
-    }
+    public override void Initialize() => InsigniaNoticeShown = false;
 
     public override IEnumerable<Item> AddStartingItems(bool mediumCoreDeath)
     {
@@ -55,37 +50,12 @@ public sealed class StoryPlayer : ModPlayer
             InsigniaNoticeShown = true;
             Main.NewText("已收集三枚雾隐标记。现在可在工作台制作再不斩挑战卷轴，去断桥与再不斩和白决战。", 100, 200, 245);
         }
-
-        if (ExamStage == ExamRules.ForestTrial &&
-            ExamRules.HasBothScrolls(Player.CountItem(ModContent.ItemType<HeavenScroll>()),
-                Player.CountItem(ModContent.ItemType<EarthScroll>())))
-        {
-            ExamStage = ExamRules.ArenaReady;
-            Main.NewText("已集齐天、地卷轴！在工作台制作预选赛挑战书。", 100, 220, 160);
-        }
-    }
-
-    public bool RegisterExam()
-    {
-        if (!ExamRules.CanRegister(StoryWorld.WaveComplete, ExamStage))
-            return false;
-        ExamStage = ExamRules.ForestTrial;
-        return true;
     }
 
     public string CurrentObjective()
     {
-        if (StoryWorld.DownedArenaRival)
-            return "中忍考试篇完成：你已晋升中忍。下一篇章仍在开发中。";
-        if (StoryWorld.WaveComplete)
-        {
-            return ExamStage switch
-            {
-                ExamRules.NotRegistered => "波之国双首领战已完成。若想参加中忍考试，可用 5 木材与 1 铁锭或铅锭制作报名书；也可继续自由探索。",
-                ExamRules.ForestTrial => "中忍考试：丛林地表击败林地考生取得天之卷轴；地下丛林击败潜伏考生取得地之卷轴。",
-                _ => "中忍考试：在工作台用天、地卷轴、10 木材与 3 铁锭或铅锭制作预选赛挑战书；遗失可重新挑战丛林考生。"
-            };
-        }
+        if (StoryWorld.WaveComplete || StoryWorld.DownedGaara)
+            return ExamObjective();
         int insignia = System.Math.Min(3, Player.CountItem(ModContent.ItemType<MistInsignia>()));
         string noBridge = WaveBridgeWorld.Site.HasValue ? "" : "（这个世界还没有大桥：先找卡卡西要达兹纳的施工图。）";
         return WaveStage switch
@@ -110,6 +80,40 @@ public sealed class StoryPlayer : ModPlayer
         };
     }
 
+    private string ExamObjective()
+    {
+        ChuninExamPlayer exam = Player.GetModPlayer<ChuninExamPlayer>();
+        switch (exam.Stage)
+        {
+            case ExamStage.NoVillage:
+                return "波之国篇完成。中忍考试在木叶隐村举行，而这个世界没有木叶——中忍考试篇需要新建的世界。其余内容可以继续自由探索。";
+            case ExamStage.Recommend:
+                return "波之国篇完成。回木叶去——卡卡西有话要说。";
+            case ExamStage.Written:
+                string lost = Player.HasItem(ModContent.ItemType<ExamAdmissionScroll>()) ? "" : "（推荐书不在身上：找卡卡西再要一份。）";
+                return exam.CanSitWritten
+                    ? $"中忍考试第一试·笔试：到木叶的忍者学校（阿吽之门往西），在学校里使用推荐书。{lost}"
+                    : "第一试：你在第十题放弃了。等明天天亮，再去忍者学校重考。" + lost;
+            case ExamStage.ForestGate:
+                return $"中忍考试第二试·死亡森林：到丛林边的第四十四演习场入口领取卷轴{ExamSiteWorld.GateHint(Player)}。";
+            case ExamStage.ForestHunt:
+                string other = ChuninExamRules.Other(exam.Issued) == ExamScroll.Heaven ? "天之卷" : "地之卷";
+                if (ChuninExamRules.HasBoth(Player.CountItem(ModContent.ItemType<HeavenScroll>()),
+                        Player.CountItem(ModContent.ItemType<EarthScroll>())))
+                    return $"第二试：天、地两卷已经齐了，进入丛林中部的中央塔{ExamSiteWorld.TowerHint(Player)}。";
+                return $"第二试：从其他考生手里夺取{other}——丛林地表有三人一组的考生小队" +
+                       $"（已击败 {exam.CandidatesBeaten / ChuninExamRules.SquadSize} 队）。带齐两卷去中央塔{ExamSiteWorld.TowerHint(Player)}。";
+            case ExamStage.Prelims:
+                return "第二试合格。预选赛：在中央塔大厅与音忍多斯一对一。（多斯正在制作中。）";
+            case ExamStage.Training:
+                return $"预选赛合格。正式赛在一个月后——先去变强（击败骷髅王，或生命上限达到 {ChuninExamRules.FinalsLifeThreshold}）。";
+            case ExamStage.Finals:
+                return $"中忍考试正式赛：到木叶城墙外的考试会场{ExamSiteWorld.StadiumHint(Player)}。对手是砂隐的我爱罗。（我爱罗正在制作中。）";
+            default:
+                return "中忍考试篇完成。木叶崩溃（M3）正在开发中。";
+        }
+    }
+
     public WaveStage WaveStage => StoryRules.Stage(StoryWorld.WaveComplete, StoryWorld.MetTazuna,
         StoryWorld.DownedDemonBrothers, StoryWorld.TazunaConfessed, StoryWorld.LakeDone,
         Player.GetModPlayer<MistEncounterPlayer>().SawPreview || StoryWorld.ZabuzaFought, ReadyForLake);
@@ -120,14 +124,11 @@ public sealed class StoryPlayer : ModPlayer
     {
         if (InsigniaNoticeShown)
             tag["insigniaNotice"] = true;
-        if (ExamStage > 0)
-            tag["examStage"] = ExamStage;
     }
 
     public override void LoadData(TagCompound tag)
     {
         // Saves from before the M1 rewrite stored this as journal stage 2.
         InsigniaNoticeShown = tag.GetBool("insigniaNotice") || tag.GetInt("stage") >= 2;
-        ExamStage = tag.GetInt("examStage");
     }
 }

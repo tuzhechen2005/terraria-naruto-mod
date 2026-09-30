@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ShinobiPrototype.Common;
 using ShinobiPrototype.Common.Players;
 using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.Items;
@@ -108,6 +109,24 @@ public sealed class Kakashi : ModNPC
             return "哟。造桥的达兹纳托我把这个交给你——他的施工图。这片海边还没有他的桥。" +
                    "到海滩上面朝大海用一次，看看轮廓；没问题的话原地再用一次，桥就立起来了。\n\n" + objective;
         }
+
+        // Wave Country done: back to the Leaf, and the recommendation for the Chūnin Exams (M2 spec, section 2).
+        ChuninExamPlayer exam = player.GetModPlayer<ChuninExamPlayer>();
+        int recommendation = ModContent.ItemType<ExamAdmissionScroll>();
+        if (exam.Stage == ExamStage.Recommend)
+        {
+            exam.Recommend();
+            player.QuickSpawnItem(NPC.GetSource_FromThis(), recommendation);
+            return "辛苦了。……该回木叶了。\n\n对了——中忍考试就要开始了。我推荐了你。去不去，你自己决定。" +
+                   "\n\n" + player.GetModPlayer<StoryPlayer>().CurrentObjective();
+        }
+        if (exam.Stage == ExamStage.Written && !player.HasItem(recommendation))
+        {
+            player.QuickSpawnItem(NPC.GetSource_FromThis(), recommendation);
+            return "推荐书弄丢了？……拿着，这是补的。别再丢了。\n\n" + objective;
+        }
+        if (exam.Stage == ExamStage.NoVillage)
+            return "辛苦了。……本来该回木叶了，可这片土地上没有木叶。中忍考试只能在有木叶的世界里参加。\n\n" + objective;
 
         return $"{Main.rand.Next(greetings)}\n\n{objective}";
     }
