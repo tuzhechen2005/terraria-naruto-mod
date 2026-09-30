@@ -153,10 +153,52 @@ Items: {
 }
 
 NPCs: {
-	HakuForest.DisplayName: Herb-Gathering Youth
+	TazunaBridge: {
+		DisplayName: Tazuna the Bridge Builder
+		TownNPCMood: {
+			Content: "Once the bridge is done, I can finally have a proper drink."
+			NoHome: "This shack is my home. I am not leaving until the bridge is finished."
+			FarFromHome: "Too far from my bridge. I do not like it."
+			LoveSpace: "Room enough to stack the bridge stones."
+			DislikeCrowded: "Too many people. I can hardly breathe."
+			HateCrowded: "This packed? How is anyone supposed to work!"
+			LikeBiome: "The {BiomeName} is fine, as long as I can see the sea."
+			LoveBiome: "In the {BiomeName} I can hear the waves. That is home."
+			DislikeBiome: "The {BiomeName}? Not a drop of water. How do you build a bridge here!"
+			HateBiome: "I cannot stand the {BiomeName}."
+			LikeNPC: "{NPCName} is someone you can count on."
+			LoveNPC: "With {NPCName} beside me, I fear nothing."
+			DislikeNPC: "{NPCName} and all that dealing... reminds me of Gato."
+			HateNPC: "Keep {NPCName} away from my bridge!"
+			LikeNPC_Princess: "What a lovely child {NPCName} is."
+			Princess_LovesNPC: "I love {NPCName}!"
+		}
+	}
+
+	HakuForest: {
+		DisplayName: Herb-Gathering Youth
+		TownNPCMood: {
+			Content: "This forest is quiet, and the herbs grow well."
+			NoHome: "I do not need a home. Only to be at that person's side."
+			FarFromHome: "I should go back. That person is waiting for me."
+			LoveSpace: "The forest is wide open, and the wind is gentle."
+			DislikeCrowded: "So many people... I prefer quiet places."
+			HateCrowded: "It is too noisy here. I should go."
+			LikeBiome: "The {BiomeName} is beautiful."
+			LoveBiome: "I love the {BiomeName}."
+			DislikeBiome: "The {BiomeName} reminds me of bad things."
+			HateBiome: "I do not want to stay in the {BiomeName}."
+			LikeNPC: "{NPCName} seems kind."
+			LoveNPC: "I feel safe with {NPCName}."
+			DislikeNPC: "{NPCName}... is a little frightening."
+			HateNPC: "I do not want to go near {NPCName}."
+			LikeNPC_Princess: "{NPCName} is so sweet."
+			Princess_LovesNPC: "I love {NPCName}!"
+		}
+	}
+
 	DemonBrotherGozu.DisplayName: Demon Brother: Gōzu
 	DemonBrotherMeizu.DisplayName: Demon Brother: Meizu
-	TazunaBridge.DisplayName: Tazuna the Bridge Builder
 
 	Tazuna: {
 		DisplayName: Bridge Builder

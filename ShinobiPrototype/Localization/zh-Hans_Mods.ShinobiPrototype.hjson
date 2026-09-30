@@ -153,10 +153,52 @@ Items: {
 }
 
 NPCs: {
-	HakuForest.DisplayName: 采药的少年
+	TazunaBridge: {
+		DisplayName: 造桥工 达兹纳
+		TownNPCMood: {
+			Content: "等桥修好了，我就能好好喝一杯了。"
+			NoHome: "这破屋子就是我的家，桥不修好我哪儿也不去。"
+			FarFromHome: "离我的桥太远了，心里不踏实。"
+			LoveSpace: "地方够大，堆得下造桥的石料。"
+			DislikeCrowded: "人太多了，挤得我喘不过气。"
+			HateCrowded: "挤成这样，还怎么干活！"
+			LikeBiome: "{BiomeName}不错，看得见海就好。"
+			LoveBiome: "住在{BiomeName}，能听见海浪声。这才叫家啊。"
+			DislikeBiome: "{BiomeName}？连一滴水都没有，怎么造桥！"
+			HateBiome: "我受不了{BiomeName}。"
+			LikeNPC: "{NPCName}是个靠得住的人。"
+			LoveNPC: "有{NPCName}在身边，我什么都不怕。"
+			DislikeNPC: "{NPCName}那副做生意的样子……让我想起卡多。"
+			HateNPC: "别让{NPCName}靠近我的桥！"
+			LikeNPC_Princess: "{NPCName}这孩子真讨人喜欢。"
+			Princess_LovesNPC: "我很喜欢{NPCName}！"
+		}
+	}
+
+	HakuForest: {
+		DisplayName: 采药的少年
+		TownNPCMood: {
+			Content: "这片林子很安静，草药也长得好。"
+			NoHome: "我不需要家。只要能待在那个人身边就好。"
+			FarFromHome: "我该回去了，那个人还在等我。"
+			LoveSpace: "林子里很宽敞，风也很舒服。"
+			DislikeCrowded: "人太多了……我还是喜欢安静的地方。"
+			HateCrowded: "这里太吵了，我该走了。"
+			LikeBiome: "{BiomeName}很美。"
+			LoveBiome: "我很喜欢{BiomeName}。"
+			DislikeBiome: "{BiomeName}让我想起不好的事。"
+			HateBiome: "我不想待在{BiomeName}。"
+			LikeNPC: "{NPCName}看起来是个温柔的人。"
+			LoveNPC: "和{NPCName}在一起，很安心。"
+			DislikeNPC: "{NPCName}……有点可怕。"
+			HateNPC: "我不想靠近{NPCName}。"
+			LikeNPC_Princess: "{NPCName}真可爱。"
+			Princess_LovesNPC: "我很喜欢{NPCName}！"
+		}
+	}
+
 	DemonBrotherGozu.DisplayName: 鬼之兄弟·伽乌斯
 	DemonBrotherMeizu.DisplayName: 鬼之兄弟·美伊兹
-	TazunaBridge.DisplayName: 造桥工 达兹纳
 
 	Tazuna: {
 		DisplayName: 造桥工
