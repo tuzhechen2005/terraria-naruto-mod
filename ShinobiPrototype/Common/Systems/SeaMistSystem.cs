@@ -38,6 +38,7 @@ public sealed class SeaMistSystem : ModSystem
             target = BridgeRules.SeaMist(WaveBridgeWorld.DistanceToBridgeTiles(player.Center),
                 !Main.dayTime || Main.raining, ShinobiClientConfig.Instance.SeaFogStrength / 100f);
         target = System.Math.Max(target, MistPreviewSystem.MistBoost);
+        target = System.Math.Max(target, LakeAmbushSystem.MistBoost());
         Density = MathHelper.Lerp(Density, target, 0.05f);
         if (overlay == null)
             return;

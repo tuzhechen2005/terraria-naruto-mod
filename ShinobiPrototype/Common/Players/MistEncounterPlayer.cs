@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
+using ShinobiPrototype.Common;
 using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.Items;
 using ShinobiPrototype.Content.Projectiles;
@@ -67,7 +68,8 @@ public sealed class MistEncounterPlayer : ModPlayer
         bool nearBreak = BridgeRules.NearBrokenEnd(offset, rowsAbove);
         if (!SawPreview)
         {
-            if (!nearBreak)
+            // Until the lake ambush the bridge only has fog; the pair in the mist appears after Zabuza's "death".
+            if (!nearBreak || !StoryRules.PreviewAllowed(StoryWorld.LakeDone))
                 return;
             SawPreview = true;
             MistPreviewSystem.Play();

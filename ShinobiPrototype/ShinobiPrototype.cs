@@ -16,6 +16,7 @@ public sealed class ShinobiPrototype : Mod
         BuildBridge,      // client -> server: shore X, direction, water Y
         WaveFirstWin,     // server -> one client: grant that character's first-win rewards
         WaveEpilogue,     // server -> clients: both bosses have fallen (haku fell first, where)
+        TazunaTalk,       // client -> server: a player talked to Tazuna (whether he confessed)
     }
 
     // Boss Checklist (optional mod): list Zabuza and Haku just after the Eye of Cthulhu (2.0).
@@ -57,6 +58,11 @@ public sealed class ShinobiPrototype : Mod
             case Packet.WaveFirstWin:
                 if (Main.netMode == NetmodeID.MultiplayerClient)
                     Main.LocalPlayer.GetModPlayer<Common.Players.WaveRewardPlayer>().ReceiveFirstWin();
+                break;
+            case Packet.TazunaTalk:
+                bool confessed = reader.ReadBoolean();
+                if (Main.netMode == NetmodeID.Server)
+                    StoryWorld.ApplyTazunaTalk(confessed);
                 break;
             case Packet.BuildBridge:
                 BridgeSite site = new(reader.ReadInt32(), reader.ReadSByte(), reader.ReadInt32());

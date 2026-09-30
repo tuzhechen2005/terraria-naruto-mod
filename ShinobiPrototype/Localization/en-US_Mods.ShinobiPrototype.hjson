@@ -253,6 +253,8 @@ NPCs: {
 	MistScout.DisplayName: Mist Scout
 	HakuBoss.DisplayName: Haku
 
+	WaterPrison.DisplayName: Water Prison
+	WaterClone.DisplayName: Water Clone
 	ZabuzaBoss: {
 		DisplayName: Zabuza Momochi
 		DemonName: Demon of the Mist — Zabuza Momochi
@@ -299,15 +301,28 @@ Dialogue: {
 	EpilogueSnow: It has begun to snow. In the village where Haku was born, it snows all year round.
 	EpilogueRest: The demon and his boy sleep together in the snow.
 	HakuForestRecall: Haku: ...We met in the forest, didn't we? What a pity.
-	DemonBrothersDown: The Demon Brothers are down. Mist chunin are hunting you now. The mission is raised to A rank.
+	LakeZabuza1: Zabuza: Escorting the old bridge builder... Bad luck, Leaf.
+	LakeKakashi1: Kakashi: Stay back. ...The Demon of the Mist, Zabuza Momochi.
+	LakeZabuza2: "Zabuza: Water Prison Jutsu!"
+	LakeKakashi2: Kakashi: This prison can't be broken from inside! Forget me—
+	LakeZabuza3: Zabuza: Water Clone Jutsu.
+	LakeGoal: Break the water prison and free Kakashi!
+	LakeKakashi3: Kakashi: ...Well done. I'll take it from here.
+	LakeZabuza4: Zabuza: What—
+	LakeHaku: "Hunter-nin: Thank you. I have been tracking this man... I will deal with him."
+	LakeKakashi4: Kakashi: ...Hunter-nin dispose of the body on the spot. With senbon? He's still alive.
+	LakeKakashi5: Kakashi: The Mist ninja will head for the broken bridge. Back to Tazuna, and get ready.
+	LakeRetreat: Zabuza: ...Hmph.
+	LakeRetreatEnd: Zabuza collapses into water and is gone in the mist. The prison breaks apart.
+	DemonBrothersDown: The Demon Brothers are down. The Mist chunin were after Tazuna, not you. Go back to his hut and ask him why.
 	Whisper1: ???: ...You again.
 	Whisper2: ???: Stay away from this bridge.
 	Whisper3: (From the mist comes the scrape of a blade dragged over stone.)
 	Whisper4: ???: The mist swallows everything... you too.
 	SenbonWarning: ???: One more step and you die.
-	PreviewZabuza1: ???: ...So a Leaf brat wants to wade into this too?
-	PreviewZabuza2: ???: This bridge will never be finished.
-	PreviewHaku: ???: ...It is not yet time. Let us go.
+	PreviewZabuza1: ???: ...You again, Leaf brat.
+	PreviewZabuza2: ???: I was careless last time. This bridge will never be finished.
+	PreviewHaku: ???: ...Your wounds have not healed. It is not yet time. Let us go.
 	PreviewEnd: The figures in the mist are gone... the Mist ninja are watching this bridge.
 	BridgeOpening: Zabuza: Let's settle this here, on this bridge.
 	HakuArrive: Haku: Master Zabuza, leave this to me.
@@ -360,6 +375,8 @@ Configs: {
 BossChecklist: {
 	WaveDuo: {
 		DisplayName: Zabuza Momochi and Haku
-		SpawnInfo: Collect 3 Mist insignia from Mist scouts on the surface far from spawn and by the sea, then craft Zabuza's challenge scroll (with 10 wood, not consumed) at a workbench and use it. Summoned near the seaside bridge, the fight has its own sea mist and lines.
+		SpawnInfo: Follow the mission from Kakashi and Tazuna: meet Tazuna, defeat the Demon Brothers, hear his confession, break Zabuza's water prison at a surface lake to free Kakashi, then see Zabuza in the mist at the broken bridge. Collect 3 Mist insignia and craft Zabuza's challenge scroll (with 10 wood, not consumed) at a workbench and use it. Summoned near the seaside bridge, the fight has its own sea mist and lines.
 	}
 }
+
+Conditions.WaveScroll: After seeing Zabuza in the mist at the broken bridge

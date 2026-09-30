@@ -50,12 +50,10 @@ public sealed class StoryPlayer : ModPlayer
         if (Player.whoAmI != Main.myPlayer)
             return;
 
-        if (!InsigniaNoticeShown && !StoryWorld.WaveComplete && Player.CountItem(ModContent.ItemType<MistInsignia>()) >= 3)
+        if (!InsigniaNoticeShown && WaveStage == WaveStage.Showdown && Player.CountItem(ModContent.ItemType<MistInsignia>()) >= 3)
         {
             InsigniaNoticeShown = true;
-            Main.NewText(WaveBridgeWorld.Site.HasValue && !Player.GetModPlayer<MistEncounterPlayer>().SawPreview
-                ? "已收集三枚雾隐标记。雾隐的人都往海边的大桥去了——去那里看看。挑战卷轴也已经可以在工作台制作了。"
-                : "已收集三枚雾隐标记。现在可在工作台制作波之国挑战卷轴，与再不斩和白决战。", 100, 200, 245);
+            Main.NewText("已收集三枚雾隐标记。现在可在工作台制作再不斩挑战卷轴，去断桥与再不斩和白决战。", 100, 200, 245);
         }
 
         if (ExamStage == ExamRules.ForestTrial &&
@@ -89,12 +87,34 @@ public sealed class StoryPlayer : ModPlayer
             };
         }
         int insignia = System.Math.Min(3, Player.CountItem(ModContent.ItemType<MistInsignia>()));
-        string bridge = WaveBridgeWorld.Site.HasValue
-            ? "海边起雾的地方有一座没修完的大桥，造桥工达兹纳就在桥头。"
-            : "这个世界还没有大桥：找卡卡西要达兹纳的施工图。";
-        return $"C 级任务：护送造桥工返回波之国。{bridge}远离出生点的地表与海边有雾隐侦察兵出没——收集雾隐标记（{insignia}/3），" +
-               "在工作台制作再不斩挑战卷轴（不消耗），击败再不斩与白。";
+        string noBridge = WaveBridgeWorld.Site.HasValue ? "" : "（这个世界还没有大桥：先找卡卡西要达兹纳的施工图。）";
+        return WaveStage switch
+        {
+            WaveStage.FindTazuna =>
+                $"C 级任务：护送造桥工达兹纳返回波之国。他先回了桥头——海边起雾的地方有座没修完的大桥，去桥头小屋找他。{noBridge}",
+            WaveStage.Scout =>
+                "C 级任务：远离出生点的地表与海边有雾隐侦察兵出没，击败他们、收集雾隐标记" +
+                $"（{insignia}/3）。带着标记时，雨天或雾中要当心伏击。",
+            WaveStage.ReportToTazuna =>
+                "伏击你们的是雾隐的中忍，而他们的目标是达兹纳。回桥头小屋，问个清楚。",
+            WaveStage.GetStronger =>
+                "A 级任务：卡多雇来的是雾隐的鬼人——桃地再不斩。以现在的实力还不够，先去变强" +
+                $"（击败克苏鲁之眼，或生命上限达到 {StoryRules.LakeLifeThreshold}）。",
+            WaveStage.Lake =>
+                $"A 级任务：护送途中，再不斩会在地表的湖边动手。{LakeAmbushSystem.NearestLakeHint(Player)}",
+            WaveStage.Bridge =>
+                "再不斩被追杀部队带走了——可用千本的追杀部队，不会是来杀他的。雾隐的人一定会去断桥，回大桥看看。",
+            _ =>
+                $"再不斩还活着，就在断桥的雾里。收集雾隐标记（{insignia}/3），在工作台制作再不斩挑战卷轴（不消耗），" +
+                "击败再不斩与白。",
+        };
     }
+
+    public WaveStage WaveStage => StoryRules.Stage(StoryWorld.WaveComplete, StoryWorld.MetTazuna,
+        StoryWorld.DownedDemonBrothers, StoryWorld.TazunaConfessed, StoryWorld.LakeDone,
+        Player.GetModPlayer<MistEncounterPlayer>().SawPreview, ReadyForLake);
+
+    public bool ReadyForLake => StoryRules.ReadyForLake(NPC.downedBoss1, Player.statLifeMax);
 
     public override void SaveData(TagCompound tag)
     {

@@ -1,4 +1,6 @@
 using System.IO;
+using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using ShinobiPrototype.Common;
@@ -11,6 +13,10 @@ public sealed class StoryWorld : ModSystem
     public static bool DownedZabuza { get; set; }
     public static bool DownedArenaRival { get; set; }
     public static bool DownedDemonBrothers { get; set; }
+    // The mission chain (M1 spec, "剧情补充"): met Tazuna at his hut, heard him confess, and the lake ambush done.
+    public static bool MetTazuna { get; set; }
+    public static bool TazunaConfessed { get; set; }
+    public static bool LakeDone { get; set; }
     public static bool WaveComplete => ExamRules.WaveComplete(DownedHaku, DownedZabuza);
 
     public static void CompleteWave()
@@ -25,6 +31,9 @@ public sealed class StoryWorld : ModSystem
         DownedZabuza = false;
         DownedArenaRival = false;
         DownedDemonBrothers = false;
+        MetTazuna = false;
+        TazunaConfessed = false;
+        LakeDone = false;
     }
 
     public override void OnWorldUnload()
@@ -33,6 +42,9 @@ public sealed class StoryWorld : ModSystem
         DownedZabuza = false;
         DownedArenaRival = false;
         DownedDemonBrothers = false;
+        MetTazuna = false;
+        TazunaConfessed = false;
+        LakeDone = false;
     }
 
     public override void SaveWorldData(TagCompound tag)
@@ -45,6 +57,12 @@ public sealed class StoryWorld : ModSystem
             tag["downedArenaRival"] = true;
         if (DownedDemonBrothers)
             tag["downedDemonBrothers"] = true;
+        if (MetTazuna)
+            tag["metTazuna"] = true;
+        if (TazunaConfessed)
+            tag["tazunaConfessed"] = true;
+        if (LakeDone)
+            tag["lakeDone"] = true;
     }
 
     public override void LoadWorldData(TagCompound tag)
@@ -55,6 +73,9 @@ public sealed class StoryWorld : ModSystem
         DownedZabuza = (wave & 2) != 0;
         DownedArenaRival = tag.GetBool("downedArenaRival");
         DownedDemonBrothers = tag.GetBool("downedDemonBrothers");
+        MetTazuna = tag.GetBool("metTazuna");
+        TazunaConfessed = tag.GetBool("tazunaConfessed");
+        LakeDone = tag.GetBool("lakeDone");
     }
 
     public override void NetSend(BinaryWriter writer)
@@ -64,6 +85,9 @@ public sealed class StoryWorld : ModSystem
         if (DownedZabuza) flags |= 2;
         if (DownedArenaRival) flags |= 4;
         if (DownedDemonBrothers) flags |= 8;
+        if (MetTazuna) flags |= 16;
+        if (TazunaConfessed) flags |= 32;
+        if (LakeDone) flags |= 64;
         writer.Write(flags);
     }
 
@@ -76,5 +100,29 @@ public sealed class StoryWorld : ModSystem
         DownedZabuza = (wave & 2) != 0;
         DownedArenaRival = (flags & 4) != 0;
         DownedDemonBrothers = (flags & 8) != 0;
+        MetTazuna = (flags & 16) != 0;
+        TazunaConfessed = (flags & 32) != 0;
+        LakeDone = (flags & 64) != 0;
+    }
+
+    // Talking to Tazuna happens on a client; the server records it and sends the world data back out.
+    public static void RecordTazunaTalk(bool confessed)
+    {
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+        {
+            ModPacket packet = ModContent.GetInstance<ShinobiPrototype>().GetPacket();
+            packet.Write((byte)ShinobiPrototype.Packet.TazunaTalk);
+            packet.Write(confessed);
+            packet.Send();
+        }
+        ApplyTazunaTalk(confessed);
+    }
+
+    internal static void ApplyTazunaTalk(bool confessed)
+    {
+        MetTazuna = true;
+        TazunaConfessed |= confessed;
+        if (Main.netMode == NetmodeID.Server)
+            NetMessage.SendData(MessageID.WorldData);
     }
 }

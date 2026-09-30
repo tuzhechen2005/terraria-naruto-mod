@@ -14,7 +14,7 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest 或 /m0 god [on|off]";
+    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 lake、/m0 story <1-5> 或 /m0 god [on|off]";
     public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
@@ -51,6 +51,48 @@ public sealed class M0Command : ModCommand
             }
             MistPreviewSystem.Play();
             caller.Reply("在本机重放迷雾预告（不改变世界进度）。", Color.LightGreen);
+            return;
+        }
+
+        if (args.Length == 1 && args[0].Equals("lake", StringComparison.OrdinalIgnoreCase))
+        {
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                caller.Reply("湖边初遇测试只在单人模式可用。", Color.OrangeRed);
+                return;
+            }
+            LakeAmbushSystem.Lake? nearest = null;
+            foreach (LakeAmbushSystem.Lake lake in LakeAmbushSystem.Lakes)
+                if (nearest is not LakeAmbushSystem.Lake best ||
+                    Math.Abs(lake.CenterX * 16f - player.Center.X) < Math.Abs(best.CenterX * 16f - player.Center.X))
+                    nearest = lake;
+            if (nearest is not LakeAmbushSystem.Lake found)
+            {
+                caller.Reply("这个世界的地表没有找到合适的湖。", Color.OrangeRed);
+                return;
+            }
+            float shore = (found.CenterX + (player.Center.X < found.CenterX * 16f ? -1 : 1) * (found.Width / 2 + 3)) * 16f;
+            player.Teleport(new Vector2(shore, (found.SurfaceY - 6) * 16f), TeleportationStyleID.RodOfDiscord);
+            LakeAmbushSystem.Start(found, player);
+            caller.Reply($"已传送到湖边（宽 {found.Width} 格）并开始湖边初遇（不检查任务进度；完成后会记录 LakeDone）。",
+                Color.LightGreen);
+            return;
+        }
+
+        if (args.Length == 2 && args[0].Equals("story", StringComparison.OrdinalIgnoreCase) &&
+            int.TryParse(args[1], out int stage) && stage is >= 1 and <= 5)
+        {
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                caller.Reply("设置任务阶段只在单人模式可用。", Color.OrangeRed);
+                return;
+            }
+            StoryWorld.MetTazuna = stage >= 2;
+            StoryWorld.DownedDemonBrothers = stage >= 3;
+            StoryWorld.TazunaConfessed = stage >= 4;
+            StoryWorld.LakeDone = stage >= 5;
+            caller.Reply($"任务阶段已设为 {stage}（1 找达兹纳、2 侦察、3 回找达兹纳、4 变强/湖边、5 断桥）。\n" +
+                         player.GetModPlayer<StoryPlayer>().CurrentObjective(), Color.LightGreen);
             return;
         }
 

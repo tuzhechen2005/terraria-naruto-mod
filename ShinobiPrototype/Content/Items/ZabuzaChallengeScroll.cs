@@ -3,6 +3,8 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Content.NPCs;
 using ShinobiPrototype.Common;
+using ShinobiPrototype.Common.Players;
+using ShinobiPrototype.Common.Systems;
 
 namespace ShinobiPrototype.Content.Items;
 
@@ -42,7 +44,11 @@ public sealed class ZabuzaChallengeScroll : ModItem
 
     public override void AddRecipes()
     {
+        // Craftable once the lake ambush is over and this character has seen the pair in the mist at the bridge.
+        Condition story = new(Mod.GetLocalization("Conditions.WaveScroll"), () =>
+            StoryRules.ScrollCraftable(StoryWorld.WaveComplete, StoryWorld.LakeDone,
+                Main.LocalPlayer.GetModPlayer<MistEncounterPlayer>().SawPreview));
         CreateRecipe().AddIngredient<MistInsignia>(3).AddIngredient(ItemID.Wood, 10)
-            .AddTile(TileID.WorkBenches).Register();
+            .AddTile(TileID.WorkBenches).AddCondition(story).Register();
     }
 }

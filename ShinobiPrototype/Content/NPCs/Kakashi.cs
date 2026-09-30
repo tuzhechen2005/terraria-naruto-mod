@@ -141,6 +141,7 @@ public sealed class Kakashi : ModNPC
             "蘑菇配太阳花，在工作台能做兵粮丸，一口回 40 查克拉。应急用的，别想着连着吃。",
             "地下洞穴里有发蓝光的查克拉结晶，就像生命水晶那样，用了能让查克拉上限变高。下矿的时候留意一下。",
             "雾隐的人在离村子远的地方活动，海边尤其多。拿到他们的标记，就能追到再不斩。",
+            "水牢术困住的人，从里面是破不开的。要是哪天我被关进去了——从外面打。",
             "我说过的这些，忍者手册里都记着，随时翻。",
         };
     }
@@ -157,6 +158,18 @@ public sealed class Kakashi : ModNPC
     // During a drill he stops wandering and faces the player; gravity and collision still run outside the AI.
     public override bool PreAI()
     {
+        // The lake ambush: he stands by the player, is held in the water prison, then stays for the ending.
+        if (WaterPrison.KakashiScene() is WaterPrison scene)
+        {
+            NPC.velocity = Vector2.Zero;
+            NPC.direction = scene.KakashiFacing;
+            NPC.dontTakeDamage = scene.KakashiHold(NPC).HasValue;
+            if (scene.KakashiHold(NPC) is Vector2 feet)
+                NPC.Bottom = feet;
+            return false;
+        }
+        NPC.dontTakeDamage = false;
+
         if (DrillReleaseTicks > 0)
             DrillReleaseTicks--;
         if (DrillTarget < 0 || !Main.player[DrillTarget].active)
@@ -166,6 +179,10 @@ public sealed class Kakashi : ModNPC
         NPC.direction = Main.player[DrillTarget].Center.X >= NPC.Center.X ? 1 : -1;
         return false;
     }
+
+    // Inside the prison he is drawn by the sphere, in his trapped pose.
+    public override bool PreDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) =>
+        WaterPrison.KakashiScene()?.KakashiHold(NPC) is null;
 
     public override void TownNPCAttackStrength(ref int damage, ref float knockback)
     {
