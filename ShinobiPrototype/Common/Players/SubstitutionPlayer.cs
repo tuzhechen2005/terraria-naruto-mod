@@ -53,6 +53,12 @@ public sealed class SubstitutionPlayer : ModPlayer
     {
         if (Player.dead || Player.CCed)
             return;
+        JutsuStatusPlayer status = Player.GetModPlayer<JutsuStatusPlayer>();
+        if (status.SubstitutionSealed)
+        {
+            CombatText.NewText(Player.getRect(), new Color(170, 200, 255), "点穴：查克拉被封，结不了印");
+            return;
+        }
 
         ChakraPlayer chakra = Player.GetModPlayer<ChakraPlayer>();
         bool drilling = Player.GetModPlayer<SubstitutionDrillPlayer>().Active;
@@ -75,6 +81,12 @@ public sealed class SubstitutionPlayer : ModPlayer
         SoundEngine.PlaySound(SoundID.Item7, Player.Center);
         for (int i = 0; i < 6; i++)
             Dust.NewDust(Player.position, Player.width, Player.height, DustID.Smoke, 0f, -1f, 120, default, 0.9f);
+        // Bound by sand or frozen by killing intent: the log takes the player's place at once.
+        if (status.Bound)
+        {
+            status.Break();
+            Substitute(-Player.direction);
+        }
     }
 
     public override bool FreeDodge(Player.HurtInfo info)

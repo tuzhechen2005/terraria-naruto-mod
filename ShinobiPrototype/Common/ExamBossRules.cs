@@ -1,0 +1,101 @@
+using System;
+
+namespace ShinobiPrototype.Common;
+
+// The Chūnin Exam fights (specs/M2_中忍考试篇.spec.md sections 3.3–3.5 and 5): Dosu in the prelims, Gaara in the
+// finals, Neji after them, and Orochimaru's encounter in the Forest of Death. Numbers are first values for play.
+// Kept free of Terraria types so the rule tests can run it.
+public static class ExamBossRules
+{
+    // --- Dosu (prelims): about seven tenths of Zabuza (1800 life after the Eye), a little later in the game.
+    public const int DosuLife = 2200;
+    public const int DosuDefense = 8;
+    public const int DosuContactDamage = 24;
+    public const int DosuDrillDamage = 30;
+    public const int DosuWaveDamage = 22;
+    public const int DosuDrillWindupTicks = 45;
+    public const int DosuWaveWindupTicks = 40;
+    public const float DosuWaveKnockback = 11f;
+    // The Resonating Echo Drill's ringing ears: left and right swap, never longer than two seconds (user, 2026-09-30).
+    public const int TinnitusTicks = 100;
+    public const int TinnitusMaxTicks = 120;
+
+    public static int Tinnitus(int current, int added) => Math.Min(TinnitusMaxTicks, Math.Max(current, added));
+
+    // --- Gaara (finals, required): three phases by life.
+    public const int GaaraLife = 5200;
+    public const int GaaraDefense = 14;
+    public const float ShieldPhaseTwo = 0.5f;     // the sand armour cracks
+    public const float ShieldPhaseThree = 0.25f;  // the partial transformation
+    // The Absolute Defence: a hit from the side Gaara faces only chips the sand unless he is recovering from an attack.
+    public const float ShieldDamageMultiplier = 0.2f;
+    public const int ShurikenDamage = 24;
+    public const int ShurikenCount = 5;
+    public const int CoffinWarnTicks = 60;
+    public const int CoffinRadiusPx = 56;
+    public const int CoffinHoldTicks = 90;     // caught: this long to substitute out before the Sand Burial
+    public const int BurialDamage = 70;
+    public const int SandWaveDamage = 34;
+    public const int SandArmDamage = 44;
+    public const int AirBulletDamage = 38;
+
+    public static int GaaraPhase(int life, int lifeMax)
+    {
+        float share = lifeMax <= 0 ? 0f : life / (float)lifeMax;
+        return share <= ShieldPhaseThree ? 3 : share <= ShieldPhaseTwo ? 2 : 1;
+    }
+
+    // Whether the shield takes the hit: from the front, and Gaara not in an attack's recovery.
+    public static bool ShieldBlocks(int phase, int facing, int hitFromSide, bool recovering) =>
+        phase == 1 && !recovering && hitFromSide == facing;
+
+    // Faster once the armour cracks, faster again when transformed.
+    public static float GaaraTempo(int phase) => phase switch { 1 => 1f, 2 => 1.3f, _ => 1.5f };
+
+    // --- Neji (optional sparring).
+    public const int NejiLife = 4000;
+    public const int NejiDefense = 12;
+    public const int PalmDamage = 30;
+    public const int RotationDamage = 26;
+    public const int RotationRadiusPx = 90;
+    public const int RotationTicks = 60;
+    public const int SixtyFourWarnTicks = 70;
+    public const int SixtyFourRadiusPx = 120;
+    public const int SixtyFourDamage = 64;
+    // Chakra point seals: each takes this much maximum chakra; at full stacks substitution is sealed for a while.
+    public const int SealChakraPerStack = 20;
+    public const int SealMaxStacks = 3;
+    public const int SealTicks = 600;
+
+    public static int SealedChakra(int stacks) => Math.Clamp(stacks, 0, SealMaxStacks) * SealChakraPerStack;
+
+    public static bool SubstitutionSealed(int stacks) => stacks >= SealMaxStacks;
+
+    public static int AddSeal(int stacks) => Math.Min(SealMaxStacks, stacks + 1);
+
+    // --- Orochimaru's encounter in the Forest of Death (optional; retreats at half life, ThresholdRetreatRules).
+    public const int OrochimaruLife = 5000;
+    public const int OrochimaruDefense = 12;
+    public const int KillingIntentTicks = 120;   // frozen by fear unless the player substitutes out
+    public const int SnakeHandDamage = 34;
+    public const int SnakeHandReachPx = 420;
+    public const int SnakeDashDamage = 38;
+    public const int WindBlastDamage = 30;
+    public const float WindBlastKnockback = 14f;
+    public const int NeckBiteDamage = 42;
+    public const int SnakeLife = 220;
+    public const int SnakeDamage = 26;
+    // Summons: once above half life, once more on the way down (the fight ends at half).
+    public const float SnakeSummonAt = 0.8f;
+    public const float SecondSnakeSummonAt = 0.62f;
+
+    public static bool SummonSnakes(float lifeShare, int summonsSoFar) =>
+        summonsSoFar == 0 && lifeShare <= SnakeSummonAt || summonsSoFar == 1 && lifeShare <= SecondSnakeSummonAt;
+
+    // Rarely met again in the forest; the shed skin calls him back for another try at the eye.
+    public const float ForestRematchChancePerCheck = 0.0005f;
+    public const float SharinganVialChance = 0.25f;
+
+    // Movement locks (sand coffin, killing intent) break the moment the player substitutes.
+    public static bool BreaksOnSubstitution(int bindTicks, int fearTicks) => bindTicks > 0 || fearTicks > 0;
+}

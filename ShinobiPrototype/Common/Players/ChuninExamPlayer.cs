@@ -96,6 +96,18 @@ public sealed class ChuninExamPlayer : ModPlayer
                      ExamSiteWorld.TowerHint(Player), Color.LightGreen);
     }
 
+    // Took part in beating Dosu in the tower.
+    public void PassPrelims()
+    {
+        if (Stage != ExamStage.Prelims)
+            return;
+        PrelimsPassed = true;
+        Main.NewText(Stage == ExamStage.Finals
+            ? $"预选赛合格！正式赛：到木叶城墙外的考试会场{ExamSiteWorld.StadiumHint(Player)}。"
+            : $"预选赛合格！正式赛前先去变强（击败骷髅王，或生命上限达到 {ChuninExamRules.FinalsLifeThreshold}）。",
+            Color.LightGreen);
+    }
+
     public static int ScrollType(ExamScroll scroll) => scroll switch
     {
         ExamScroll.Heaven => ModContent.ItemType<HeavenScroll>(),

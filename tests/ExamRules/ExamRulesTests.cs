@@ -105,3 +105,26 @@ for (int x = -ExamSiteDesign.FieldHalf; x <= ExamSiteDesign.FieldHalf; x++)
     for (int y = -stadium.ClearHeight; y <= -1; y++)
         sky &= stadium.CellAt(x, y) is null;
 Check(sky && stadium.Arena.Width >= 45, "The stadium field is open to the sky and wide enough for Gaara");
+
+// The exam fights.
+Check(ExamBossRules.Tinnitus(0, ExamBossRules.TinnitusTicks) <= 120 && ExamBossRules.Tinnitus(119, 500) == ExamBossRules.TinnitusMaxTicks,
+    "Dosu's reversed controls never last longer than two seconds");
+Check(ExamBossRules.DosuLife < 1800 * 1.4f && ExamBossRules.DosuLife > 1800,
+    "Dosu is a mini boss: a little tougher than Zabuza's life, at a later stage");
+Check(ExamBossRules.GaaraPhase(5200, 5200) == 1 && ExamBossRules.GaaraPhase(2600, 5200) == 2 && ExamBossRules.GaaraPhase(1300, 5200) == 3,
+    "Gaara: armour cracks at half, partial transformation at a quarter");
+Check(ExamBossRules.ShieldBlocks(1, 1, 1, false) && !ExamBossRules.ShieldBlocks(1, 1, -1, false) &&
+      !ExamBossRules.ShieldBlocks(1, 1, 1, true) && !ExamBossRules.ShieldBlocks(2, 1, 1, false),
+    "The sand shield stops hits from the front, not from behind or during recovery, and falls with the armour");
+Check(ExamBossRules.GaaraTempo(3) > ExamBossRules.GaaraTempo(2) && ExamBossRules.GaaraTempo(2) > ExamBossRules.GaaraTempo(1),
+    "Gaara speeds up each phase");
+Check(ExamBossRules.CoffinHoldTicks >= 60, "Caught in the coffin, there is time to substitute out");
+Check(ExamBossRules.SealedChakra(1) == 20 && ExamBossRules.SealedChakra(5) == 60 && ExamBossRules.AddSeal(3) == 3,
+    "Each chakra point seal takes 20 maximum chakra, three at most");
+Check(!ExamBossRules.SubstitutionSealed(2) && ExamBossRules.SubstitutionSealed(3), "Three seals stop substitution");
+Check(ExamBossRules.SummonSnakes(0.79f, 0) && !ExamBossRules.SummonSnakes(0.9f, 0) && ExamBossRules.SummonSnakes(0.6f, 1) &&
+      !ExamBossRules.SummonSnakes(0.7f, 1) && !ExamBossRules.SummonSnakes(0.1f, 2),
+    "Orochimaru summons snakes twice before he leaves at half");
+Check(ExamBossRules.SecondSnakeSummonAt > ThresholdRetreatRules.DefaultThreshold, "The second summon comes before the retreat");
+Check(ExamBossRules.BreaksOnSubstitution(10, 0) && ExamBossRules.BreaksOnSubstitution(0, 10) && !ExamBossRules.BreaksOnSubstitution(0, 0),
+    "Substitution breaks the sand coffin and the killing intent");

@@ -15,13 +15,14 @@ public sealed class ChakraPlayer : ModPlayer
     private int hitRestoredThisWindow;
 
     public int Crystals { get; private set; }
-    public int MaxChakra => ChakraRules.MaxChakra(Crystals);
+    // Neji's chakra point seals take some of it for a while (JutsuStatusPlayer).
+    public int MaxChakra => System.Math.Max(0, ChakraRules.MaxChakra(Crystals) - Player.GetModPlayer<JutsuStatusPlayer>().SealedChakra);
     public int Chakra => (int)chakra;
 
     public override void Initialize()
     {
         Crystals = 0;
-        chakra = MaxChakra;
+        chakra = ChakraRules.MaxChakra(0);
         recoveryDelay = 0;
         hitWindowTicks = 0;
         hitRestoredThisWindow = 0;
@@ -84,6 +85,6 @@ public sealed class ChakraPlayer : ModPlayer
     public override void LoadData(TagCompound tag)
     {
         Crystals = System.Math.Clamp(tag.GetInt("chakraCrystals"), 0, ChakraRules.MaxCrystals);
-        chakra = MaxChakra;
+        chakra = ChakraRules.MaxChakra(Crystals);
     }
 }

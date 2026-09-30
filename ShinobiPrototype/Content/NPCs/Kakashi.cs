@@ -125,6 +125,13 @@ public sealed class Kakashi : ModNPC
             player.QuickSpawnItem(NPC.GetSource_FromThis(), recommendation);
             return "推荐书弄丢了？……拿着，这是补的。别再丢了。\n\n" + objective;
         }
+        int challenge = ModContent.ItemType<NejiChallengeScroll>();
+        if (exam.Stage is ExamStage.Finals or ExamStage.Done && !player.HasItem(challenge))
+        {
+            player.QuickSpawnItem(NPC.GetSource_FromThis(), challenge);
+            return "日向家的那个孩子——宁次，托我带句话：正式赛开始以后，他想在会场和你切磋一场。" +
+                   "去不去随你。\n\n" + objective;
+        }
         if (exam.Stage == ExamStage.NoVillage)
             return "辛苦了。……本来该回木叶了，可这片土地上没有木叶。中忍考试只能在有木叶的世界里参加。\n\n" + objective;
 

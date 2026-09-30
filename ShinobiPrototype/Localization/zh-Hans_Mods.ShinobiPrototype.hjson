@@ -59,6 +59,16 @@ Items: {
 		Tooltip: 通过中忍考试的证明\n装备后防御 +3，近战与魔法伤害 +4%
 	}
 
+	SnakeSkin: {
+		DisplayName: 蛇的蜕皮
+		Tooltip: 大蛇丸留下的蛇蜕\n在丛林的地表使用，把他再引出来\n不会被消耗
+	}
+
+	NejiChallengeScroll: {
+		DisplayName: 宁次的切磋书
+		Tooltip: 正式赛开始后，在考试会场的场地上使用，与日向宁次切磋\n不会被消耗
+	}
+
 	ChakraPill: {
 		DisplayName: 兵粮丸
 		Tooltip:
@@ -259,6 +269,11 @@ NPCs: {
 	ForestCanopyCandidate.DisplayName: 考生
 	RainGenin.DisplayName: 雨隐下忍
 	Hiruzen.DisplayName: 猿飞日斩（三代火影）
+	Dosu.DisplayName: 音忍·多斯
+	Gaara.DisplayName: 砂瀑之我爱罗
+	Neji.DisplayName: 日向宁次
+	Orochimaru.DisplayName: 大蛇丸
+	SummonedSnake.DisplayName: 通灵蛇
 }
 
 Projectiles: {
@@ -266,6 +281,7 @@ Projectiles: {
 	KunaiThrown.DisplayName: 苦无
 	SenbonThrown.DisplayName: 千本
 	ExamSenbon.DisplayName: 千本
+	JutsuHitbox.DisplayName: 忍术
 	WaterDragonFriendly.DisplayName: 水龙弹
 	IceMirrorMinion.DisplayName: 魔镜冰晶
 	KakashiPracticeKunai.DisplayName: 练习苦无

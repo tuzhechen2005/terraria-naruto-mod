@@ -11,6 +11,8 @@
     <Compile Include="../../ShinobiPrototype/Common/ChuninExamRules.cs" Link="ChuninExamRules.cs" />
     <Compile Include="../../ShinobiPrototype/Common/WrittenExamBank.cs" Link="WrittenExamBank.cs" />
     <Compile Include="../../ShinobiPrototype/Common/VowRules.cs" Link="VowRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ExamBossRules.cs" Link="ExamBossRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ThresholdRetreatRules.cs" Link="ThresholdRetreatRules.cs" />
     <Compile Include="../../ShinobiPrototype/Common/StyleCoreRules.cs" Link="StyleCoreRules.cs" />
     <Compile Include="../../ShinobiPrototype/Common/ExamSiteDesign.cs" Link="ExamSiteDesign.cs" />
     <Compile Include="../../ShinobiPrototype/Common/KonohaDesign.cs" Link="KonohaDesign.cs" />

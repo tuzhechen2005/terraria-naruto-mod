@@ -104,13 +104,13 @@ public sealed class StoryPlayer : ModPlayer
                 return $"第二试：从其他考生手里夺取{other}——丛林地表有三人一组的考生小队" +
                        $"（已击败 {exam.CandidatesBeaten / ChuninExamRules.SquadSize} 队）。带齐两卷去中央塔{ExamSiteWorld.TowerHint(Player)}。";
             case ExamStage.Prelims:
-                return "第二试合格。预选赛：在中央塔大厅与音忍多斯一对一。（多斯正在制作中。）";
+                return "第二试合格。预选赛：走进中央塔大厅，与音忍多斯一对一。被他的响鸣穿打中会耳鸣——左右会暂时颠倒。";
             case ExamStage.Training:
                 return $"预选赛合格。正式赛在一个月后——先去变强（击败骷髅王，或生命上限达到 {ChuninExamRules.FinalsLifeThreshold}）。";
             case ExamStage.Finals:
-                return $"中忍考试正式赛：到木叶城墙外的考试会场{ExamSiteWorld.StadiumHint(Player)}。对手是砂隐的我爱罗。（我爱罗正在制作中。）";
+                return $"中忍考试正式赛：走进木叶城墙外的考试会场{ExamSiteWorld.StadiumHint(Player)}。对手是砂隐的我爱罗——他的沙会挡下正面的攻击。";
             default:
-                return "中忍考试篇完成。木叶崩溃（M3）正在开发中。";
+                return "中忍考试篇完成：我爱罗倒下的那一刻，木叶崩溃开始了。（M3 开发中）";
         }
     }
 

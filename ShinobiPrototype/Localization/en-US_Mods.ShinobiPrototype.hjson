@@ -59,6 +59,16 @@ Items: {
 		Tooltip: Proof of passing the Chunin Exams\n+3 defense and +4% melee and magic damage when equipped
 	}
 
+	SnakeSkin: {
+		DisplayName: Shed Snake Skin
+		Tooltip: Left behind by Orochimaru\nUse it on the jungle surface to draw him out again\nNot consumed
+	}
+
+	NejiChallengeScroll: {
+		DisplayName: Neji's Challenge
+		Tooltip: Once the finals have begun, use it on the stadium field to spar with Neji Hyuga\nNot consumed
+	}
+
 	ChakraPill: {
 		DisplayName: Soldier Pill
 		Tooltip:
@@ -259,6 +269,11 @@ NPCs: {
 	ForestCanopyCandidate.DisplayName: Exam Candidate
 	RainGenin.DisplayName: Rain Genin
 	Hiruzen.DisplayName: Sarutobi Hiruzen (Third Hokage)
+	Dosu.DisplayName: Dosu Kinuta
+	Gaara.DisplayName: Gaara of the Sand
+	Neji.DisplayName: Neji Hyuga
+	Orochimaru.DisplayName: Orochimaru
+	SummonedSnake.DisplayName: Summoned Snake
 }
 
 Projectiles: {
@@ -266,6 +281,7 @@ Projectiles: {
 	KunaiThrown.DisplayName: Kunai
 	SenbonThrown.DisplayName: Senbon
 	ExamSenbon.DisplayName: Senbon
+	JutsuHitbox.DisplayName: Jutsu
 	WaterDragonFriendly.DisplayName: Water Dragon
 	IceMirrorMinion.DisplayName: Ice Mirror
 	KakashiPracticeKunai.DisplayName: Practice Kunai
