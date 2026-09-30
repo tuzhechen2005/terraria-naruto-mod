@@ -62,6 +62,9 @@ public abstract class RegionBackground : ModSurfaceBackgroundStyle
         if (Main.backgroundWidth[slot] > 0 && Main.backgroundHeight[slot] > 0)
             return true;
         Asset<Texture2D> texture = TextureAssets.Background[slot];
+        // Drawing runs on the main thread, where a texture that never finished loading can be loaded on the spot.
+        if (!texture.IsLoaded)
+            texture = ModContent.Request<Texture2D>($"ShinobiPrototype/Backgrounds/{Region}{layer}", AssetRequestMode.ImmediateLoad);
         if (!texture.IsLoaded)
             return false;
         Main.backgroundWidth[slot] = texture.Width();
