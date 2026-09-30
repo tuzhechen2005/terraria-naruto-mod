@@ -287,6 +287,8 @@ Projectiles: {
 }
 
 Dialogue: {
+	EpilogueHaku4: "Haku: The snow was so cold that day... but your hand was warm."
+	EpilogueHaku5: "Haku: It's snowing... just like that day. Master Zabuza, this time... I will stay with you."
 	EpilogueZabuza1: Zabuza: ...Haku.
 	EpilogueZabuza2: Zabuza: You fool... right to the end, you took the blow for me.
 	EpilogueZabuza3: Zabuza: I always called you a tool... but, Haku...

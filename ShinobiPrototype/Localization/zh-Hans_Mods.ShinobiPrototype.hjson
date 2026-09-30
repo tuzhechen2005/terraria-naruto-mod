@@ -287,6 +287,8 @@ Projectiles: {
 }
 
 Dialogue: {
+	EpilogueHaku4: 白：那天的雪很冷……可您的手是暖的。
+	EpilogueHaku5: 白：下雪了……和那天一样。再不斩先生，这次……换我陪着您。
 	EpilogueZabuza1: 再不斩：……白。
 	EpilogueZabuza2: 再不斩：你这家伙……直到最后，都在替我挡刀。
 	EpilogueZabuza3: 再不斩：我一直说你只是工具……可是啊，白……

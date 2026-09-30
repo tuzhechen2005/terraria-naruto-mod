@@ -17,19 +17,22 @@ public static class WaveEpilogueRules
         new(1260, "EpilogueRest"),
     };
 
+    // Haku's side gets five lines like Zabuza's (user, 2026-09-29), echoing the snow of the day he found her.
     public static readonly Beat[] ZabuzaFellFirst =
     {
         new(60, "EpilogueHaku1"),
-        new(260, "EpilogueHaku2"),
-        new(460, "EpilogueHaku3"),
-        new(660, "EpilogueSnow"),
-        new(900, "EpilogueRest"),
+        new(220, "EpilogueHaku2"),
+        new(400, "EpilogueHaku4"),
+        new(580, "EpilogueHaku3"),
+        new(820, "EpilogueHaku5"),
+        new(1020, "EpilogueSnow"),
+        new(1260, "EpilogueRest"),
     };
 
     public const int CrawlFrom = 580;
     public const int CrawlTo = 800;
     public const int SnowFromHakuFirst = 960;
-    public const int SnowFromZabuzaFirst = 600;
+    public const int SnowFromZabuzaFirst = 800;
     public const int FadeTicks = 120;
     public const int MusicTicks = 102 * 60; // the epilogue track (the Need to be Strong file) runs about 1:42
     public const float MusicLeaveTiles = 200f;
