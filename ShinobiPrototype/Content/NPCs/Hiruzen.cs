@@ -9,17 +9,21 @@ using ShinobiPrototype.Common.Systems;
 namespace ShinobiPrototype.Content.NPCs;
 
 // Sarutobi Hiruzen, the Third Hokage: a story NPC who stands in his office in the Hokage tower (no house, cannot be
-// hurt) and hears the vow (立志, specs/流派系统.spec.md section 6). Placeholder art: vanilla's Old Man.
+// hurt) and hears the vow (立志, specs/流派系统.spec.md section 6). Art: hiruzen-npc-v1 (scripts/build_npc_sheet.py), the
+// twelve NpcSheet frames plus two of his own: a puff on the pipe, and a raised hand while someone talks to him.
 public sealed class Hiruzen : ModNPC
 {
-    public override string Texture => $"Terraria/Images/NPC_{NPCID.OldMan}";
+    private const int PuffFrame = NpcSheet.FrameCount;
+    private const int TalkFrame = NpcSheet.FrameCount + 1;
+    private const int PuffEvery = 60 * 7;
+    private const int PuffTicks = 50;
 
     // The fee was named in this conversation: the next vow request is the confirmation.
     private static bool changePending;
 
     public override void SetStaticDefaults()
     {
-        Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.OldMan];
+        Main.npcFrameCount[Type] = NpcSheet.FrameCount + 2;
         NPCID.Sets.NoTownNPCHappiness[Type] = true;
         NPCID.Sets.NPCBestiaryDrawModifiers value = new() { Hide = true };
         NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, value);
@@ -53,7 +57,18 @@ public sealed class Hiruzen : ModNPC
         NPC.direction = NPC.spriteDirection = nearest.Center.X >= NPC.Center.X ? 1 : -1;
     }
 
-    public override void FindFrame(int frameHeight) => NPC.frame.Y = 0;
+    public override void FindFrame(int frameHeight)
+    {
+        NPC.spriteDirection = NPC.direction;
+        bool talking = Main.LocalPlayer.talkNPC == NPC.whoAmI;
+        int frame = talking ? TalkFrame
+            : ++NPC.frameCounter % PuffEvery < PuffTicks ? PuffFrame
+            : NpcSheet.IdleFrame;
+        if (frame == PuffFrame && NPC.frameCounter % PuffEvery == PuffTicks / 2 && Main.netMode != NetmodeID.Server)
+            Dust.NewDustPerfect(NPC.Top + new Vector2(NPC.direction * 14f, 14f), DustID.Smoke, new Vector2(0f, -0.6f), 120,
+                default, 1.1f);
+        NPC.frame.Y = frame * frameHeight;
+    }
 
     public override string GetChat()
     {
