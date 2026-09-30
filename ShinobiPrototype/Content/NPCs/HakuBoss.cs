@@ -35,7 +35,9 @@ public sealed class HakuBoss : ModNPC
     private Vector2 mirrorCenter;
     private int hopMirror = -1;
     private int hopCount;
-    private int cageCooldown;
+    // Starts full, so the first thing Haku does after stepping out of her mirror is close the cage around the player
+    // with Zabuza inside (user, 2026-09-30); after that it recharges as before.
+    private int cageCooldown = WaveDuoRules.CageCooldownTicks;
     private int thousandCooldown;
     private int thousandCasts;
     private bool frenzyStarted;

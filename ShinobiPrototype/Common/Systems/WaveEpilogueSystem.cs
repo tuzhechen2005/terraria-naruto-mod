@@ -74,8 +74,10 @@ public sealed class WaveEpilogueSystem : ModSystem
             foreach (WaveEpilogueRules.Beat beat in WaveEpilogueRules.Beats(hakuFirst))
                 if (beat.Tick == tick)
                     Speak(beat.Key);
-            if (tick >= WaveEpilogueRules.SnowFrom(hakuFirst))
-                Snow();
+            float rate = WaveEpilogueRules.SnowRate(tick - WaveEpilogueRules.SnowFrom(hakuFirst),
+                WaveEpilogueRules.Length(hakuFirst) - tick);
+            if (rate > 0f)
+                Snow(rate);
         }
         if (++tick >= WaveEpilogueRules.Length(hakuFirst))
             tick = -1;
@@ -98,9 +100,10 @@ public sealed class WaveEpilogueSystem : ModSystem
     // Like vanilla's snowfall: flakes (dust 76) appear at random open-air spots anywhere in view and drift down,
     // so it is snowing the moment it starts. (The first version spawned one flake above the screen edge every other
     // tick with a dust that shrank away before it came into view, so no snow was seen.)
-    private static void Snow()
+    private static void Snow(float rate)
     {
-        for (int i = 0; i < WaveEpilogueRules.SnowPerTick; i++)
+        int count = (int)rate + (Main.rand.NextFloat() < rate % 1f ? 1 : 0);
+        for (int i = 0; i < count; i++)
         {
             Vector2 at = Main.screenPosition + new Vector2(Main.rand.NextFloat(-60f, Main.screenWidth + 60f),
                 Main.rand.NextFloat(-40f, Main.screenHeight * 0.9f));

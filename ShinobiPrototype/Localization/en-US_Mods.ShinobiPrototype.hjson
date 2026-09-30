@@ -275,6 +275,7 @@ Projectiles: {
 	KakashiPracticeKunai.DisplayName: Practice Kunai
 	SubstitutionLog.DisplayName: Substitution Log
 	RasenganHitbox.DisplayName: Chakra Strike
+	ZabuzaDashHitbox.DisplayName: Executioner's Blade Charge
 	ZabuzaSlash.DisplayName: Executioner's Blade Slash
 	ZabuzaWaterWave.DisplayName: Water Style
 	ZabuzaWaterDragon.DisplayName: Water Dragon Technique

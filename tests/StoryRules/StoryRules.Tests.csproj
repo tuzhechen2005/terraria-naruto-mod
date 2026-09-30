@@ -9,5 +9,6 @@
   <ItemGroup>
     <Compile Include="StoryRulesTests.cs" />
     <Compile Include="../../ShinobiPrototype/Common/StoryRules.cs" Link="StoryRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/WaveEpilogueRules.cs" Link="WaveEpilogueRules.cs" />
   </ItemGroup>
 </Project>

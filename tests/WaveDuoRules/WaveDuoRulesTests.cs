@@ -7,8 +7,8 @@ static void Check(bool condition, string name)
     Console.WriteLine($"PASS {name}");
 }
 
-Check(WaveDuoRules.HakuMaxLife is >= 500 and <= 600,
-    "Haku life matches the agreed early-game duration");
+Check(WaveDuoRules.HakuMaxLife is >= 850 and <= 950,
+    "Haku life raised after play (2026-09-30), about half of Zabuza's");
 Check(WaveDuoRules.HakuBodyHeight is >= 64 and <= 72 &&
     WaveDuoRules.HakuBodyHeight < ZabuzaCombatRules.BodyHeight,
     "Haku is about 1.6x the player's height and clearly smaller than Zabuza");

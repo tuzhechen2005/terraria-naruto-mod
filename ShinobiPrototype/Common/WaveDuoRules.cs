@@ -4,7 +4,7 @@ namespace ShinobiPrototype.Common;
 
 public static class WaveDuoRules
 {
-    public const int HakuMaxLife = 560;
+    public const int HakuMaxLife = 900; // was 560 (user, 2026-09-30: too low)
     public const int HakuBodyWidth = 28;
     public const int HakuBodyHeight = 68;
     public const int HakuNeedleWindupTicks = 36;

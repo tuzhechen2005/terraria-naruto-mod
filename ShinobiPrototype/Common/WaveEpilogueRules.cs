@@ -1,3 +1,5 @@
+using System;
+
 namespace ShinobiPrototype.Common;
 
 // Timeline of the epilogue after both Zabuza and Haku have fallen (ticks). Two versions: Haku fell first (Zabuza
@@ -42,6 +44,14 @@ public static class WaveEpilogueRules
 
     public static int SnowFrom(bool hakuFellFirst) => hakuFellFirst ? SnowFromHakuFirst : SnowFromZabuzaFirst;
 
-    // Snowflakes per tick once it starts: enough to read as snowfall over the whole view.
+    // Snowflakes per tick at full fall: enough to read as snowfall over the whole view. It thickens gradually from the
+    // first flakes (user, 2026-09-30: all at once felt abrupt) and thins out again before the scene ends.
     public const int SnowPerTick = 4;
+    public const int SnowFadeInTicks = 360;
+    public const int SnowFadeOutTicks = 180;
+
+    public static float SnowRate(int ticksSinceSnow, int ticksLeft) =>
+        ticksSinceSnow < 0 ? 0f
+            : SnowPerTick * Math.Min(1f, ticksSinceSnow / (float)SnowFadeInTicks) *
+              Math.Clamp(ticksLeft / (float)SnowFadeOutTicks, 0f, 1f);
 }

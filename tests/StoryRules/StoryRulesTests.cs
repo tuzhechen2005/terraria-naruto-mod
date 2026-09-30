@@ -42,3 +42,11 @@ Check(PrisonFormed < IntroKakashiTrapped && IntroKakashiTrapped < IntroClonesCal
 Check(OutroSenbon < OutroZabuzaFalls && OutroZabuzaFalls < OutroHakuAppear && OutroVanish < OutroKakashiDeduce1 &&
       OutroKakashiDeduce2 < OutroLength, "The ending runs senbon, fall, Haku, vanish, Kakashi's deduction");
 Check(RetryCooldownTicks >= 60 * 60, "A failed ambush waits at least a minute");
+
+Check(WaveEpilogueRules.SnowRate(-1, 500) == 0f && WaveEpilogueRules.SnowRate(0, 500) == 0f,
+    "No snow before it starts");
+Check(WaveEpilogueRules.SnowRate(WaveEpilogueRules.SnowFadeInTicks / 2, 1000) < WaveEpilogueRules.SnowPerTick &&
+      WaveEpilogueRules.SnowRate(WaveEpilogueRules.SnowFadeInTicks, 1000) == WaveEpilogueRules.SnowPerTick,
+    "Snow thickens gradually to full fall");
+Check(WaveEpilogueRules.SnowRate(2000, WaveEpilogueRules.SnowFadeOutTicks / 2) < WaveEpilogueRules.SnowPerTick &&
+      WaveEpilogueRules.SnowRate(2000, 0) == 0f, "Snow thins out before the scene ends");

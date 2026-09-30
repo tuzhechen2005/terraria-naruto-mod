@@ -275,6 +275,7 @@ Projectiles: {
 	KakashiPracticeKunai.DisplayName: 练习苦无
 	SubstitutionLog.DisplayName: 替身木头
 	RasenganHitbox.DisplayName: 螺旋丸
+	ZabuzaDashHitbox.DisplayName: 斩首大刀冲撞
 	ZabuzaSlash.DisplayName: 斩首大刀斩击
 	ZabuzaWaterWave.DisplayName: 水遁
 	ZabuzaWaterDragon.DisplayName: 水遁·水龙弹

@@ -803,6 +803,11 @@ public sealed class ZabuzaBoss : ModNPC
         NPC.netUpdate = true;
         SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
         Enter(activeState);
+        // One blade hitbox per dash (a chained dash starts a new one once the old one has ended with the re-aim).
+        if (Main.netMode != NetmodeID.MultiplayerClient)
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
+                ModContent.ProjectileType<ZabuzaDashHitbox>(), WaveDuoRules.SoftenedDamage(InMistPhase ? 48 : 32), 0f,
+                Main.myPlayer, NPC.whoAmI);
     }
 
     private void EndDash()
