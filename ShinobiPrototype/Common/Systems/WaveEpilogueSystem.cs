@@ -50,8 +50,15 @@ public sealed class WaveEpilogueSystem : ModSystem
         musicTicks = 0;
     }
 
+    // A new fight silences the epilogue at once (user, 2026-09-29: re-summoning Zabuza within the three minutes of
+    // Sadness and Sorrow kept the sad track playing over his entrance).
+    private static bool BossPresent() =>
+        NPC.AnyNPCs(ModContent.NPCType<Content.NPCs.ZabuzaBoss>()) || NPC.AnyNPCs(ModContent.NPCType<Content.NPCs.HakuBoss>());
+
     public override void PostUpdateEverything()
     {
+        if (musicTicks > 0 && BossPresent())
+            musicTicks = 0;
         if (musicTicks > 0)
         {
             musicTicks--;
