@@ -37,6 +37,9 @@ public sealed class WaterPrison : ModNPC
     private float WaterY => NPC.ai[3];
     private ref float CloneTimer => ref NPC.localAI[0];
 
+    // Everything is drawn in PreDraw; the sphere's first frame stands in as the registered texture.
+    public override string Texture => "ShinobiPrototype/Content/NPCs/WaterSphere_0";
+
     public bool Holding => Phase == Fight || (Phase == Intro && Tick >= StoryRules.PrisonFormed);
 
     private Vector2 ZabuzaBottom => new(NPC.Center.X + Side * (Radius + 46f), WaterY);
