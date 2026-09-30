@@ -94,7 +94,7 @@ public sealed class StoryPlayer : ModPlayer
                 $"C 级任务：护送造桥工达兹纳返回波之国。他先回了桥头——海边起雾的地方有座没修完的大桥，去桥头小屋找他。{noBridge}",
             WaveStage.Scout =>
                 "C 级任务：远离出生点的地表与海边有雾隐侦察兵出没，击败他们、收集雾隐标记" +
-                $"（{insignia}/3）。带着标记时，雨天或雾中要当心伏击。",
+                $"（{insignia}/3）。拿到标记后回大桥一带的海雾里——雾隐的人会找上门来。",
             WaveStage.ReportToTazuna =>
                 "伏击你们的是雾隐的中忍，而他们的目标是达兹纳。回桥头小屋，问个清楚。",
             WaveStage.GetStronger =>

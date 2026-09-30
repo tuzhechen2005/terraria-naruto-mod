@@ -23,3 +23,11 @@ Check(ChainSweepReady(0, 300f, true) && !ChainSweepReady(10, 300f, true) && !Cha
 Check(ChainWarnTicks >= 30, "The chain sweep is telegraphed for at least half a second");
 Check(ChainHurts(true, 200f) && !ChainHurts(false, 200f), "A slack chain does not hurt");
 Check(ChainRushSpeed * ChainRushTicks > ChainMaxLength / 2f, "The rush carries each brother past the middle");
+
+Check(AmbushDue(false, true, true, true, false, false, 0), "The first ambush is certain in the bridge mist once an insignia is found");
+Check(!AmbushDue(true, true, true, true, false, false, 0), "After the first win they only come at random");
+Check(!AmbushDue(false, false, true, true, false, false, 0) && !AmbushDue(false, true, false, true, false, false, 0),
+    "Needs an insignia and the sea mist");
+Check(!AmbushDue(false, true, true, true, false, true, 0) && !AmbushDue(false, true, true, true, false, false, 10),
+    "Not while a pair is out or during the retry wait");
+Check(AmbushRetryTicks >= 60 * 60 && AmbushWarnTicks >= 60, "A warning first, and a minute before trying again");

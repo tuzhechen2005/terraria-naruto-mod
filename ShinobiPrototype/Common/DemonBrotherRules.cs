@@ -33,6 +33,16 @@ public static class DemonBrotherRules
         bool brothersAlive, bool onSurface) =>
         foundInsignia && (raining || inSeaMist) && !waveComplete && !brothersAlive && onSurface;
 
+    // Until they are first beaten the story waits on them, so that first ambush is certain (user, 2026-09-30): with an
+    // insignia found, walking into the bridge's sea mist on the surface brings them after a short warning; if the
+    // player flees or dies, again a minute later. Afterwards they only turn up at random, as above.
+    public const int AmbushWarnTicks = 120;
+    public const int AmbushRetryTicks = 3600;
+
+    public static bool AmbushDue(bool downedBrothers, bool foundInsignia, bool inSeaMist, bool onSurface,
+        bool waveComplete, bool brothersAlive, int cooldown) =>
+        !downedBrothers && foundInsignia && inSeaMist && onSurface && !waveComplete && !brothersAlive && cooldown <= 0;
+
     // Each brother holds its own side of the player: -1 left, +1 right.
     public static float FlankX(float playerX, int side) => playerX + side * FlankGap;
 

@@ -252,9 +252,9 @@ NPCs: {
 
 	MistScout.DisplayName: 雾隐侦察兵
 	HakuBoss.DisplayName: 白
-
 	WaterPrison.DisplayName: 水牢术
 	WaterClone.DisplayName: 水分身
+
 	ZabuzaBoss: {
 		DisplayName: 桃地再不斩
 		DemonName: 鬼人·桃地再不斩
@@ -314,6 +314,7 @@ Dialogue: {
 	LakeKakashi5: 卡卡西：雾隐的人一定会去断桥。回达兹纳那里，做好准备。
 	LakeRetreat: 再不斩：……哼。
 	LakeRetreatEnd: 再不斩化作一滩水，消失在雾里。水牢散了。
+	DemonBrothersWarn: 雾里传来锁链拖过地面的声音……有人从两边包抄过来了！
 	DemonBrothersDown: 鬼之兄弟倒下了——雾隐的中忍盯上的不是你，是达兹纳。回桥头小屋问个清楚。
 	Whisper1: ？？？：……又是你。
 	Whisper2: ？？？：离这座桥远一点。

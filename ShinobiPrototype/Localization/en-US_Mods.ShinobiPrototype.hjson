@@ -252,9 +252,9 @@ NPCs: {
 
 	MistScout.DisplayName: Mist Scout
 	HakuBoss.DisplayName: Haku
-
 	WaterPrison.DisplayName: Water Prison
 	WaterClone.DisplayName: Water Clone
+
 	ZabuzaBoss: {
 		DisplayName: Zabuza Momochi
 		DemonName: Demon of the Mist — Zabuza Momochi
@@ -303,17 +303,18 @@ Dialogue: {
 	HakuForestRecall: Haku: ...We met in the forest, didn't we? What a pity.
 	LakeZabuza1: Zabuza: Escorting the old bridge builder... Bad luck, Leaf.
 	LakeKakashi1: Kakashi: Stay back. ...The Demon of the Mist, Zabuza Momochi.
-	LakeZabuza2: "Zabuza: Water Prison Jutsu!"
+	LakeZabuza2: Zabuza: Water Prison Jutsu!
 	LakeKakashi2: Kakashi: This prison can't be broken from inside! Forget me—
 	LakeZabuza3: Zabuza: Water Clone Jutsu.
 	LakeGoal: Break the water prison and free Kakashi!
 	LakeKakashi3: Kakashi: ...Well done. I'll take it from here.
 	LakeZabuza4: Zabuza: What—
-	LakeHaku: "Hunter-nin: Thank you. I have been tracking this man... I will deal with him."
+	LakeHaku: Hunter-nin: Thank you. I have been tracking this man... I will deal with him.
 	LakeKakashi4: Kakashi: ...Hunter-nin dispose of the body on the spot. With senbon? He's still alive.
 	LakeKakashi5: Kakashi: The Mist ninja will head for the broken bridge. Back to Tazuna, and get ready.
 	LakeRetreat: Zabuza: ...Hmph.
 	LakeRetreatEnd: Zabuza collapses into water and is gone in the mist. The prison breaks apart.
+	DemonBrothersWarn: A chain drags across the ground somewhere in the mist... someone is closing in from both sides!
 	DemonBrothersDown: The Demon Brothers are down. The Mist chunin were after Tazuna, not you. Go back to his hut and ask him why.
 	Whisper1: ???: ...You again.
 	Whisper2: ???: Stay away from this bridge.
