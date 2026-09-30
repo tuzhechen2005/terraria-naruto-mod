@@ -346,7 +346,11 @@ Buffs: {
 }
 
 Tiles.ChakraCrystalTile.MapEntry: 查克拉结晶
-Keybinds.Substitution.DisplayName: 替身术
+
+Keybinds: {
+	Substitution.DisplayName: 替身术
+	StyleTechnique.DisplayName: 流派奥义
+}
 
 Configs: {
 	ShinobiClientConfig: {

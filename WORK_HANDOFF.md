@@ -36,6 +36,14 @@
 - **创意工坊**：用户已首次上传（仅自己可见，**包内含四首原声**，用户知情并决定暂不拆分），Steam 显示等待审核。若被拒，大概率与原声有关，方案：把音乐拆成本地附属模组，或发布构建时 `buildIgnore` 排除 `Assets\Music\*`。给朋友玩可直接发 `~/Library/Application Support/Terraria/tModLoader/Mods/ShinobiPrototype.tmod`。
 - **给朋友的引导页**（大桥篇简版，私有 Artifact，需用户在 Share 菜单开权限）：https://claude.ai/artifact/4AJRcbKYYh9dQMApX8rutq 。源文件不在仓库，修改时先用 Artifact read 取回，再发布到同一 URL。
 
+**2026-09-30 夜间（用户睡前授权，只做不需生图、不需拍板的代码与规划）**
+
+- 修复：砂隐 / 妙木山 / 雾隐背景不显示——原版在 `BiomeMedium` 之前就选定沙漠、发光蘑菇、海洋背景，已把地区背景与木叶生物群系提到 `BiomeHigh`（反编译 `Main.GetPreferredBGStyleForPlayer` 确认）。
+- 木叶装饰：挂画（原版 3×3 风景画样式 63/66/67/69/76/77/79/94）、学校武器架、门口陶盆草药、广场长椅、“阿”“吽”牌子；布局测试新增物件重叠检查（发现并修复学校书架与灯笼冲突）；导出钩子报告放置失败的物件，现 0 缺失。
+- **待用户确认的规划草案**：`specs/M2_中忍考试篇_规划草案.spec.md`（主线、M1→M2 衔接、大蛇丸遭遇战与木叶崩溃设计、代码架构、美术清单，末尾 8 条待确认）；`specs/流派系统_草案.spec.md`（四流派第一阶的被动与奥义、共用规则，末尾 5 条待确认）。
+- 框架代码（无具体玩法）：`Common/ThresholdRetreatRules.cs`（打到阈值退场）、`Common/StyleCoreRules.cs`、`Content/Items/StyleCores/StyleCore.cs`（抽象基类）、`Common/Players/StyleCorePlayer.cs`、“流派奥义”键（默认 V，待确认）。测试 `tests/StyleCoreRules`。
+- 下一步：用户确认两份草案 → 按 M2 主线逐阶段实现；大蛇丸等美术分批请求（每批 2～4 个，避免 Codex 额度耗尽）。
+
 **木叶村与地区背景（规格 `specs/M2a_木叶村与地区背景.spec.md`；用户出门前授权自主完成，已完成，待实机验收）**
 
 - 木叶（仅新世界生成，阿吽大门在出生点居中，48 间房）：`Common/KonohaDesign.cs`（布局，测试 `tests/KonohaDesign`）、`KonohaBuilder`、`KonohaWorld`、`KonohaBiome`（全体原版 NPC 喜欢木叶 + 家在木叶内不计拥挤，钩 `On_ShopHelper.GetNearbyResidentNPCs`）、`KonohaDump`（仅开发用，环境变量触发）。小/中/大世界各生成验证，48/48 通过原版住房检查。

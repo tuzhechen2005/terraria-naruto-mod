@@ -346,7 +346,11 @@ Buffs: {
 }
 
 Tiles.ChakraCrystalTile.MapEntry: Chakra Crystal
-Keybinds.Substitution.DisplayName: Substitution Jutsu
+
+Keybinds: {
+	Substitution.DisplayName: Substitution Jutsu
+	StyleTechnique.DisplayName: Style technique
+}
 
 Configs: {
 	ShinobiClientConfig: {
