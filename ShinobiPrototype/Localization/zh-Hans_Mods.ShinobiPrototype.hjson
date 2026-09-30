@@ -367,6 +367,11 @@ Configs: {
 			Tooltip: 波之国大桥附近海雾的浓度；0 为关闭，200 为加倍
 		}
 
+		RegionBackgrounds: {
+			Label: 火影地区背景
+			Tooltip: 在木叶、波之国、砂隐等地区用火影风格的地表背景；关闭则使用原版背景
+		}
+
 		ShowSubstitutionHints: {
 			Label: 显示替身术教学提示
 			Tooltip: 被敌人击中时提示如何使用替身术（最多 3 次，首次成功后不再出现）
@@ -382,3 +387,11 @@ BossChecklist: {
 }
 
 Conditions.WaveScroll: 在断桥的雾中见过再不斩之后
+
+Biomes: {
+	KonohaBiome: {
+		DisplayName: 木叶隐村
+		BestiaryText: ""
+		// TownNPCDialogueName: the Konoha Biome
+	}
+}

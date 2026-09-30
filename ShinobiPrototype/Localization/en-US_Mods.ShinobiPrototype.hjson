@@ -367,6 +367,11 @@ Configs: {
 			Tooltip: Thickness of the sea mist around the Wave Country bridge; 0 turns it off, 200 doubles it
 		}
 
+		RegionBackgrounds: {
+			Label: Naruto region backgrounds
+			Tooltip: Use Naruto-styled surface backgrounds in the Leaf, Wave Country, the Sand and other regions; off keeps vanilla backgrounds
+		}
+
 		ShowSubstitutionHints: {
 			Label: Show Substitution Jutsu hints
 			Tooltip: When an enemy hits you, explain how to use Substitution (up to 3 times, none after the first success)
@@ -382,3 +387,11 @@ BossChecklist: {
 }
 
 Conditions.WaveScroll: After seeing Zabuza in the mist at the broken bridge
+
+Biomes: {
+	KonohaBiome: {
+		DisplayName: Hidden Leaf Village
+		BestiaryText: ""
+		TownNPCDialogueName: the Konoha Biome
+	}
+}

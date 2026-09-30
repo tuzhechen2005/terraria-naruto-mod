@@ -28,4 +28,8 @@ public sealed class ShinobiClientConfig : ModConfig
     [DefaultValue(100)]
     [Slider]
     public int SeaFogStrength;
+
+    // Naruto region backgrounds (the Leaf, Wave Country, the Sand, ...) in place of vanilla's surface backgrounds.
+    [DefaultValue(true)]
+    public bool RegionBackgrounds;
 }
