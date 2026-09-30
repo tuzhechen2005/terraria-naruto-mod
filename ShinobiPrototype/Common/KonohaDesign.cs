@@ -338,11 +338,11 @@ public sealed class KonohaDesign
     private void HokageTower(int x0)
     {
         const int interior = 14;
-        int roof = Block("火影楼", x0, 2, interior, 3, KMat.RedBrick, KMat.Wood, KWall.Shoji, topAccess: true);
+        int roof = Block("火影楼", x0, 2, interior, 3, KMat.RedBrick, KMat.Wood, KWall.RedStucco, topAccess: true);
         int x1 = x0 + 2 * (interior + 1);
         // The office: one wide room on top.
         int floorRow = roof;
-        int ceiling = floorRow - StoryHeight - 2;
+        int ceiling = floorRow - StoryHeight - 4;
         for (int x = x0; x <= x1; x++)
             Set(x, ceiling, KMat.RedBrick);
         for (int y = floorRow - 1; y > ceiling; y--)
@@ -370,15 +370,17 @@ public sealed class KonohaDesign
         // The 火 emblem, big on the office's back wall, as on the tower's roof in the anime.
         string[] fire =
         {
-            "...##...",
-            "#..##..#",
-            ".#.##.#.",
-            "...##...",
-            "..#..#..",
-            ".#....#.",
-            "#......#",
+            "....#....",
+            "....#....",
+            "#...#...#",
+            ".#..#..#.",
+            "....#....",
+            "...#.#...",
+            "..#...#..",
+            ".#.....#.",
+            "#.......#",
         };
-        int ex = (x0 + x1) / 2 - 3;
+        int ex = (x0 + x1) / 2 - 4;
         for (int row = 0; row < fire.Length; row++)
             for (int col = 0; col < fire[row].Length; col++)
                 if (fire[row][col] == '#')
