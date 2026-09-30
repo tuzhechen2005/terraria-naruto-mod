@@ -1,6 +1,6 @@
 # 当前工作交接
 
-本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。以下为 **2026-09-30 Claude Code 建造木叶村、制作地区背景途中** 的快照。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
+本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。以下为 **2026-09-30 Claude Code 完成 M2 中忍考试篇（占位美术）后** 的快照。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
 
 ## 项目与规格入口
 
@@ -41,9 +41,21 @@
 - 修复：砂隐 / 妙木山 / 雾隐背景不显示——原版在 `BiomeMedium` 之前就选定沙漠、发光蘑菇、海洋背景，已把地区背景与木叶生物群系提到 `BiomeHigh`（反编译 `Main.GetPreferredBGStyleForPlayer` 确认）。
 - 修复（用户实机反馈：只看到远景，木叶缺火影楼、砂隐缺村子）：`client.log` 有 `DivideByZeroException` 于 `SurfaceBackgroundStylesLoader.DrawCloseBackground`。tML 在工作线程登记背景尺寸时部分贴图尚未加载，宽高记为 0：中景画成 0×0、近景除零并中断整帧地表背景。`RegionBackground` 取贴图时补宽高（补时写日志 “registered as 0 x 0”）。另外 tML 的近景公式比原版低（少前景层 -150、相机基准不同），且我们的近景图地面线比原版森林近景（第 342 行）低，`BackgroundLayoutRules.CloseOffset` 在 `ChooseCloseTexture` 的 b 上补回，地面行运行时从贴图读取。测试套件 `tests/BackgroundRules`。仍待实机确认。
 - 木叶装饰：挂画（原版 3×3 风景画样式 63/66/67/69/76/77/79/94）、学校武器架、门口陶盆草药、广场长椅、“阿”“吽”牌子；布局测试新增物件重叠检查（发现并修复学校书架与灯笼冲突）；导出钩子报告放置失败的物件，现 0 缺失。
-- **待用户确认的规划草案**：`specs/M2_中忍考试篇_规划草案.spec.md`（主线、M1→M2 衔接、大蛇丸遭遇战与木叶崩溃设计、代码架构、美术清单，末尾 8 条待确认）；`specs/流派系统_草案.spec.md`（四流派第一阶的被动与奥义、共用规则，末尾 5 条待确认）。
-- 框架代码（无具体玩法）：`Common/ThresholdRetreatRules.cs`（打到阈值退场）、`Common/StyleCoreRules.cs`、`Content/Items/StyleCores/StyleCore.cs`（抽象基类）、`Common/Players/StyleCorePlayer.cs`、“流派奥义”键（默认 V，待确认）。测试 `tests/StyleCoreRules`。
-- 下一步：用户确认两份草案 → 按 M2 主线逐阶段实现；大蛇丸等美术分批请求（每批 2～4 个，避免 Codex 额度耗尽）。
+- 规划草案已在 grill 会话（Q1–Q31）逐条定稿，见下方“M2 中忍考试篇”。
+
+**M2 中忍考试篇（2026-09-30 定稿并实现；占位美术；未实机验收）**
+
+- 规格：`specs/M2_中忍考试篇.spec.md`（定稿）、`specs/流派系统.spec.md`（第六节立志已定；第三节四流派第一阶的被动与奥义**仍待确认**，具体核心物品未做）。验收清单：`tests/M2_中忍考试.acceptance.md`（E01–E20，全部未执行）。
+- 用户决定要点：M2 到我爱罗为止，木叶崩溃另立 M3；**只支持新世界**；死亡森林在原版丛林（入口 + 中央塔两地标）；正式赛会场在木叶城墙外；考试进度按玩家、Boss 击败按世界；笔试 9 题 + 第十题“接受”即合格，放弃则天亮后重考；不限时；雨隐三人组首次必伏击（保底卷轴）；考生小队 25%、第 5 队必掉；多斯固定为预选对手；我爱罗必打、宁次赛后可选切磋；门槛：大蛇丸 = 世吞/克脑或生命 ≥ 300，正式赛 = 骷髅王或生命 ≥ 400；流派混合制（核心可换 + 找三代立志一次，改投 10 金币），立志时提示仙术要 M3；四个本命章节（咒印 / 凯的修行 / 日向 / 妙木山）只定主题；三代是固定站在火影办公室的剧情 NPC，M3 牺牲后改找自来也、再后纲手；奥义键 V。
+- 代码：
+  - 规则（纯逻辑，测试 `tests/ExamRules`）：`ChuninExamRules`（阶段、门槛、笔试、卷轴保底）、`WrittenExamBank`（31 题，正确答案在首位，面板打乱）、`VowRules`、`ExamSiteDesign`（三地标布局）、`ExamBossRules`。
+  - 进度：`ChuninExamPlayer`（存档 + `Packet.ExamSync` 同步给服务器，供刷怪判断）；`StoryWorld` 标记改为两个 BitsByte，新增 DownedDosu/DownedGaara/DownedNeji/OrochimaruMet，删除 DownedArenaRival。
+  - 流程：卡卡西发推荐书（`ExamAdmissionScroll`，无配方）与宁次切磋书；`WrittenExamSystem`（学校内使用推荐书）；`ExamSiteWorld`/`ExamSiteBuilder`（由 `KonohaWorld` 生成步骤末尾调用）；`DeathForestSystem`（雨隐伏击）；`ExamBoutSystem`（塔内多斯、会场我爱罗、丛林大蛇丸）；`HiruzenSpawnSystem` + `Hiruzen`（原版老人贴图占位）。
+  - Boss（占位贴图 = 考生精灵染色，招式用 `JutsuHitbox` 粒子表现）：`ExamBoss` 基类、`Dosu`、`Gaara`、`Neji`、`Orochimaru`（阈值退场，掉 `SnakeSkin` 可再召唤）、`SummonedSnake`；玩家状态 `JutsuStatusPlayer`（沙缚柩/杀气可被替身术打断，耳鸣左右反向 ≤2 秒，点穴降查克拉上限、满 3 层封替身术）。
+  - 删除：原创砂隐考生 `ArenaRivalBoss`、预选赛挑战书及其弹幕、`ExamRules.cs`、地下潜伏考生。
+  - 调试：`/m0 exam [阶段|gate|tower|stadium|academy|hokage]`。
+- 世界生成已用后台服务器验证（小/中/大），三个地标 0 物件缺失；`scripts/konoha-worldgen-check.sh` 现同时渲染 `-Gate/-Tower/-Stadium` 三张图。
+- **未做**：流派核心物品（写轮眼试管、八门、白眼）——等流派第一阶设计确认；蛇鳞材料；真正的 Boss 美术与三代、雨隐、考生美术（需 Codex，每批 2～4 个）；M3。
 
 **木叶村与地区背景（规格 `specs/M2a_木叶村与地区背景.spec.md`；用户出门前授权自主完成，已完成，待实机验收）**
 
@@ -64,7 +76,9 @@
 
 **已定（2026-09-29）**：“雨隐村”是口误，指雾隐，音乐维持大桥范围；村庄方案见总纲末“地区与村庄”（木叶完整城镇，其余为生物群系 + 小地标 + 专属 BGM/怪物/背景）。
 
-**待用户决定**：专家专属饰品；补充道具（手里剑、起爆符、木叶护额、鬼之兄弟独有掉落）；大师模式遗物；是否推送 GitHub；下一步是否进入 M2（中忍考试重写 + 流派系统，先 grill）。
+**待用户决定**：流派第一阶的被动与奥义（`specs/流派系统.spec.md` 第三节，决定后才做核心物品）；专家专属饰品；补充道具（手里剑、起爆符、木叶护额、鬼之兄弟独有掉落）；大师模式遗物；是否推送 GitHub。
+
+**下一步**：用户 Build + Reload 后按 `tests/M2_中忍考试.acceptance.md` 实机验收，并确认地区背景中景/近景是否出现（修复在 c0a96a7、c2202d8，用户上次测试时游戏里仍是 01:06 的旧包；若仍不显示，查 `client.log` 是否有 “registered as 0 x 0”）；之后分批请求 M2 美术替换占位图；再 grill M3 木叶崩溃。
 
 **工具**：`scripts/build_npc_sheet.py`、`scripts/build_head_equip.py`、`tools/BridgePreview` + `scripts/render_bridge_preview.py`、`scripts/art_bridge.py`（Codex 美术）。反编译原版用 `ilspycmd 8.2`（需 `DOTNET_ROLL_FORWARD=Major`），装在旧会话 scratchpad，不在仓库。
 
