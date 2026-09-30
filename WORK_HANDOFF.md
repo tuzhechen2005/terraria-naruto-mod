@@ -36,13 +36,13 @@
 - **创意工坊**：用户已首次上传（仅自己可见，**包内含四首原声**，用户知情并决定暂不拆分），Steam 显示等待审核。若被拒，大概率与原声有关，方案：把音乐拆成本地附属模组，或发布构建时 `buildIgnore` 排除 `Assets\Music\*`。给朋友玩可直接发 `~/Library/Application Support/Terraria/tModLoader/Mods/ShinobiPrototype.tmod`。
 - **给朋友的引导页**（大桥篇简版，私有 Artifact，需用户在 Share 菜单开权限）：https://claude.ai/artifact/4AJRcbKYYh9dQMApX8rutq 。源文件不在仓库，修改时先用 Artifact read 取回，再发布到同一 URL。
 
-**当前目标：木叶村与地区背景（规格 `specs/M2a_木叶村与地区背景.spec.md`，用户出门前授权自主完成）**
+**木叶村与地区背景（规格 `specs/M2a_木叶村与地区背景.spec.md`；用户出门前授权自主完成，已完成，待实机验收）**
 
-- 木叶（新世界生成，大门在出生点居中，48 间房）已实现并提交（`f14ff03`、`414c1ba`）：`Common/KonohaDesign.cs`（布局，测试 `tests/KonohaDesign`）、`KonohaBuilder`、`KonohaWorld`、`KonohaBiome`（全体原版 NPC 喜欢木叶 + 木叶内不计拥挤，钩 `On_ShopHelper.GetNearbyResidentNPCs`）、`KonohaDump`（仅开发用）。
-- 验证工具：`./scripts/konoha-worldgen-check.sh <目录> [种子] [大小]` 把模组打包到独立存档目录（游戏开着也能用），后台服务器生成新世界并导出木叶，`scripts/render_konoha_world.py` 用原版贴图渲染（`--bg 目录` 叠背景）并打印原版住房检查结果。小/中/大世界 48/48 通过。注意 zsh 不拆分变量，循环调用要用 bash。
-- 地区背景：`Common/Systems/RegionBackgrounds.cs`（木叶=木叶区域；雾隐=大桥海雾范围；砂隐=沙漠；雪之国=雪原；草隐/泷隐=丛林；妙木山=发光蘑菇；模组设置“火影地区背景”开关）。贴图放 `ShinobiPrototype/Backgrounds/<Region>Far/Mid/Close.png`，缺图的地区自动用原版背景。现已放入 v1 的木叶与砂隐（用户认可这两张“还不错”）。
-- 美术：v1 四张被用户指出“没有火影元素”（雾隐、雪之国尤其），v2 请求加了原作参考图（本地 `art/reference/villages/`，gitignore）。v2 首次提交时 Codex 生图额度用尽（429），已设后台任务于 22:25 额度恢复后重交木叶/雾隐/砂隐/雪之国 v2；草隐、妙木山、雨隐、岩隐的 v2 请求已写好（`art/requests/bg-*-v2.md`），**等前一批出完再交，避免再次耗尽额度**。
-- 下一步：v2 出图后对照参考图检查，挑 v1/v2 较好者放入 `Backgrounds/`；交剩余四个；实机检查背景比例与视差、NPC 入住与幸福度。
+- 木叶（仅新世界生成，阿吽大门在出生点居中，48 间房）：`Common/KonohaDesign.cs`（布局，测试 `tests/KonohaDesign`）、`KonohaBuilder`、`KonohaWorld`、`KonohaBiome`（全体原版 NPC 喜欢木叶 + 家在木叶内不计拥挤，钩 `On_ShopHelper.GetNearbyResidentNPCs`）、`KonohaDump`（仅开发用，环境变量触发）。小/中/大世界各生成验证，48/48 通过原版住房检查。
+- 验证工具：`./scripts/konoha-worldgen-check.sh <目录> [种子] [大小]`（游戏开着也能用：模组打包到独立存档目录，后台服务器生成新世界并导出木叶）；`scripts/render_konoha_world.py dump.jsonl out.png [--bg 背景目录] [--crop 起 止]` 用原版贴图渲染并打印住房检查。zsh 不拆分变量，循环调用请用 bash。
+- 地区背景（`Common/Systems/RegionBackgrounds.cs`，模组设置“火影地区背景”开关）：木叶=木叶区域、雾隐/波之国=大桥海雾范围、砂隐=沙漠、雪之国=雪原、草隐/泷隐=丛林、妙木山=发光蘑菇，均为地表。贴图 `ShinobiPrototype/Backgrounds/<Region>Far/Mid/Close.png`，全部为 v2（照原作参考图重画）。雨隐、岩隐只出图未接入。
+- **未实机验证**：背景在游戏里的缩放、视差与地平线高度；地区切换时的淡入淡出；NPC 实际入住、幸福度报告与晶塔售卖；木叶中卡卡西与向导的位置。预览图里的背景比例是估计值。
+- Codex 生图有时段额度（本次连续 8 个请求后 429，约 1 小时恢复）；以后一次最多交 2～4 个。
 
 **本会话新增（2026-09-30，待实机验收）**：
 
