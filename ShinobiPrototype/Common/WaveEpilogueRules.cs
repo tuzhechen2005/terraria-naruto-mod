@@ -17,12 +17,11 @@ public static class WaveEpilogueRules
         new(1260, "EpilogueRest"),
     };
 
-    // Haku's side gets five lines like Zabuza's (user, 2026-09-29), echoing the snow of the day he found her.
+    // Haku's side: four lines, the last echoing the snow of the day he found her (user, 2026-09-29).
     public static readonly Beat[] ZabuzaFellFirst =
     {
         new(60, "EpilogueHaku1"),
         new(220, "EpilogueHaku2"),
-        new(400, "EpilogueHaku4"),
         new(580, "EpilogueHaku3"),
         new(820, "EpilogueHaku5"),
         new(1020, "EpilogueSnow"),
