@@ -73,7 +73,7 @@ public sealed class ZabuzaBoss : ModNPC
         NPC.aiStyle = -1;
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
-        Music = WaveMusic.OrBossMusic(WaveMusic.NeedToBeStrong);
+        Music = WaveMusic.OrBossMusic(WaveMusic.ZabuzaEntrance);
     }
 
     public override void AI()
@@ -113,7 +113,7 @@ public sealed class ZabuzaBoss : ModNPC
             Enter(ZabuzaCombatRules.FrenzyAwaken);
         }
 
-        Music = WaveMusic.OrBossMusic(InMistPhase ? WaveMusic.StrongAndStrike : WaveMusic.NeedToBeStrong);
+        Music = WaveMusic.OrBossMusic(InMistPhase ? WaveMusic.StrongAndStrike : WaveMusic.ZabuzaEntrance);
         NPC.ai[1]++;
         int state = (int)NPC.ai[0];
         NPC.noGravity = state is ZabuzaCombatRules.DashActive or ZabuzaCombatRules.DashChainActive or

@@ -4,8 +4,9 @@ using Terraria.ModLoader;
 
 namespace ShinobiPrototype.Common.Systems;
 
-// Wave Country music (user, 2026-09-29): Glued State around the bridge, Need to be Strong for Zabuza, Strong and
-// Strike from his demon phase (and for Haku), Sadness and Sorrow for the epilogue.
+// Wave Country music (user, 2026-09-29): Glued State around the bridge, the Sadness and Sorrow file for Zabuza's
+// entrance, Strong and Strike from his demon phase (and for Haku), the Need to be Strong file for the epilogue.
+// (The user first described these the other way round, then asked for the two to be swapped after hearing them.)
 // The tracks are the Naruto soundtrack, which the user supplies for local play: they live in Assets/Music/, are
 // gitignored and must never be committed or published. When a file is missing the fight falls back to vanilla
 // boss music and the scenes simply play no special track.
@@ -14,9 +15,10 @@ public static class WaveMusic
     private static int? gluedState, needToBeStrong, strongAndStrike, sadnessAndSorrow;
 
     public static int GluedState => gluedState ??= Slot("GluedState");
-    public static int NeedToBeStrong => needToBeStrong ??= Slot("NeedToBeStrong");
+    // Named by role: the entrance plays the SadnessAndSorrow file and the epilogue the NeedToBeStrong file.
+    public static int ZabuzaEntrance => needToBeStrong ??= Slot("SadnessAndSorrow");
     public static int StrongAndStrike => strongAndStrike ??= Slot("StrongAndStrike");
-    public static int SadnessAndSorrow => sadnessAndSorrow ??= Slot("SadnessAndSorrow");
+    public static int Epilogue => sadnessAndSorrow ??= Slot("NeedToBeStrong");
 
     public static int OrBossMusic(int slot) => slot >= 0 ? slot : MusicID.Boss1;
 
@@ -45,14 +47,14 @@ public sealed class WaveBridgeMusic : ModSceneEffect
         WaveBridgeWorld.DistanceToBridgeTiles(player.Center) <= BridgeRules.FogReachTiles;
 }
 
-// Sadness and Sorrow once both have fallen, for the length of the track (unless the player wanders far off).
+// The epilogue track once both have fallen, for its length (unless the player wanders off or a new fight starts).
 public sealed class WaveEpilogueMusic : ModSceneEffect
 {
-    public override int Music => WaveMusic.SadnessAndSorrow;
+    public override int Music => WaveMusic.Epilogue;
     public override SceneEffectPriority Priority => SceneEffectPriority.BossHigh;
 
     public override bool IsSceneEffectActive(Player player) =>
-        WaveMusic.SadnessAndSorrow >= 0 && WaveEpilogueSystem.MusicActive;
+        WaveMusic.Epilogue >= 0 && WaveEpilogueSystem.MusicActive;
 
     public override void Unload() => WaveMusic.Reset();
 }

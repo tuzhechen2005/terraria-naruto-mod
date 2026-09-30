@@ -31,7 +31,7 @@ public static class WaveEpilogueRules
     public const int SnowFromHakuFirst = 960;
     public const int SnowFromZabuzaFirst = 600;
     public const int FadeTicks = 120;
-    public const int MusicTicks = 186 * 60; // Sadness and Sorrow runs about three minutes
+    public const int MusicTicks = 102 * 60; // the epilogue track (the Need to be Strong file) runs about 1:42
     public const float MusicLeaveTiles = 200f;
 
     public static Beat[] Beats(bool hakuFellFirst) => hakuFellFirst ? HakuFellFirst : ZabuzaFellFirst;
@@ -39,4 +39,7 @@ public static class WaveEpilogueRules
     public static int Length(bool hakuFellFirst) => Beats(hakuFellFirst)[^1].Tick + 240 + FadeTicks;
 
     public static int SnowFrom(bool hakuFellFirst) => hakuFellFirst ? SnowFromHakuFirst : SnowFromZabuzaFirst;
+
+    // Snowflakes per tick once it starts: enough to read as snowfall over the whole view.
+    public const int SnowPerTick = 4;
 }

@@ -95,14 +95,22 @@ public sealed class WaveEpilogueSystem : ModSystem
                 colon >= 0 ? text[(colon + 1)..] : text, dramatic: true);
     }
 
+    // Like vanilla's snowfall: flakes (dust 76) appear at random open-air spots anywhere in view and drift down,
+    // so it is snowing the moment it starts. (The first version spawned one flake above the screen edge every other
+    // tick with a dust that shrank away before it came into view, so no snow was seen.)
     private static void Snow()
     {
-        if (Main.GameUpdateCount % 2 != 0)
-            return;
-        Vector2 at = Main.screenPosition + new Vector2(Main.rand.NextFloat(-100f, Main.screenWidth + 100f), -20f);
-        Dust flake = Dust.NewDustPerfect(at, DustID.Snow, new Vector2(Main.rand.NextFloat(-0.4f, 0.4f), Main.rand.NextFloat(1f, 2f)),
-            0, default, Main.rand.NextFloat(0.8f, 1.3f));
-        flake.noGravity = true;
-        flake.fadeIn = 1.2f;
+        for (int i = 0; i < WaveEpilogueRules.SnowPerTick; i++)
+        {
+            Vector2 at = Main.screenPosition + new Vector2(Main.rand.NextFloat(-60f, Main.screenWidth + 60f),
+                Main.rand.NextFloat(-40f, Main.screenHeight * 0.9f));
+            Point tile = at.ToTileCoordinates();
+            if (!WorldGen.InWorld(tile.X, tile.Y) || Main.tile[tile.X, tile.Y].HasTile)
+                continue;
+            Dust flake = Dust.NewDustPerfect(at, DustID.Snow,
+                new Vector2(Main.WindForVisuals * 1.5f + Main.rand.NextFloat(-0.3f, 0.3f), Main.rand.NextFloat(1.5f, 3f)),
+                0, default, Main.rand.NextFloat(0.9f, 1.3f));
+            flake.noGravity = true;
+        }
     }
 }
