@@ -13,6 +13,7 @@ namespace ShinobiPrototype.Content.NPCs;
 // Dosu Kinuta of the Sound, the prelims bout in the tower hall (specs/M2_中忍考试篇.spec.md 3.3): the Resonating
 // Echo Drill up close (low damage, the ears ring: left and right swap for under two seconds) and a sound wave that
 // throws the player back from range.
+[AutoloadBossHead]
 public sealed class Dosu : ExamBoss
 {
     private const float Approach = 0f;

@@ -472,6 +472,4 @@ Biomes: {
 	}
 }
 
-DamageClasses: {
-	TaijutsuDamage.DisplayName: taijutsu damage
-}
+DamageClasses.TaijutsuDamage.DisplayName: taijutsu damage

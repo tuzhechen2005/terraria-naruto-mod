@@ -84,7 +84,7 @@ internal static class ExamSiteBuilder
             if (Math.Abs(dx) > half)
             {
                 float t = (Math.Abs(dx) - half) / (float)blend;
-                target = (int)Math.Round(site.GroundY + (KonohaBuilder.Surface(x) - site.GroundY) * t * t * (3f - 2f * t));
+                target = (int)Math.Round(site.GroundY + (KonohaBuilder.BlendSurface(x) - site.GroundY) * t * t * (3f - 2f * t));
             }
             for (int y = site.GroundY - design.ClearHeight; y < target; y++)
                 Main.tile[x, y].ClearEverything();

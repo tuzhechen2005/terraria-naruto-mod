@@ -17,6 +17,10 @@ public abstract class ExamBoss : ModNPC
 {
     public override string Texture => "ShinobiPrototype/Content/NPCs/ForestExamCandidate";
 
+    // The boss bar at the bottom of the screen needs a head icon (vanilla shows no bar without one); cut from the
+    // idle frame, "<Name>_Head_Boss.png".
+    public override string BossHeadTexture => $"ShinobiPrototype/Content/NPCs/{Name}_Head_Boss";
+
     protected abstract Color Tint { get; }
     protected abstract int LifeMax { get; }
     protected abstract int Defense { get; }

@@ -17,6 +17,7 @@ namespace ShinobiPrototype.Content.NPCs;
 // Shadow Snake Hands, a snake dash round behind the player, the Great Breakthrough gust, the Five Elements Seal (chakra
 // stops recovering), summoned snakes and the long neck. At half life he stops taking damage, says his line and sinks away as snakes (ThresholdRetreatRules), leaving
 // his shed skin to call him back. Now and then he leaves the Sharingan in a vial (the first Sharingan core).
+[AutoloadBossHead]
 public sealed class Orochimaru : ExamBoss
 {
     private const float Disguise = 0f;

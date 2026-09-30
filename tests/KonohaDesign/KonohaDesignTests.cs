@@ -127,3 +127,23 @@ Check(passable, "The main street is walkable end to end outside buildings (gate 
 foreach (var p in d.Places.Where(p => p.Fix == KFix.LampPost)) foreach (var b in d.Buildings.Where(b => p.Dx >= b.X0 - 1 && p.Dx <= b.X1 + 1)) Console.WriteLine($"  lamp {p.Dx} in {b.Name} {b.X0}..{b.X1}");
 Check(d.Places.Where(p => p.Fix == KFix.LampPost).All(p => !d.Buildings.Any(b => p.Dx >= b.X0 - 1 && p.Dx <= b.X1 + 1)),
     "Lamp posts stand in the open");
+
+// The street runs straight through the village: along the ground rows nothing blocks from wall to wall except doors,
+// which open (user, 2026-09-30: every building had only one way in and the village could not be crossed).
+{
+    KonohaDesign street = KonohaDesign.Create();
+    HashSet<(int, int)> doorCells = new();
+    foreach (KPlace place in street.Places)
+        if (place.Fix == KFix.Door)
+            for (int dy = 0; dy < 3; dy++)
+                doorCells.Add((place.Dx, place.Dy - dy));
+    List<int> blocked = new();
+    for (int x = -KonohaDesign.HalfWidth; x <= KonohaDesign.HalfWidth; x++)
+        for (int y = -3; y <= -1; y++)
+            // The training posts (living wood, three tall) are meant to be jumped.
+            if (street.CellAt(x, y) is KCell c && c.Mat is not (KMat.Beam or KMat.Platform or KMat.LivingWood) && !doorCells.Contains((x, y)))
+                blocked.Add(x);
+    Check(blocked.Count == 0, $"The street can be walked from wall to wall (blocked at {string.Join(",", blocked.Distinct().Take(8))})");
+    int partitionDoors = street.Places.Count(p => p.Fix == KFix.Door);
+    Check(partitionDoors > 30, "Doors through the partitions as well as the outer walls");
+}

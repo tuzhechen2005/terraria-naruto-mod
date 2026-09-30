@@ -18,6 +18,7 @@ namespace ShinobiPrototype.Content.NPCs;
 // 2. The sand armour cracks: faster, and a sand wave rolls along the ground.
 // 3. Partial transformation: a great sand arm sweeps in front of him, and the Drilling Air Bullet.
 // He turns to face the player only when he starts something, so there is time to get behind him.
+[AutoloadBossHead]
 public sealed class Gaara : ExamBoss
 {
     private const float Approach = 0f;

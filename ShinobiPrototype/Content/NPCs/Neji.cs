@@ -13,6 +13,7 @@ namespace ShinobiPrototype.Content.NPCs;
 // Hyūga Neji, the optional sparring bout at the stadium after the finals begin (specs/M2_中忍考试篇.spec.md 3.5):
 // Gentle Fist palms seal chakra points (less maximum chakra; three seals stop substitution), the Rotation throws back
 // whatever the player shot at him, and the Sixty-Four Palms seal everything inside the trigram ring.
+[AutoloadBossHead]
 public sealed class Neji : ExamBoss
 {
     private const float Approach = 0f;

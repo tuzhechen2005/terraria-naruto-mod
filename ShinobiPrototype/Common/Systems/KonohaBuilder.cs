@@ -51,17 +51,67 @@ internal static class KonohaBuilder
         return rows[rows.Count / 2];
     }
 
+    // The natural ground in a column: the first solid tile from the sky that has solid ground under it. Something
+    // floating (a sky island's edge, a tree crown) is not the ground: taking it as such raised the blend around the
+    // village and the exam sites to its height and filled the air below with dirt, leaving towering dirt pillars
+    // (user, 2026-09-30).
     internal static int Surface(int x)
     {
-        for (int y = (int)(Main.worldSurface * 0.3); y < Main.worldSurface + 30; y++)
+        for (int y = ScanTop; y < Main.worldSurface + 30; y++)
         {
             Tile tile = Main.tile[x, y];
-            if (tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType] &&
-                tile.TileType is not (TileID.Trees or TileID.LivingWood or TileID.LeafBlock or TileID.LivingMahogany or
-                    TileID.LivingMahoganyLeaves or TileID.Cloud or TileID.RainCloud) || tile.LiquidAmount > 0)
+            if (tile.LiquidAmount > 0)
+                return y;
+            if (IsGround(tile) && Grounded(x, y))
                 return y;
         }
         return (int)Main.worldSurface;
+    }
+
+    // The surface a blend slopes back to: the median over the columns around, so a narrow spike (whatever stood
+    // there) does not become a towering pillar of dirt at the edge of a levelled site.
+    internal static int BlendSurface(int x, int radius = 10)
+    {
+        List<int> rows = new();
+        for (int dx = -radius; dx <= radius; dx++)
+            if (WorldGen.InWorld(x + dx, 100, 10))
+                rows.Add(Surface(x + dx));
+        rows.Sort();
+        return rows.Count > 0 ? rows[rows.Count / 2] : Surface(x);
+    }
+
+    // Where to start looking down from: just above the highest point of the generated terrain. Sky islands float
+    // well above it; starting higher found an island first and built the stadium in the sky, with a wall of
+    // foundation dirt hanging below it (user, 2026-09-30).
+    private static int ScanTop =>
+        Terraria.WorldBuilding.GenVars.worldSurfaceLow > 0
+            ? System.Math.Max(10, (int)Terraria.WorldBuilding.GenVars.worldSurfaceLow - 12)
+            : (int)(Main.worldSurface * 0.3);
+
+    private static bool IsGround(Tile tile) =>
+        tile.HasTile && Main.tileSolid[tile.TileType] && !Main.tileSolidTop[tile.TileType] &&
+        tile.TileType is not (TileID.Trees or TileID.LivingWood or TileID.LeafBlock or TileID.LivingMahogany or
+            TileID.LivingMahoganyLeaves or TileID.Cloud or TileID.RainCloud);
+
+    // Ground, not something floating: most of the tiles just below are solid, and no long drop of open air follows
+    // within the next thirty rows (a sky island is thick enough to pass the first test; the air under it fails this).
+    private static bool Grounded(int x, int y)
+    {
+        int solid = 0;
+        for (int dy = 1; dy <= 8; dy++)
+            if (WorldGen.InWorld(x, y + dy) && IsGround(Main.tile[x, y + dy]))
+                solid++;
+        if (solid < 6)
+            return false;
+        int air = 0;
+        for (int dy = 1; dy <= 30 && WorldGen.InWorld(x, y + dy); dy++)
+        {
+            Tile below = Main.tile[x, y + dy];
+            air = below.HasTile || below.LiquidAmount > 0 ? 0 : air + 1;
+            if (air >= 8)
+                return false;
+        }
+        return true;
     }
 
     // Clear the sky over the village and slope back to the natural surface past the walls; solid dirt beneath.
@@ -77,7 +127,7 @@ internal static class KonohaBuilder
             if (Math.Abs(dx) > half)
             {
                 float t = (Math.Abs(dx) - half) / (float)blend;
-                target = (int)Math.Round(site.GroundY + (Surface(x) - site.GroundY) * t * t * (3f - 2f * t));
+                target = (int)Math.Round(site.GroundY + (BlendSurface(x) - site.GroundY) * t * t * (3f - 2f * t));
             }
             for (int y = site.GroundY - KonohaDesign.ClearHeight; y < target; y++)
             {

@@ -36,7 +36,8 @@ public static class DemonBrotherRules
     // Until they are first beaten the story waits on them, so that first ambush is certain (user, 2026-09-30): with an
     // insignia found, walking into the bridge's sea mist on the surface brings them after a short warning; if the
     // player flees or dies, again a minute later. Afterwards they only turn up at random, as above.
-    public const int AmbushWarnTicks = 120;
+    // Five seconds between the warning and the ambush (user, 2026-09-30: long enough to get ready).
+    public const int AmbushWarnTicks = 300;
     public const int AmbushRetryTicks = 3600;
 
     public static bool AmbushDue(bool downedBrothers, bool foundInsignia, bool inSeaMist, bool onSurface,

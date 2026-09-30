@@ -113,7 +113,8 @@ public static class ChuninExamRules
         stage == ExamStage.ForestHunt && !ambushDone && squadsBeaten >= 1 && onJungleSurface &&
         tilesFromTower <= RainAmbushTowerTiles && !rainAlive;
 
-    public const int RainAmbushWarnTicks = 150;
+    // Five seconds between the warning and the ambush (user, 2026-09-30).
+    public const int RainAmbushWarnTicks = 300;
     public const int RainAmbushRetryTicks = 60 * 60;
 
     public static bool CandidatesSpawn(ExamStage stage, bool onJungleSurface) =>

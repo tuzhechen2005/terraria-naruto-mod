@@ -38,8 +38,9 @@ public sealed class WrittenExamSystem : ModSystem
         if (ui == null || IsOpen)
             return;
         HandbookSystem.Close();
-        state.Begin();
+        // SetState first: it runs OnInitialize, which builds the panel the questions go into.
         ui.SetState(state);
+        state.Begin();
         SoundEngine.PlaySound(SoundID.MenuOpen);
     }
 

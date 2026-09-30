@@ -49,7 +49,7 @@ public readonly record struct KBuilding(string Name, int X0, int X1, int Top);
 public sealed class KonohaDesign
 {
     // Bump whenever the layout changes.
-    public const int Version = 1;
+    public const int Version = 2;   // 2: doors through every partition (user, 2026-09-30)
 
     public const int HalfWidth = 199;          // outer faces of the village walls
     public const int Blend = 30;               // terrain slopes back to nature over this many tiles past the walls
@@ -212,7 +212,8 @@ public sealed class KonohaDesign
     }
 
     // A block of homes: `rooms` side by side on each of `stories` floors. Ground rooms open through doors in the
-    // outer walls; upper rooms through a platform in their floor, stacked so the player can climb straight up.
+    // outer walls, neighbouring rooms through doors in the partitions; upper rooms through a platform in their floor,
+    // stacked so the player can climb straight up.
     // Returns the row of the flat roof.
     private int Block(string name, int x0, int rooms, int interior, int stories, KMat frame, KMat floor, KWall wall,
         bool beds = false, bool topAccess = false, bool pots = true)
@@ -247,6 +248,10 @@ public sealed class KonohaDesign
             }
             for (int y = floorRow - 1; y > ceiling; y--)
                 Set(x1, y, frame);
+            // A door through every partition, on every floor, so the street runs straight through a building and
+            // each floor can be crossed (user, 2026-09-30: walking across the village was blocked inside).
+            for (int r = 1; r < rooms; r++)
+                Door(x0 + r * (interior + 1), floorRow);
             if (s == 0)
             {
                 Door(x0, floorRow);

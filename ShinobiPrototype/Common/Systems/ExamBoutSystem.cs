@@ -13,7 +13,8 @@ namespace ShinobiPrototype.Common.Systems;
 // the server (or single player) from each player's synced exam progress.
 public sealed class ExamBoutSystem : ModSystem
 {
-    private const int AnnounceTicks = 150;
+    // Five seconds between the announcement and the opponent (user, 2026-09-30).
+    private const int AnnounceTicks = 300;
     private const int RetryTicks = 60 * 20;
 
     private static int cooldown;
