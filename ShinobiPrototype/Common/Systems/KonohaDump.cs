@@ -29,6 +29,25 @@ public sealed class KonohaDump : ModSystem
         Environment.Exit(0);
     }
 
+    private static int? ExpectedTile(KFix fix) => fix switch
+    {
+        KFix.Door => TileID.ClosedDoor,
+        KFix.Table => TileID.Tables,
+        KFix.Chair => TileID.Chairs,
+        KFix.Lantern => TileID.ChineseLanterns,
+        KFix.LampPost => TileID.Lampposts,
+        KFix.Sign => TileID.Signs,
+        KFix.Banner => TileID.Banners,
+        KFix.Bookcase => TileID.Bookcases,
+        KFix.Bed => TileID.Beds,
+        KFix.Painting => TileID.Painting3X3,
+        KFix.WeaponRack => TileID.WeaponsRack,
+        KFix.Bench => TileID.Benches,
+        KFix.PottedPlant => TileID.ClayPot,
+        KFix.Tree => TileID.Trees,
+        _ => null,
+    };
+
     private static void Write(string path)
     {
         StringBuilder sb = new();
@@ -70,6 +89,23 @@ public sealed class KonohaDump : ModSystem
                 score = WorldGen.hiScore;
             }
             sb.Append($"{{\"k\":\"room\",\"b\":\"{room.Building}\",\"x0\":{site.X(room.X0)},\"x1\":{site.X(room.X1)},\"top\":{site.Y(room.Top)},\"bottom\":{site.Y(room.Bottom)},\"check\":{(check ? 1 : 0)},\"needs\":{(needs ? 1 : 0)},\"score\":{score}}}\n");
+        }
+        // Did every designed fixture actually go in? Placement fails silently when something is in the way.
+        foreach (KPlace place in design.Places)
+        {
+            int x = site.X(place.Dx), y = site.Y(place.Dy);
+            int? expected = ExpectedTile(place.Fix);
+            if (expected is not int type)
+                continue;
+            bool found = false;
+            for (int dx = -2; dx <= 2 && !found; dx++)
+                for (int dy = -3; dy <= 3 && !found; dy++)
+                {
+                    Tile t = Main.tile[x + dx, y + dy];
+                    found = t.HasTile && t.TileType == type;
+                }
+            if (!found)
+                sb.Append($"{{\"k\":\"missing\",\"fix\":\"{place.Fix}\",\"dx\":{place.Dx},\"dy\":{place.Dy}}}\n");
         }
         File.WriteAllText(path, sb.ToString());
     }

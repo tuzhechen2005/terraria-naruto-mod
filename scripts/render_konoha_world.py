@@ -70,6 +70,7 @@ def main():
     meta = rows[0]
     tiles = [r for r in rows if "x" in r and "k" not in r]
     rooms = [r for r in rows if r.get("k") == "room"]
+    missing = [r for r in rows if r.get("k") == "missing"]
     x0, x1, y0, y1 = meta["x0"], meta["x1"], meta["y0"], meta["y1"]
     if "--crop" in args:
         i = args.index("--crop")
@@ -147,6 +148,9 @@ def main():
 
     bad = [r for r in rooms if not (r["check"] and r["needs"] and r["score"] > 0)]
     print(f"{len(rooms)} homes, {len(rooms) - len(bad)} valid by vanilla housing rules; ground y={meta['gy']}, world {meta['w']}x{meta['h']}")
+    print(f"{len(missing)} designed fixtures missing in the world")
+    for r in missing:
+        print(f"  MISSING: {r['fix']} at dx={r['dx']} dy={r['dy']}")
     for r in bad:
         print(f"  NOT VALID: {r['b']} x{r['x0'] - meta['cx']}..{r['x1'] - meta['cx']} y{r['top'] - meta['gy']}..{r['bottom'] - meta['gy']}"
               f" check={r['check']} needs={r['needs']} score={r['score']}")

@@ -68,6 +68,47 @@ foreach (KRoom r in d.Rooms)
     Check(clearInside, $"{at} has no tiles inside");
 }
 
+// Footprints of fixtures (x0, y0, w, h), by how each is anchored; none may overlap another or a tile.
+(int X, int Y, int W, int H) Footprint(KPlace p) => p.Fix switch
+{
+    KFix.Door => (p.Dx, p.Dy - 2, 1, 3),
+    KFix.Table => (p.Dx - 1, p.Dy - 1, 3, 2),
+    KFix.Chair => (p.Dx, p.Dy - 1, 1, 2),
+    KFix.Lantern => (p.Dx - 1, p.Dy, 2, 2),
+    KFix.LampPost => (p.Dx, p.Dy - 5, 1, 6),
+    KFix.Sign => (p.Dx, p.Dy - 1, 2, 2),
+    KFix.Banner => (p.Dx, p.Dy, 1, 3),
+    KFix.Bookcase => (p.Dx - 1, p.Dy - 3, 3, 4),
+    KFix.Bed => (p.Dx - 2, p.Dy - 1, 4, 2),
+    KFix.Painting or KFix.WeaponRack => (p.Dx - 1, p.Dy - 1, 3, 3),
+    KFix.Bench => (p.Dx - 1, p.Dy - 1, 3, 2),
+    KFix.PottedPlant => (p.Dx, p.Dy - 1, 1, 2),
+    _ => (p.Dx, p.Dy, 1, 1),
+};
+Dictionary<(int, int), KPlace> used = new();
+bool noClash = true;
+foreach (KPlace p in d.Places.Where(p => p.Fix != KFix.Tree))
+{
+    var (fx, fy, fw, fh) = Footprint(p);
+    bool hangs = p.Fix is KFix.Painting or KFix.WeaponRack;
+    for (int x = fx; x < fx + fw; x++)
+        for (int y = fy; y < fy + fh; y++)
+        {
+            if (used.TryGetValue((x, y), out KPlace other) && !(hangs ^ (other.Fix is KFix.Painting or KFix.WeaponRack)))
+            {
+                noClash = false;
+                Console.WriteLine($"  {p.Fix} at {p.Dx},{p.Dy} overlaps {other.Fix} at {other.Dx},{other.Dy}");
+            }
+            if (p.Fix != KFix.Door && Solid(x, y))
+            {
+                noClash = false;
+                Console.WriteLine($"  {p.Fix} at {p.Dx},{p.Dy} sits in a tile at {x},{y}");
+            }
+            used[(x, y)] = p;
+        }
+}
+Check(noClash, "Fixtures do not overlap each other or tiles");
+
 var sorted = d.Buildings.OrderBy(b => b.X0).ToList();
 bool apart = true;
 for (int i = 1; i < sorted.Count; i++)

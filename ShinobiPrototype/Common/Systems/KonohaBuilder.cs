@@ -155,6 +155,9 @@ internal static class KonohaBuilder
         _ => WallID.Wood,
     };
 
+    // Landscapes and maps from vanilla's 3x3 wall hangings (the low styles of that tile are boss trophies).
+    private static readonly int[] PaintingStyles = { 63, 66, 67, 69, 76, 77, 79, 94 };
+
     private static void PlaceFixture(KonohaSite site, KPlace place)
     {
         int x = site.X(place.Dx), y = site.Y(place.Dy);
@@ -187,11 +190,33 @@ internal static class KonohaBuilder
             case KFix.Sign:
                 PlaceSign(x, y, place.Text);
                 break;
+            case KFix.Painting:
+                WorldGen.PlaceObject(x, y, TileID.Painting3X3, mute: true, style: PaintingStyles[place.Style % PaintingStyles.Length]);
+                break;
+            case KFix.WeaponRack:
+                PlaceNear(x, y, TileID.WeaponsRack, 0);
+                break;
+            case KFix.Bench:
+                WorldGen.PlaceObject(x, y, TileID.Benches, mute: true);
+                break;
+            case KFix.PottedPlant:
+                // A clay pot with a flowering herb in it (vanilla's potted plants are five tiles tall).
+                WorldGen.PlaceTile(x, y, TileID.ClayPot, mute: true, forced: true);
+                WorldGen.PlaceTile(x, y - 1, TileID.BloomingHerbs, mute: true, forced: true, style: WorldGen.genRand.Next(6));
+                break;
             case KFix.Tree:
                 WorldGen.PlaceTile(x, y, TileID.Saplings, mute: true);
                 WorldGen.GrowTree(x, y);
                 break;
         }
+    }
+
+    // For objects whose anchor row is not the one assumed: try the spot, then a row or two above and below.
+    private static void PlaceNear(int x, int y, ushort type, int style)
+    {
+        foreach (int dy in new[] { 0, -1, 1, -2, 2 })
+            if (WorldGen.PlaceObject(x, y + dy, type, mute: true, style: style))
+                return;
     }
 
     // Three-tall door with its bottom at `bottomY` (see BridgeBuilder.PlaceDoor for why several anchors are tried).

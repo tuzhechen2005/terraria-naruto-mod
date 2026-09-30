@@ -17,14 +17,17 @@ public enum KShape : byte { Full, Half, TopRisesEast, TopRisesWest }
 
 public enum KWall : byte { Planks, Stucco, Shoji, Marble, RedBrick, Wood, Brick, Palm, RedStucco, Fence, DoorLeaf }
 
-public enum KFix : byte { Door, Table, Chair, Lantern, LampPost, Sign, Banner, Tree, Bookcase, Bed }
+public enum KFix : byte
+{
+    Door, Table, Chair, Lantern, LampPost, Sign, Banner, Tree, Bookcase, Bed, Painting, WeaponRack, Bench, PottedPlant,
+}
 
 public readonly record struct KCell(int Dx, int Dy, KMat Mat, KShape Shape = KShape.Full);
 
 public readonly record struct KWallCell(int Dx, int Dy, KWall Wall);
 
 // Dy is the bottom row of the fixture (the row resting on the floor) except lanterns and banners, which hang with
-// their top at Dy. Text is for signs.
+// their top at Dy, and wall hangings (paintings, weapon racks), whose centre is at (Dx, Dy). Text is for signs.
 public readonly record struct KPlace(int Dx, int Dy, KFix Fix, string Text = "", int Style = 0);
 
 // A home's interior (inclusive), and the building it belongs to.
@@ -110,6 +113,11 @@ public sealed class KonohaDesign
         foreach (int x in new[] { -18, 17, -62, -98, -136, -165, 40, 128, 158 })
             d.Places.Add(new KPlace(x, -1, KFix.LampPost));
         d.Places.Add(new KPlace(-3, -1, KFix.Sign, "木叶隐村\n——火之国·阿吽之门"));
+        // The gate's two door leaves carry 阿 and 吽; here they are signs at each side of the gateway.
+        d.Places.Add(new KPlace(-12, -1, KFix.Sign, "阿"));
+        d.Places.Add(new KPlace(11, -1, KFix.Sign, "吽"));
+        d.Places.Add(new KPlace(-15, -1, KFix.Bench));
+        d.Places.Add(new KPlace(14, -1, KFix.Bench));
         d.Places.Add(new KPlace(161, -1, KFix.Tree));
         return d;
     }
@@ -197,7 +205,7 @@ public sealed class KonohaDesign
     // outer walls; upper rooms through a platform in their floor, stacked so the player can climb straight up.
     // Returns the row of the flat roof.
     private int Block(string name, int x0, int rooms, int interior, int stories, KMat frame, KMat floor, KWall wall,
-        bool beds = false, bool topAccess = false)
+        bool beds = false, bool topAccess = false, bool pots = true)
     {
         int width = rooms * (interior + 1) + 1;
         int x1 = x0 + width - 1;
@@ -235,6 +243,11 @@ public sealed class KonohaDesign
                 Door(x1, floorRow);
                 Awning(x0 - 1, -1);
                 Awning(x1 + 1, 1);
+                if (pots)
+                {
+                    Places.Add(new KPlace(x0 - 2, -1, KFix.PottedPlant));
+                    Places.Add(new KPlace(x1 + 2, -1, KFix.PottedPlant));
+                }
             }
         }
         // With a room built on top (the Hokage's office), the top ceiling gets its platforms too.
@@ -287,6 +300,8 @@ public sealed class KonohaDesign
         Places.Add(new KPlace(inL + (inR - inL) / 2 + 1, ceiling + 1, KFix.Lantern));
         if (bed && inR - inL + 1 >= 12)
             Places.Add(new KPlace(inL + 5, floorRow - 1, KFix.Bed));
+        // A picture on the wall above the table (three by three, clear of the lantern).
+        Places.Add(new KPlace(table, ceiling + 2, KFix.Painting, Style: (inL * 7 + floorRow) & 7));
     }
 
     // A pitched roof of shingles over [x0, x1] starting at row `row` and stepping in by one tile a row.
@@ -329,8 +344,15 @@ public sealed class KonohaDesign
         int x1 = x0 + 2 * (interior + 1);
         Roof(x0 - 2, x1 + 2, roof - 1, KMat.RedShingle, 4);
         foreach (KRoom room in Rooms)
-            if (room.Building == "忍者学校" && room.Bottom == -1)
-                Places.Add(new KPlace(room.X0 + 5, -1, KFix.Bookcase));
+        {
+            if (room.Building != "忍者学校")
+                continue;
+            if (room.Bottom == -1)
+                Places.Add(new KPlace(room.X0 + 4, -1, KFix.Bookcase));
+            else
+                // Kunai and shuriken on the classroom wall.
+                Places.Add(new KPlace(room.X0 + 6, room.Top + 1, KFix.WeaponRack));
+        }
         Places.Add(new KPlace(x0 + 3, roof - 5, KFix.Sign, "忍者学校"));
     }
 
@@ -418,7 +440,7 @@ public sealed class KonohaDesign
         for (int x = cx - 2; x <= cx + 2; x++)
             Set(x, roof - 4, KMat.RedBrick);
         Buildings[^1] = new KBuilding("木叶医院", x0 - 1, x1 + 1, roof - 6);
-        Places.Add(new KPlace(x0 - 3, -1, KFix.Sign, "木叶医院"));
+        Places.Add(new KPlace(x0 + 3, roof - 2, KFix.Sign, "木叶医院"));
     }
 
     private void Shop(string name, int x0, KMat roofMat)
@@ -433,7 +455,7 @@ public sealed class KonohaDesign
     private void Ichiraku(int x0)
     {
         const int interior = 10;
-        int roof = Block("一乐拉面", x0, 1, interior, 1, KMat.DynastyWood, KMat.Wood, KWall.Shoji);
+        int roof = Block("一乐拉面", x0, 1, interior, 1, KMat.DynastyWood, KMat.Wood, KWall.Shoji, pots: false);
         int x1 = x0 + interior + 1;
         Roof(x0 - 6, x1 + 1, roof - 1, KMat.RedShingle, 2);
         // Awning posts and the counter out front.
