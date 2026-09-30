@@ -79,6 +79,31 @@ Items: {
 		Tooltip: Use it on the stadium field outside the Leaf's wall to fight Gaara again\nNot consumed
 	}
 
+	SharinganCore1: {
+		DisplayName: Sharingan in a Vial (One Tomoe)
+		Tooltip: Style core: Sharingan (tier one, one tomoe)\nSubstitution window lengthened to 0.6 s\nStyle technique [Foresight]: 30 chakra, 20 s cooldown. The first hit within 4 s is substituted automatically; then +15% damage for 3 s\nKunai and senbon always crit the enemy seen through\nOnly one style core can be worn
+	}
+
+	EightGatesCore: {
+		DisplayName: Scroll of the Eight Gates
+		Tooltip: Style core: Eight Gates (tier one)\nTaijutsu weapons attack 10% faster\nStyle technique [Gate of Opening]: each press opens one more gate (up to three): +10% damage and speed per gate, losing 2/4/6 life a second\nPress again at three to close; below 20% life they close themselves, then 10 s of fatigue\n20 chakra per gate\nOnly one style core can be worn
+	}
+
+	ByakuganCore: {
+		DisplayName: Byakugan
+		Tooltip: Style core: Byakugan (tier one)\nSee nearby enemies\nMelee hits seal chakra points: -4 defense, up to 3 stacks; bosses take 5% more damage per stack\nStyle technique [Rotation]: 40 chakra, 15 s cooldown. Spin for 1 s, cancelling enemy projectiles and throwing back nearby enemies\nOnly one style core can be worn
+	}
+
+	TrainingWraps: {
+		DisplayName: Training Wraps
+		Tooltip: Taijutsu weapon: every punch throws a wave of air pressure, harder up close\nRight click [Leaf Whirlwind]: a dash kick, briefly invulnerable\nThe open Eight Gates make the pressure bigger and carry it further
+	}
+
+	LeeLegWeights: {
+		DisplayName: Lee's Leg Weights
+		Tooltip: Taijutsu weapon: every punch throws a wave of air pressure, harder up close\nRight click [Leaf Whirlwind]: a dash kick, briefly invulnerable\nThe open Eight Gates make the pressure bigger and carry it further
+	}
+
 	ChakraPill: {
 		DisplayName: Soldier Pill
 		Tooltip:
@@ -292,6 +317,8 @@ Projectiles: {
 	SenbonThrown.DisplayName: Senbon
 	ExamSenbon.DisplayName: Senbon
 	JutsuHitbox.DisplayName: Jutsu
+	TaijutsuPressure.DisplayName: Air Pressure
+	WhirlwindKick.DisplayName: Leaf Whirlwind
 	WaterDragonFriendly.DisplayName: Water Dragon
 	IceMirrorMinion.DisplayName: Ice Mirror
 	KakashiPracticeKunai.DisplayName: Practice Kunai
@@ -418,4 +445,8 @@ Biomes: {
 		BestiaryText: ""
 		TownNPCDialogueName: the Konoha Biome
 	}
+}
+
+DamageClasses: {
+	TaijutsuDamage.DisplayName: taijutsu damage
 }

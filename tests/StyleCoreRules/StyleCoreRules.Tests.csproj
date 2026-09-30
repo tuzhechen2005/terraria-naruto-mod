@@ -9,6 +9,7 @@
   <ItemGroup>
     <Compile Include="StyleCoreRulesTests.cs" />
     <Compile Include="../../ShinobiPrototype/Common/StyleCoreRules.cs" Link="StyleCoreRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ChakraRules.cs" Link="ChakraRules.cs" />
     <Compile Include="../../ShinobiPrototype/Common/ThresholdRetreatRules.cs" Link="ThresholdRetreatRules.cs" />
   </ItemGroup>
 </Project>

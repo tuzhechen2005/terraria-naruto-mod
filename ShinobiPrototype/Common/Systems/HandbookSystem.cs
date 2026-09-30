@@ -241,7 +241,7 @@ internal sealed class HandbookState : UIState
         string status = substitution.Cooldown > 0 ? $"冷却 {substitution.Cooldown / 60f:0.0} 秒" : "就绪";
         return "替身术（基础忍术，所有职业可用）\n" +
                $"· 按键：【{ShinobiKeybinds.SubstitutionKeyName()}】（可在“设置 → 控制”中修改）\n" +
-               $"· 消耗 {ChakraRules.SubstitutionCost} 查克拉；按下后 {ChakraRules.SubstitutionWindowTicks / 60f:0.0} 秒内受到的攻击会被完全闪避\n" +
+               $"· 消耗 {ChakraRules.SubstitutionCost} 查克拉；按下后 {Main.LocalPlayer.GetModPlayer<StyleCorePlayer>().SubstitutionWindowTicks / 60f:0.0} 秒内受到的攻击会被完全闪避\n" +
                "· 成功时原地留下一截木头，你出现在附近的安全位置，并短暂无敌\n" +
                $"· 无论成功与否，冷却 {ChakraRules.SubstitutionCooldownTicks / 60} 秒\n" +
                "· 诀窍：看准敌人出手的瞬间再按；按早了会白白浪费查克拉\n" +

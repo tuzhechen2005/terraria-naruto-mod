@@ -152,6 +152,16 @@ public sealed class RainGenin : ForestExamCandidate
                 ModContent.ProjectileType<ExamSenbon>(), NPC.damage / 3, 0f, Main.myPlayer);
     }
 
+    public override void AI()
+    {
+        if (Main.netMode != NetmodeID.Server && NPC.localAI[1] == 0f)
+        {
+            NPC.localAI[1] = 1f;
+            Common.Systems.BossIntroSystem.Show("雨隐三人组", "雨隐村的下忍——冲着你的卷轴来的");
+        }
+        base.AI();
+    }
+
     protected override void Beaten(ChuninExamPlayer exam)
     {
         foreach (NPC other in Main.ActiveNPCs)

@@ -25,10 +25,16 @@ public sealed class Neji : ExamBoss
     protected override Color Tint => new(235, 225, 245);
     protected override int LifeMax => ExamBossRules.NejiLife;
     protected override int Defense => ExamBossRules.NejiDefense;
+    protected override (string Name, string Title) Intro => ("日向宁次", "日向分家的天才，“命运早已注定”");
 
     protected override void Fight(Player target)
     {
         float distance = Math.Abs(target.Center.X - NPC.Center.X);
+        if (Timer == 1f && State == Approach && NPC.localAI[0] == 0f)
+        {
+            NPC.localAI[0] = 1f;
+            Say("……来吧。让你看看，什么叫做命运。", new Color(200, 220, 255));
+        }
         switch (State)
         {
             case Approach:
@@ -133,10 +139,13 @@ public sealed class Neji : ExamBoss
         }
     }
 
+    public override void ModifyNPCLoot(NPCLoot npcLoot) =>
+        npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.StyleCores.ByakuganCore>(), 4));
+
     public override void OnKill()
     {
         StoryWorld.DownedNeji = true;
-        Tell("宁次：……命运，并不是早就注定的吗。你让我……看到了不一样的东西。", new Color(200, 220, 255));
+        Tell("宁次：……命运，并不是早就注定的吗。你让我……看到了不一样的东西。（切磋书可以再用，随时奉陪。）", new Color(200, 220, 255));
         if (Main.netMode == NetmodeID.Server)
             NetMessage.SendData(MessageID.WorldData);
     }

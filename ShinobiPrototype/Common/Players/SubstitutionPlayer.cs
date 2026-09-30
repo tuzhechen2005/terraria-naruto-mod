@@ -75,7 +75,8 @@ public sealed class SubstitutionPlayer : ModPlayer
 
         if (cost > 0)
             chakra.TrySpend(cost);
-        standby = ChakraRules.SubstitutionWindowTicks;
+        // The Sharingan widens the window (StyleCorePlayer).
+        standby = Player.GetModPlayer<StyleCorePlayer>().SubstitutionWindowTicks;
         Cooldown = ChakraRules.SubstitutionCooldownFor(drilling);
         ticksSinceActivation = 0;
         SoundEngine.PlaySound(SoundID.Item7, Player.Center);
@@ -91,11 +92,37 @@ public sealed class SubstitutionPlayer : ModPlayer
 
     public override bool FreeDodge(Player.HurtInfo info)
     {
-        if (standby <= 0 || Player.whoAmI != Main.myPlayer)
+        if (Player.whoAmI != Main.myPlayer)
+            return false;
+        // Sharingan foresight: the first hit while it lasts is substituted for free.
+        StyleCorePlayer styles = Player.GetModPlayer<StyleCorePlayer>();
+        if (styles.ForesightTicks > 0)
+        {
+            styles.ForesightTook(AttackerOf(info));
+            Substitute(info.HitDirection != 0 ? info.HitDirection : -Player.direction);
+            return true;
+        }
+        if (standby <= 0)
             return false;
 
         Substitute(info.HitDirection != 0 ? info.HitDirection : -Player.direction);
         return true;
+    }
+
+    // The enemy behind a hit: the NPC itself, or for a projectile the nearest enemy (the likely thrower).
+    private int AttackerOf(Player.HurtInfo info)
+    {
+        if (info.DamageSource.SourceNPCIndex >= 0)
+            return info.DamageSource.SourceNPCIndex;
+        int nearest = -1;
+        float best = 60f * 16f;
+        foreach (NPC npc in Main.ActiveNPCs)
+            if (!npc.friendly && npc.Distance(Player.Center) < best)
+            {
+                best = npc.Distance(Player.Center);
+                nearest = npc.whoAmI;
+            }
+        return nearest;
     }
 
     // Kakashi's drill kunai deal no damage, so they ask for the dodge directly instead of going through FreeDodge.

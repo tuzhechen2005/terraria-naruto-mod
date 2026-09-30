@@ -20,6 +20,7 @@ public sealed class ExamBoutSystem : ModSystem
     private static int announce = -1;
     private static int pendingType;
     private static Vector2 pendingAt;
+    private static int pendingNear = -1;
 
     public override void OnWorldLoad() => Reset();
 
@@ -41,7 +42,13 @@ public sealed class ExamBoutSystem : ModSystem
         if (announce >= 0)
         {
             if (--announce < 0 && !NPC.AnyNPCs(pendingType))
+            {
+                // Someone who walks up to the player comes from wherever the player is by then.
+                if (pendingNear >= 0 && Main.player[pendingNear] is { active: true, dead: false } near)
+                    pendingAt = new Vector2(near.Center.X + (Main.rand.NextBool() ? -1 : 1) * 30 * 16, near.Bottom.Y);
                 NPC.NewNPC(new Terraria.DataStructures.EntitySource_WorldEvent(), (int)pendingAt.X, (int)pendingAt.Y, pendingType);
+                pendingNear = -1;
+            }
             return;
         }
         if (Main.GameUpdateCount % 30 != 0 || cooldown > 0 || AnyBout())
@@ -70,9 +77,10 @@ public sealed class ExamBoutSystem : ModSystem
             if (forest && ChuninExamRules.ReadyForOrochimaru(NPC.downedBoss2, player.statLifeMax) &&
                 (!StoryWorld.OrochimaruMet || Main.rand.NextFloat() < ExamBossRules.ForestRematchChancePerCheck))
             {
-                // He walks up as a Grass candidate; no announcement.
-                NPC.NewNPC(new Terraria.DataStructures.EntitySource_WorldEvent(),
-                    (int)player.Center.X + (Main.rand.NextBool() ? -1 : 1) * 30 * 16, (int)player.Bottom.Y, ModContent.NPCType<Orochimaru>());
+                // He walks up as a Grass candidate.
+                pendingNear = player.whoAmI;
+                Schedule(ModContent.NPCType<Orochimaru>(), player.Bottom,
+                    "林子里忽然安静了下来……一个草隐的考生从树后走出来，笑得让人发毛。");
                 cooldown = RetryTicks * 3;
                 return;
             }

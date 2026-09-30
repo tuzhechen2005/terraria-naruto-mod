@@ -24,6 +24,7 @@ public sealed class Dosu : ExamBoss
     protected override Color Tint => new(120, 115, 105);
     protected override int LifeMax => ExamBossRules.DosuLife;
     protected override int Defense => ExamBossRules.DosuDefense;
+    protected override (string Name, string Title) Intro => ("音忍·多斯", "音隐村的下忍，大蛇丸的部下");
 
     protected override void Fight(Player target)
     {

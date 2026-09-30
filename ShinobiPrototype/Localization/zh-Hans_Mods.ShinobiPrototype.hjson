@@ -79,6 +79,31 @@ Items: {
 		Tooltip: 在木叶城墙外考试会场的场地上使用，与我爱罗再战\n不会被消耗
 	}
 
+	SharinganCore1: {
+		DisplayName: 装在试管里的写轮眼（一勾玉）
+		Tooltip: 流派核心·写轮眼（第一阶·一勾玉）\n替身术的判定窗口延长到 0.6 秒\n流派奥义【看破】：30 查克拉，冷却 20 秒。4 秒内受到的第一次攻击自动替身，成功后 3 秒内伤害 +15%\n苦无、千本命中被看破的敌人必定暴击\n一次只能装备一个流派核心
+	}
+
+	EightGatesCore: {
+		DisplayName: 八门遁甲之卷
+		Tooltip: 流派核心·八门（第一阶）\n体术武器攻速 +10%\n流派奥义【开门】：每按一次多开一门（最多三门），每门伤害与移速 +10%，按门数每秒失去 2/4/6 生命\n三门时再按关门；生命低于 20% 自动关门，之后 10 秒疲劳\n每开一门耗 20 查克拉\n一次只能装备一个流派核心
+	}
+
+	ByakuganCore: {
+		DisplayName: 白眼
+		Tooltip: 流派核心·白眼（第一阶）\n看得见附近的敌人\n近战命中点穴：防御 -4，最多 3 层；Boss 每层多受 5% 伤害\n流派奥义【八卦掌·回天】：40 查克拉，冷却 15 秒。旋转 1 秒，抵消敌方弹幕并弹开近身敌人\n一次只能装备一个流派核心
+	}
+
+	TrainingWraps: {
+		DisplayName: 训练用绷带
+		Tooltip: 体术武器：每一拳打出一道风压，贴身时伤害更高\n右键【木叶旋风】：冲刺踢，冲刺中短暂无敌\n八门打开时风压更大、飞得更远
+	}
+
+	LeeLegWeights: {
+		DisplayName: 小李的负重护腿
+		Tooltip: 体术武器：每一拳打出一道风压，贴身时伤害更高\n右键【木叶旋风】：冲刺踢，冲刺中短暂无敌\n八门打开时风压更大、飞得更远
+	}
+
 	ChakraPill: {
 		DisplayName: 兵粮丸
 		Tooltip:
@@ -292,6 +317,8 @@ Projectiles: {
 	SenbonThrown.DisplayName: 千本
 	ExamSenbon.DisplayName: 千本
 	JutsuHitbox.DisplayName: 忍术
+	TaijutsuPressure.DisplayName: 风压
+	WhirlwindKick.DisplayName: 木叶旋风
 	WaterDragonFriendly.DisplayName: 水龙弹
 	IceMirrorMinion.DisplayName: 魔镜冰晶
 	KakashiPracticeKunai.DisplayName: 练习苦无
@@ -418,4 +445,8 @@ Biomes: {
 		BestiaryText: ""
 		// TownNPCDialogueName: the Konoha Biome
 	}
+}
+
+DamageClasses: {
+	TaijutsuDamage.DisplayName: 体术伤害
 }

@@ -66,6 +66,10 @@ public sealed class Hiruzen : ModNPC
             "村子里的每一个人，都是我的家人。你也一样。",
             "火之意志，会一直传下去的。",
         };
+        if (vow == StyleSchool.None && player.GetModPlayer<StyleCorePlayer>().VowCalled)
+            return "……你来了。听卡卡西说，你已经摸到了一条路的门槛。\n\n" +
+                   "忍者要走哪一条路，得自己决定。想好了，就戴着那个流派的核心，点“立志”。" +
+                   "仙术要等木叶崩溃之后才能取得——想走那条路的话，也可以等。";
         string status = vow == StyleSchool.None
             ? "你还没有立志。取得流派核心之后，戴着它来找我。"
             : $"你的忍道：{VowRules.SchoolName(vow)}。";

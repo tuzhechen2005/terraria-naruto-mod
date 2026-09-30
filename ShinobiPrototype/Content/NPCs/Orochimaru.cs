@@ -16,7 +16,7 @@ namespace ShinobiPrototype.Content.NPCs;
 // Grass candidate, drops the disguise and freezes the player with killing intent (substitution breaks it), then Hidden
 // Shadow Snake Hands, a snake dash round behind the player, the Great Breakthrough gust, the Five Elements Seal (chakra
 // stops recovering), summoned snakes and the long neck. At half life he stops taking damage, says his line and sinks away as snakes (ThresholdRetreatRules), leaving
-// his shed skin to call him back. The Sharingan vial waits on the style spec.
+// his shed skin to call him back. Now and then he leaves the Sharingan in a vial (the first Sharingan core).
 public sealed class Orochimaru : ExamBoss
 {
     private const float Disguise = 0f;
@@ -38,6 +38,8 @@ public sealed class Orochimaru : ExamBoss
     protected override Color Tint => State == Disguise ? new Color(180, 225, 170) : new Color(150, 140, 175);
     protected override int LifeMax => ExamBossRules.OrochimaruLife;
     protected override int Defense => ExamBossRules.OrochimaruDefense;
+    protected override (string Name, string Title) Intro => ("大蛇丸", "木叶三忍之一，叛忍——他在找宇智波的眼睛");
+    protected override bool Revealed => State != Disguise;
 
     private Vector2 Mark => new(NPC.ai[2], NPC.ai[3]);
 
@@ -251,7 +253,9 @@ public sealed class Orochimaru : ExamBoss
         {
             StoryWorld.OrochimaruMet = true;
             Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<SnakeSkin>());
-            Tell("大蛇丸化作一群蛇，钻进了土里。地上只留下一张蛇蜕。", new Color(190, 150, 230));
+            if (Main.rand.NextFloat() < ExamBossRules.SharinganVialChance)
+                Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.StyleCores.SharinganCore1>());
+            Tell("大蛇丸化作一群蛇，钻进了土里。地上只留下一张蛇蜕——在丛林里用它，还能把他引出来。", new Color(190, 150, 230));
             if (Main.netMode == NetmodeID.Server)
                 NetMessage.SendData(MessageID.WorldData);
             foreach (NPC snake in Main.ActiveNPCs)

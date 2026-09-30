@@ -23,6 +23,10 @@ public sealed class ChuninExamPlayer : ModPlayer
     public int CandidatesBeaten { get; private set; }
     public bool TowerReached { get; private set; }
     public bool PrelimsPassed { get; private set; }
+    // The Eight Gates core and Lee's leg weights come with each character's first win over Gaara.
+    public bool GaaraFirstWin { get; private set; }
+
+    public void ClaimGaaraFirstWin() => GaaraFirstWin = true;
 
     private bool wasDay = true;
 
@@ -164,6 +168,8 @@ public sealed class ChuninExamPlayer : ModPlayer
             tag["examScroll"] = (byte)Issued;
         if (CandidatesBeaten > 0)
             tag["examCandidates"] = CandidatesBeaten;
+        if (GaaraFirstWin)
+            tag["gaaraFirstWin"] = true;
     }
 
     public override void LoadData(TagCompound tag)
@@ -171,6 +177,7 @@ public sealed class ChuninExamPlayer : ModPlayer
         Flags = tag.GetByte("examFlags");
         Issued = (ExamScroll)tag.GetByte("examScroll");
         CandidatesBeaten = tag.GetInt("examCandidates");
+        GaaraFirstWin = tag.GetBool("gaaraFirstWin");
     }
 
     private BitsByte Flags

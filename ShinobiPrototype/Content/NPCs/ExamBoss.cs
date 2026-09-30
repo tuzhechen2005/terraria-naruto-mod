@@ -5,6 +5,7 @@ using Terraria.Chat;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using ShinobiPrototype.Common.Systems;
 
 namespace ShinobiPrototype.Content.NPCs;
 
@@ -25,6 +26,11 @@ public abstract class ExamBoss : ModNPC
 
     private bool hitByLocalPlayer;
     private int leaveTicks;
+    private bool introShown;
+
+    // The entrance title (BossIntroSystem): name and who they are, shown once the boss has shown itself.
+    protected abstract (string Name, string Title) Intro { get; }
+    protected virtual bool Revealed => true;
 
     public override void SetStaticDefaults()
     {
@@ -69,6 +75,11 @@ public abstract class ExamBoss : ModNPC
         }
         leaveTicks = 0;
         Timer++;
+        if (!introShown && Revealed && Main.netMode != NetmodeID.Server)
+        {
+            introShown = true;
+            BossIntroSystem.Show(Intro.Name, Intro.Title);
+        }
         Fight(target);
     }
 

@@ -14,6 +14,7 @@
     <Compile Include="../../ShinobiPrototype/Common/ExamBossRules.cs" Link="ExamBossRules.cs" />
     <Compile Include="../../ShinobiPrototype/Common/ThresholdRetreatRules.cs" Link="ThresholdRetreatRules.cs" />
     <Compile Include="../../ShinobiPrototype/Common/StyleCoreRules.cs" Link="StyleCoreRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ChakraRules.cs" Link="ChakraRules.cs" />
     <Compile Include="../../ShinobiPrototype/Common/ExamSiteDesign.cs" Link="ExamSiteDesign.cs" />
     <Compile Include="../../ShinobiPrototype/Common/KonohaDesign.cs" Link="KonohaDesign.cs" />
   </ItemGroup>

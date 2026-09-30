@@ -34,6 +34,7 @@ public sealed class Gaara : ExamBoss
     protected override Color Tint => Phase == 3 ? new Color(200, 150, 90) : new Color(210, 120, 90);
     protected override int LifeMax => ExamBossRules.GaaraLife;
     protected override int Defense => ExamBossRules.GaaraDefense;
+    protected override (string Name, string Title) Intro => ("砂瀑之我爱罗", "砂隐村的人柱力，体内封着一尾守鹤");
 
     private int Phase => ExamBossRules.GaaraPhase(NPC.life, NPC.lifeMax);
     private float Tempo => ExamBossRules.GaaraTempo(Phase);
@@ -214,11 +215,26 @@ public sealed class Gaara : ExamBoss
     public override void ModifyHitByProjectile(Projectile projectile, ref NPC.HitModifiers modifiers) =>
         Shield(projectile.Center.X - projectile.velocity.X * 4f, ref modifiers);
 
-    // Everyone who fought him passes the exams (the Chūnin headband); the Eight Gates core waits on the style spec.
+    // Everyone who fought him passes the exams (the Chūnin headband); a character's first win always brings the Eight
+    // Gates core and Lee's leg weights, later wins by chance (ModifyNPCLoot).
     protected override void LocalVictory(Player player)
     {
+        var source = player.GetSource_Misc("ChuninExam");
         if (!player.HasItem(ModContent.ItemType<ChuninHeadband>()))
-            player.QuickSpawnItem(player.GetSource_Misc("ChuninExam"), ModContent.ItemType<ChuninHeadband>());
+            player.QuickSpawnItem(source, ModContent.ItemType<ChuninHeadband>());
+        ChuninExamPlayer exam = player.GetModPlayer<ChuninExamPlayer>();
+        if (exam.GaaraFirstWin)
+            return;
+        exam.ClaimGaaraFirstWin();
+        player.QuickSpawnItem(source, ModContent.ItemType<Items.StyleCores.EightGatesCore>());
+        player.QuickSpawnItem(source, ModContent.ItemType<Items.Taijutsu.LeeLegWeights>());
+        Main.NewText("首次击败我爱罗：得到八门遁甲之卷（流派核心）与小李的负重护腿。", new Color(255, 215, 120));
+    }
+
+    public override void ModifyNPCLoot(NPCLoot npcLoot)
+    {
+        npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.StyleCores.EightGatesCore>(), 4));
+        npcLoot.Add(Terraria.GameContent.ItemDropRules.ItemDropRule.Common(ModContent.ItemType<Items.Taijutsu.LeeLegWeights>(), 3));
     }
 
     public override void OnKill()
