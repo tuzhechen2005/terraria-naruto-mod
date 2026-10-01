@@ -33,8 +33,8 @@ public sealed class ExamSiteWorld : ModSystem
     public static ExamSite? Gate { get; private set; }
     public static ExamSite? Tower { get; private set; }
     public static ExamSite? Stadium { get; private set; }
-    public static ExamSite? Camp { get; private set; }
     public static ExamSite? HollowTree { get; private set; }
+    private static ExamSite? oldCamp;
     public static int BuiltVersion { get; private set; }
 
     private static readonly Dictionary<(ExamSiteKind, int), ExamSiteDesign> designs = new();
@@ -62,7 +62,7 @@ public sealed class ExamSiteWorld : ModSystem
 
     public static IEnumerable<ExamSite> All()
     {
-        foreach (ExamSite? site in new[] { Gate, Tower, Stadium, Camp, HollowTree })
+        foreach (ExamSite? site in new[] { Gate, Tower, Stadium, HollowTree })
             if (site is ExamSite s)
                 yield return s;
     }
@@ -86,7 +86,8 @@ public sealed class ExamSiteWorld : ModSystem
 
     public override void ClearWorld()
     {
-        Gate = Tower = Stadium = Camp = HollowTree = null;
+        Gate = Tower = Stadium = HollowTree = null;
+        oldCamp = null;
         BuiltVersion = 0;
     }
 
@@ -117,8 +118,8 @@ public sealed class ExamSiteWorld : ModSystem
     }
 
     // The forest of Training Ground 44 (v2, user 2026-10-01): the gate on the jungle's side facing the village, the
-    // tower as deep in as the jungle allows and at least ForestLengthTiles in, and on the way between them the giant
-    // tree, the rest point halfway, and warning signs pointing on to the tower.
+    // tower as deep in as the jungle allows and well clear of the gate, and on the way between them the giant tree and
+    // warning signs pointing on to the tower.
     internal static void BuildForest(int west, int east, int dir)
     {
         int gateInset = Design(ExamSiteKind.Gate).HalfWidth + 6;
@@ -131,14 +132,13 @@ public sealed class ExamSiteWorld : ModSystem
         Gate = ExamSiteBuilder.Build(ExamSiteKind.Gate, gateX, dir);
         Tower = ExamSiteBuilder.Build(ExamSiteKind.Tower, towerX, dir);
         int length = (towerX - gateX) * dir;
-        Camp = ExamSiteBuilder.Build(ExamSiteKind.Camp, gateX + dir * length / 2, dir);
         HollowTree = length >= 140 ? ExamSiteBuilder.Build(ExamSiteKind.HollowTree, gateX + dir * length * 3 / 10, dir) : null;
         // Warning signs every so often, clear of the other landmarks and the Rain genin's clearing.
         int rain = towerX - dir * (ExamSiteDesign.TowerHalf + ChuninExamRules.RainClearingTiles);
         for (int x = gateX + dir * (Design(ExamSiteKind.Gate).HalfWidth + 12); (rain - x) * dir > 12; x += dir * 30)
         {
             bool clear = true;
-            foreach (ExamSite? s in new[] { Camp, HollowTree })
+            foreach (ExamSite? s in new[] { HollowTree })
                 if (s is ExamSite site && Math.Abs(site.CenterX - x) < Design(site.Kind).HalfWidth + 14)
                     clear = false;
             if (clear)
@@ -152,9 +152,10 @@ public sealed class ExamSiteWorld : ModSystem
     {
         if (ExamSiteBuilder.JungleSurface() is not (int west, int east) || KonohaWorld.Site is not KonohaSite village)
             return false;
-        foreach (ExamSite? site in new[] { Gate, Tower, Camp, HollowTree })
+        foreach (ExamSite? site in new[] { Gate, Tower, HollowTree, oldCamp })
             if (site is ExamSite s)
                 ExamSiteBuilder.Erase(s, 50, 70);
+        oldCamp = null;
         BuildForest(west, east, (west + east) / 2 > village.CenterX ? 1 : -1);
         BuiltVersion = ExamSiteDesign.Version;
         return true;
@@ -173,7 +174,8 @@ public sealed class ExamSiteWorld : ModSystem
         Gate = Load(tag, ExamSiteKind.Gate);
         Tower = Load(tag, ExamSiteKind.Tower);
         Stadium = Load(tag, ExamSiteKind.Stadium);
-        Camp = Load(tag, ExamSiteKind.Camp);
+        // The rest point was dropped (user, 2026-10-01: too crude); remembered only so a rebuild clears it away.
+        oldCamp = tag.GetIntArray("examSiteCamp") is { Length: 3 } c ? new ExamSite(ExamSiteKind.Marker, c[0], c[1], c[2]) : null;
         HollowTree = Load(tag, ExamSiteKind.HollowTree);
         BuiltVersion = tag.GetInt("examSiteVersion");
     }
@@ -187,7 +189,7 @@ public sealed class ExamSiteWorld : ModSystem
 
     public override void NetSend(BinaryWriter writer)
     {
-        foreach (ExamSite? site in new[] { Gate, Tower, Stadium, Camp, HollowTree })
+        foreach (ExamSite? site in new[] { Gate, Tower, Stadium, HollowTree })
         {
             writer.Write(site.HasValue);
             if (site is ExamSite s)
@@ -204,7 +206,6 @@ public sealed class ExamSiteWorld : ModSystem
         Gate = Read(reader, ExamSiteKind.Gate);
         Tower = Read(reader, ExamSiteKind.Tower);
         Stadium = Read(reader, ExamSiteKind.Stadium);
-        Camp = Read(reader, ExamSiteKind.Camp);
         HollowTree = Read(reader, ExamSiteKind.HollowTree);
     }
 

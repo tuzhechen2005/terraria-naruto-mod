@@ -15,7 +15,7 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|camp|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名] 或 /m0 god [on|off]";
+    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名] 或 /m0 god [on|off]";
     public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
@@ -294,7 +294,6 @@ public sealed class M0Command : ModCommand
         }
         Vector2? target = arg.ToLowerInvariant() switch
         {
-            "camp" => SiteTop(ExamSiteWorld.Camp),
             "tree" => SiteTop(ExamSiteWorld.HollowTree),
             "rain" => ExamSiteWorld.RainClearing,
             "gate" => SiteTop(ExamSiteWorld.Gate),
@@ -310,7 +309,7 @@ public sealed class M0Command : ModCommand
             caller.Reply($"已传送到 {arg}。", Color.LightGreen);
             return;
         }
-        if (arg is "gate" or "tower" or "stadium" or "academy" or "hokage" or "camp" or "tree" or "rain")
+        if (arg is "gate" or "tower" or "stadium" or "academy" or "hokage" or "tree" or "rain")
         {
             caller.Reply("这个世界没有这个场地（需要新建世界）。", Color.OrangeRed);
             return;

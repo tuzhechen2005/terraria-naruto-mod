@@ -8,7 +8,7 @@ namespace ShinobiPrototype.Common;
 // the central tower deep in the jungle, the landmarks on the way between them, and the finals stadium outside the
 // village wall. Positions are
 // (dx, dy) from the site's centre on its ground row (0 = the ground row, negative = above).
-public enum ExamSiteKind : byte { Gate, Tower, Stadium, Camp, HollowTree, Marker }
+public enum ExamSiteKind : byte { Gate, Tower, Stadium, HollowTree, Marker }
 
 public sealed class ExamSiteDesign
 {
@@ -62,7 +62,6 @@ public sealed class ExamSiteDesign
     {
         ExamSiteKind.Gate => Gate(),
         ExamSiteKind.Tower => Tower(),
-        ExamSiteKind.Camp => Camp(),
         ExamSiteKind.HollowTree => HollowTree(),
         ExamSiteKind.Marker => Marker(),
         _ => Stadium(),
@@ -272,20 +271,6 @@ public sealed class ExamSiteDesign
             "天无智慧，则当求知以备之；\n地无体力，则当奔走以求之。\n天地双开，则险道亦成正道。"));
         d.Places.Add(new KPlace(x0 - 4, -1, KFix.Sign, "中央塔\n——带齐天、地两卷入内"));
         d.Buildings.Add(new KBuilding("中央塔", x0, x1, floor - 9));
-        return d;
-    }
-
-    // The rest point halfway through the forest: a fallen giant trunk (in the background, so the path stays open) and
-    // a campfire.
-    private static ExamSiteDesign Camp()
-    {
-        ExamSiteDesign d = new(ExamSiteKind.Camp, 11, 10, 14);
-        d.Ground(KMat.JungleGrass, KMat.Mud);
-        for (int x = -10; x <= 2; x++)
-            for (int y = -1; y >= (x < -7 ? -3 : -4); y--)
-                d.SetWall(x, y, KWall.LivingWood);
-        d.Places.Add(new KPlace(6, -1, KFix.Campfire));
-        d.Buildings.Add(new KBuilding("林中休息处", -10, 8, -5));
         return d;
     }
 
