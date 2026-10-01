@@ -455,8 +455,7 @@ public sealed class WaterPrison : ModNPC
             spriteBatch.Draw(tex, NPC.Center + bob - screenPos, null, light, 0f, tex.Size() / 2f, NpcSheet.ScaleFor(NpcSheet.KakashiBody), flip, 0f);
             return;
         }
-        // Until trapped frames in the kakashi-npc-v4 style arrive (the water-prison-v1 ones were the old Kakashi): his
-        // jump frame from the town sheet, tilted.
+        // Without the trapped frames (kakashi-trapped-v2): his jump frame from the town sheet, tilted.
         Texture2D sheet = TextureAssets.Npc[ModContent.NPCType<Kakashi>()].Value;
         int height = sheet.Height / 12;
         Rectangle source = new(0, 7 * height, sheet.Width, height);
