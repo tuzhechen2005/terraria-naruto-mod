@@ -1,8 +1,32 @@
-# Shinobi Prototype · 泰拉瑞亚火影模组
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="docs/images/banner-dark.png">
+    <img src="docs/images/banner-light.png" alt="Shinobi Prototype · 泰拉瑞亚火影忍者模组" width="640">
+  </picture>
+</p>
 
-一个以《火影忍者》第一部为蓝本的 [tModLoader](https://github.com/tModLoader/tModLoader) 模组：保留原版泰拉瑞亚的全部 Boss 与流程，把忍者的主线剧情、Boss 战和村子嵌进去，让玩家边打原版边经历波之国任务和中忍考试。
+<p align="center">
+  <a href="https://github.com/tuzhechen2005/terraria-naruto-mod/actions/workflows/tests.yml"><img src="https://github.com/tuzhechen2005/terraria-naruto-mod/actions/workflows/tests.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/tuzhechen2005/terraria-naruto-mod/stargazers"><img src="https://img.shields.io/github/stars/tuzhechen2005/terraria-naruto-mod?style=flat&logo=github&label=stars&color=f08c28" alt="GitHub stars"></a>
+  <img src="https://img.shields.io/badge/version-0.4.0-e05a2b" alt="version 0.4.0">
+  <img src="https://img.shields.io/badge/tModLoader-1.4.4-4e7d32" alt="tModLoader 1.4.4">
+  <a href="https://github.com/tuzhechen2005/terraria-naruto-mod/commits/main"><img src="https://img.shields.io/github/last-commit/tuzhechen2005/terraria-naruto-mod?color=3a6ea5" alt="last commit"></a>
+</p>
 
-> A Naruto-inspired content mod for Terraria (tModLoader). Fan project in active development — Chinese-first; an English summary is at the end.
+<p align="center">
+  <b>边打原版泰拉瑞亚，边经历《火影忍者》第一部的波之国任务和中忍考试。</b><br>
+  一个 <a href="https://github.com/tModLoader/tModLoader">tModLoader</a> 模组：原版的 Boss 一个不少，忍者的主线、首领战和木叶村嵌在它们之间。
+</p>
+
+<p align="center">
+  <a href="#内容一览">内容一览</a> ·
+  <a href="#游玩须知">游玩须知</a> ·
+  <a href="#从源码构建">从源码构建</a> ·
+  <a href="#仓库结构">仓库结构</a> ·
+  <a href="#english-summary">English</a>
+</p>
+
+---
 
 **开发状态**：开发版 0.4.x。波之国篇已在游戏内跑通；中忍考试篇代码完成、正在逐段实机打磨，部分美术仍是占位图。
 
@@ -66,7 +90,7 @@
 
 源码在 `ShinobiPrototype/`。在 tModLoader 的 `ModSources/` 下建一个指向它的链接（或直接放进去），然后在游戏里「Workshop → Develop Mods」选 **Build + Reload**。
 
-Mac 上的完整环境（.NET 8 x64 SDK、原生库路径）见 [DEVELOPMENT_MAC.md](DEVELOPMENT_MAC.md)。命令行一次跑完所有规则测试并打包：
+Mac 上的完整环境（.NET 8 x64 SDK、原生库路径）见 [DEVELOPMENT_MAC.md](DEVELOPMENT_MAC.md)。命令行一次跑完所有规则测试并打包（每次推送时 GitHub Actions 也会在 Linux 上跑同一组规则测试，见上方 CI 徽章）：
 
 ```sh
 ./scripts/verify-mac.sh

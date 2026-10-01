@@ -1,0 +1,25 @@
+name: CI
+
+# The rule tests: plain .NET console programs over the mod's Terraria-free logic (tests/*). The mod itself needs
+# tModLoader to build, so it is built locally (scripts/verify-mac.sh or Build + Reload in game).
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Run the rule tests
+        run: |
+          set -e
+          for project in tests/*/*.Tests.csproj; do
+            echo "::group::$project"
+            dotnet run --project "$project"
+            echo "::endgroup::"
+          done
