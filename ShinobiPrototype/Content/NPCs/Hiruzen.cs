@@ -9,7 +9,7 @@ using ShinobiPrototype.Common.Systems;
 namespace ShinobiPrototype.Content.NPCs;
 
 // Sarutobi Hiruzen, the Third Hokage: a story NPC who stands in his office in the Hokage tower (no house, cannot be
-// hurt) and hears the vow (立志, specs/流派系统.spec.md section 6). Art: hiruzen-npc-v1 (scripts/build_npc_sheet.py), the
+// hurt) and hears the vow (立志, specs/流派系统.spec.md section 6). Art: hiruzen-npc-v2 (scripts/build_npc_sheet.py), the
 // twelve NpcSheet frames plus two of his own: a puff on the pipe, and a raised hand while someone talks to him.
 public sealed class Hiruzen : ModNPC
 {
@@ -40,7 +40,7 @@ public sealed class Hiruzen : ModNPC
         NPC.defense = 15;
         NPC.knockBackResist = 0f;
         NPC.noGravity = true;
-        NPC.scale = NpcSheet.ScaleFor(48);
+        NPC.scale = NpcSheet.ScaleFor(46);
     }
 
     public override bool CanChat() => true;
