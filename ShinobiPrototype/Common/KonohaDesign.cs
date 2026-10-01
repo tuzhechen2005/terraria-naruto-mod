@@ -73,6 +73,9 @@ public sealed class KonohaDesign
 
     // Where the Third Hokage stands in his office (the row his feet rest on is HokageSpot.Dy + 1).
     public (int Dx, int Dy) HokageSpot { get; private set; }
+    // Where Morino Ibiki waits for the written test: by the door of the Academy's first ground-floor classroom, clear of
+    // its bookcase, table and chair.
+    public (int Dx, int Dy) IbikiSpot { get; private set; }
 
     public IEnumerable<KCell> Cells => cells.Values;
     public IEnumerable<KWallCell> Walls
@@ -369,6 +372,7 @@ public sealed class KonohaDesign
                 Places.Add(new KPlace(room.X0 + 6, room.Top + 1, KFix.WeaponRack));
         }
         Places.Add(new KPlace(x0 + 3, roof - 5, KFix.Sign, "忍者学校"));
+        IbikiSpot = (x0 + 2, -1);
     }
 
     // Red, with rounded shoulders so the tower reads as a cylinder, and the office crowned by a red dome.

@@ -30,8 +30,28 @@ public static class WaveEpilogueRules
         new(1260, "EpilogueRest"),
     };
 
-    public const int CrawlFrom = 580;
-    public const int CrawlTo = 800;
+    // The one who fell last gets up and walks to the other (user, 2026-09-30: sliding there lying down looked eerie):
+    // lies still through the first lines, pushes up and stands, staggers over, and collapses at the other's side
+    // just before the last line.
+    public enum WalkerPhase { Lying, Rising, Walking, Collapsing, Down }
+
+    public const int RiseFrom = 240;
+    public const int RiseTicks = 90;
+    public const int CollapseFrom = 780;
+    public const int CollapseTicks = 45;
+    public const float MinWalkSpeed = 0.15f;
+    public const float MaxWalkSpeed = 1.1f;
+
+    public static WalkerPhase Phase(int tick) =>
+        tick < RiseFrom ? WalkerPhase.Lying
+        : tick < RiseFrom + RiseTicks ? WalkerPhase.Rising
+        : tick < CollapseFrom ? WalkerPhase.Walking
+        : tick < CollapseFrom + CollapseTicks ? WalkerPhase.Collapsing
+        : WalkerPhase.Down;
+
+    // Pixels a tick, so the walk across `gap` pixels ends as the collapse begins; slow either way.
+    public static float WalkSpeed(float gap, int tick) =>
+        Math.Clamp(Math.Abs(gap) / Math.Max(1, CollapseFrom - tick), MinWalkSpeed, MaxWalkSpeed);
     public const int SnowFromHakuFirst = 960;
     public const int SnowFromZabuzaFirst = 800;
     public const int FadeTicks = 120;

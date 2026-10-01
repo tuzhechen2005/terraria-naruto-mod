@@ -14,8 +14,22 @@ public sealed class StoryPlayer : ModPlayer
 {
     // Whether the "three insignia collected" notice has been shown. Nothing here gates exploration or bosses.
     public bool InsigniaNoticeShown { get; private set; }
+    // The village has welcomed this character home from Wave Country (user, 2026-09-30: "让 NPC 都欢呼祝贺").
+    public bool WelcomedHome { get; private set; }
+    private int welcomeTicks = -1;
+    private readonly List<int> cheering = new();
 
-    public override void Initialize() => InsigniaNoticeShown = false;
+    private static readonly string[] Cheers =
+    {
+        "欢迎回来！", "听说你在波之国打倒了雾隐的鬼人！", "了不起！", "木叶的骄傲！", "辛苦了！", "一乐拉面，今天我请！",
+        "真的假的，那个桃地再不斩？", "你回来啦！",
+    };
+
+    public override void Initialize()
+    {
+        InsigniaNoticeShown = false;
+        WelcomedHome = false;
+    }
 
     public override IEnumerable<Item> AddStartingItems(bool mediumCoreDeath)
     {
@@ -46,11 +60,54 @@ public sealed class StoryPlayer : ModPlayer
         if (Player.whoAmI != Main.myPlayer)
             return;
 
+        if (!WelcomedHome && StoryWorld.WaveComplete && Main.GameUpdateCount % 30 == 0 && KonohaWorld.InKonoha(Player.Center))
+            StartWelcome();
+        if (welcomeTicks >= 0)
+            Welcome();
+
         if (!InsigniaNoticeShown && WaveStage == WaveStage.Showdown && Player.CountItem(ModContent.ItemType<MistInsignia>()) >= 3)
         {
             InsigniaNoticeShown = true;
             Main.NewText("已收集三枚雾隐标记。现在可在工作台制作再不斩挑战卷轴，去断桥与再不斩和白决战。", 100, 200, 245);
         }
+    }
+
+    // Home from Wave Country: the townsfolk nearby cheer one after another, with confetti over the player.
+    private void StartWelcome()
+    {
+        WelcomedHome = true;
+        welcomeTicks = 0;
+        cheering.Clear();
+        foreach (NPC npc in Main.ActiveNPCs)
+            if (npc.townNPC && npc.Distance(Player.Center) < 70 * 16)
+                cheering.Add(npc.whoAmI);
+        Main.NewText("木叶的大家都听说了——你在波之国，打倒了雾隐的鬼人。", new Color(255, 220, 150));
+        Terraria.Audio.SoundEngine.PlaySound(SoundID.Item4, Player.Center);
+    }
+
+    private void Welcome()
+    {
+        const int spacing = 25;
+        if (welcomeTicks < 90 && welcomeTicks % 3 == 0)
+            for (int i = 0; i < 3; i++)
+                Dust.NewDustPerfect(Player.Center + new Vector2(Main.rand.NextFloat(-120f, 120f), -90f + Main.rand.NextFloat(-30f, 10f)),
+                    DustID.Confetti + Main.rand.Next(4), new Vector2(Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(0.5f, 2f)),
+                    0, default, 1.2f);
+        if (welcomeTicks % spacing == 0 && welcomeTicks / spacing < cheering.Count)
+        {
+            NPC npc = Main.npc[cheering[welcomeTicks / spacing]];
+            if (npc.active && npc.townNPC)
+            {
+                Terraria.GameContent.UI.EmoteBubble.NewBubble(Main.rand.Next(new[]
+                    {
+                        Terraria.GameContent.UI.EmoteID.EmotionLove, Terraria.GameContent.UI.EmoteID.EmoteLaugh,
+                        Terraria.GameContent.UI.EmoteID.EmoteHappiness, Terraria.GameContent.UI.EmoteID.PartyBalloons,
+                    }), new Terraria.GameContent.UI.WorldUIAnchor(npc), 180);
+                CombatText.NewText(npc.getRect(), new Color(255, 230, 160), Main.rand.Next(Cheers), true);
+            }
+        }
+        if (++welcomeTicks > spacing * (cheering.Count + 1) + 90)
+            welcomeTicks = -1;
     }
 
     public string CurrentObjective()
@@ -93,7 +150,7 @@ public sealed class StoryPlayer : ModPlayer
             case ExamStage.Written:
                 string lost = Player.HasItem(ModContent.ItemType<ExamAdmissionScroll>()) ? "" : "（推荐书不在身上：找卡卡西再要一份。）";
                 return exam.CanSitWritten
-                    ? $"中忍考试第一试·笔试：到木叶的忍者学校（阿吽之门往西），在学校里使用推荐书。{lost}"
+                    ? $"中忍考试第一试·笔试：带着推荐书到木叶的忍者学校（阿吽之门往西），找教室里的主考官森乃伊比喜。{lost}"
                     : "第一试：你在第十题放弃了。等明天天亮，再去忍者学校重考。" + lost;
             case ExamStage.ForestGate:
                 return $"中忍考试第二试·死亡森林：到丛林边的第四十四演习场入口领取卷轴{ExamSiteWorld.GateHint(Player)}。";
@@ -169,11 +226,14 @@ public sealed class StoryPlayer : ModPlayer
     {
         if (InsigniaNoticeShown)
             tag["insigniaNotice"] = true;
+        if (WelcomedHome)
+            tag["welcomedHome"] = true;
     }
 
     public override void LoadData(TagCompound tag)
     {
         // Saves from before the M1 rewrite stored this as journal stage 2.
         InsigniaNoticeShown = tag.GetBool("insigniaNotice") || tag.GetInt("stage") >= 2;
+        WelcomedHome = tag.GetBool("welcomedHome");
     }
 }

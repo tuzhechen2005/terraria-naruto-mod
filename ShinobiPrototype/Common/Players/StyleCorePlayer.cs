@@ -37,7 +37,6 @@ public sealed class StyleCorePlayer : ModPlayer
     public int Gates { get; private set; }
     public bool GatesCore { get; set; }
     private int fatigueTicks;
-    private float gateLifeDebt;
 
     // Byakugan.
     public bool Byakugan { get; set; }

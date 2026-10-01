@@ -50,3 +50,18 @@ Check(WaveEpilogueRules.SnowRate(WaveEpilogueRules.SnowFadeInTicks / 2, 1000) < 
     "Snow thickens gradually to full fall");
 Check(WaveEpilogueRules.SnowRate(2000, WaveEpilogueRules.SnowFadeOutTicks / 2) < WaveEpilogueRules.SnowPerTick &&
       WaveEpilogueRules.SnowRate(2000, 0) == 0f, "Snow thins out before the scene ends");
+
+// The epilogue walk (user, 2026-09-30): lie, rise, stagger over, collapse before the last line.
+Check(WaveEpilogueRules.Phase(0) == WaveEpilogueRules.WalkerPhase.Lying &&
+      WaveEpilogueRules.Phase(WaveEpilogueRules.RiseFrom) == WaveEpilogueRules.WalkerPhase.Rising &&
+      WaveEpilogueRules.Phase(WaveEpilogueRules.RiseFrom + WaveEpilogueRules.RiseTicks) == WaveEpilogueRules.WalkerPhase.Walking &&
+      WaveEpilogueRules.Phase(WaveEpilogueRules.CollapseFrom) == WaveEpilogueRules.WalkerPhase.Collapsing &&
+      WaveEpilogueRules.Phase(WaveEpilogueRules.CollapseFrom + WaveEpilogueRules.CollapseTicks) == WaveEpilogueRules.WalkerPhase.Down,
+    "The last to fall lies still, rises, walks, then collapses");
+Check(WaveEpilogueRules.CollapseFrom + WaveEpilogueRules.CollapseTicks <= WaveEpilogueRules.HakuFellFirst[^3].Tick + 40 &&
+      WaveEpilogueRules.CollapseFrom < WaveEpilogueRules.HakuFellFirst[4].Tick,
+    "The collapse comes just before the last words");
+Check(WaveEpilogueRules.WalkSpeed(400f, 330) <= WaveEpilogueRules.MaxWalkSpeed &&
+      WaveEpilogueRules.WalkSpeed(10f, 330) >= WaveEpilogueRules.MinWalkSpeed &&
+      Math.Abs(WaveEpilogueRules.WalkSpeed(225f, 330) * (WaveEpilogueRules.CollapseFrom - 330) - 225f) < 1f,
+    "The walk paces itself to arrive as the collapse begins, always slowly");

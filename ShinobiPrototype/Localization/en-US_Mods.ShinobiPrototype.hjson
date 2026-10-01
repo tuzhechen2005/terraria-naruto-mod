@@ -41,7 +41,7 @@ Items: {
 
 	ExamAdmissionScroll: {
 		DisplayName: Chunin Exam Recommendation
-		Tooltip: Kakashi's recommendation for the Chunin Exams\nUse it inside the Konoha Academy to sit the first test (the written exam)\nIf lost, ask Kakashi for another
+		Tooltip: Kakashi's recommendation for the Chunin Exams\nBring it to Morino Ibiki in the Konoha Academy to sit the first test (the written exam)\nIf lost, ask Kakashi for another
 	}
 
 	HeavenScroll: {
@@ -304,6 +304,7 @@ NPCs: {
 	ForestCanopyCandidate.DisplayName: Exam Candidate
 	RainGenin.DisplayName: Rain Genin
 	Hiruzen.DisplayName: Sarutobi Hiruzen (Third Hokage)
+	Ibiki.DisplayName: Morino Ibiki (Written Test Proctor)
 	Dosu.DisplayName: Dosu Kinuta
 	Gaara.DisplayName: Gaara of the Sand
 	Neji.DisplayName: Neji Hyuga

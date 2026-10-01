@@ -58,6 +58,11 @@ public sealed class KonohaWorld : ModSystem
         return null;
     }
 
+    public static Vector2? IbikiFeet =>
+        Site is KonohaSite site
+            ? new Vector2((site.X(Design.IbikiSpot.Dx) + 0.5f) * 16f, (site.Y(Design.IbikiSpot.Dy) + 1) * 16f)
+            : null;
+
     // World position of the Third Hokage's feet in his office.
     public static Vector2? HokageFeet =>
         Site is KonohaSite site

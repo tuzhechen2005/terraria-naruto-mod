@@ -41,7 +41,7 @@ Items: {
 
 	ExamAdmissionScroll: {
 		DisplayName: 中忍考试推荐书
-		Tooltip: 卡卡西推荐你参加中忍考试的推荐书\n在木叶的忍者学校里使用，参加第一试（笔试）\n遗失了可以再找卡卡西要
+		Tooltip: 卡卡西推荐你参加中忍考试的推荐书\n带着它去木叶的忍者学校，找主考官森乃伊比喜参加第一试（笔试）\n遗失了可以再找卡卡西要
 	}
 
 	HeavenScroll: {
@@ -304,6 +304,7 @@ NPCs: {
 	ForestCanopyCandidate.DisplayName: 考生
 	RainGenin.DisplayName: 雨隐下忍
 	Hiruzen.DisplayName: 猿飞日斩（三代火影）
+	Ibiki.DisplayName: 森乃伊比喜（第一试主考官）
 	Dosu.DisplayName: 音忍·多斯
 	Gaara.DisplayName: 砂瀑之我爱罗
 	Neji.DisplayName: 日向宁次

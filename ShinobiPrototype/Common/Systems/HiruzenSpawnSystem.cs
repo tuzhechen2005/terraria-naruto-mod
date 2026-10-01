@@ -6,18 +6,24 @@ using ShinobiPrototype.Content.NPCs;
 
 namespace ShinobiPrototype.Common.Systems;
 
-// The Third Hokage is always in his office in a world with the village (he cannot be hurt, so this only ever places
-// him once per session). Run by the server or single player.
+// The village's story NPCs are always in their places in a world with the village: the Third Hokage in his office,
+// Morino Ibiki in the Academy (they cannot be hurt, so this only ever places them once per session). Run by the server
+// or single player.
 public sealed class HiruzenSpawnSystem : ModSystem
 {
     public override void PostUpdateWorld()
     {
         if (Main.netMode == NetmodeID.MultiplayerClient || Main.GameUpdateCount % 120 != 0)
             return;
-        if (KonohaWorld.HokageFeet is not Vector2 feet || NPC.AnyNPCs(ModContent.NPCType<Hiruzen>()))
+        Place(KonohaWorld.HokageFeet, ModContent.NPCType<Hiruzen>());
+        Place(KonohaWorld.IbikiFeet, ModContent.NPCType<Ibiki>());
+    }
+
+    private static void Place(Vector2? feet, int type)
+    {
+        if (feet is not Vector2 at || NPC.AnyNPCs(type))
             return;
-        int index = NPC.NewNPC(new Terraria.DataStructures.EntitySource_WorldEvent(), (int)feet.X, (int)feet.Y,
-            ModContent.NPCType<Hiruzen>());
+        int index = NPC.NewNPC(new Terraria.DataStructures.EntitySource_WorldEvent(), (int)at.X, (int)at.Y, type);
         if (index < Main.maxNPCs && Main.netMode == NetmodeID.Server)
             NetMessage.SendData(MessageID.SyncNPC, number: index);
     }

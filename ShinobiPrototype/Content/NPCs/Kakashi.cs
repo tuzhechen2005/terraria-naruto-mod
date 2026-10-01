@@ -140,18 +140,18 @@ public sealed class Kakashi : ModNPC
     public const string RecommendationLine =
         "哟，辛苦了。……好了，回村子吧。啊对了——中忍考试，我把你的名字报上去了。嘛……要是怕了，现在后悔也还来得及。";
 
-    // Once the Wave epilogue ends: the server (or single player) flickers him in beside the nearest player who has
-    // not had the recommendation yet; each such player nearby gets the line and the recommendation on their client.
+    // Once the Wave epilogue ends: the server (or single player) flickers him in beside the player nearest the bridge
+    // who has not had the recommendation yet, wherever they have got to; each such player gets the line and the
+    // recommendation on their client. (It used to wait for players within 200 tiles, and a player who flew off during
+    // the epilogue never saw him; user, 2026-09-30.)
     public static void ArriveAfterEpilogue(Vector2 where)
     {
-        const float reach = 200f * 16f;
         int type = ModContent.NPCType<Kakashi>();
         if (Main.netMode != NetmodeID.MultiplayerClient)
         {
             Player closest = null;
             foreach (Player player in Main.ActivePlayers)
-                if (!player.dead && player.Distance(where) < reach &&
-                    player.GetModPlayer<ChuninExamPlayer>().Stage == ExamStage.Recommend &&
+                if (!player.dead && player.GetModPlayer<ChuninExamPlayer>().Stage == ExamStage.Recommend &&
                     (closest == null || player.Distance(where) < closest.Distance(where)))
                     closest = player;
             if (closest != null)
@@ -169,11 +169,12 @@ public sealed class Kakashi : ModNPC
             return;
         Player local = Main.LocalPlayer;
         ChuninExamPlayer exam = local.GetModPlayer<ChuninExamPlayer>();
-        if (!local.active || local.dead || local.Distance(where) > reach || exam.Stage != ExamStage.Recommend)
+        if (!local.active || exam.Stage != ExamStage.Recommend)
             return;
         exam.Recommend();
         local.QuickSpawnItem(local.GetSource_Misc("KakashiRecommendation"), ModContent.ItemType<ExamAdmissionScroll>());
         Main.NewText("卡卡西：" + RecommendationLine, new Color(200, 210, 230));
+        Main.NewText("卡卡西：……要回村的话跟我说一声，我带你一程。", new Color(200, 210, 230));
         foreach (NPC npc in Main.ActiveNPCs)
             if (npc.type == type)
             {
@@ -186,7 +187,35 @@ public sealed class Kakashi : ModNPC
     public override void SetChatButtons(ref string button, ref string button2)
     {
         button = "指点";
-        button2 = "练习替身术";
+        button2 = OffersRideHome(Main.LocalPlayer) ? "回村" : "练习替身术";
+    }
+
+    // Right after Wave Country, far from the Leaf, he takes the player home in one Body Flicker (the bridge is a long
+    // walk from the village; user, 2026-09-30). Once, until the written test is passed.
+    private static bool OffersRideHome(Player player) =>
+        KonohaWorld.Site is KonohaSite site && player.GetModPlayer<ChuninExamPlayer>().Stage == ExamStage.Written &&
+        System.Math.Abs(player.Center.X / 16f - site.CenterX) > KonohaDesign.HalfWidth + 60;
+
+    private void RideHome()
+    {
+        if (KonohaWorld.Site is not KonohaSite site)
+            return;
+        Player player = Main.LocalPlayer;
+        player.SetTalkNPC(-1);
+        Main.npcChatText = "";
+        Vector2 gate = new(site.CenterX * 16f + 8f, site.GroundY * 16f);
+        for (int i = 0; i < 30; i++)
+            Dust.NewDust(player.position, player.width, player.height, DustID.Smoke, 0f, -1f, 100, default, 1.6f);
+        player.Teleport(gate - new Vector2(player.width / 2f, player.height), TeleportationStyleID.RecallPotion);
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            NetMessage.SendData(MessageID.TeleportEntity, -1, -1, null, 0, player.whoAmI, gate.X - player.width / 2f,
+                gate.Y - player.height, TeleportationStyleID.RecallPotion);
+        else
+        {
+            NPC.Bottom = gate + new Vector2(-player.direction * 48f, 0f);
+            NPC.velocity = Vector2.Zero;
+        }
+        Main.NewText("卡卡西：……瞬身之术。到了——欢迎回来。", new Color(200, 210, 230));
     }
 
     public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -199,7 +228,10 @@ public sealed class Kakashi : ModNPC
             return;
         }
 
-        StartPractice();
+        if (OffersRideHome(Main.LocalPlayer))
+            RideHome();
+        else
+            StartPractice();
     }
 
     private static string[] Tips()
