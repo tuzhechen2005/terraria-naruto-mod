@@ -51,27 +51,27 @@ Check(WaveEpilogueRules.SnowRate(WaveEpilogueRules.SnowFadeInTicks / 2, 1000) < 
 Check(WaveEpilogueRules.SnowRate(2000, WaveEpilogueRules.SnowFadeOutTicks / 2) < WaveEpilogueRules.SnowPerTick &&
       WaveEpilogueRules.SnowRate(2000, 0) == 0f, "Snow thins out before the scene ends");
 
-// The epilogue walk (user, 2026-09-30): every line said lying down, then rise, a slow fixed walk, collapse, and only
-// then the snow and the closing narration.
+// The epilogue walk (user, 2026-09-30): fall, rise, speak while staggering over at a slow fixed pace, stand if early,
+// collapse after the last words, and only then the snow and the closing narration.
 {
-    int walk = WaveEpilogueRules.WalkTicks(300f);
-    int rise = WaveEpilogueRules.RiseFrom(true);
-    Check(rise > WaveEpilogueRules.ZabuzaLines[^1].Tick && WaveEpilogueRules.RiseFrom(false) > WaveEpilogueRules.HakuLines[^1].Tick,
-        "The walker says every line before getting up");
-    Check(WaveEpilogueRules.Phase(true, walk, rise - 1) == WaveEpilogueRules.WalkerPhase.Lying &&
-          WaveEpilogueRules.Phase(true, walk, rise) == WaveEpilogueRules.WalkerPhase.Rising &&
-          WaveEpilogueRules.Phase(true, walk, rise + WaveEpilogueRules.RiseTicks) == WaveEpilogueRules.WalkerPhase.Walking &&
-          WaveEpilogueRules.Phase(true, walk, WaveEpilogueRules.CollapseFrom(true, walk)) == WaveEpilogueRules.WalkerPhase.Collapsing &&
-          WaveEpilogueRules.Phase(true, walk, WaveEpilogueRules.CollapseFrom(true, walk) + WaveEpilogueRules.CollapseTicks) == WaveEpilogueRules.WalkerPhase.Down,
-        "Lying, rising, walking, collapsing, down, in that order");
-    Check(Math.Abs(walk * WaveEpilogueRules.WalkSpeed - 300f) < 1f && WaveEpilogueRules.WalkSpeed <= 0.8f,
-        "The walk keeps one slow pace and lasts as long as the distance takes");
+    int near = WaveEpilogueRules.WalkTicks(120f), far = WaveEpilogueRules.WalkTicks(900f);
+    Check(WaveEpilogueRules.ZabuzaLines[0].Tick >= WaveEpilogueRules.WalkFrom && WaveEpilogueRules.HakuLines[0].Tick >= WaveEpilogueRules.WalkFrom,
+        "The lines start once the walker is on their feet, so they are spoken walking");
+    Check(WaveEpilogueRules.Phase(true, near, 0) == WaveEpilogueRules.WalkerPhase.Lying &&
+          WaveEpilogueRules.Phase(true, near, WaveEpilogueRules.RiseFrom) == WaveEpilogueRules.WalkerPhase.Rising &&
+          WaveEpilogueRules.Phase(true, near, WaveEpilogueRules.WalkFrom) == WaveEpilogueRules.WalkerPhase.Walking &&
+          WaveEpilogueRules.Phase(true, near, WaveEpilogueRules.ArriveAt(near)) == WaveEpilogueRules.WalkerPhase.Standing,
+        "Near: lying, rising, walking, then standing beside the other until the words are said");
+    Check(WaveEpilogueRules.CollapseFrom(true, near) == WaveEpilogueRules.ZabuzaLines[^1].Tick + WaveEpilogueRules.CollapseAfterLastLine,
+        "Near: the collapse comes after the last words");
+    Check(WaveEpilogueRules.CollapseFrom(true, far) == WaveEpilogueRules.ArriveAt(far) &&
+          WaveEpilogueRules.Phase(true, far, WaveEpilogueRules.ArriveAt(far) - 1) == WaveEpilogueRules.WalkerPhase.Walking,
+        "Far: still walking after the words, collapsing on arrival");
+    Check(Math.Abs(near * WaveEpilogueRules.WalkSpeed - 120f) < 1f && WaveEpilogueRules.WalkSpeed <= 0.8f,
+        "One slow pace, as long as the distance takes");
     Check(WaveEpilogueRules.WalkTicks(100000f) == WaveEpilogueRules.MaxWalkTicks && WaveEpilogueRules.WalkTicks(-5f) == 0,
         "Too far to reach: the walker falls on the way");
-    WaveEpilogueRules.Beat[] beats = WaveEpilogueRules.Beats(true, walk);
-    Check(beats[^2].Key == "EpilogueSnow" && beats[^2].Tick > WaveEpilogueRules.CollapseFrom(true, walk) + WaveEpilogueRules.CollapseTicks &&
-          beats[^1].Tick > beats[^2].Tick && WaveEpilogueRules.Length(true, walk) > beats[^1].Tick,
-        "The snow and the narration follow the collapse");
-    Check(WaveEpilogueRules.Beats(true, 600)[^1].Tick - WaveEpilogueRules.Beats(true, 0)[^1].Tick == 600,
-        "A longer walk pushes the closing beats back");
+    WaveEpilogueRules.Beat[] beats = WaveEpilogueRules.Beats(true, far);
+    Check(beats[^2].Key == "EpilogueSnow" && beats[^2].Tick > WaveEpilogueRules.CollapseFrom(true, far) + WaveEpilogueRules.CollapseTicks &&
+          WaveEpilogueRules.Length(true, far) > beats[^1].Tick, "The snow and the narration follow the collapse");
 }

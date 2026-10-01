@@ -78,7 +78,7 @@ public sealed class WaveEpilogueSystem : ModSystem
             return;
 
         // The walk is measured as the walker gets up, from where the two bodies lie.
-        if (walkTicks < 0 && tick >= WaveEpilogueRules.RiseFrom(hakuFirst))
+        if (walkTicks < 0 && tick >= WaveEpilogueRules.RiseFrom)
         {
             Projectile zabuza = WaveCorpse.Find(WaveCorpse.Zabuza), haku = WaveCorpse.Find(WaveCorpse.Haku);
             walkTicks = zabuza != null && haku != null

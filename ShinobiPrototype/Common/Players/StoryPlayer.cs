@@ -110,7 +110,7 @@ public sealed class StoryPlayer : ModPlayer
 
     private void Welcome()
     {
-        const int spacing = 25;
+        const int spacing = 50;
         if (welcomeTicks < 90 && welcomeTicks % 3 == 0)
             for (int i = 0; i < 3; i++)
                 Dust.NewDustPerfect(Player.Center + new Vector2(Main.rand.NextFloat(-120f, 120f), -90f + Main.rand.NextFloat(-30f, 10f)),
@@ -126,7 +126,10 @@ public sealed class StoryPlayer : ModPlayer
                         Terraria.GameContent.UI.EmoteID.EmotionLove, Terraria.GameContent.UI.EmoteID.EmoteLaugh,
                         Terraria.GameContent.UI.EmoteID.EmoteHappiness, Terraria.GameContent.UI.EmoteID.PartyBalloons,
                     }), new Terraria.GameContent.UI.WorldUIAnchor(npc), 180);
-                CombatText.NewText(npc.getRect(), new Color(255, 230, 160), Main.rand.Next(cheers), true);
+                int text = CombatText.NewText(npc.getRect(), new Color(255, 230, 160), Main.rand.Next(cheers), true);
+                // Long enough to read (user, 2026-09-30: the cheers vanished too fast).
+                if (text >= 0 && text < Main.maxCombatText)
+                    Main.combatText[text].lifeTime = 300;
             }
         }
         if (++welcomeTicks > spacing * (cheering.Count + 1) + 90)

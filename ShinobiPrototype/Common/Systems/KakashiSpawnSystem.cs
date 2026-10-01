@@ -29,6 +29,8 @@ public sealed class KakashiSpawnSystem : ModSystem
 
     public override void LoadWorldData(TagCompound tag) => arrived = tag.GetBool("kakashiArrived");
 
+    public override void PostUpdateEverything() => Kakashi.UpdatePendingTalk();
+
     public override void PostUpdateWorld()
     {
         if (Main.netMode == NetmodeID.MultiplayerClient)

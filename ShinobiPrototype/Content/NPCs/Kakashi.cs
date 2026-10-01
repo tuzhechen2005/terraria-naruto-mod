@@ -155,15 +155,29 @@ public sealed class Kakashi : ModNPC
                     (closest == null || player.Distance(where) < closest.Distance(where)))
                     closest = player;
             if (closest != null)
+            {
+                Vector2 beside = closest.Bottom + new Vector2(-closest.direction * 48f, 0f);
+                NPC kakashi = null;
                 foreach (NPC npc in Main.ActiveNPCs)
                     if (npc.type == type)
                     {
-                        npc.Bottom = closest.Bottom + new Vector2(-closest.direction * 48f, 0f);
-                        npc.velocity = Vector2.Zero;
-                        npc.direction = npc.spriteDirection = closest.direction;
-                        npc.netUpdate = true;
+                        kakashi = npc;
                         break;
                     }
+                // Not in the world (fell in a fight, say): he comes anyway.
+                if (kakashi == null)
+                {
+                    int index = NPC.NewNPC(new Terraria.DataStructures.EntitySource_WorldEvent(), (int)beside.X, (int)beside.Y, type);
+                    kakashi = index < Main.maxNPCs ? Main.npc[index] : null;
+                }
+                if (kakashi != null)
+                {
+                    kakashi.Bottom = beside;
+                    kakashi.velocity = Vector2.Zero;
+                    kakashi.direction = kakashi.spriteDirection = closest.direction;
+                    kakashi.netUpdate = true;
+                }
+            }
         }
         if (Main.dedServ)
             return;
@@ -174,15 +188,32 @@ public sealed class Kakashi : ModNPC
         exam.Recommend();
         local.QuickSpawnItem(local.GetSource_Misc("KakashiRecommendation"), ModContent.ItemType<ExamAdmissionScroll>());
         Main.NewText("卡卡西：" + RecommendationLine, new Color(200, 210, 230));
+        // He opens the conversation himself once he stands beside the player: the line, with the ride home on a button
+        // (user, 2026-09-30). Opening it the same tick he was moved broke the chat drawing.
+        pendingTalkTicks = 300;
+    }
+
+    private static int pendingTalkTicks;
+
+    // Client side, each tick (KakashiSpawnSystem): open the pending talk when he is close enough to be talked to.
+    internal static void UpdatePendingTalk()
+    {
+        if (pendingTalkTicks <= 0 || Main.dedServ)
+            return;
+        pendingTalkTicks--;
+        Player local = Main.LocalPlayer;
+        int type = ModContent.NPCType<Kakashi>();
         foreach (NPC npc in Main.ActiveNPCs)
-            if (npc.type == type)
+            if (npc.type == type && npc.Distance(local.Center) < 12 * 16)
             {
                 for (int i = 0; i < 20; i++)
                     Dust.NewDust(npc.position, npc.width, npc.height, DustID.Smoke, 0f, -1f, 100, default, 1.4f);
-                // He opens the conversation himself: the line, with the ride home on a button (user, 2026-09-30).
+                Main.playerInventory = false;
+                Main.npcChatCornerItem = 0;
                 local.SetTalkNPC(npc.whoAmI);
                 Main.npcChatText = RecommendationLine;
-                break;
+                pendingTalkTicks = 0;
+                return;
             }
     }
 

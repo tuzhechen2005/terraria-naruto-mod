@@ -85,7 +85,7 @@ public sealed class WaveCorpse : ModProjectile
             return false;
         int t = WaveEpilogueSystem.Tick;
         WaveEpilogueRules.WalkerPhase phase = WaveEpilogueSystem.Phase;
-        int rise = WaveEpilogueRules.RiseFrom(WaveEpilogueSystem.HakuFellFirst);
+        int rise = WaveEpilogueRules.RiseFrom;
         int collapse = WaveEpilogueRules.CollapseFrom(WaveEpilogueSystem.HakuFellFirst, WaveEpilogueSystem.WalkTicks);
         string prefix = Who == Zabuza ? "Zabuza" : "Haku";
         BossSprites.Canvas canvas = Who == Zabuza ? BossSprites.Zabuza : BossSprites.Haku;
@@ -94,6 +94,8 @@ public sealed class WaveCorpse : ModProjectile
             WaveEpilogueRules.WalkerPhase.Rising => ("Rise", (t - rise) * 3 / WaveEpilogueRules.RiseTicks, 3,
                 Who == Zabuza ? "Kneel" : "Idle", 1),
             WaveEpilogueRules.WalkerPhase.Walking => ("Stagger", t / 16, 4, Who == Zabuza ? "Unarmed" : "Idle", Who == Zabuza ? 6 : 4),
+            // At the other's side, waiting for the last words: on their feet, swaying.
+            WaveEpilogueRules.WalkerPhase.Standing => ("Rise", 2, 3, Who == Zabuza ? "Kneel" : "Idle", 1),
             WaveEpilogueRules.WalkerPhase.Collapsing => ("Collapse", (t - collapse) * 3 / WaveEpilogueRules.CollapseTicks, 3,
                 Who == Zabuza ? "Kneel" : "Idle", 1),
             _ => (null, 0, 0, null, 0),
