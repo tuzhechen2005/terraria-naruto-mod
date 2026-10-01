@@ -20,7 +20,7 @@ public sealed class ChuninExamPlayer : ModPlayer
     public bool DawnSinceGivingUp { get; private set; }
     public ExamScroll Issued { get; private set; }
     public bool RainAmbushDone { get; private set; }
-    public int CandidatesBeaten { get; private set; }
+    public int SquadsBeaten { get; private set; }
     public bool TowerReached { get; private set; }
     public bool PrelimsPassed { get; private set; }
     // The Eight Gates core and Lee's leg weights come with each character's first win over Gaara.
@@ -42,7 +42,7 @@ public sealed class ChuninExamPlayer : ModPlayer
     {
         Recommended = WrittenPassed = GaveUpWritten = DawnSinceGivingUp = RainAmbushDone = TowerReached = PrelimsPassed = false;
         Issued = ExamScroll.None;
-        CandidatesBeaten = 0;
+        SquadsBeaten = 0;
     }
 
     public void Recommend() => Recommended = true;
@@ -66,20 +66,27 @@ public sealed class ChuninExamPlayer : ModPlayer
         DawnSinceGivingUp = false;
     }
 
-    // The character took part in beating a candidate. Every third is a squad; a squad may carry the other scroll.
-    public void CreditCandidate()
+    public bool HasBothScrolls => ChuninExamRules.HasBoth(Player.CountItem(ModContent.ItemType<HeavenScroll>()),
+        Player.CountItem(ModContent.ItemType<EarthScroll>()));
+
+    // The character took part in beating a whole candidate squad (its last member fell). Each says what it carried.
+    public void CreditSquad(string squad)
     {
         if (Stage != ExamStage.ForestHunt)
             return;
-        CandidatesBeaten++;
-        if (CandidatesBeaten % ChuninExamRules.SquadSize != 0)
-            return;
-        int squads = CandidatesBeaten / ChuninExamRules.SquadSize;
-        if (ChuninExamRules.SquadDropsScroll(squads, Main.rand.NextFloat()))
-            GiveOtherScroll("考生小队掉落了卷轴");
+        SquadsBeaten++;
+        string mine = ScrollName(Issued);
+        string other = ScrollName(ChuninExamRules.Other(Issued));
+        if (HasBothScrolls)
+            Main.NewText($"击败了{squad}。两卷已经齐了——去丛林中部的中央塔。{ExamSiteWorld.TowerHint(Player)}", 180, 200, 170);
+        else if (ChuninExamRules.SquadDropsScroll(SquadsBeaten, Main.rand.NextFloat()))
+            GiveOtherScroll($"击败了{squad}（第 {SquadsBeaten} 队），他们带着的正是你缺的那一卷");
         else
-            Main.NewText($"这一队考生带的卷轴和你的一样。（已击败 {squads} 队）", 180, 200, 170);
+            Main.NewText($"击败了{squad}（第 {SquadsBeaten} 队）。搜了搜，他们带的也是{mine}——和你一样。" +
+                         $"继续在丛林地表找带着{other}的小队。", 180, 200, 170);
     }
+
+    public static string ScrollName(ExamScroll scroll) => scroll == ExamScroll.Heaven ? "天之卷" : "地之卷";
 
     // The last of the Rain genin fell with the character in the fight.
     public void CreditRainTrio()
@@ -94,7 +101,7 @@ public sealed class ChuninExamPlayer : ModPlayer
     {
         ExamScroll other = ChuninExamRules.Other(Issued);
         int type = ScrollType(other);
-        if (type <= 0)
+        if (type <= 0 || HasBothScrolls)
             return;
         Player.QuickSpawnItem(Player.GetSource_Misc("ExamScroll"), type);
         Main.NewText($"{why}：得到{(other == ExamScroll.Heaven ? "天之卷" : "地之卷")}！带齐两卷去丛林中部的中央塔。" +
@@ -171,8 +178,8 @@ public sealed class ChuninExamPlayer : ModPlayer
         tag["examFlags"] = (byte)Flags;
         if (Issued != ExamScroll.None)
             tag["examScroll"] = (byte)Issued;
-        if (CandidatesBeaten > 0)
-            tag["examCandidates"] = CandidatesBeaten;
+        if (SquadsBeaten > 0)
+            tag["examSquads"] = SquadsBeaten;
         if (GaaraFirstWin)
             tag["gaaraFirstWin"] = true;
     }
@@ -181,7 +188,7 @@ public sealed class ChuninExamPlayer : ModPlayer
     {
         Flags = tag.GetByte("examFlags");
         Issued = (ExamScroll)tag.GetByte("examScroll");
-        CandidatesBeaten = tag.GetInt("examCandidates");
+        SquadsBeaten = tag.GetInt("examSquads");
         GaaraFirstWin = tag.GetBool("gaaraFirstWin");
     }
 
@@ -216,13 +223,13 @@ public sealed class ChuninExamPlayer : ModPlayer
         ChuninExamPlayer copy = (ChuninExamPlayer)targetCopy;
         copy.Flags = Flags;
         copy.Issued = Issued;
-        copy.CandidatesBeaten = CandidatesBeaten;
+        copy.SquadsBeaten = SquadsBeaten;
     }
 
     public override void SendClientChanges(ModPlayer clientPlayer)
     {
         ChuninExamPlayer old = (ChuninExamPlayer)clientPlayer;
-        if ((byte)old.Flags != (byte)Flags || old.Issued != Issued || old.CandidatesBeaten != CandidatesBeaten)
+        if ((byte)old.Flags != (byte)Flags || old.Issued != Issued || old.SquadsBeaten != SquadsBeaten)
             SyncPlayer(-1, Main.myPlayer, false);
     }
 
@@ -230,13 +237,13 @@ public sealed class ChuninExamPlayer : ModPlayer
     {
         writer.Write((byte)Flags);
         writer.Write((byte)Issued);
-        writer.Write((ushort)System.Math.Min(CandidatesBeaten, ushort.MaxValue));
+        writer.Write((ushort)System.Math.Min(SquadsBeaten, ushort.MaxValue));
     }
 
     internal void Read(BinaryReader reader)
     {
         Flags = reader.ReadByte();
         Issued = (ExamScroll)reader.ReadByte();
-        CandidatesBeaten = reader.ReadUInt16();
+        SquadsBeaten = reader.ReadUInt16();
     }
 }

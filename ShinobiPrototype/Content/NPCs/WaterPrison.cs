@@ -42,8 +42,11 @@ public sealed class WaterPrison : ModNPC
 
     public bool Holding => Phase == Fight || (Phase == Intro && Tick >= StoryRules.PrisonFormed);
 
-    private Vector2 ZabuzaBottom => new(NPC.Center.X + Side * (Radius + 46f), WaterY);
-    private Vector2 HakuBottom => ZabuzaBottom + new Vector2(Side * 40f, 0f);
+    // Standing on the lake's real surface (WaterY is the top water tile's edge).
+    private Vector2 ZabuzaBottom => OnWater(NPC.Center.X + Side * (Radius + 46f));
+    private Vector2 HakuBottom => OnWater(NPC.Center.X + Side * (Radius + 86f));
+
+    private Vector2 OnWater(float x) => new(x, LiquidSurface.StandY(x, WaterY));
 
     public override void SetStaticDefaults()
     {

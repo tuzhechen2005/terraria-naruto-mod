@@ -224,7 +224,7 @@ internal sealed class HandbookState : UIState
         string forest = stage < ExamStage.ForestGate ? "未开始"
             : stage > ExamStage.ForestHunt ? "合格"
             : exam.Issued == ExamScroll.None ? "进行中（去入口领卷）"
-            : $"进行中（持有{(exam.Issued == ExamScroll.Heaven ? "天之卷" : "地之卷")}，已击败考生 {exam.CandidatesBeaten / ChuninExamRules.SquadSize} 队）";
+            : $"进行中（持有{(exam.Issued == ExamScroll.Heaven ? "天之卷" : "地之卷")}，已击败考生 {exam.SquadsBeaten} 队）";
         string vow = VowRules.SchoolName(player.GetModPlayer<StyleCorePlayer>().Vow);
         return "中忍考试\n\n" + player.GetModPlayer<StoryPlayer>().CurrentObjective() + "\n\n" +
                "进度\n" +

@@ -185,8 +185,8 @@ public sealed class StoryPlayer : ModPlayer
                 if (ChuninExamRules.HasBoth(Player.CountItem(ModContent.ItemType<HeavenScroll>()),
                         Player.CountItem(ModContent.ItemType<EarthScroll>())))
                     return $"第二试：天、地两卷已经齐了，进入丛林中部的中央塔{ExamSiteWorld.TowerHint(Player)}。";
-                return $"第二试：从其他考生手里夺取{other}——丛林地表有三人一组的考生小队" +
-                       $"（已击败 {exam.CandidatesBeaten / ChuninExamRules.SquadSize} 队）。带齐两卷去中央塔{ExamSiteWorld.TowerHint(Player)}。";
+                return $"第二试：从其他考生手里夺取{other}——在丛林地表走动，三人一组的考生小队会找上门来" +
+                       $"（已击败 {exam.SquadsBeaten} 队）。带齐两卷去中央塔{ExamSiteWorld.TowerHint(Player)}。";
             case ExamStage.Prelims:
                 return "第二试合格。预选赛：走进中央塔大厅，与音忍多斯一对一。被他的响鸣穿打中会耳鸣——左右会暂时颠倒。";
             case ExamStage.Training:

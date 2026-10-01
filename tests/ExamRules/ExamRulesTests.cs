@@ -58,18 +58,29 @@ Check(Issue(0) != Issue(1), "Either scroll can be handed out");
 Check(HasBoth(1, 1) && !HasBoth(1, 0) && !HasBoth(0, 2), "Both scrolls are needed");
 Check(!SquadDropsScroll(1, 0.9f) && SquadDropsScroll(1, 0.1f) && SquadDropsScroll(SquadPity, 0.99f),
     "A squad carries the scroll by chance, the fifth always");
-Check(RainAmbushDue(ExamStage.ForestHunt, false, 1, true, 100f, false) &&
-      !RainAmbushDue(ExamStage.ForestHunt, true, 1, true, 100f, false) &&
-      !RainAmbushDue(ExamStage.ForestGate, false, 1, true, 100f, false) &&
-      !RainAmbushDue(ExamStage.ForestHunt, false, 1, false, 100f, false) &&
-      !RainAmbushDue(ExamStage.ForestHunt, false, 1, true, 100f, true),
+Check(RainAmbushDue(ExamStage.ForestHunt, false, 1, true, 100f, false, false) &&
+      !RainAmbushDue(ExamStage.ForestHunt, true, 1, true, 100f, false, false) &&
+      !RainAmbushDue(ExamStage.ForestGate, false, 1, true, 100f, false, false) &&
+      !RainAmbushDue(ExamStage.ForestHunt, false, 1, false, 100f, false, false) &&
+      !RainAmbushDue(ExamStage.ForestHunt, false, 1, true, 100f, true, false),
     "The Rain genin ambush once, on the jungle surface, while hunting");
-Check(!RainAmbushDue(ExamStage.ForestHunt, false, 0, true, 100f, false),
+Check(!RainAmbushDue(ExamStage.ForestHunt, false, 0, true, 100f, false, false),
     "The Rain genin wait until a candidate squad has been beaten");
-Check(!RainAmbushDue(ExamStage.ForestHunt, false, 3, true, RainAmbushTowerTiles + 1, false),
+Check(!RainAmbushDue(ExamStage.ForestHunt, false, 3, true, RainAmbushTowerTiles + 1, false, false),
     "The Rain genin lie in wait on the road to the tower, not anywhere in the forest");
-Check(CandidatesSpawn(ExamStage.ForestHunt, true) && !CandidatesSpawn(ExamStage.Prelims, true) && !CandidatesSpawn(ExamStage.ForestHunt, false),
-    "Candidates only come for someone hunting on the jungle surface");
+Check(!RainAmbushDue(ExamStage.ForestHunt, false, 1, true, 100f, false, true),
+    "The Rain genin leave alone someone who already has both scrolls");
+Check(SquadDue(ExamStage.ForestHunt, true, false, false, SquadFirstTicks, 0) &&
+      !SquadDue(ExamStage.Prelims, true, false, false, SquadFirstTicks, 0) &&
+      !SquadDue(ExamStage.ForestHunt, false, false, false, SquadFirstTicks, 0),
+    "Squads only come for someone hunting on the jungle surface");
+Check(!SquadDue(ExamStage.ForestHunt, true, true, false, SquadEveryTicks, 1) &&
+      !SquadDue(ExamStage.ForestHunt, true, false, true, SquadEveryTicks, 1),
+    "No squad once both scrolls are in hand, nor while another squad is about");
+Check(!SquadDue(ExamStage.ForestHunt, true, false, false, SquadFirstTicks - 1, 0) &&
+      !SquadDue(ExamStage.ForestHunt, true, false, false, SquadFirstTicks, 1) &&
+      SquadDue(ExamStage.ForestHunt, true, false, false, SquadEveryTicks, 1),
+    "The first squad comes after a short while, the next ones after a longer one");
 
 Check(VowRules.Evaluate(StyleSchool.None, StyleSchool.None, false, 0) == VowOutcome.NoCore, "No core, no vow");
 Check(VowRules.Evaluate(StyleSchool.None, StyleSchool.Sharingan, false, 0) == VowOutcome.Vow, "The first vow is free");

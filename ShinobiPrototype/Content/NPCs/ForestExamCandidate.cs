@@ -24,9 +24,6 @@ public abstract class ForestExamCandidate : ModNPC
     protected virtual float Speed => 2.6f;
     protected virtual int ThrowInterval => 150;
 
-    // The local player hit this one (client side only).
-    private bool hitByLocalPlayer;
-
     public override void SetStaticDefaults() => Main.npcFrameCount[Type] = JumpFrame + 1;
 
     public override void SetDefaults()
@@ -106,16 +103,29 @@ public abstract class ForestExamCandidate : ModNPC
             NPC.damage / 3, 0f, Main.myPlayer);
     }
 
+    // Squads (user, 2026-10-01): DeathForestSystem sends three at a time, sharing a squad number (ai[3]) and a name
+    // (ai[0], SquadNames). A squad counts as beaten when its last member falls, for whoever hit any of the three.
+    public static readonly string[] SquadNames = { "草隐的考生小队", "泷隐的考生小队", "木叶的考生小队" };
+
+    // Squads the local player has hit (client side).
+    private static readonly System.Collections.Generic.HashSet<int> squadsHitHere = new();
+
+    public static void ForgetSquads() => squadsHitHere.Clear();
+
+    protected int Squad => (int)NPC.ai[3];
+
+    protected string SquadName => SquadNames[System.Math.Clamp((int)NPC.ai[0], 0, SquadNames.Length - 1)];
+
     public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
     {
         if (player.whoAmI == Main.myPlayer)
-            hitByLocalPlayer = true;
+            squadsHitHere.Add(Squad);
     }
 
     public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone)
     {
         if (projectile.owner == Main.myPlayer && projectile.friendly)
-            hitByLocalPlayer = true;
+            squadsHitHere.Add(Squad);
     }
 
     public override void HitEffect(NPC.HitInfo hit)
@@ -124,36 +134,20 @@ public abstract class ForestExamCandidate : ModNPC
             return;
         for (int i = 0; i < 12; i++)
             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, hit.HitDirection * 2f, -1.5f);
-        if (hitByLocalPlayer)
+        foreach (NPC other in Main.ActiveNPCs)
+            if (other.type == Type && other.whoAmI != NPC.whoAmI && other.life > 0 && (int)other.ai[3] == Squad)
+                return;
+        if (squadsHitHere.Remove(Squad))
             Beaten(Main.LocalPlayer.GetModPlayer<ChuninExamPlayer>());
     }
 
     protected abstract void Beaten(ChuninExamPlayer exam);
 }
 
-// Candidates on the jungle surface, three to a squad, for anyone hunting the other scroll.
+// Candidates on the jungle surface, three to a squad, for anyone hunting the other scroll (sent by DeathForestSystem).
 public sealed class ForestCanopyCandidate : ForestExamCandidate
 {
-
-    public override float SpawnChance(NPCSpawnInfo spawnInfo)
-    {
-        Player player = spawnInfo.Player;
-        if (!ChuninExamRules.CandidatesSpawn(player.GetModPlayer<ChuninExamPlayer>().Stage,
-                player.ZoneJungle && player.ZoneOverworldHeight))
-            return 0f;
-        return NPC.CountNPCS(Type) >= ChuninExamRules.SquadSize * 2 ? 0f : 0.35f;
-    }
-
-    // A naturally spawned candidate brings the other two of their squad.
-    public override void OnSpawn(IEntitySource source)
-    {
-        if (source is not EntitySource_SpawnNPC || Main.netMode == NetmodeID.MultiplayerClient)
-            return;
-        for (int i = 1; i < ChuninExamRules.SquadSize; i++)
-            NPC.NewNPC(NPC.GetSource_FromThis(), (int)NPC.Center.X + (i == 1 ? -40 : 40), (int)NPC.Bottom.Y, Type);
-    }
-
-    protected override void Beaten(ChuninExamPlayer exam) => exam.CreditCandidate();
+    protected override void Beaten(ChuninExamPlayer exam) => exam.CreditSquad(SquadName);
 }
 
 // The Rain genin who ambush the player once in the forest; the last of the three carries the missing scroll.
@@ -189,11 +183,5 @@ public sealed class RainGenin : ForestExamCandidate
         base.AI();
     }
 
-    protected override void Beaten(ChuninExamPlayer exam)
-    {
-        foreach (NPC other in Main.ActiveNPCs)
-            if (other.type == Type && other.whoAmI != NPC.whoAmI && other.life > 0)
-                return;
-        exam.CreditRainTrio();
-    }
+    protected override void Beaten(ChuninExamPlayer exam) => exam.CreditRainTrio();
 }

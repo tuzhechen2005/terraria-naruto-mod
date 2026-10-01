@@ -94,8 +94,8 @@ public static class ChuninExamRules
 
     public static bool HasBoth(int heaven, int earth) => heaven > 0 && earth > 0;
 
-    // Candidate squads: three to a squad, each squad beaten carries the other scroll with this chance, and the fifth
-    // always does.
+    // Candidate squads: three to a squad, coming together, each squad beaten carries the other scroll with this chance,
+    // and the fifth always does (user, 2026-10-01: they came one by one and "a squad" was just every third kill).
     public const int SquadSize = 3;
     public const float SquadScrollChance = 0.25f;
     public const int SquadPity = 5;
@@ -109,16 +109,25 @@ public static class ChuninExamRules
     public const int RainAmbushTowerTiles = 150;
 
     public static bool RainAmbushDue(ExamStage stage, bool ambushDone, int squadsBeaten, bool onJungleSurface,
-        float tilesFromTower, bool rainAlive) =>
+        float tilesFromTower, bool rainAlive, bool hasBoth) =>
         stage == ExamStage.ForestHunt && !ambushDone && squadsBeaten >= 1 && onJungleSurface &&
-        tilesFromTower <= RainAmbushTowerTiles && !rainAlive;
+        tilesFromTower <= RainAmbushTowerTiles && !rainAlive && !hasBoth;
 
     // Five seconds between the warning and the ambush (user, 2026-09-30).
     public const int RainAmbushWarnTicks = 300;
     public const int RainAmbushRetryTicks = 60 * 60;
 
-    public static bool CandidatesSpawn(ExamStage stage, bool onJungleSurface) =>
-        stage == ExamStage.ForestHunt && onJungleSurface;
+    // A squad comes for someone hunting on the jungle surface who still lacks a scroll, one squad at a time: the first
+    // after a short while in the forest, the next a while after the last one was beaten or lost.
+    public const int SquadFirstTicks = 15 * 60;
+    public const int SquadEveryTicks = 35 * 60;
+    public const int SquadSpawnTiles = 48;  // just off screen
+    public const int SquadNearTiles = 120;  // a squad this close is still about
+
+    public static bool SquadDue(ExamStage stage, bool onJungleSurface, bool hasBoth, bool squadNear, int ticksWaited,
+        int squadsBeaten) =>
+        stage == ExamStage.ForestHunt && onJungleSurface && !hasBoth && !squadNear &&
+        ticksWaited >= (squadsBeaten == 0 ? SquadFirstTicks : SquadEveryTicks);
 
     // How close to the Area 44 gate the scroll is handed out, in tiles from its centre.
     public const int GateReachTiles = 14;

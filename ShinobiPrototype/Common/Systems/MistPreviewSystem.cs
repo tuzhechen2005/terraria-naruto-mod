@@ -59,11 +59,12 @@ public sealed class MistPreviewSystem : ModSystem
 
     public static bool Playing => tick >= 0;
 
-    private static Vector2 ZabuzaBottom(BridgeSite site) =>
-        new(site.X(BridgeRules.PreviewZabuzaOffset) * 16f + 8f, site.WaterY * 16f);
+    // Both stand on the sea's real surface (user, 2026-10-01: they floated above it).
+    private static Vector2 ZabuzaBottom(BridgeSite site) => OnWater(site.X(BridgeRules.PreviewZabuzaOffset) * 16f + 8f, site);
 
-    private static Vector2 HakuBottom(BridgeSite site) =>
-        new(site.X(BridgeRules.PreviewHakuOffset) * 16f + 8f, site.WaterY * 16f - 24f);
+    private static Vector2 HakuBottom(BridgeSite site) => OnWater(site.X(BridgeRules.PreviewHakuOffset) * 16f + 8f, site);
+
+    private static Vector2 OnWater(float x, BridgeSite site) => new(x, LiquidSurface.StandY(x, site.WaterY * 16f));
 
     private static float Visibility(int appear) =>
         BridgeRules.FigureVisibility(tick - appear, BridgeRules.PreviewVanish + 10 - appear, 25);

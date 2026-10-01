@@ -76,15 +76,16 @@ public sealed class MistSightingSystem : ModSystem
     internal static void StartSighting(BridgeSite? site, Player player, bool withWhisper)
     {
         MistFigure figure = Main.rand.NextBool() ? MistFigure.Zabuza : MistFigure.Haku;
-        float lift = figure == MistFigure.Haku ? 24f : 0f;
         if (site is BridgeSite bridge && NearBreak(bridge, player))
         {
             int offset = Main.rand.Next(BridgeRules.SightingNearOffset, BridgeRules.SightingFarOffset + 1);
-            Glimpse(figure, new Vector2(bridge.X(offset) * 16f + 8f, bridge.WaterY * 16f - lift), -bridge.Dir,
+            // On the sea's real surface (the old 24-pixel lift for Haku predates her current frames).
+            float x = bridge.X(offset) * 16f + 8f;
+            Glimpse(figure, new Vector2(x, LiquidSurface.StandY(x, bridge.WaterY * 16f)), -bridge.Dir,
                 BridgeRules.SightingLength, withWhisper);
             return;
         }
-        Vector2 ahead = new(player.Center.X + player.direction * 15 * 16f, player.Bottom.Y - lift);
+        Vector2 ahead = new(player.Center.X + player.direction * 15 * 16f, player.Bottom.Y);
         Glimpse(figure, ahead, -player.direction, BridgeRules.SightingLength, withWhisper);
     }
 
