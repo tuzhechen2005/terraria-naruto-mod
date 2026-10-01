@@ -1,6 +1,6 @@
 # 素材请求：orochimaru-style-v3
 
-- 状态：requested
+- 状态：approved（用户 2026-10-01：可以的，出全套动作 → orochimaru-moves-v1、v2）
 - 提出者及提交号：Claude Code（基于 `4db8db4`；用户 2026-10-01 看过 v2 样张，要求修）
 - 资产类型：Boss 样张（2 张），修 `art/deliveries/orochimaru-style-v2/`
 - **v2 的问题（只改这些，构图和配色思路保留）**：

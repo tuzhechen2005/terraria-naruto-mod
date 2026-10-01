@@ -101,7 +101,9 @@ public sealed class OrochimaruDisguise : ModNPC
     {
         if (!OwnArt)
             return true;
-        BossSprites.TryDraw(spriteBatch, "Orochimaru", "Disguise", 0, 1, ExamBoss.PersonCanvas, NPC.Bottom, NPC.direction,
+        bool walking = System.Math.Abs(NPC.velocity.X) > 0.3f && BossSprites.Has("Orochimaru_DisguiseWalk_0");
+        BossSprites.TryDraw(spriteBatch, "Orochimaru", walking ? "DisguiseWalk" : "Disguise",
+            walking ? BossSprites.Loop(10f, 4) : 0, walking ? 4 : 1, ExamBoss.PersonCanvas, NPC.Bottom, NPC.direction,
             BossSprites.Lit(drawColor), screenPos);
         return false;
     }

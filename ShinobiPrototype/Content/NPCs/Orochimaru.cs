@@ -47,6 +47,32 @@ public sealed class Orochimaru : ExamBoss
 
     protected override Color Tint => new(150, 140, 175);
 
+    // Art: orochimaru-style-v3, orochimaru-moves-v1 (moving, openings, leaving) and -v2 (techniques). A technique
+    // without its frames yet stands in with the idle frames; without any, the tinted placeholder is drawn.
+    protected override string SpritePrefix => Has("Idle") ? "Orochimaru" : null;
+
+    private static bool Has(string action) => BossSprites.Has($"Orochimaru_{action}_0");
+
+    private static (string, int, int, bool) Or((string Action, int Frames, int Ticks, bool Loop) pose) =>
+        Has(pose.Action) ? pose : ("Idle", 4, 12, true);
+
+    private int summonPose;
+
+    protected override (string Action, int Frames, int TicksPerFrame, bool Loop) Pose => summonPose > 0
+        ? Or(("Summon", 2, 20, false))
+        : State switch
+        {
+            Reveal => Or(("Reveal", 3, RevealTicks / 3, false)),
+            Emerge => Or(("Emerge", 3, EmergeTicks / 3, false)),
+            HandsWindup => Or(("Hands", 3, 14, false)),
+            DashWindup or Dash => Or(("Dash", 2, 6, true)),
+            WindWindup => Or(("Wind", 2, 20, false)),
+            NeckWindup => Or(("Neck", 1, 10, true)),
+            SealWindup => Or(("Seal", 2, 17, false)),
+            Exit => Or(("Sink", 3, ThresholdRetreatRules.ExitInvulnerableTicks / 3, false)),
+            _ => Has("Walk") ? Moving("Walk", "Idle") : ("Idle", 4, 12, true),
+        };
+
     // Damage, eased for a player not yet strong enough.
     private int Dmg(int damage) => ExamBossRules.OrochimaruDamage(damage, ready ?? true);
     protected override int LifeMax => ExamBossRules.OrochimaruLife;
@@ -57,6 +83,8 @@ public sealed class Orochimaru : ExamBoss
     protected override void Fight(Player target)
     {
         NPC.color = Tint;
+        if (summonPose > 0)
+            summonPose--;
         if (ready == null)
         {
             ready = ChuninExamRules.ReadyForOrochimaru(NPC.downedBoss2, target.statLifeMax);
@@ -82,6 +110,7 @@ public sealed class Orochimaru : ExamBoss
             ExamBossRules.GiantSnakeDue(giantSnake, NPC.life, NPC.lifeMax, fightTicks))
         {
             giantSnake = true;
+            summonPose = 40;
             Projectile.NewProjectile(NPC.GetSource_FromAI(), target.Center, Vector2.Zero, ModContent.ProjectileType<GiantSnake>(),
                 Dmg(ExamBossRules.GiantSnakeDamage), 9f, Main.myPlayer, Main.rand.NextBool() ? 1f : -1f, target.Bottom.Y);
         }
@@ -283,6 +312,7 @@ public sealed class Orochimaru : ExamBoss
 
     private void SummonSnakes()
     {
+        summonPose = 40;
         for (int side = -1; side <= 1; side += 2)
             NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X + side * 5 * 16, (int)NPC.Bottom.Y, ModContent.NPCType<SummonedSnake>());
     }
@@ -322,6 +352,34 @@ public sealed class Orochimaru : ExamBoss
         }
         NPC.active = false;
         NPC.netUpdate = true;
+    }
+
+    public override void PostDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+    {
+        const string root = "ShinobiPrototype/Content/NPCs/Orochimaru_";
+        if (State != NeckWindup || !ModContent.HasAsset(root + "NeckSegment") || !ModContent.HasAsset(root + "NeckHead"))
+            return;
+        var segment = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>(root + "NeckSegment").Value;
+        var head = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>(root + "NeckHead").Value;
+        Color light = BossSprites.Lit(drawColor);
+        // From the collar out towards where the player stood, snaking a little on the way.
+        Vector2 from = NPC.Top + new Vector2(NPC.direction * 6f, 14f);
+        Vector2 to = Vector2.Lerp(from, Mark, Math.Min(1f, Timer / 40f));
+        float length = Vector2.Distance(from, to);
+        Vector2 dir = length > 0f ? (to - from) / length : Vector2.UnitX;
+        Vector2 side = new(-dir.Y, dir.X);
+        int steps = (int)(length / 6f);
+        for (int i = 0; i < steps; i++)
+        {
+            float t = i / (float)Math.Max(1, steps);
+            Vector2 at = from + dir * length * t + side * (float)Math.Sin(t * MathHelper.TwoPi * 1.5f + Main.GameUpdateCount * 0.2f) * 10f * t;
+            spriteBatch.Draw(segment, at - screenPos, null, light, 0f, segment.Size() / 2f, 1f,
+                Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
+        }
+        float angle = (float)Math.Atan2(dir.Y, dir.X);
+        bool left = dir.X < 0f;
+        spriteBatch.Draw(head, to - screenPos, null, light, left ? angle - MathHelper.Pi : angle, head.Size() / 2f, 1f,
+            left ? Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally : Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
     }
 
     // One burst hit cannot carry him past half.
