@@ -9,6 +9,7 @@ frames stacked vertically, and cuts a head icon from the idle frame.
 Usage:
   python3 scripts/build_npc_sheet.py OUT_SHEET OUT_HEAD STRIP:CELLS [STRIP:CELLS ...] [--brighten 1.0]
   e.g. ... Tazuna.png Tazuna_Head.png source/Tazuna_Idle_Walk.png:0,1,2,3,4,5,6 source/Tazuna_Idle_Jump_Sit_Throw.png:1,2,3,4,5
+  Native-size sheets: add --cell 256x256 --frame 64 --base 62.
 """
 import argparse
 import numpy as np
@@ -22,9 +23,13 @@ p.add_argument("strips", nargs="+")
 p.add_argument("--brighten", type=float, default=1.0)
 p.add_argument("--min-speck", type=int, default=6)
 p.add_argument("--cell", default="224x200")
+# Frame height and the feet's row in it: 56/54 for the 23-art-pixel town NPCs; 64/62 for the native-size ones
+# (--cell 256x256, 28 art pixels tall, shown at 1x).
+p.add_argument("--frame", type=int, default=56)
+p.add_argument("--base", type=int, default=54)
 a = p.parse_args()
 cw, ch = (int(v) for v in a.cell.split("x"))
-fw, fh, base = cw // 4, 56, 54
+fw, fh, base = cw // 4, a.frame, a.base
 
 cells = []
 for spec in a.strips:

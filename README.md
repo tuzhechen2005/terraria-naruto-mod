@@ -1,66 +1,119 @@
-# 火影主题 Terraria 模组：M0–M2 开发版
+# Shinobi Prototype · 泰拉瑞亚火影模组
 
-> 当前双首领战以 [M9 规格](specs/M9_波之国双首领战.spec.md) 为准。下文部分 M1 流程仍是旧版；Mac 构建步骤见 [开发环境记录](DEVELOPMENT_MAC.md)。
+一个以《火影忍者》第一部为蓝本的 [tModLoader](https://github.com/tModLoader/tModLoader) 模组：保留原版泰拉瑞亚的全部 Boss 与流程，把忍者的主线剧情、Boss 战和村子嵌进去，让玩家边打原版边经历波之国任务和中忍考试。
 
-这是 tModLoader 的火影主题模组原型。M0 战斗目标见 [M0 战斗原型设计稿](M0_战斗原型设计稿.md)，M1/M2 的规格与验收清单分别在 `specs/`、`tests/`。关键物品与人物已使用项目内的原创像素风素材；动作动画与少量招式特效仍在开发中。
+> A Naruto-inspired content mod for Terraria (tModLoader). Fan project in active development — Chinese-first; an English summary is at the end.
 
-## M1 开发版：自由探索与必打主线
+**开发状态**：开发版 0.4.x。波之国篇已在游戏内跑通；中忍考试篇代码完成、正在逐段实机打磨，部分美术仍是占位图。
 
-1. 启用模组后创建**新角色和新世界**。新角色会获得苦无、任务卷轴和身份卷轴；任务卷轴可随时查看目标。
-2. 身份卷轴左键切换战斗倾向、右键切换查克拉性质。用苦无命中敌怪三次并选好两项后，获得「查克拉冲击」；这是可选的成长路线，不阻挡探索或 Boss 挑战。
-3. 工作台用 1 木材制作忍术研习手册。左键切换目标属性，右键学习：本系消耗 1 坠星、跨系消耗 3 坠星，另需 5 木材。学会后取得五遁基础忍术，右键切换已学属性、左键施放；跨系招式不会被永久削弱。
-4. 沿地表离开出生点，击败雾隐侦察兵，收集三枚雾隐标记。
-5. 在工作台制作白的挑战卷轴（三枚标记、十个木材、三个铁锭或铅锭），或再不斩的挑战卷轴（三枚标记、十个木材）。两者都可重复使用，挑战顺序不限。
-6. 白与再不斩都是波之国主线 Boss，必须**两人都击败**才开放中忍考试。再不斩掉落功绩牌。任务卷轴会分别记录两人的击败状态。
+---
 
-任务阶段、忍者选择、忍术学习和两个 Boss 的击败记录会保存。丢失挑战卷轴后可重新制作；雾隐侦察兵始终有机会出现。M1 仍需全流程游戏内试玩、地图场景和剧情演出；编译通过不代表验收通过。
+## 内容一览
 
-## M2 中忍考试流程（开发版）
+### 波之国篇（克苏鲁之眼前后）
 
-1. 在波之国击败白与再不斩后，任务卷轴提示用 5 木材与 1 铁锭或铅锭制作中忍考试报名书；使用报名书开启试炼。
-2. 前往天然丛林：地表林地考生掉落天之卷轴，地下潜伏考生掉落地之卷轴，均为必掉；任务卷轴随时提示位置。
-3. 用两卷轴、10 木材和 3 铁锭或铅锭制作预选赛挑战书，在开阔地挑战原创砂隐考生。
-4. 获胜后得到中忍晋升反馈与中忍护额。丢失试炼材料时仍可回丛林重新取得。
+- **任务链**：卡卡西带队 → 去海边桥头找造桥工达兹纳 → 海雾里遭鬼之兄弟伏击 → 达兹纳坦白真相，任务升为 A 级 → 湖边遭遇再不斩的水牢术，从外面打破水牢救出卡卡西 → 断桥雾中的再不斩与白。
+- **再不斩与白双首领战**：克眼式冲刺、雾隐阶段、冰镜牢笼、千杀水翔、白先倒下时再不斩暴走（绷带脱落、口咬苦无）。
+- **尾声**：最后倒下的人起身走到对方身边，说完最后的话后倒下，雪落下来。
+- 海边会生成一座没修完的石桥（桥头小屋、起重机、海雾），波之国的主线围绕它展开。
 
-M2 的游戏内验收尚未执行；当前仅通过规则测试、静态美术检查和构建。
+### 中忍考试篇（世界吞噬者 / 克苏鲁之脑之后）
 
-## 在游戏中试玩
+- **木叶村**：新世界在出生点生成完整的木叶，阿吽大门、火影楼、忍者学校，共 48 间可入住的房子，原版 NPC 都能住进来。
+- **第一试·笔试**：找主考官森乃伊比喜，答九道题，第十题是"接受还是放弃"。
+- **第二试·死亡森林**：在丛林边的第四十四演习场入口找御手洗红豆领卷。从入口到森林深处的中央塔，一路有固定遭遇：
+  - 入口外埋伏的考生小队；
+  - 林中休息处和空心巨树；
+  - 塔前空地的雨隐三人组（伞中千本雨、幻术分身）。
+- **预选赛**：在中央塔大厅找月光疾风，对战音忍·多斯（响鸣穿连突、音波、地鸣、共鸣环、跳劈）。
+- **正式赛**：木叶城墙外的会场，砂瀑之我爱罗（沙之盾、沙缚柩、守鹤半身化）；之后可找日向宁次切磋。
+- **大蛇丸**：用蛇蜕在丛林召唤，打到一半他会遁走，可能留下写轮眼。
 
-1. 启动 tModLoader，确认模组列表中的 **Shinobi Prototype** 已启用。如果游戏已经开着，先在「Workshop → Develop Mods」里对本模组执行 **Build + Reload**。
-2. 新角色与新世界可按 M1、M2 流程自然开始。`/m0` 仅用于单独验证战斗原型：输入后获得测试苦无、螺旋丸和再不斩测试卷轴。正式卷轴现也不要求先击败白。
-3. M0 测试时把苦无和螺旋丸放到快捷栏，在开阔平地使用挑战卷轴召唤再不斩。
-4. 观察查克拉条：苦无命中回复 5 点，螺旋丸消耗 35 点。再不斩半血后进入雾阶段并召唤水分身；挥刀与结印动作代替危险区预警。
+### 系统
 
-尚未发育的角色可在**单人测试**中输入 `/m0 god on` 开启临时无敌，HUD 会显示「M0 测试无敌」；输入 `/m0 god off` 关闭，或输入 `/m0 god` 切换。无敌默认关闭，退出世界后不会保存；无参 `/m0` 仍只发放测试道具。
+- **查克拉与替身术**：独立的查克拉条；在挨打前一刻按替身术键（默认 F）留下一截木头闪开。
+- **流派核心**：写轮眼、八门遁甲、白眼（仙术在后续篇章）。装备核心获得被动，按奥义键（默认 V）放流派奥义；找三代火影"立志"选定本命流派。
+- **忍者手册**：任务、进度和首领信息；提示和原版一样含蓄，模组设置里可以打开"任务指引"显示方向与距离。
+- **地区背景**：木叶（火影岩）、砂隐、雾隐、妙木山等地表背景。
+- 装了 Boss Checklist 模组时，本模组的首领会出现在它的列表里。
 
-建议使用单独的测试角色和世界。正式流程不依赖 `/m0`。
+---
 
-## 编译
+## 游玩须知
 
-本机已安装 .NET 8 SDK。仓库中的 `ShinobiPrototype/` 是源码原件；游戏当前读取 `C:\Users\徐吉良\Documents\My Games\Terraria\tModLoader\ModSources\ShinobiPrototype`。修改仓库源码后，先运行同步脚本：
+- 需要 tModLoader（Steam 版，1.4.4）。
+- **请使用新角色和新世界**：木叶、海边大桥和中忍考试场地都在世界生成时建好，旧世界里没有。
+- 单人模式经过测试；多人模式的同步代码已写，但没有完整验证。
 
-```powershell
-.\Sync-ModSources.ps1
+### 测试指令（单人）
+
+主线不依赖这些指令，它们只用来跳过已经测过的部分：
+
+| 指令 | 作用 |
+| --- | --- |
+| `/m0 god [on\|off]` | 测试无敌 |
+| `/m0 story <1-5>` | 跳到波之国任务链的某一步 |
+| `/m0 lake`、`/m0 preview` | 湖边水牢、断桥雾中预告 |
+| `/m0 epilogue zabuza\|haku` | 直接播再不斩与白的尾声 |
+| `/m0 exam <阶段>` | 设定中忍考试进度，如 `ForestGate`（刚考完笔试）、`ForestHunt`、`Prelims` |
+| `/m0 exam gate\|tower\|camp\|tree\|rain\|stadium\|academy\|hokage` | 传送到考试场地 |
+| `/m0 exam rebuild` | 在当前世界按最新设计重建死亡森林的场地 |
+| `/m0 squad` | 叫来一队考生 |
+
+---
+
+## 从源码构建
+
+源码在 `ShinobiPrototype/`。在 tModLoader 的 `ModSources/` 下建一个指向它的链接（或直接放进去），然后在游戏里「Workshop → Develop Mods」选 **Build + Reload**。
+
+Mac 上的完整环境（.NET 8 x64 SDK、原生库路径）见 [DEVELOPMENT_MAC.md](DEVELOPMENT_MAC.md)。命令行一次跑完所有规则测试并打包：
+
+```sh
+./scripts/verify-mac.sh
 ```
 
-然后在 tModLoader 的「Workshop → Develop Mods」中选择 **Build + Reload**。也可以在仓库根目录先检查 C# 编译：
+游戏开着时命令行打包会报 TML003（模组文件被占用），这时只看测试和 C# 编译结果，打包交给游戏内的 Build + Reload。
 
-```powershell
-dotnet build .\ShinobiPrototype\ShinobiPrototype.csproj
-```
+规则层（刷怪条件、Boss 招式选择、场地布局等）写成不依赖 Terraria 的纯逻辑，测试在 `tests/` 下，每组都是独立的控制台程序。
 
-游戏当前使用 C 盘的 `tModLoader` 数据目录；命令行编译可能将 `.tmod` 放到 D 盘的旧数据目录，因此以游戏内的 **Build + Reload** 作为最终验证。项目文件当前引用本机 `D:\Steam\steamapps\common\tModLoader\tMLMod.targets`；换电脑时需调整该路径。
+---
 
-规则层可运行 `dotnet run --project .\tests\TrainingRules\TrainingRules.Tests.csproj`、`dotnet run --project .\tests\ExamRules\ExamRules.Tests.csproj`、`dotnet run --project .\tests\ZabuzaCombatRules\ZabuzaCombatRules.Tests.csproj` 和 `dotnet run --project .\tests\DebugModeRules\DebugModeRules.Tests.csproj`。
+## 仓库结构
 
-再不斩卷轴门槛回归测试：`dotnet run --project .\tests\ChallengeRules\ChallengeRules.Tests.csproj`。
+| 路径 | 内容 |
+| --- | --- |
+| `ShinobiPrototype/` | 模组源码与贴图（`Common/` 规则与系统，`Content/` NPC、物品、弹幕） |
+| `specs/` | 各篇章的设计规格；`总纲_主线与支线结构.spec.md` 是总体规划 |
+| `tests/` | 规则测试与实机验收清单（`*.acceptance.md`） |
+| `art/` | 美术请求（`requests/`）与交付（`deliveries/`），流程见 `art/AGENT_HANDOFF.md` |
+| `scripts/` | 构建验证、世界生成检查、像素图处理脚本 |
+| `tools/` | 开发用小工具（大桥预览、原版贴图解包） |
+| `docs/archive/` | 早期设计稿与旧交接记录 |
 
-## 当前实现与待验证处
+### 美术
 
-- 已有查克拉、苦无近战、贴身螺旋丸、再不斩斩击与水遁、水分身和聊天测试命令。
-- 雾阶段现有云雾粒子和蓝色半透明分身；真正的视野遮蔽、战斗数值与完整逐帧动作动画仍待实机验证与后续制作。
-- 再不斩已按官方造型重新设计待机、奔跑、跃击、蓄刀、挥刀、结印六种像素风姿态，加入追击跃击、挥刀前冲、雾中位移、水龙攻击及水分身复现冷却；新源图与最近邻缩图脚本见 `art/zabuza-v2/` 和 `art/Prepare-ZabuzaV2.ps1`。这些是状态关键帧与运动反馈，仍需游戏内检查视觉和手感。白和考试对手尚未重制。
-- M4 为再不斩增加扇形水针、三轮锁位落雨和旋涡水针；攻击随阶段与距离切换，近身避免密集弹幕，落雨有水珠提示和移动的躲避空隙。地面追击、撤步、短跃与雾步加快，角色显示放大并提高暗处可读性。水针原图和处理脚本见 `art/zabuza-v3/` 与 `art/Prepare-ZabuzaV3.ps1`；数值与玩法手感仍需实机测试。
-- M5 将再不斩追位改成保持侧翼距离、远距离加速逼近；跑姿按实际位移在三张动作帧间循环，不再夹入待机帧。一阶段可冲撞，半血鬼人形态有紫色气焰、二连高速冲撞，低血量冲撞更频繁。分身生成在玩家远侧，保持夹击站位并有独立水针射击冷却；冲撞与密集弹幕时分身暂缓射击。地图与原版式血条使用头部特写，二阶段切换鬼人头像。新美术见 `art/zabuza-v4/` 与 `art/Prepare-ZabuzaV4.ps1`。
-- 招式开始会显示原创双语短句。未找到可确认再分发授权的原作语音，因此**没有打包动画/游戏配音**；如有已授权的原创录音，按 `ShinobiPrototype/Assets/Sounds/README.md` 的文件名放入即可触发对应攻击语音。此部分不等于已完成配音。
-- 目前完成了编译和生成模组文件；仍需在游戏中确认手感、刀身判定、动作可读性与全流程。
+所有角色都以同一套泰拉瑞亚原生像素风为准（深色外描边、3～4 阶硬色阶、明亮饱和）。图由 AI 生成像素风姿势后，采样到像素网格并逐像素修整；每张图都先出样张，确认后才接进游戏。
+
+---
+
+## 版权说明
+
+这是非商业的粉丝作品。《火影忍者》的角色、名称与设定归岸本齐史 / 集英社 / 东京电视台 / Studio Pierrot 所有。
+
+仓库不包含任何动画原声、配音或官方图片。模组会在本地找原声文件（不随仓库分发），找不到时改用原版泰拉瑞亚音乐；美术参考图只保存在开发者本地。
+
+---
+
+## English summary
+
+Shinobi Prototype weaves the first part of *Naruto* into vanilla Terraria without replacing it: every vanilla boss stays, and the story arcs unlock alongside them.
+
+- **Wave Country** (around the Eye of Cthulhu): a mission chain ending in a two-boss fight against Zabuza and Haku on an unfinished bridge, with a scripted epilogue.
+- **Chunin Exams** (after the Eater of Worlds / Brain of Cthulhu):
+  - the Hidden Leaf generated around the spawn point;
+  - a written test;
+  - the Forest of Death with fixed encounters on the way to the central tower;
+  - prelims against Dosu, finals against Gaara.
+- **Systems**: chakra, the Substitution Jutsu, style cores (Sharingan, Eight Gates, Byakugan), a ninja handbook, and region backgrounds.
+
+Start a new world. Build from `ShinobiPrototype/` with tModLoader's *Build + Reload*. Fan work; the repository contains no anime audio or official images (local soundtrack files are optional and fall back to vanilla music).

@@ -24,6 +24,15 @@
 
 ## 当前状态（2026-10-01）
 
+**2026-10-01 晚：第二试与预选赛改版（与用户 grill 定稿，见 `specs/M2_中忍考试篇.spec.md` 第十节；已提交并推送，未实机）**
+
+- 已实现：场地 v2（大门 + 监考小屋 + 长铁丝网、59×56 中央塔 + 结印石像、休息处、空心巨树、警告牌，镜像 `ExamSite.Dir`，`/m0 exam rebuild`）；红豆发卷、疾风开始预选赛（`Content/NPCs/ExamProctors.cs`，`Packet.StartPrelims`）；固定节点（入口埋伏小队、塔前雨隐，`DeathForestSystem` 重写）；游荡小队只掉材料；考生苦无/手里剑/烟雾弹，雨隐千本雨/分身（`RainClone`）；多斯五招（`Dosu.cs`、`ExamBossRules.ChooseDosuMove`，`JutsuKind.GroundQuake/ResonanceRing/ImpactSlam`）；删 Boss 大字标题（`BossIntroSystem` 已删）、关大蛇丸自然触发；删雾隐侦察兵，标记改为鬼之兄弟 2 + 达兹纳 1。
+- 世界生成验证：`scripts/konoha-worldgen-check.sh`（种子 12345 小世界）入口、中央塔、休息处、巨树均生成，0 物件缺失（脚本现在也渲染 Camp、HollowTree）。
+- 美术：`dosu-moves-v1` 已接入。`ibiki-npc-v4`、`anko-npc-v1`、`hayate-npc-v1`（新规格：28 美术像素、256×256 格、游戏里 1 倍）已交付，**等用户看样张**；接入命令 `build_npc_sheet.py ... --cell 256x256 --frame 64 --base 62`（Idle_Walk:0-6、Idle_Jump_Sit_Throw:1-5、Talk:1,2 共 14 帧），接入后把 `ExamProctor`/`Ibiki` 的缩放改为 1、`NPC.height` 适配。红豆、疾风在美术接入前借用卡卡西贴图。
+- 用户新规范：所有人物以达兹纳为画风标准；Codex 采样后要逐像素修整（写进 `art/AGENT_HANDOFF.md`）。
+- 仓库整理：README 重写（面向公开访客，中英）；早期文档移到 `docs/archive/`。
+- 待讨论：大蛇丸在第二试的出场方式；结印石像是否请 Codex 画成贴图（现在用大理石墙拼）。
+
 **2026-10-01 Claude Code 接手后（本段）**
 
 - 用户反馈与改动（已提交，未实机）：

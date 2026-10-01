@@ -5,7 +5,7 @@
 ## 项目与资料优先级
 
 - 本项目是 Terraria tModLoader 火影模组。唯一源码为本仓库的 `ShinobiPrototype/`；Mac 的 `ModSources/ShinobiPrototype` 是指向它的符号链接。
-- 当前波之国双首领战以 `specs/M9_波之国双首领战.spec.md` 为准。`README.md`、早期 M1/M2 验收文档及 `MAC_HANDOFF.md` 有历史内容，发现冲突时先核对现有代码与较新的规格，再向用户说明。
+- 当前波之国双首领战以 `specs/M9_波之国双首领战.spec.md` 为准。`README.md`、早期 M1/M2 验收文档及 `docs/archive/` 下的旧文档有历史内容，发现冲突时先核对现有代码与较新的规格，再向用户说明。
 - Mac 环境、构建方式和未完成的实机验收见 `DEVELOPMENT_MAC.md`。不要把构建通过写成游戏内验收通过。
 - 长期设计与验收要求放 `specs/`、`tests/`；当前工作进度放 `WORK_HANDOFF.md`。Git 记录已提交的文件变化，交接文档帮助恢复未完成的任务上下文。
 
