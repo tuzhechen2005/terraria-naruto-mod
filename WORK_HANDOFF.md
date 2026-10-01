@@ -4,7 +4,7 @@
 
 ## 项目与规格入口
 
-- 模组正式名称 **Naruto: Shinobi Path（火影：忍道）**。根目录 `/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组`，唯一源码 `ShinobiPrototype/`。GitHub 公开仓库：https://github.com/tuzhechen2005/terraria-naruto-mod （分支 `main`）。
+- 模组正式名称 **Naruterria**，由 Naruto 与 Terraria 融合成一个单词。根目录 `/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组`，唯一源码 `ShinobiPrototype/`。GitHub 公开仓库：https://github.com/tuzhechen2005/terraria-naruto-mod （分支 `main`）。
 - 上位设计：`specs/总纲_主线与支线结构.spec.md`（原版 Boss 全保留、月总为阶段门槛、主线必打链、疾风传解锁、原版职业 + 流派核心饰品、独立查克拉、尾兽/通灵兽支线、写轮眼完整路线）。旧 M1/M2 设计已作废。
 - M1 波之国：`specs/M1_波之国下忍篇.spec.md`（已实现，验收记录 `tests/M1_波之国下忍篇.acceptance.md`）。
 - Boss 战：`specs/M9_波之国双首领战.spec.md` + `specs/M10_波之国双首领战优化.spec.md`（M10 已实现）。
@@ -26,9 +26,9 @@
 
 **2026-10-01 Codex：模组命名、公开 README、素材展示与新图标**
 
-- 按用户“给这个模组起个名字，不要叫 shinobi prototype”的要求，将正式名称定为 **Naruto: Shinobi Path（火影：忍道）**。`build.txt` 的显示名称、中英文 README 标题与介绍、`description.txt` 的模组简介已同步；GitHub 仓库简介也已通过 API 更新为新名字。
+- 用户纠正命名方向：要求把 Naruto 和 Terraria 融合成一个单词，并有想象力。现采用 **Naruterria**。`build.txt` 的显示名称、中英文 README 标题与介绍、`description.txt` 的模组简介已同步；GitHub 仓库简介也已通过 API 更新为新名字。
 - 改的是显示名称，源码目录、Mod 类名、命名空间、资源路径和本地化键仍是 `ShinobiPrototype`，与原有存档和配置所用的内部标识一致。
-- 名称验证：四个面向玩家的文件均包含新名字，原显示名称已移除；使用独立存档目录运行 `./scripts/verify-mac.sh`，13 组规则测试与完整打包通过、0 错误。既有编译告警和图像转换回退日志仍在；尚未进行游戏内重载验收。
+- 名称验证：四个面向玩家的文件均使用 Naruterria，前两版显示名称已移除；使用独立存档目录完整打包通过、0 错误。此前命名提交已通过全部 13 组规则测试，本次只替换显示文字，未重复运行规则测试。既有编译告警和图像转换回退日志仍在；尚未进行游戏内重载验收。
 - README 改为自然正文，默认英文 `README.md`，中文 `README.zh-CN.md`，顶部有语言切换入口；旧横幅改为可编辑标题，末尾英文摘要已删除。此前相关提交 `797ae10`、`2966df3` 已按用户“推送”的要求推到 `main`。
 - `2827ab3` 已推送：补充波之国、中忍考试、剧情 NPC、流派、武器与任务道具的介绍。`docs/images/readme/` 的 20 张展示图均从当前运行时贴图导出：5 位 Boss 的四帧待机 GIF、4 位剧情 NPC、10 件道具，以及我爱罗三阶段对照。`scripts/export_readme_assets.py` 可在带 Pillow 的 Python 环境中重新生成；未修改游戏源码或原始贴图。
 - 验证：中英文图片与文档链接通过，GIF 均为四帧透明循环；GitHub Markdown API 保留全部 20 张展示图和 7 个表格；浏览器预览两版全部图片加载、无横向溢出，并已检查排版。本次为文档展示改动，未重新构建或实机测试模组。
@@ -148,7 +148,7 @@
 
 ## 工作树与后台
 
-- 分支 `main`。命名修改前已 fetch 确认与 `origin/main` 同步在 `3108f8f`，早先“领先 23 个提交”的记录已过期；用户已明确授权推送 README 修改，图标更新也已推送。当前命名提交包含中英文 README、模组显示名称与简介、交接记录。
+- 分支 `main`。Naruterria 命名修改前已 fetch 确认与 `origin/main` 同步在 `9b510be`，早先“领先 23 个提交”的记录已过期；用户已明确授权推送 README 修改，图标更新也已推送。当前命名提交包含中英文 README、模组显示名称与简介、交接记录。
 - 未跟踪美术：`art/deliveries/kakashi-npc-v3/`（作废残留）、`art/deliveries/orochimaru-style-v1/`（暂缓）。这些不随本次图标提交接入。
 - 运行中的美术请求：无（`.art-bridge/bg-konoha-v1.json` 显示 running 是早已被 v2 取代的陈旧状态，忽略）。`.art-bridge/`、`art/reference/` 为本地忽略目录。
 
