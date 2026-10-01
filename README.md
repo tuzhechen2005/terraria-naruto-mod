@@ -2,7 +2,7 @@
   <img src="docs/images/mod-icon.png" alt="Naruto and Kakashi with a Rasengan against the Hidden Leaf Village" width="320">
 </p>
 
-<h1 align="center">Terraria Naruto Mod</h1>
+<h1 align="center">Naruto: Shinobi Path</h1>
 
 <p align="center">Naruto Part I, from the Land of Waves to the Chunin Exams.</p>
 
@@ -21,7 +21,7 @@
 
 ---
 
-Shinobi Prototype is a Naruto fan mod for tModLoader. It follows the story of Part I alongside Terraria's existing progression, with all vanilla bosses retained. You start in the Hidden Leaf Village, travel to the Land of Waves with Kakashi's guidance, and return for the Chunin Exams after completing the mission.
+Naruto: Shinobi Path is a Naruto fan mod for tModLoader. It follows the story of Part I alongside Terraria's existing progression, with all vanilla bosses retained. You start in the Hidden Leaf Village, travel to the Land of Waves with Kakashi's guidance, and return for the Chunin Exams after completing the mission.
 
 ## Game content
 
