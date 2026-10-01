@@ -45,3 +45,16 @@ Check(matches, "With vanilla's ground row, the corrected close layer lands exact
 Check(Math.Abs(CloseOffset(1080, 450, VanillaCloseGroundRow + 60) - CloseOffset(1080, 450, VanillaCloseGroundRow) + 60 * CloseDrawScale) < 0.01,
     "Art whose ground starts lower is lifted by the difference, at draw scale");
 Check(CloseOffset(1080, 450, -1) == CloseOffset(1080, 450, VanillaCloseGroundRow), "Art without solid ground is not lifted");
+
+// tModLoader lays a surface style's far and middle layers side by side every 1024 pixels (at its scale) whatever the
+// texture's width: a narrower layer leaves a gap between copies (user, 2026-10-01: the Suna village had a slit of
+// canyon showing through after its middle layer was cropped to 977). Every region layer must be 1024 wide.
+string backgrounds = Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "..", "ShinobiPrototype", "Backgrounds");
+foreach (string png in Directory.GetFiles(backgrounds, "*.png"))
+{
+    byte[] header = new byte[24];
+    using (FileStream stream = File.OpenRead(png))
+        stream.ReadExactly(header);
+    int width = header[16] << 24 | header[17] << 16 | header[18] << 8 | header[19];
+    Check(width == 1024, $"{Path.GetFileName(png)} is 1024 pixels wide");
+}
