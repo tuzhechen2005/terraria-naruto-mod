@@ -28,7 +28,7 @@ public static class Landmarks
                         new Vector2((site.X((building.X0 + building.X1) / 2) + 0.5f) * 16f, site.Y(building.Top) * 16f));
         foreach (ExamSite exam in ExamSiteWorld.All())
         {
-            ExamSiteDesign design = ExamSiteWorld.Design(exam.Kind);
+            ExamSiteDesign design = ExamSiteWorld.Design(exam.Kind, exam.Dir);
             foreach (KBuilding building in design.Buildings)
                 yield return new Landmark(building.Name,
                     new Vector2((exam.CenterX + (building.X0 + building.X1) / 2 + 0.5f) * 16f, (exam.GroundY + building.Top) * 16f));

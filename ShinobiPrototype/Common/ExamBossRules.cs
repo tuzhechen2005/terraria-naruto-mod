@@ -2,6 +2,8 @@ using System;
 
 namespace ShinobiPrototype.Common;
 
+public enum DosuMove : byte { None, Drill, Wave, Quake, Ring, Leap }
+
 // The Chūnin Exam fights (specs/M2_中忍考试篇.spec.md sections 3.3–3.5 and 5): Dosu in the prelims, Gaara in the
 // finals, Neji after them, and Orochimaru's encounter in the Forest of Death. Numbers are first values for play.
 // Kept free of Terraria types so the rule tests can run it.
@@ -16,6 +18,36 @@ public static class ExamBossRules
     public const int DosuDrillWindupTicks = 45;
     public const int DosuWaveWindupTicks = 40;
     public const float DosuWaveKnockback = 11f;
+    // Five techniques (user, 2026-10-01: two were far too few beside Zabuza), one phase; under half life every windup
+    // is shorter and the sound wave comes twice.
+    public const int DosuQuakeDamage = 24;
+    public const int DosuRingDamage = 20;
+    public const int DosuLeapDamage = 34;
+    public const int DosuQuakeWindupTicks = 40;
+    public const int DosuRingWindupTicks = 60;
+    public const int DosuLeapWindupTicks = 30;
+    public const int DosuRingRadiusTiles = 10;
+    public const float DosuEnragedWindup = 0.7f;
+
+    public static float DosuWindupScale(int life, int lifeMax) => life * 2 <= lifeMax ? DosuEnragedWindup : 1f;
+
+    public static bool DosuDoubleWave(int life, int lifeMax) => life * 2 <= lifeMax;
+
+    // What he does next, by how far away the player is; never the same technique twice running. roll is in [0, 1).
+    public static DosuMove ChooseDosuMove(float tilesAway, DosuMove last, float roll)
+    {
+        DosuMove[] options = tilesAway < 5f ? new[] { DosuMove.Drill, DosuMove.Ring, DosuMove.Drill, DosuMove.Quake }
+            : tilesAway < 14f ? new[] { DosuMove.Quake, DosuMove.Wave, DosuMove.Leap, DosuMove.Drill }
+            : new[] { DosuMove.Leap, DosuMove.Wave, DosuMove.Quake };
+        int pick = (int)(roll * options.Length) % options.Length;
+        for (int i = 0; i < options.Length; i++)
+        {
+            DosuMove move = options[(pick + i) % options.Length];
+            if (move != last)
+                return move;
+        }
+        return options[pick];
+    }
     // The Resonating Echo Drill's ringing ears: left and right swap, never longer than two seconds (user, 2026-09-30).
     public const int TinnitusTicks = 100;
     public const int TinnitusMaxTicks = 120;

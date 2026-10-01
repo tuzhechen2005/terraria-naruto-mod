@@ -103,19 +103,19 @@ public static class ChuninExamRules
     public static bool SquadDropsScroll(int squadsBeaten, float roll) =>
         squadsBeaten >= SquadPity || roll < SquadScrollChance;
 
-    // The Rain genin close the second test (user, 2026-09-30): once the character has beaten a candidate squad, they
-    // lie in wait on the road to the tower, and the three carry the other scroll (in the anime Team 7 took its Earth
-    // scroll from them by the tower). Candidates are the main source; the Rain genin are the sure one.
-    public const int RainAmbushTowerTiles = 150;
+    // The second test's fixed encounters (user, 2026-10-01: random squads and a hidden trigger felt muddled). A squad
+    // lies in wait past the gate (carrying the same scroll), and the Rain genin in the clearing before the tower carry
+    // the missing one; both wait at their spot for whoever comes by, and try again if the player runs or falls.
+    public const int EncounterReachTiles = 16;
+    public const int GateAmbushRetryTicks = 20 * 60;
+    public const int RainAmbushRetryTicks = 20 * 60;
+    public const int RainAmbushWarnTicks = 120;
 
-    public static bool RainAmbushDue(ExamStage stage, bool ambushDone, int squadsBeaten, bool onJungleSurface,
-        float tilesFromTower, bool rainAlive, bool hasBoth) =>
-        stage == ExamStage.ForestHunt && !ambushDone && squadsBeaten >= 1 && onJungleSurface &&
-        tilesFromTower <= RainAmbushTowerTiles && !rainAlive && !hasBoth;
+    public static bool GateAmbushDue(ExamStage stage, bool done, float tilesFromSpot, bool squadAlive) =>
+        stage == ExamStage.ForestHunt && !done && tilesFromSpot <= EncounterReachTiles && !squadAlive;
 
-    // Five seconds between the warning and the ambush (user, 2026-09-30).
-    public const int RainAmbushWarnTicks = 300;
-    public const int RainAmbushRetryTicks = 60 * 60;
+    public static bool RainAmbushDue(ExamStage stage, bool done, float tilesFromClearing, bool rainAlive, bool hasBoth) =>
+        stage == ExamStage.ForestHunt && !done && tilesFromClearing <= EncounterReachTiles && !rainAlive && !hasBoth;
 
     // A squad comes for someone hunting on the jungle surface who still lacks a scroll, one squad at a time: the first
     // after a short while in the forest, the next a while after the last one was beaten or lost.
@@ -128,6 +128,11 @@ public static class ChuninExamRules
         int squadsBeaten) =>
         stage == ExamStage.ForestHunt && onJungleSurface && !hasBoth && !squadNear &&
         ticksWaited >= (squadsBeaten == 0 ? SquadFirstTicks : SquadEveryTicks);
+
+    // The forest's fixed encounters (user, 2026-10-01): a squad lies in wait this far past the gate, and the Rain genin
+    // in a clearing this far out from the tower's wall on the gate side.
+    public const int GateAmbushTiles = 40;
+    public const int RainClearingTiles = 40;
 
     // How close to the Area 44 gate the scroll is handed out, in tiles from its centre.
     public const int GateReachTiles = 14;

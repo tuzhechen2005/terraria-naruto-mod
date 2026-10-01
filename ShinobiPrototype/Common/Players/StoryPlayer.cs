@@ -147,8 +147,7 @@ public sealed class StoryPlayer : ModPlayer
             WaveStage.FindTazuna =>
                 $"C 级任务：护送造桥工达兹纳返回波之国。他先回了桥头——海边起雾的地方有座没修完的大桥，去桥头小屋找他。{noBridge}",
             WaveStage.Scout =>
-                "C 级任务：远离出生点的地表与海边有雾隐侦察兵出没，击败他们、收集雾隐标记" +
-                $"（{insignia}/3）。拿到标记后回大桥一带的海雾里——雾隐的人会找上门来。",
+                "C 级任务：达兹纳说，雾隐的忍者常在桥这一带的海雾里出没。去起雾的海边走一走——他们会找上门来。",
             WaveStage.ReportToTazuna =>
                 "伏击你们的是雾隐的中忍，而他们的目标是达兹纳。回桥头小屋，问个清楚。",
             WaveStage.GetStronger =>
@@ -159,7 +158,7 @@ public sealed class StoryPlayer : ModPlayer
             WaveStage.Bridge =>
                 "再不斩被追杀部队带走了——可用千本的追杀部队，不会是来杀他的。雾隐的人一定会去断桥，回大桥看看。",
             _ =>
-                $"再不斩还活着，就在断桥的雾里。收集雾隐标记（{insignia}/3），在工作台制作再不斩挑战卷轴（不消耗），" +
+                $"再不斩还活着，就在断桥的雾里。集齐雾隐标记（{insignia}/3：鬼之兄弟各一枚，达兹纳给的一枚），在工作台制作再不斩挑战卷轴（不消耗），" +
                 "到大桥一带使用，击败再不斩与白。",
         };
     }
@@ -226,7 +225,7 @@ public sealed class StoryPlayer : ModPlayer
         return WaveStage switch
         {
             WaveStage.FindTazuna => ("去桥头找达兹纳", bridge),
-            WaveStage.Scout => ("击败雾隐侦察兵", null),
+            WaveStage.Scout => ("去大桥一带的海雾里巡视", bridge),
             WaveStage.ReportToTazuna => ("回桥头问达兹纳", bridge),
             WaveStage.GetStronger => ("变强：击败克苏鲁之眼或生命达到 200", null),
             WaveStage.Lake => ("去地表的湖边", LakeAmbushSystem.NearestLake(Player)),

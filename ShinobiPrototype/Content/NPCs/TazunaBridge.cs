@@ -43,7 +43,7 @@ public sealed class TazunaBridge : ModNPC
     {
         "我是造桥的达兹纳。这座桥修通了，波之国才能活下去。",
         "卡多那家伙封锁了海路，船进不来，大家连饭都快吃不上了。",
-        "雾隐的忍者常在夜里和下雨时出没，就在这片海边。",
+        "雾隐的忍者常在起雾的时候出没，就在桥这一带的海边。",
         "桥断在那里好久了……工人们都不敢来了。",
         "这座桥全是石头砌的。一块一块，都是镇上的人扛上去的。",
         "起重机上还吊着一块石头呢——那天工人们一看见雾里的人影，扔下就跑了。",
@@ -59,7 +59,8 @@ public sealed class TazunaBridge : ModNPC
     private const string Confession =
         "……鬼之兄弟？连雾隐的中忍都来了……看来瞒不住了。\n" +
         "委托的时候我说了谎。这根本不是什么 C 级任务——海运大亨卡多想要我的命，他雇了忍者。\n" +
-        "桥修通了，他对波之国的封锁就完了。可这个穷国家……付不起 A 级任务的钱。拜托了，忍者。";
+        "桥修通了，他对波之国的封锁就完了。可这个穷国家……付不起 A 级任务的钱。拜托了，忍者。\n" +
+        "……对了，这是前几天夜里在小屋门口捡到的，上面刻着雾隐的记号。你拿着吧。";
 
     public override string GetChat()
     {
@@ -71,7 +72,9 @@ public sealed class TazunaBridge : ModNPC
                 return FirstMeeting;
             case WaveStage.ReportToTazuna:
                 StoryWorld.RecordTazunaTalk(true);
-                Main.NewText("任务等级上调为 A 级。", 255, 190, 90);
+                // The third Mist insignia (with the brothers' two): one the Mist ninja dropped by his hut.
+                player.QuickSpawnItem(player.GetSource_Misc("TazunaConfession"), ModContent.ItemType<MistInsignia>());
+                Main.NewText("任务等级上调为 A 级。达兹纳交给你一枚雾隐标记。", 255, 190, 90);
                 return Confession;
         }
 

@@ -20,6 +20,8 @@ public sealed class ChuninExamPlayer : ModPlayer
     public bool DawnSinceGivingUp { get; private set; }
     public ExamScroll Issued { get; private set; }
     public bool RainAmbushDone { get; private set; }
+    // The squad lying in wait past the gate has been beaten (the second test's first encounter).
+    public bool GateSquadDone { get; private set; }
     public int SquadsBeaten { get; private set; }
     public bool TowerReached { get; private set; }
     public bool PrelimsPassed { get; private set; }
@@ -40,7 +42,8 @@ public sealed class ChuninExamPlayer : ModPlayer
 
     public override void Initialize()
     {
-        Recommended = WrittenPassed = GaveUpWritten = DawnSinceGivingUp = RainAmbushDone = TowerReached = PrelimsPassed = false;
+        Recommended = WrittenPassed = GaveUpWritten = DawnSinceGivingUp = RainAmbushDone = TowerReached = PrelimsPassed =
+            GateSquadDone = false;
         Issued = ExamScroll.None;
         SquadsBeaten = 0;
     }
@@ -69,21 +72,23 @@ public sealed class ChuninExamPlayer : ModPlayer
     public bool HasBothScrolls => ChuninExamRules.HasBoth(Player.CountItem(ModContent.ItemType<HeavenScroll>()),
         Player.CountItem(ModContent.ItemType<EarthScroll>()));
 
-    // The character took part in beating a whole candidate squad (its last member fell). Each says what it carried.
-    public void CreditSquad(string squad)
+    // The character took part in beating the squad that lay in wait past the gate: they carried the same scroll, and
+    // one of them lets slip where the other kind is to be had (not spelled out, user 2026-10-01).
+    public void CreditGateSquad()
     {
-        if (Stage != ExamStage.ForestHunt)
+        if (Stage != ExamStage.ForestHunt || GateSquadDone)
             return;
+        GateSquadDone = true;
         SquadsBeaten++;
-        string mine = ScrollName(Issued);
-        string other = ScrollName(ChuninExamRules.Other(Issued));
-        if (HasBothScrolls)
-            Main.NewText($"击败了{squad}。两卷已经齐了——去丛林中部的中央塔。{ExamSiteWorld.TowerHint(Player)}", 180, 200, 170);
-        else if (ChuninExamRules.SquadDropsScroll(SquadsBeaten, Main.rand.NextFloat()))
-            GiveOtherScroll($"击败了{squad}（第 {SquadsBeaten} 队），他们带着的正是你缺的那一卷");
-        else
-            Main.NewText($"击败了{squad}（第 {SquadsBeaten} 队）。搜了搜，他们带的也是{mine}——和你一样。" +
-                         $"继续在丛林地表找带着{other}的小队。", 180, 200, 170);
+        Main.NewText($"倒在地上的考生怀里，露出一角{ScrollName(Issued)}——和你的一样。\n" +
+                     $"考生：“……哼，想要{ScrollName(ChuninExamRules.Other(Issued))}？去塔那边碰碰运气吧……雨……”", 180, 200, 170);
+    }
+
+    // A squad met anywhere else in the forest: an optional fight, no scroll, no announcement.
+    public void CreditSquad()
+    {
+        if (Stage == ExamStage.ForestHunt)
+            SquadsBeaten++;
     }
 
     public static string ScrollName(ExamScroll scroll) => scroll == ExamScroll.Heaven ? "天之卷" : "地之卷";
@@ -106,6 +111,15 @@ public sealed class ChuninExamPlayer : ModPlayer
         Player.QuickSpawnItem(Player.GetSource_Misc("ExamScroll"), type);
         Main.NewText($"{why}：得到{(other == ExamScroll.Heaven ? "天之卷" : "地之卷")}！带齐两卷去丛林中部的中央塔。" +
                      ExamSiteWorld.TowerHint(Player), Color.LightGreen);
+    }
+
+    // Mitarashi Anko hands over one of the two scrolls at the gate (specs/M2_中忍考试篇.spec.md 3.2).
+    public void IssueScroll()
+    {
+        if (Stage != ExamStage.ForestGate)
+            return;
+        Issued = ChuninExamRules.Issue(Main.rand.Next(2));
+        Player.QuickSpawnItem(Player.GetSource_Misc("ExamScroll"), ScrollType(Issued));
     }
 
     // Took part in beating Dosu in the tower.
@@ -142,22 +156,12 @@ public sealed class ChuninExamPlayer : ModPlayer
         if (lastStage == ExamStage.Training && stage == ExamStage.Finals)
             Main.NewText("木叶的街上贴出了告示：中忍考试正式赛，即将开始。", new Color(255, 220, 150));
         lastStage = stage;
-        if (stage == ExamStage.ForestGate && ExamSiteWorld.Gate is ExamSite gate &&
-            gate.DistanceTiles(Player.Center) <= ChuninExamRules.GateReachTiles)
-        {
-            Issued = ChuninExamRules.Issue(Main.rand.Next(2));
-            Player.QuickSpawnItem(Player.GetSource_Misc("ExamScroll"), ScrollType(Issued));
-            string mine = Issued == ExamScroll.Heaven ? "天之卷" : "地之卷";
-            string other = Issued == ExamScroll.Heaven ? "地之卷" : "天之卷";
-            Main.NewText($"第二试开始！你领到了{mine}。从其他考生手里夺取{other}，带齐两卷到丛林中部的中央塔。" +
-                         "不限时——但森林里不只有考生。", new Color(255, 200, 120));
-        }
-        else if (stage == ExamStage.ForestHunt && ExamSiteWorld.InArena(ExamSiteWorld.Tower, Player.Center) &&
+        if (stage == ExamStage.ForestHunt && ExamSiteWorld.InArena(ExamSiteWorld.Tower, Player.Center) &&
                  ChuninExamRules.HasBoth(Player.CountItem(ModContent.ItemType<HeavenScroll>()),
                      Player.CountItem(ModContent.ItemType<EarthScroll>())))
         {
             TowerReached = true;
-            Main.NewText("天地双开——第二试合格！通过的人太多，要在这座塔里先打一场预选赛。", Color.LightGreen);
+            Main.NewText("天地双开——第二试合格。大厅里的监考官正等着你。", Color.LightGreen);
         }
     }
 
@@ -169,6 +173,7 @@ public sealed class ChuninExamPlayer : ModPlayer
         WrittenPassed = stage >= ExamStage.ForestGate;
         Issued = stage >= ExamStage.ForestHunt ? ExamScroll.Heaven : ExamScroll.None;
         RainAmbushDone = stage >= ExamStage.Prelims;
+        GateSquadDone = stage >= ExamStage.Prelims;
         TowerReached = stage >= ExamStage.Prelims;
         PrelimsPassed = stage >= ExamStage.Training;
     }
@@ -195,7 +200,7 @@ public sealed class ChuninExamPlayer : ModPlayer
     private BitsByte Flags
     {
         get => new(Recommended, WrittenPassed, GaveUpWritten, DawnSinceGivingUp, RainAmbushDone, TowerReached,
-            PrelimsPassed);
+            PrelimsPassed, GateSquadDone);
         set
         {
             Recommended = value[0];
@@ -205,6 +210,7 @@ public sealed class ChuninExamPlayer : ModPlayer
             RainAmbushDone = value[4];
             TowerReached = value[5];
             PrelimsPassed = value[6];
+            GateSquadDone = value[7];
         }
     }
 

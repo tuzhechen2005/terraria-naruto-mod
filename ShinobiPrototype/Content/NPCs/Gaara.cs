@@ -35,7 +35,6 @@ public sealed class Gaara : ExamBoss
     protected override Color Tint => Phase == 3 ? new Color(200, 150, 90) : new Color(210, 120, 90);
     protected override int LifeMax => ExamBossRules.GaaraLife;
     protected override int Defense => ExamBossRules.GaaraDefense;
-    protected override (string Name, string Title) Intro => ("砂瀑之我爱罗", "砂隐村的人柱力，体内封着一尾守鹤");
 
     private int Phase => ExamBossRules.GaaraPhase(NPC.life, NPC.lifeMax);
     private float Tempo => ExamBossRules.GaaraTempo(Phase);

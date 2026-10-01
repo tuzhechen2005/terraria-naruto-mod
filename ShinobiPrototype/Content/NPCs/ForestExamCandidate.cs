@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.DataStructures;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common;
@@ -9,27 +9,47 @@ using ShinobiPrototype.Content.Projectiles;
 
 namespace ShinobiPrototype.Content.NPCs;
 
-// Genin in the Forest of Death (specs/M2_中忍考试篇.spec.md 3.2): they run the player down and throw senbon. Who beat
-// them is judged on each player's own client (a player who landed a hit takes part), since the exam progress lives
-// there. Art: exam-genin-style-v1 and exam-genin-full-v1, one sheet each (<ClassName>.png, 112x88 frames facing left):
-// standing, the throw (shown for a moment after each one), a four-frame run and the jump.
+// Genin in the Forest of Death (specs/M2_中忍考试篇.spec.md 3.2). DeathForestSystem sends them three at a time: a squad
+// shares a number (ai[3]) and ai[0] holds its kind and name (Kind * 10 + name). Who beat a squad is judged on each
+// player's own client (whoever hit any of the three takes part when the last one falls), since the exam progress
+// lives there. Art: exam-genin-style-v1 and exam-genin-full-v1, one sheet each (<ClassName>.png, 112x88 frames facing
+// left): standing, the throw (shown for a moment after each attack), a four-frame run and the jump.
 public abstract class ForestExamCandidate : ModNPC
 {
-    private const int ThrowPoseTicks = 20;
+    public const int KindRoaming = 0;   // an optional fight anywhere in the forest
+    public const int KindGate = 1;      // the squad lying in wait past the gate
+    public const int KindRain = 2;      // the Rain genin before the tower
+
+    public static readonly string[] SquadNames = { "草隐的考生小队", "泷隐的考生小队", "木叶的考生小队" };
+
+    private const int PoseTicks = 20;
     private const int ThrowFrame = 1;
     private const int RunFirst = 2;
     private const int RunFrames = 4;
     private const int JumpFrame = RunFirst + RunFrames;
 
+    // Squads the local player has hit (client side).
+    private static readonly System.Collections.Generic.HashSet<int> squadsHitHere = new();
+
+    public static void ForgetSquads() => squadsHitHere.Clear();
+
+    protected int Squad => (int)NPC.ai[3];
+    protected int Kind => (int)NPC.ai[0] / 10;
+    protected string SquadName => SquadNames[System.Math.Clamp((int)NPC.ai[0] % 10, 0, SquadNames.Length - 1)];
+
+    // ai[1] counts up to the next attack, ai[2] counts down the attack pose.
+    protected ref float AttackTimer => ref NPC.ai[1];
+    protected ref float PoseTimer => ref NPC.ai[2];
+
     protected virtual float Speed => 2.6f;
-    protected virtual int ThrowInterval => 150;
+    protected virtual float KeepAway => 9 * 16f;
 
     public override void SetStaticDefaults() => Main.npcFrameCount[Type] = JumpFrame + 1;
 
     public override void SetDefaults()
     {
         NPC.width = 28;
-        // The new art stands about 62 pixels tall.
+        // The art stands about 62 pixels tall.
         NPC.height = 56;
         NPC.damage = 26;
         NPC.defense = 8;
@@ -55,31 +75,37 @@ public abstract class ForestExamCandidate : ModNPC
         float distance = target.Center.X - NPC.Center.X;
         NPC.direction = distance >= 0f ? 1 : -1;
         NPC.spriteDirection = NPC.direction;
-        // Keep a little distance to throw from, close in when the player is far.
-        float want = System.Math.Abs(distance) > 12 * 16 ? NPC.direction * Speed : NPC.direction * Speed * 0.35f;
-        NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, want, 0.07f);
+        float want = System.Math.Abs(distance) > KeepAway ? NPC.direction * Speed : NPC.direction * Speed * 0.35f;
+        if (PoseTimer > 0f)
+            want = 0f;
+        NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, want, 0.08f);
         if (NPC.collideX && NPC.velocity.Y == 0f)
             NPC.velocity.Y = -7.5f;
         if (NPC.velocity.Y == 0f && target.Bottom.Y < NPC.Top.Y - 32f && Main.rand.NextBool(90))
             NPC.velocity.Y = -9f;
+        if (PoseTimer > 0f)
+            PoseTimer--;
 
-        if (Main.netMode != NetmodeID.MultiplayerClient && ++NPC.ai[1] >= ThrowInterval &&
-            Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1))
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            return;
+        AttackTimer++;
+        if (Attack(target, System.Math.Abs(distance)))
         {
-            NPC.ai[1] = Main.rand.Next(-30, 30);
-            NPC.ai[2] = ThrowPoseTicks;
+            PoseTimer = PoseTicks;
             NPC.netUpdate = true;
-            Throw(target);
         }
-        if (NPC.ai[2] > 0f)
-            NPC.ai[2]--;
     }
+
+    // Server side: start an attack when it is due; true if one was made (the pose follows).
+    protected abstract bool Attack(Player target, float distance);
+
+    protected bool ClearShot(Player target) => Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1);
 
     public override void FindFrame(int frameHeight)
     {
         NPC.spriteDirection = NPC.direction;
         int frame;
-        if (NPC.ai[2] > 0f)
+        if (PoseTimer > 0f)
             frame = ThrowFrame;
         else if (NPC.velocity.Y != 0f)
             frame = JumpFrame;
@@ -95,26 +121,6 @@ public abstract class ForestExamCandidate : ModNPC
         }
         NPC.frame.Y = frame * frameHeight;
     }
-
-    protected virtual void Throw(Player target)
-    {
-        Vector2 aim = NPC.DirectionTo(target.Center) * 9f;
-        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, aim, ModContent.ProjectileType<ExamSenbon>(),
-            NPC.damage / 3, 0f, Main.myPlayer);
-    }
-
-    // Squads (user, 2026-10-01): DeathForestSystem sends three at a time, sharing a squad number (ai[3]) and a name
-    // (ai[0], SquadNames). A squad counts as beaten when its last member falls, for whoever hit any of the three.
-    public static readonly string[] SquadNames = { "草隐的考生小队", "泷隐的考生小队", "木叶的考生小队" };
-
-    // Squads the local player has hit (client side).
-    private static readonly System.Collections.Generic.HashSet<int> squadsHitHere = new();
-
-    public static void ForgetSquads() => squadsHitHere.Clear();
-
-    protected int Squad => (int)NPC.ai[3];
-
-    protected string SquadName => SquadNames[System.Math.Clamp((int)NPC.ai[0], 0, SquadNames.Length - 1)];
 
     public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)
     {
@@ -142,46 +148,197 @@ public abstract class ForestExamCandidate : ModNPC
     }
 
     protected abstract void Beaten(ChuninExamPlayer exam);
+
+    // A poof of smoke and a few tiles away, beside the target (the smoke bomb; the Rain genin's clone trick).
+    protected void SmokeTo(Player target, int[] tiles)
+    {
+        Smoke(NPC.Center);
+        if (GroundSpot.TryBeside(target, NPC.width, NPC.height, tiles, out Vector2 bottom))
+        {
+            NPC.Bottom = bottom;
+            NPC.velocity = Vector2.Zero;
+            NPC.netUpdate = true;
+        }
+        Smoke(NPC.Center);
+    }
+
+    protected static void Smoke(Vector2 at)
+    {
+        if (Main.dedServ)
+            return;
+        for (int i = 0; i < 20; i++)
+            Dust.NewDustPerfect(at + Main.rand.NextVector2Circular(24f, 30f), DustID.Smoke, Main.rand.NextVector2Circular(2f, 2f),
+                100, default, 1.7f);
+    }
 }
 
-// Candidates on the jungle surface, three to a squad, for anyone hunting the other scroll (sent by DeathForestSystem).
+// Candidates on the jungle surface: a kunai up close, shuriken from a little way off, and now and then a smoke bomb to
+// slip round behind the player (user, 2026-10-01: they all just threw senbon).
 public sealed class ForestCanopyCandidate : ForestExamCandidate
 {
-    protected override void Beaten(ChuninExamPlayer exam) => exam.CreditSquad(SquadName);
+    private const int SlashEvery = 55;
+    private const int ThrowEvery = 140;
+
+    protected override bool Attack(Player target, float distance)
+    {
+        if (distance < 4 * 16f && AttackTimer >= SlashEvery)
+        {
+            AttackTimer = 0f;
+            JutsuHitbox.Spawn(NPC, JutsuKind.Strike, NPC.Center + new Vector2(NPC.direction * 22f, 0f), Vector2.Zero, 44, 50,
+                NPC.damage, 4f);
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
+            return true;
+        }
+        if (distance >= 6 * 16f && distance < 26 * 16f && AttackTimer >= ThrowEvery && ClearShot(target))
+        {
+            AttackTimer = Main.rand.Next(-30, 20);
+            Vector2 aim = new(NPC.direction * 9.5f, 0f);
+            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, aim, ModContent.ProjectileType<ExamShuriken>(),
+                NPC.damage / 3, 0f, Main.myPlayer);
+            return true;
+        }
+        // The smoke bomb, once in a while when the player keeps close.
+        if (distance < 7 * 16f && AttackTimer >= 40f && Main.rand.NextBool(240))
+        {
+            AttackTimer = 0f;
+            SmokeTo(target, new[] { 6, 8, 10 });
+        }
+        return false;
+    }
+
+    public override void ModifyNPCLoot(NPCLoot npcLoot)
+    {
+        npcLoot.Add(ItemDropRule.Common(ItemID.Shuriken, 2, 15, 30));
+        npcLoot.Add(ItemDropRule.Common(ItemID.ThrowingKnife, 3, 10, 20));
+        npcLoot.Add(ItemDropRule.Common(ItemID.LesserHealingPotion, 5));
+    }
+
+    protected override void Beaten(ChuninExamPlayer exam)
+    {
+        if (Kind == KindGate)
+            exam.CreditGateSquad();
+        else
+            exam.CreditSquad();
+    }
 }
 
-// The Rain genin who ambush the player once in the forest; the last of the three carries the missing scroll.
+// The Rain genin who lie in wait in the clearing before the tower: the second test's small boss (user, 2026-10-01).
+// They keep their distance and take turns: a fan of three senbon, the umbrella rain (needles thrown up out of the
+// umbrella come down on the player, a glint first marks each), and an illusion clone that bursts into smoke when hit.
+// The last of the three carries the missing scroll.
 public sealed class RainGenin : ForestExamCandidate
 {
+    private const int AttackEvery = 100;
+
     protected override float Speed => 3f;
-    protected override int ThrowInterval => 110;
+    protected override float KeepAway => 12 * 16f;
+
+    private int Turn => (int)NPC.localAI[1];
 
     public override void SetDefaults()
     {
         base.SetDefaults();
-        NPC.lifeMax = 340;
+        NPC.lifeMax = 420;
         NPC.damage = 30;
         NPC.defense = 10;
     }
 
-    // A fan of three senbon (the umbrella trick of the anime, kept to the ground).
-    protected override void Throw(Player target)
+    protected override bool Attack(Player target, float distance)
     {
-        Vector2 aim = NPC.DirectionTo(target.Center) * 9f;
-        for (int i = -1; i <= 1; i++)
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, aim.RotatedBy(i * 0.14f),
-                ModContent.ProjectileType<ExamSenbon>(), NPC.damage / 3, 0f, Main.myPlayer);
+        if (AttackTimer < AttackEvery || !ClearShot(target))
+            return false;
+        AttackTimer = Main.rand.Next(-25, 15);
+        NPC.localAI[1]++;
+        switch (Turn % 3)
+        {
+            case 0:
+            {
+                Vector2 aim = NPC.DirectionTo(target.Center) * 9f;
+                for (int i = -1; i <= 1; i++)
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, aim.RotatedBy(i * 0.14f),
+                        ModContent.ProjectileType<ExamSenbon>(), NPC.damage / 3, 0f, Main.myPlayer);
+                break;
+            }
+            case 1:
+                // The umbrella rain: a spread of needles above the player, falling one after another.
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item7, NPC.Center);
+                for (int i = 0; i < 6; i++)
+                {
+                    Vector2 at = target.Center + new Vector2((i - 2.5f) * 46f + Main.rand.NextFloat(-10f, 10f), -360f);
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), at, Vector2.Zero, ModContent.ProjectileType<ExamSenbon>(),
+                        NPC.damage / 3, 0f, Main.myPlayer, 40 + i * 6);
+                }
+                break;
+            default:
+                // The clone: the genin slips aside in smoke and an illusion stays behind in its place.
+                if (NPC.CountNPCS(ModContent.NPCType<RainClone>()) < 3)
+                    NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X, (int)NPC.Bottom.Y, ModContent.NPCType<RainClone>());
+                SmokeTo(target, new[] { 12, 10, 14 });
+                break;
+        }
+        return true;
+    }
+
+    protected override void Beaten(ChuninExamPlayer exam) => exam.CreditRainTrio();
+}
+
+// An illusion left by a Rain genin: looks the same, walks at the player, harmless, gone in smoke at the first hit or
+// after a while.
+public sealed class RainClone : ModNPC
+{
+    private const int LifeTicks = 600;
+
+    public override string Texture => "ShinobiPrototype/Content/NPCs/RainGenin";
+
+    public override void SetStaticDefaults()
+    {
+        Main.npcFrameCount[Type] = 7;
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, new NPCID.Sets.NPCBestiaryDrawModifiers { Hide = true });
+    }
+
+    public override void SetDefaults()
+    {
+        NPC.width = 28;
+        NPC.height = 56;
+        NPC.lifeMax = 1;
+        NPC.damage = 0;
+        NPC.aiStyle = -1;
+        NPC.knockBackResist = 0f;
+        NPC.HitSound = SoundID.NPCHit1;
+        NPC.DeathSound = SoundID.Item8;
+        NPC.npcSlots = 0f;
     }
 
     public override void AI()
     {
-        if (Main.netMode != NetmodeID.Server && NPC.localAI[1] == 0f)
+        NPC.TargetClosest();
+        Player target = Main.player[NPC.target];
+        NPC.direction = NPC.spriteDirection = target.Center.X >= NPC.Center.X ? 1 : -1;
+        NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * 2.2f, 0.06f);
+        if (NPC.collideX && NPC.velocity.Y == 0f)
+            NPC.velocity.Y = -7f;
+        if (++NPC.ai[0] > LifeTicks && Main.netMode != NetmodeID.MultiplayerClient)
         {
-            NPC.localAI[1] = 1f;
-            Common.Systems.BossIntroSystem.Show("雨隐三人组", "雨隐村的下忍——冲着你的卷轴来的");
+            NPC.active = false;
+            NPC.netUpdate = true;
         }
-        base.AI();
     }
 
-    protected override void Beaten(ChuninExamPlayer exam) => exam.CreditRainTrio();
+    public override void FindFrame(int frameHeight)
+    {
+        NPC.spriteDirection = NPC.direction;
+        NPC.frameCounter += System.Math.Abs(NPC.velocity.X);
+        NPC.frame.Y = (System.Math.Abs(NPC.velocity.X) > 0.3f ? 2 + (int)(NPC.frameCounter / 10.0) % 4 : 0) * frameHeight;
+    }
+
+    public override void HitEffect(NPC.HitInfo hit)
+    {
+        if (NPC.life > 0 || Main.dedServ)
+            return;
+        for (int i = 0; i < 24; i++)
+            Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(20f, 28f), DustID.Smoke,
+                Main.rand.NextVector2Circular(2f, 2f), 100, default, 1.6f);
+    }
+
+    public override bool CheckActive() => true;
 }

@@ -16,7 +16,6 @@ public static class BridgeRules
     // (user, 2026-09-29: 300 tiles reached far too far inland).
     public const float FogFullWithinTiles = 20f;
     public const float FogReachTiles = 70f;
-    public const float ScoutSpawnMultiplierInFog = 2f;
 
     // Mist preview timeline, in ticks from the moment a player nears the broken end (about 14 seconds).
     public const int PreviewLength = 840;

@@ -45,7 +45,7 @@ if [ ! -s "$dump" ]; then
 fi
 python3 "$project_root/scripts/render_konoha_world.py" "$dump" "$work/$name.png"
 # The Chunin Exam landmarks (ExamSiteWorld), when the world has them.
-for kind in Gate Tower Stadium; do
+for kind in Gate Tower Stadium Camp HollowTree; do
   if [ -s "$work/$name-$kind.jsonl" ]; then
     echo "== $kind"
     python3 "$project_root/scripts/render_konoha_world.py" "$work/$name-$kind.jsonl" "$work/$name-$kind.png"

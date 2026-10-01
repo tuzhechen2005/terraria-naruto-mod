@@ -5,13 +5,14 @@ namespace ShinobiPrototype.Common;
 
 // The Chūnin Exam landmarks (specs/M2_中忍考试篇.spec.md, section 4), built like the Hidden Leaf (KonohaDesign) and
 // independent of Terraria so they can be tested and rendered: the gate of Training Ground 44 at the jungle's edge,
-// the central tower in the middle of the jungle, and the finals stadium outside the village wall. Positions are
+// the central tower deep in the jungle, the landmarks on the way between them, and the finals stadium outside the
+// village wall. Positions are
 // (dx, dy) from the site's centre on its ground row (0 = the ground row, negative = above).
-public enum ExamSiteKind : byte { Gate, Tower, Stadium }
+public enum ExamSiteKind : byte { Gate, Tower, Stadium, Camp, HollowTree, Marker }
 
 public sealed class ExamSiteDesign
 {
-    public const int Version = 1;
+    public const int Version = 2;
 
     public ExamSiteKind Kind { get; }
     public int HalfWidth { get; }
@@ -61,6 +62,9 @@ public sealed class ExamSiteDesign
     {
         ExamSiteKind.Gate => Gate(),
         ExamSiteKind.Tower => Tower(),
+        ExamSiteKind.Camp => Camp(),
+        ExamSiteKind.HollowTree => HollowTree(),
+        ExamSiteKind.Marker => Marker(),
         _ => Stadium(),
     };
 
@@ -93,59 +97,86 @@ public sealed class ExamSiteDesign
         Places.Add(new KPlace(x, floorRow - 1, KFix.Door));
     }
 
-    // Training Ground 44: a chain-link fence running off into the forest on both sides, and a timber gate over the
-    // path with the warning signs. The path itself stays open (the posts are beams).
-    public const int GatePostInner = 4;
-    public const int GateHeight = 10;
+    // Training Ground 44 (v2, user 2026-10-01: the gate was too small). Drawn with the forest to the east (+x): a tall
+    // timber gate over the path, a chain-link fence running some forty tiles off each way, and on the village side
+    // the proctor's hut with the rules board, where Mitarashi Anko hands out the scrolls. Mirrored when the forest
+    // lies to the west.
+    public const int GatePostInner = 5;
+    public const int GateHeight = 20;
+    public const int FenceHalf = 44;
+    public const int HutX0 = -31, HutX1 = -21;
+    public const int AnkoDx = -18;
 
     private static ExamSiteDesign Gate()
     {
-        ExamSiteDesign d = new(ExamSiteKind.Gate, 18, 16, 30);
+        ExamSiteDesign d = new(ExamSiteKind.Gate, FenceHalf + 2, 16, GateHeight + 8);
         d.Ground(KMat.JungleGrass, KMat.Mud);
         foreach (int side in new[] { -1, 1 })
         {
             for (int i = 0; i < 2; i++)
                 for (int y = -1; y >= -GateHeight; y--)
                     d.Set(side * (GatePostInner + i), y, KMat.Beam);
-            // The fence, from just outside the posts to the edge of the site.
-            for (int x = GatePostInner + 2; x <= d.HalfWidth; x++)
-                for (int y = -1; y >= -6; y--)
+            // The fence, from just outside the posts outward; a post every six tiles.
+            for (int x = GatePostInner + 2; x <= FenceHalf; x++)
+                for (int y = -1; y >= -10; y--)
                     d.SetWall(side * x, y, KWall.MetalFence);
-            // Fence posts every few tiles, in the background too.
-            for (int x = GatePostInner + 4; x <= d.HalfWidth; x += 5)
-                for (int y = -1; y >= -7; y--)
+            for (int x = GatePostInner + 5; x <= FenceHalf; x += 6)
+                for (int y = -1; y >= -11; y--)
                     d.SetWall(side * x, y, KWall.Mahogany);
         }
-        // The two gate leaves, swung open behind the path.
-        for (int x = -GatePostInner + 2; x <= GatePostInner - 2; x++)
-            for (int y = -1; y >= -GateHeight + 2; y--)
-                d.SetWall(x, y, KWall.Mahogany);
-        int beamHalf = GatePostInner + 3;
-        for (int x = -beamHalf; x <= beamHalf; x++)
+        // Two crossbeams, the upper one wider, under a tiled roof.
+        int lower = GatePostInner + 2, upper = GatePostInner + 4;
+        for (int x = -lower; x <= lower; x++)
+            d.Set(x, -GateHeight + 3, KMat.RichMahogany);
+        for (int x = -upper; x <= upper; x++)
             d.Set(x, -GateHeight - 1, KMat.RichMahogany);
-        d.Roof(-beamHalf - 1, beamHalf + 1, -GateHeight - 2, KMat.RedShingle, 2);
-        d.Places.Add(new KPlace(-GatePostInner - 3, -1, KFix.Sign, "第四十四演习场\n——死亡森林"));
-        d.Places.Add(new KPlace(GatePostInner + 3, -1, KFix.Sign, "禁止入内\n中忍考试第二试进行中"));
-        d.Places.Add(new KPlace(-2, -GateHeight, KFix.Banner, Style: 0));
-        d.Places.Add(new KPlace(2, -GateHeight, KFix.Banner, Style: 0));
-        d.Buildings.Add(new KBuilding("第四十四演习场入口", -beamHalf - 1, beamHalf + 1, -GateHeight - 3));
+        d.Roof(-upper - 1, upper + 1, -GateHeight - 2, KMat.RedShingle, 3);
+        // Banners hang from the lower crossbeam.
+        d.Places.Add(new KPlace(-3, -GateHeight + 4, KFix.Banner, Style: 0));
+        d.Places.Add(new KPlace(2, -GateHeight + 4, KFix.Banner, Style: 0));
+        d.Places.Add(new KPlace(-GatePostInner - 4, -1, KFix.Sign, "第四十四演习场\n——死亡森林"));
+        d.Places.Add(new KPlace(GatePostInner + 3, -1, KFix.Sign, "危险·禁止入内\n中忍考试第二试进行中"));
+        // The proctor's hut, door facing the gate.
+        for (int y = -1; y >= -6; y--)
+        {
+            d.Set(HutX0, y, KMat.Wood);
+            d.Set(HutX1, y, KMat.Wood);
+            for (int x = HutX0 + 1; x < HutX1; x++)
+                d.SetWall(x, y, KWall.Planks);
+        }
+        for (int x = HutX0; x <= HutX1; x++)
+            d.Set(x, -7, KMat.Wood);
+        d.Roof(HutX0 - 1, HutX1 + 1, -8, KMat.RedShingle, 3);
+        // Doors both ways, so the path along the ground stays open.
+        d.Door(HutX1, 0);
+        d.Door(HutX0, 0);
+        d.Places.Add(new KPlace(HutX0 + 3, -1, KFix.Table));
+        d.Places.Add(new KPlace(HutX0 + 5, -1, KFix.Chair));
+        d.Places.Add(new KPlace(HutX0 + 6, -6, KFix.Lantern));
+        d.Places.Add(new KPlace(HutX1 + 6, -1, KFix.Sign,
+            "第二试　生存演习\n一、领取天之卷或地之卷，夺取另一卷\n二、带齐两卷进入中央塔\n三、不限时，生死自负"));
+        d.Buildings.Add(new KBuilding("第四十四演习场入口", -upper - 1, upper + 1, -GateHeight - 4));
+        d.Buildings.Add(new KBuilding("监考小屋", HutX0, HutX1, -10));
         return d;
     }
 
-    // The tower in the middle of the Forest of Death: a tall stone keep. The ground floor is one great hall (the
-    // prelims are fought there), with the scroll verse on a sign by the entrance; two floors of rooms above.
-    public const int TowerHalf = 17;           // outer faces of the tower walls
-    public const int HallHeight = 14;          // rows of open hall above its floor
+    // The central tower (v2, user 2026-10-01: too small), after the anime: a great stone hall on the ground floor,
+    // where the prelims are fought, with watching galleries along both walls and the giant hands of the Ram seal
+    // standing at its middle; two gallery floors above it, a narrower keep above those, and a roofed lookout on top.
+    // Drawn with the gate to the west (-x): Gekkō Hayate waits on that side of the hall.
+    public const int TowerHalf = 29;           // outer faces of the tower walls
+    public const int HallHeight = 22;          // rows of open hall above its floor
+    public const int KeepHalf = 18;
+    public const int HayateDx = -TowerHalf + 9;
 
     private static ExamSiteDesign Tower()
     {
-        ExamSiteDesign d = new(ExamSiteKind.Tower, TowerHalf + 6, 20, 50);
+        ExamSiteDesign d = new(ExamSiteKind.Tower, TowerHalf + 6, 24, 66);
         d.Ground(KMat.JungleGrass, KMat.Mud);
         int x0 = -TowerHalf, x1 = TowerHalf;
         for (int x = x0 + 1; x < x1; x++)
             d.Set(x, 0, KMat.Slab);
         int hallCeiling = -HallHeight - 1;
-        // Walls of the hall, two tiles thick, doors at the bottom of each side.
         for (int y = -1; y > hallCeiling; y--)
             foreach (int x in new[] { x0, x0 + 1, x1 - 1, x1 })
                 d.Set(x, y, KMat.Brick);
@@ -156,53 +187,174 @@ public sealed class ExamSiteDesign
                 d.SetWall(x, y, KWall.Slab);
         foreach (int x in new[] { x0, x0 + 1, x1 - 1, x1 })
             d.Door(x, 0);
-        // Only the outer tile of each doorway carries a door: clear the inner one to an open arch.
         d.Places.RemoveAll(p => p.Fix == KFix.Door && (p.Dx == x0 + 1 || p.Dx == x1 - 1));
         d.Arena = new KRoom(x0 + 2, x1 - 2, hallCeiling + 1, -1, "中央塔大厅");
-        // Platforms up through the hall ceiling, one stack each side, to the floors above.
-        foreach (int x in new[] { x0 + 3, x1 - 5 })
-            for (int i = 0; i < 3; i++)
-                d.Set(x + i, hallCeiling, KMat.Platform);
-        // Two floors above the hall.
-        int floor = hallCeiling;
-        for (int s = 0; s < 2; s++)
+
+        // Galleries along both walls, railed, with steps up to them.
+        const int gallery = -12;
+        foreach (int side in new[] { -1, 1 })
         {
+            int wall = side < 0 ? x0 + 2 : x1 - 2;
+            for (int i = 0; i < 8; i++)
+            {
+                d.Set(wall - side * i, gallery, KMat.Platform);
+                d.SetWall(wall - side * i, gallery - 1, KWall.MetalFence);
+                d.SetWall(wall - side * i, gallery - 2, KWall.MetalFence);
+            }
+            foreach ((int row, int width) in new[] { (-4, 3), (-8, 3) })
+                for (int i = 0; i < width; i++)
+                    d.Set(wall - side * (i + (row == -8 ? 4 : 0)), row, KMat.Platform);
+            // A banner over each gallery, hanging from the hall ceiling.
+            d.Places.Add(new KPlace(wall - side * 4, -HallHeight, KFix.Banner, Style: side < 0 ? 0 : 1));
+        }
+        // The Ram seal: two great white stone hands, palms together, index and middle fingers raised, on a dark plinth,
+        // in the background (marble against the hall's grey slabs, so it stands out).
+        foreach (int side in new[] { -1, 1 })
+        {
+            for (int y = -4; y >= -13; y--)
+                for (int i = 1; i <= 5; i++)
+                    d.SetWall(side * i, y, i == 5 || y == -4 ? KWall.Brick : KWall.Marble);
+            for (int y = -14; y >= -21; y--)
+                for (int i = 1; i <= 3; i++)
+                    d.SetWall(side * i, y, i == 3 || y == -21 ? KWall.Brick : KWall.Marble);
+            // The folded fingers across the back of the hand.
+            for (int i = 1; i <= 5; i++)
+                d.SetWall(side * i, -10, KWall.Brick);
+        }
+        for (int y = -4; y >= -21; y--)
+            d.SetWall(0, y, KWall.Brick);
+        for (int x = -8; x <= 8; x++)
+            for (int y = -1; y >= -3; y--)
+                d.SetWall(x, y, y == -3 || System.Math.Abs(x) == 8 ? KWall.Brick : KWall.RedBrick);
+        foreach (int x in new[] { -18, -6, 6, 18 })
+            d.Places.Add(new KPlace(x, hallCeiling + 1, KFix.Lantern));
+
+        // Two gallery floors above the hall, then the keep.
+        int floor = hallCeiling;
+        for (int s = 0; s < 4; s++)
+        {
+            int half = s < 2 ? TowerHalf - 1 : KeepHalf;
             int ceiling = floor - KonohaDesign.StoryHeight;
-            for (int x = x0 + 1; x <= x1 - 1; x++)
+            for (int x = -half; x <= half; x++)
                 d.Set(x, ceiling, KMat.Brick);
             for (int y = floor - 1; y > ceiling; y--)
             {
-                d.Set(x0 + 1, y, KMat.Brick);
-                d.Set(x1 - 1, y, KMat.Brick);
-                for (int x = x0 + 2; x <= x1 - 2; x++)
+                d.Set(-half, y, KMat.Brick);
+                d.Set(half, y, KMat.Brick);
+                for (int x = -half + 1; x <= half - 1; x++)
                     d.SetWall(x, y, KWall.Brick);
             }
-            if (s == 0)
-                foreach (int x in new[] { x0 + 3, x1 - 5 })
-                    for (int i = 0; i < 3; i++)
-                        d.Set(x + i, ceiling, KMat.Platform);
+            // Ways up: platforms through each floor, alternating sides.
+            int up = s % 2 == 0 ? -half + 2 : half - 4;
+            for (int i = 0; i < 3; i++)
+            {
+                d.Set(up + i, floor, KMat.Platform);
+                if (s < 3)
+                    d.Set(up + i, ceiling, KMat.Platform);
+            }
             d.Places.Add(new KPlace(0, ceiling + 1, KFix.Lantern));
+            if (s == 1)
+                // Battlements on the gallery roof outside the keep.
+                for (int x = -TowerHalf + 1; x <= TowerHalf - 1; x += 2)
+                    if (Math.Abs(x) > KeepHalf)
+                        d.Set(x, ceiling - 1, KMat.Brick);
             floor = ceiling;
         }
-        // Battlements, and a small roofed lookout in the middle.
-        for (int x = x0 + 1; x <= x1 - 1; x += 2)
+        for (int x = -KeepHalf; x <= KeepHalf; x += 2)
             d.Set(x, floor - 1, KMat.Brick);
-        for (int x = -4; x <= 4; x++)
-            for (int y = floor - 1; y >= floor - 4; y--)
-                if (Math.Abs(x) == 4)
-                    d.Set(x, y, KMat.Beam);
-        d.Roof(-6, 6, floor - 5, KMat.RedShingle, 3);
-        // Lanterns along the hall ceiling, the verse by the entrance, banners.
-        foreach (int x in new[] { -10, 0, 10 })
-            d.Places.Add(new KPlace(x, hallCeiling + 1, KFix.Lantern));
+        for (int y = floor - 1; y >= floor - 4; y--)
+        {
+            d.Set(-6, y, KMat.Beam);
+            d.Set(6, y, KMat.Beam);
+        }
+        d.Roof(-8, 8, floor - 5, KMat.RedShingle, 4);
         d.Places.Add(new KPlace(x0 + 4, -1, KFix.Sign,
             "天无智慧，则当求知以备之；\n地无体力，则当奔走以求之。\n天地双开，则险道亦成正道。"));
-        d.Places.Add(new KPlace(-6, hallCeiling + 1, KFix.Banner, Style: 1));
-        d.Places.Add(new KPlace(6, hallCeiling + 1, KFix.Banner, Style: 1));
-        d.Places.Add(new KPlace(x1 + 3, -1, KFix.Sign, "中央塔\n——带齐天、地两卷入内"));
-        d.Buildings.Add(new KBuilding("中央塔", x0, x1, floor - 7));
+        d.Places.Add(new KPlace(x0 - 4, -1, KFix.Sign, "中央塔\n——带齐天、地两卷入内"));
+        d.Buildings.Add(new KBuilding("中央塔", x0, x1, floor - 9));
         return d;
     }
+
+    // The rest point halfway through the forest: a fallen giant trunk (in the background, so the path stays open) and
+    // a campfire.
+    private static ExamSiteDesign Camp()
+    {
+        ExamSiteDesign d = new(ExamSiteKind.Camp, 11, 10, 14);
+        d.Ground(KMat.JungleGrass, KMat.Mud);
+        for (int x = -10; x <= 2; x++)
+            for (int y = -1; y >= (x < -7 ? -3 : -4); y--)
+                d.SetWall(x, y, KWall.LivingWood);
+        d.Places.Add(new KPlace(6, -1, KFix.Campfire));
+        d.Buildings.Add(new KBuilding("林中休息处", -10, 8, -5));
+        return d;
+    }
+
+    // A giant hollow tree: walk in through either side; a genin's stash in the hollow.
+    private static ExamSiteDesign HollowTree()
+    {
+        ExamSiteDesign d = new(ExamSiteKind.HollowTree, 12, 10, 44);
+        d.Ground(KMat.JungleGrass, KMat.Mud);
+        const int trunkHalf = 5, top = -30;
+        for (int y = -1; y >= top; y--)
+            for (int x = -trunkHalf; x <= trunkHalf; x++)
+            {
+                bool hollow = Math.Abs(x) <= trunkHalf - 2 && y >= -7;
+                bool doorway = Math.Abs(x) >= trunkHalf - 1 && y >= -3;
+                if (hollow || doorway)
+                    d.SetWall(x, y, KWall.LivingWood);
+                else
+                    d.Set(x, y, KMat.LivingWood);
+            }
+        // Roots spreading out at the foot, behind the path.
+        foreach (int side in new[] { -1, 1 })
+            for (int i = 1; i <= 3; i++)
+                for (int y = -1; y >= -4 + i; y--)
+                    d.SetWall(side * (trunkHalf + i), y, KWall.LivingWood);
+        // The crown.
+        for (int y = top - 1; y >= top - 9; y--)
+        {
+            int half = 11 - Math.Abs(y - (top - 5)) * 2;
+            for (int x = -half; x <= half; x++)
+                d.Set(x, y, KMat.Leaf);
+        }
+        d.Places.Add(new KPlace(0, -1, KFix.Chest));
+        d.Buildings.Add(new KBuilding("空心巨树", -trunkHalf, trunkHalf, top - 10));
+        return d;
+    }
+
+    // A warning sign by the way to the tower.
+    private static ExamSiteDesign Marker()
+    {
+        ExamSiteDesign d = new(ExamSiteKind.Marker, 1, 3, 6);
+        d.Ground(KMat.JungleGrass, KMat.Mud);
+        d.Places.Add(new KPlace(0, -1, KFix.Sign, "危险\n禁止入内——第四十四演习场"));
+        return d;
+    }
+
+    // The design flipped east to west (the forest beyond the gate lies west of it).
+    public ExamSiteDesign Mirrored()
+    {
+        ExamSiteDesign m = new(Kind, HalfWidth, Blend, ClearHeight);
+        foreach (KCell c in Cells)
+            m.Set(-c.Dx, c.Dy, c.Mat, c.Shape switch
+            {
+                KShape.TopRisesEast => KShape.TopRisesWest,
+                KShape.TopRisesWest => KShape.TopRisesEast,
+                _ => c.Shape,
+            });
+        foreach (KWallCell w in Walls)
+            m.SetWall(-w.Dx, w.Dy, w.Wall);
+        foreach (KPlace place in Places)
+            m.Places.Add(place with { Dx = -place.Dx - FixtureWidth(place.Fix) + 1 });
+        foreach (KBuilding b in Buildings)
+            m.Buildings.Add(b with { X0 = -b.X1, X1 = -b.X0 });
+        m.Arena = Arena with { X0 = -Arena.X1, X1 = -Arena.X0 };
+        return m;
+    }
+
+    // Signs and chests are placed by their west column, so a mirrored one shifts by its width to keep its footprint;
+    // tables, benches and campfires are anchored at their middle, everything else is one tile wide.
+    private static int FixtureWidth(KFix fix) => fix is KFix.Sign or KFix.Chest ? 2 : 1;
 
     // The finals stadium: an open sand-coloured field between tiers of stands. The stands are platforms (the field
     // is reached by walking straight in along the ground), the outer shell stone above head height, and the far side

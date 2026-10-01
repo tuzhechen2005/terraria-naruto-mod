@@ -18,6 +18,7 @@ public sealed class ShinobiPrototype : Mod
         WaveEpilogue,     // server -> clients: both bosses have fallen (haku fell first, where)
         TazunaTalk,       // client -> server: a player talked to Tazuna (whether he confessed)
         ExamSync,         // client -> server: a player's Chunin Exam progress (ChuninExamPlayer)
+        StartPrelims,     // client -> server: a player asked Hayate to start the prelims
     }
 
     // Boss Checklist (optional mod): list Zabuza and Haku just after the Eye of Cthulhu (2.0), and the Chūnin Exam
@@ -93,6 +94,11 @@ public sealed class ShinobiPrototype : Mod
             case Packet.ExamSync:
                 byte who = reader.ReadByte();
                 Main.player[who].GetModPlayer<Common.Players.ChuninExamPlayer>().Read(reader);
+                break;
+            case Packet.StartPrelims:
+                byte asker = reader.ReadByte();
+                if (Main.netMode == NetmodeID.Server)
+                    ExamBoutSystem.StartPrelims(asker);
                 break;
             case Packet.BuildBridge:
                 BridgeSite site = new(reader.ReadInt32(), reader.ReadSByte(), reader.ReadInt32());

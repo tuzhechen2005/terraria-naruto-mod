@@ -40,11 +40,11 @@ internal static class ExamSiteBuilder
         return tile.HasTile && tile.TileType is TileID.JungleGrass or TileID.Mud;
     }
 
-    public static ExamSite Build(ExamSiteKind kind, int centerX)
+    public static ExamSite Build(ExamSiteKind kind, int centerX, int dir = 1)
     {
-        ExamSiteDesign design = ExamSiteDesign.Create(kind);
+        ExamSiteDesign design = ExamSiteWorld.Design(kind, dir);
         centerX = Math.Clamp(centerX, OceanMargin, Main.maxTilesX - OceanMargin);
-        ExamSite site = new(kind, centerX, GroundLevel(centerX, design));
+        ExamSite site = new(kind, centerX, GroundLevel(centerX, design), dir < 0 ? -1 : 1);
         Level(site, design);
         KonohaSite origin = site.Origin;
         foreach (KCell cell in design.Cells)
@@ -57,6 +57,16 @@ internal static class ExamSiteBuilder
         WorldGen.RangeFrame(centerX - margin, site.GroundY - design.ClearHeight - 2, centerX + margin,
             site.GroundY + design.FoundationDepth + 2);
         return site;
+    }
+
+    // Clears what stands on a site (tiles, walls, liquids) `half` tiles each way and `height` rows up from its ground.
+    public static void Erase(ExamSite site, int half, int height)
+    {
+        for (int x = site.CenterX - half; x <= site.CenterX + half; x++)
+            for (int y = site.GroundY - height; y < site.GroundY; y++)
+                if (WorldGen.InWorld(x, y, 10))
+                    Main.tile[x, y].ClearEverything();
+        WorldGen.RangeFrame(site.CenterX - half, site.GroundY - height, site.CenterX + half, site.GroundY);
     }
 
     // The median surface across the site, so one odd column (a pond, a tree stump) does not decide it.

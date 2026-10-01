@@ -191,6 +191,7 @@ internal static class KonohaBuilder
         KMat.JungleGrass => TileID.JungleGrass,
         KMat.Mud => TileID.Mud,
         KMat.RichMahogany => TileID.RichMahogany,
+        KMat.Leaf => TileID.LeafBlock,
         _ => TileID.LivingWood,
     };
 
@@ -209,6 +210,7 @@ internal static class KonohaBuilder
         KWall.MetalFence => WallID.MetalFence,
         KWall.Slab => WallID.StoneSlab,
         KWall.Mahogany => WallID.RichMaogany,
+        KWall.LivingWood => WallID.LivingWoodUnsafe,
         _ => WallID.Wood,
     };
 
@@ -265,6 +267,30 @@ internal static class KonohaBuilder
                 WorldGen.PlaceTile(x, y, TileID.Saplings, mute: true);
                 WorldGen.GrowTree(x, y);
                 break;
+            case KFix.Campfire:
+                WorldGen.PlaceObject(x, y, TileID.Campfire, mute: true);
+                break;
+            case KFix.Chest:
+                PlaceStash(x, y);
+                break;
+        }
+    }
+
+    // A small wooden chest of what a genin would leave behind in the Forest of Death (the giant tree's hollow).
+    private static void PlaceStash(int x, int y)
+    {
+        int index = WorldGen.PlaceChest(x, y, TileID.Containers, notNearOtherChests: false, style: 0);
+        if (index < 0)
+            return;
+        Item[] items = Main.chest[index].item;
+        (int type, int stack)[] loot =
+        {
+            (ItemID.LesserHealingPotion, 5), (ItemID.Shuriken, 60), (ItemID.ThrowingKnife, 40), (ItemID.SilverCoin, 30),
+        };
+        for (int i = 0; i < loot.Length; i++)
+        {
+            items[i].SetDefaults(loot[i].type);
+            items[i].stack = loot[i].stack;
         }
     }
 

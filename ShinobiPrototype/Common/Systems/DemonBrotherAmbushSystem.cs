@@ -47,8 +47,9 @@ public sealed class DemonBrotherAmbushSystem : ModSystem
         {
             if (player.dead)
                 continue;
-            bool found = player.HasItem(ModContent.ItemType<MistInsignia>()) ||
-                         player.GetModPlayer<StoryPlayer>().InsigniaNoticeShown;
+            // After meeting Tazuna, the Mist ninja come for whoever walks the sea mist (the Mist scouts that used to
+            // hand out the first insignia are gone, user 2026-10-01).
+            bool found = StoryWorld.MetTazuna || player.HasItem(ModContent.ItemType<MistInsignia>());
             bool inMist = WaveBridgeWorld.MistActive &&
                           WaveBridgeWorld.DistanceToBridgeTiles(player.Center) < BridgeRules.FogReachTiles;
             if (!DemonBrotherRules.AmbushDue(StoryWorld.DownedDemonBrothers, found, inMist, player.ZoneOverworldHeight,

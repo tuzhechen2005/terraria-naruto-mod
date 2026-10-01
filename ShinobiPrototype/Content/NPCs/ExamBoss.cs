@@ -30,13 +30,14 @@ public abstract class ExamBoss : ModNPC
 
     private bool hitByLocalPlayer;
     private int leaveTicks;
-    private bool introShown;
     protected int HurtTicks;
 
     // Frame-by-frame art (BossSprites: "<Prefix>_<Action>_<n>.png" in Content/NPCs). Until the frames are there the
     // tinted placeholder is drawn instead.
     internal static readonly BossSprites.Canvas PersonCanvas = new(112, 88, 56, 84);
     protected virtual string SpritePrefix => null;
+    // Pose plays its frames starting from this one (to hold, say, only the last frames of an action).
+    protected virtual int PoseFirstFrame => 0;
     private protected virtual BossSprites.Canvas CanvasFor(string action) => PersonCanvas;
     // The animation to show now: its frame count, ticks per frame, and whether it loops (otherwise it plays once
     // from the start of the current state).
@@ -44,10 +45,6 @@ public abstract class ExamBoss : ModNPC
 
     protected (string, int, int, bool) Moving(string walk, string idle) =>
         System.Math.Abs(NPC.velocity.X) > 0.4f ? (walk, 4, 7, true) : (idle, 4, 10, true);
-
-    // The entrance title (BossIntroSystem): name and who they are, shown once the boss has shown itself.
-    protected abstract (string Name, string Title) Intro { get; }
-    protected virtual bool Revealed => true;
 
     public override void SetStaticDefaults()
     {
@@ -94,11 +91,6 @@ public abstract class ExamBoss : ModNPC
         Timer++;
         if (HurtTicks > 0)
             HurtTicks--;
-        if (!introShown && Revealed && Main.netMode != NetmodeID.Server)
-        {
-            introShown = true;
-            BossIntroSystem.Show(Intro.Name, Intro.Title);
-        }
         Fight(target);
     }
 
@@ -182,9 +174,11 @@ public abstract class ExamBoss : ModNPC
         if (SpritePrefix == null)
             return true;
         (string action, int frames, int ticksPerFrame, bool loop) = HurtTicks > 0 ? ("Hurt", 1, 10, true) : Pose;
-        int frame = loop ? (int)(Main.GameUpdateCount / (uint)ticksPerFrame) : System.Math.Min(frames - 1, (int)(Timer / ticksPerFrame));
-        return !BossSprites.TryDraw(spriteBatch, SpritePrefix, action, frame, frames, CanvasFor(action), NPC.Bottom, NPC.direction,
-            BossSprites.Lit(drawColor), screenPos);
+        int first = HurtTicks > 0 ? 0 : PoseFirstFrame;
+        int frame = first + (loop ? (int)(Main.GameUpdateCount / (uint)ticksPerFrame) % frames
+            : System.Math.Min(frames - 1, (int)(Timer / ticksPerFrame)));
+        return !BossSprites.TryDraw(spriteBatch, SpritePrefix, action, frame, first + frames, CanvasFor(action), NPC.Bottom,
+            NPC.direction, BossSprites.Lit(drawColor), screenPos);
     }
 
     public override void HitEffect(NPC.HitInfo hit)

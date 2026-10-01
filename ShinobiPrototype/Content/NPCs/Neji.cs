@@ -26,7 +26,6 @@ public sealed class Neji : ExamBoss
     protected override Color Tint => new(235, 225, 245);
     protected override int LifeMax => ExamBossRules.NejiLife;
     protected override int Defense => ExamBossRules.NejiDefense;
-    protected override (string Name, string Title) Intro => ("日向宁次", "日向分家的天才，“命运早已注定”");
 
     protected override string SpritePrefix => "Neji";
 

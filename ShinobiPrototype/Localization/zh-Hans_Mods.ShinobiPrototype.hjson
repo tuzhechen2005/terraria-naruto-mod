@@ -16,7 +16,7 @@ Items: {
 
 	MistInsignia: {
 		DisplayName: 雾隐标记
-		Tooltip: 雾隐侦察兵留下的身份标记；可用于制作挑战卷轴
+		Tooltip: 雾隐忍者的身份标记；可用于制作挑战卷轴
 	}
 
 	HakuChallengeScroll: {
@@ -290,7 +290,6 @@ NPCs: {
 		}
 	}
 
-	MistScout.DisplayName: 雾隐侦察兵
 	HakuBoss.DisplayName: 白
 	WaterPrison.DisplayName: 水牢术
 	WaterClone.DisplayName: 水分身
@@ -305,11 +304,14 @@ NPCs: {
 	RainGenin.DisplayName: 雨隐下忍
 	Hiruzen.DisplayName: 猿飞日斩（三代火影）
 	Ibiki.DisplayName: 森乃伊比喜（第一试主考官）
+	Anko.DisplayName: 御手洗红豆（第二试监考官）
+	Hayate.DisplayName: 月光疾风（预选赛主考官）
 	Dosu.DisplayName: 音忍·多斯
 	Gaara.DisplayName: 砂瀑之我爱罗
 	Neji.DisplayName: 日向宁次
 	Orochimaru.DisplayName: 大蛇丸
 	SummonedSnake.DisplayName: 通灵蛇
+	// RainClone.DisplayName: Rain Clone
 }
 
 Projectiles: {
@@ -335,6 +337,7 @@ Projectiles: {
 	HakuPrismShard.DisplayName: 千杀水翔
 	HakuDashHitbox.DisplayName: 冰刃突进
 	// SenbonWarning.DisplayName: Senbon Warning
+	// ExamShuriken.DisplayName: Exam Shuriken
 }
 
 Dialogue: {

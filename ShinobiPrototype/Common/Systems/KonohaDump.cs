@@ -60,7 +60,7 @@ public sealed class KonohaDump : ModSystem
         // The Chūnin Exam landmarks, each in its own file next to the village's.
         foreach (ExamSite exam in ExamSiteWorld.All())
         {
-            ExamSiteDesign d = ExamSiteDesign.Create(exam.Kind);
+            ExamSiteDesign d = ExamSiteWorld.Design(exam.Kind, exam.Dir);
             int half = d.HalfWidth + d.Blend + 6;
             WorldGen.RangeFrame(exam.CenterX - half, exam.GroundY - d.ClearHeight - 2, exam.CenterX + half, exam.GroundY + 22);
             WriteRegion(path.Replace(".jsonl", $"-{exam.Kind}.jsonl"), exam.Origin, half, d.ClearHeight, 20,

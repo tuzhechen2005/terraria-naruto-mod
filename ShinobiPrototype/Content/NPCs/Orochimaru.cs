@@ -39,8 +39,6 @@ public sealed class Orochimaru : ExamBoss
     protected override Color Tint => State == Disguise ? new Color(180, 225, 170) : new Color(150, 140, 175);
     protected override int LifeMax => ExamBossRules.OrochimaruLife;
     protected override int Defense => ExamBossRules.OrochimaruDefense;
-    protected override (string Name, string Title) Intro => ("大蛇丸", "木叶三忍之一，叛忍——他在找宇智波的眼睛");
-    protected override bool Revealed => State != Disguise;
 
     private Vector2 Mark => new(NPC.ai[2], NPC.ai[3]);
 

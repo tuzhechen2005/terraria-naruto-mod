@@ -26,6 +26,9 @@ public enum JutsuKind : byte
     SnakeHand,     // Orochimaru: shoots out and comes back
     WindBlast,     // Orochimaru: throws the player back
     FiveSeal,      // Orochimaru: chakra stops recovering
+    GroundQuake,   // Dosu: a sound wave crawling along the floor (jump it)
+    ResonanceRing, // Dosu: a ring of sound spreading out from him (only the ring itself hurts)
+    ImpactSlam,    // Dosu: the shock of landing from his leap
 }
 
 public sealed class JutsuHitbox : ModProjectile
@@ -58,6 +61,9 @@ public sealed class JutsuHitbox : ModProjectile
         JutsuKind.SandArm => 22,
         JutsuKind.Rotation => ExamBossRules.RotationTicks,
         JutsuKind.SnakeHand => 44,
+        JutsuKind.GroundQuake => 75,
+        JutsuKind.ResonanceRing => 50,
+        JutsuKind.ImpactSlam => 14,
         _ => 30,
     };
 
@@ -92,6 +98,19 @@ public sealed class JutsuHitbox : ModProjectile
             case JutsuKind.SandShuriken:
                 Projectile.rotation += 0.4f;
                 break;
+            case JutsuKind.GroundQuake:
+                Projectile.velocity.Y = 0f;
+                break;
+            case JutsuKind.ResonanceRing:
+            {
+                // Grows from the caster out to its full size (ai[1]) over its life, keeping its centre.
+                float t = 1f - Projectile.timeLeft / Projectile.localAI[1];
+                int size = (int)MathHelper.Lerp(40f, Projectile.ai[1], t);
+                Vector2 center = Projectile.Center;
+                Projectile.Resize(size, size);
+                Projectile.Center = center;
+                break;
+            }
         }
         if (Main.netMode != NetmodeID.Server)
             Effects();
@@ -142,7 +161,36 @@ public sealed class JutsuHitbox : ModProjectile
                 for (int i = 0; i < 4; i++)
                     Dust.NewDustPerfect(Main.rand.NextVector2FromRectangle(box), DustID.Cloud, Projectile.velocity * 0.4f, 100, default, 1.4f).noGravity = true;
                 break;
+            case JutsuKind.GroundQuake:
+                for (int i = 0; i < 3; i++)
+                    Dust.NewDustPerfect(new Vector2(Main.rand.NextFloat(box.Left, box.Right), box.Bottom - Main.rand.NextFloat(0f, box.Height)),
+                        DustID.Smoke, new Vector2(0f, -1.5f), 100, new Color(220, 220, 255), 1.4f).noGravity = true;
+                break;
+            case JutsuKind.ResonanceRing:
+                for (int i = 0; i < 10; i++)
+                    Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2CircularEdge(Projectile.width / 2f, Projectile.height / 2f),
+                        DustID.Smoke, Vector2.Zero, 100, new Color(220, 220, 255), 1.3f).noGravity = true;
+                break;
+            case JutsuKind.ImpactSlam:
+                for (int i = 0; i < 6; i++)
+                    Dust.NewDustPerfect(new Vector2(Main.rand.NextFloat(box.Left, box.Right), box.Bottom), DustID.Smoke,
+                        new Vector2(Main.rand.NextFloat(-3f, 3f), -2f), 80, default, 1.6f);
+                break;
         }
+    }
+
+    // The ring only hurts at its edge: inside it, the sound has already passed.
+    public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+    {
+        if (Kind != JutsuKind.ResonanceRing)
+            return null;
+        float radius = Projectile.width / 2f;
+        Vector2 nearest = Vector2.Clamp(Projectile.Center, targetHitbox.TopLeft(), targetHitbox.BottomRight());
+        float distance = Vector2.Distance(nearest, Projectile.Center);
+        float farthest = 0f;
+        foreach (Vector2 corner in new[] { targetHitbox.TopLeft(), targetHitbox.TopRight(), targetHitbox.BottomLeft(), targetHitbox.BottomRight() })
+            farthest = System.Math.Max(farthest, Vector2.Distance(corner, Projectile.Center));
+        return distance <= radius && farthest >= radius - 28f;
     }
 
     public override void OnHitPlayer(Player target, Player.HurtInfo info)

@@ -13,6 +13,8 @@ public enum KMat : byte
     Beam, Platform, LivingWood,
     // Appended for the exam sites in the jungle (ExamSiteDesign).
     JungleGrass, Mud, RichMahogany,
+    // The Forest of Death landmarks (v2): the giant tree's crown.
+    Leaf,
 }
 
 public enum KShape : byte { Full, Half, TopRisesEast, TopRisesWest }
@@ -22,11 +24,13 @@ public enum KWall : byte
     Planks, Stucco, Shoji, Marble, RedBrick, Wood, Brick, Palm, RedStucco, Fence, DoorLeaf,
     // Appended for the exam sites (ExamSiteDesign).
     MetalFence, Slab, Mahogany,
+    LivingWood,
 }
 
 public enum KFix : byte
 {
     Door, Table, Chair, Lantern, LampPost, Sign, Banner, Tree, Bookcase, Bed, Painting, WeaponRack, Bench, PottedPlant,
+    Campfire, Chest,
 }
 
 public readonly record struct KCell(int Dx, int Dy, KMat Mat, KShape Shape = KShape.Full);

@@ -16,7 +16,7 @@ Items: {
 
 	MistInsignia: {
 		DisplayName: Mist Insignia
-		Tooltip: A Mist scout's token, used to make a challenge scroll
+		Tooltip: A Mist ninja's token, used to make a challenge scroll
 	}
 
 	HakuChallengeScroll: {
@@ -290,7 +290,6 @@ NPCs: {
 		}
 	}
 
-	MistScout.DisplayName: Mist Scout
 	HakuBoss.DisplayName: Haku
 	WaterPrison.DisplayName: Water Prison
 	WaterClone.DisplayName: Water Clone
@@ -305,11 +304,14 @@ NPCs: {
 	RainGenin.DisplayName: Rain Genin
 	Hiruzen.DisplayName: Sarutobi Hiruzen (Third Hokage)
 	Ibiki.DisplayName: Morino Ibiki (Written Test Proctor)
+	Anko.DisplayName: Mitarashi Anko (Second Test Proctor)
+	Hayate.DisplayName: Gekko Hayate (Prelims Proctor)
 	Dosu.DisplayName: Dosu Kinuta
 	Gaara.DisplayName: Gaara of the Sand
 	Neji.DisplayName: Neji Hyuga
 	Orochimaru.DisplayName: Orochimaru
 	SummonedSnake.DisplayName: Summoned Snake
+	RainClone.DisplayName: Rain Clone
 }
 
 Projectiles: {
@@ -335,6 +337,7 @@ Projectiles: {
 	HakuPrismShard.DisplayName: Thousand Water Needles
 	HakuDashHitbox.DisplayName: Ice Blade Dash
 	SenbonWarning.DisplayName: Senbon Warning
+	ExamShuriken.DisplayName: Exam Shuriken
 }
 
 Dialogue: {

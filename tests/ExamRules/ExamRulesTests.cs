@@ -58,18 +58,16 @@ Check(Issue(0) != Issue(1), "Either scroll can be handed out");
 Check(HasBoth(1, 1) && !HasBoth(1, 0) && !HasBoth(0, 2), "Both scrolls are needed");
 Check(!SquadDropsScroll(1, 0.9f) && SquadDropsScroll(1, 0.1f) && SquadDropsScroll(SquadPity, 0.99f),
     "A squad carries the scroll by chance, the fifth always");
-Check(RainAmbushDue(ExamStage.ForestHunt, false, 1, true, 100f, false, false) &&
-      !RainAmbushDue(ExamStage.ForestHunt, true, 1, true, 100f, false, false) &&
-      !RainAmbushDue(ExamStage.ForestGate, false, 1, true, 100f, false, false) &&
-      !RainAmbushDue(ExamStage.ForestHunt, false, 1, false, 100f, false, false) &&
-      !RainAmbushDue(ExamStage.ForestHunt, false, 1, true, 100f, true, false),
-    "The Rain genin ambush once, on the jungle surface, while hunting");
-Check(!RainAmbushDue(ExamStage.ForestHunt, false, 0, true, 100f, false, false),
-    "The Rain genin wait until a candidate squad has been beaten");
-Check(!RainAmbushDue(ExamStage.ForestHunt, false, 3, true, RainAmbushTowerTiles + 1, false, false),
-    "The Rain genin lie in wait on the road to the tower, not anywhere in the forest");
-Check(!RainAmbushDue(ExamStage.ForestHunt, false, 1, true, 100f, false, true),
-    "The Rain genin leave alone someone who already has both scrolls");
+Check(GateAmbushDue(ExamStage.ForestHunt, false, 10f, false) && !GateAmbushDue(ExamStage.ForestHunt, true, 10f, false) &&
+      !GateAmbushDue(ExamStage.ForestHunt, false, EncounterReachTiles + 1, false) &&
+      !GateAmbushDue(ExamStage.ForestHunt, false, 10f, true) && !GateAmbushDue(ExamStage.ForestGate, false, 10f, false),
+    "The squad past the gate waits at its spot, once, while hunting");
+Check(RainAmbushDue(ExamStage.ForestHunt, false, 10f, false, false) &&
+      !RainAmbushDue(ExamStage.ForestHunt, true, 10f, false, false) &&
+      !RainAmbushDue(ExamStage.ForestHunt, false, EncounterReachTiles + 1, false, false) &&
+      !RainAmbushDue(ExamStage.ForestHunt, false, 10f, true, false) &&
+      !RainAmbushDue(ExamStage.ForestHunt, false, 10f, false, true),
+    "The Rain genin wait in their clearing for someone still short of a scroll");
 Check(SquadDue(ExamStage.ForestHunt, true, false, false, SquadFirstTicks, 0) &&
       !SquadDue(ExamStage.Prelims, true, false, false, SquadFirstTicks, 0) &&
       !SquadDue(ExamStage.ForestHunt, false, false, false, SquadFirstTicks, 0),
@@ -124,6 +122,16 @@ for (int x = -ExamSiteDesign.FieldHalf; x <= ExamSiteDesign.FieldHalf; x++)
 Check(sky && stadium.Arena.Width >= 45, "The stadium field is open to the sky and wide enough for Gaara");
 
 // The exam fights.
+Check(Enumerable.Range(0, 40).All(i => ExamBossRules.ChooseDosuMove(i % 20, DosuMove.Quake, i / 40f) != DosuMove.Quake) &&
+      Enumerable.Range(0, 40).All(i => ExamBossRules.ChooseDosuMove(3f, DosuMove.Drill, i / 40f) != DosuMove.Drill),
+    "Dosu never uses the same technique twice running");
+Check(new[] { 2f, 9f, 18f }.SelectMany(d => Enumerable.Range(0, 20).Select(i => ExamBossRules.ChooseDosuMove(d, DosuMove.None, i / 20f)))
+          .Distinct().Count() == 5,
+    "All five of Dosu's techniques come up across the distances");
+Check(ExamBossRules.ChooseDosuMove(2f, DosuMove.None, 0.3f) is DosuMove.Drill or DosuMove.Ring || ExamBossRules.ChooseDosuMove(2f, DosuMove.None, 0.3f) == DosuMove.Quake,
+    "Up close he drills, rings or slams the floor");
+Check(ExamBossRules.DosuWindupScale(1000, 2200) < 1f && ExamBossRules.DosuWindupScale(2000, 2200) == 1f && ExamBossRules.DosuDoubleWave(1100, 2200) && !ExamBossRules.DosuDoubleWave(1200, 2200),
+    "Under half life Dosu winds up faster and the sound wave comes twice");
 Check(ExamBossRules.Tinnitus(0, ExamBossRules.TinnitusTicks) <= 120 && ExamBossRules.Tinnitus(119, 500) == ExamBossRules.TinnitusMaxTicks,
     "Dosu's reversed controls never last longer than two seconds");
 Check(ExamBossRules.DosuLife < 1800 * 1.4f && ExamBossRules.DosuLife > 1800,

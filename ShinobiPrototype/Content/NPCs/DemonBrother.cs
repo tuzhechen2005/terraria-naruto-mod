@@ -74,8 +74,7 @@ public abstract class DemonBrother : ModNPC
         if (!Leads)
             return 0f;
         Player player = spawnInfo.Player;
-        bool found = player.HasItem(ModContent.ItemType<MistInsignia>()) ||
-                     player.GetModPlayer<StoryPlayer>().InsigniaNoticeShown;
+        bool found = StoryWorld.MetTazuna || player.HasItem(ModContent.ItemType<MistInsignia>());
         bool inMist = WaveBridgeWorld.MistActive &&
                       WaveBridgeWorld.DistanceToBridgeTiles(player.Center) < BridgeRules.FogReachTiles;
         bool alive = NPC.AnyNPCs(Type) || NPC.AnyNPCs(PartnerType);
