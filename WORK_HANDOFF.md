@@ -33,7 +33,7 @@
   - 接入 `byakugan-icon-v3`（`StyleCores/ByakuganCore.png`）与 `exam-genin-style-v1`（`RainGenin.png`、`ForestCanopyCandidate.png`，2 帧：站立/投掷，投掷后显示 20 帧；去掉染色；判定框高 56）。
   - 修复：卡卡西“回村/去忍者学校/练习替身术”与伊比喜“开始笔试”按钮在回调里关对话框，原版随后读 `npc[-1]` 报 IndexOutOfRange（client.log `Main.GUIChatDrawInner`）。改为 `NpcChatCloser.CloseNextTick()` 下一帧关。
 - 再不斩尾声帧重新上色（用户：倒地帧太柔、色块太大，和 Boss 战形象不一样）：`scripts/sharpen_epilogue_frames.py` 把 Rise/Stagger/Collapse 共 10 帧按战斗帧调色板重上色（蓝灰衣服色阶 + 左上光、描边分肢体、两阶肤色、绑腿灰、头部面罩白），剪影与位置逐像素不变，衔接不受影响。输入为 `6d87a4a` 时的游戏帧（Stagger 已按躯干对齐，与交付不同）。白的尾声帧未处理。
-- 后台美术（已提交给 Codex，用 `python3 scripts/art_bridge.py status <ID>` 查）：`kakashi-npc-v3`（卡卡西按伊比喜规格重画，25 美术像素高；接入后把 `NpcSheet.KakashiBody` 改为 50 像素身高对应值）、`exam-genin-full-v1`（两种考生的 Walk 4 + Jump 1；接入后改 `ForestExamCandidate.FindFrame`）。
+- 后台美术（已提交给 Codex，用 `python3 scripts/art_bridge.py status <ID>` 查）：`kakashi-npc-v3`（卡卡西按伊比喜规格重画，25 美术像素高；接入后把 `NpcSheet.KakashiBody` 改为 50 像素身高对应值）。`exam-genin-full-v1` 已交付并接入（考生贴图 7 帧：站立、投掷、跑 4、跳）。
 - 用户已定：白眼 v3、雨隐下忍与考生样张都通过。
 
 **最近一次会话（2026-09-30 晚 ～ 10-01，全部已提交；GitHub 只推送到 `b411ffe`，之后的提交都还在本地，推送需用户明确要求）**
@@ -119,7 +119,7 @@
 ## 工作树与后台
 
 - 分支 `main`，领先 origin/main 23 个提交未推送（origin 在 `b411ffe`）；未跟踪：`art/deliveries/orochimaru-style-v1/`（用户说大蛇丸先不管）（推送需用户明确要求，推送前确认没有音乐文件进入提交）。
-- 运行中的美术请求：`kakashi-npc-v3`、`exam-genin-full-v1`（`.art-bridge/bg-konoha-v1.json` 显示 running 是早已被 v2 取代的陈旧状态，忽略）。`.art-bridge/`、`art/reference/` 为本地忽略目录。
+- 运行中的美术请求：`kakashi-npc-v3`（`.art-bridge/bg-konoha-v1.json` 显示 running 是早已被 v2 取代的陈旧状态，忽略）。`.art-bridge/`、`art/reference/` 为本地忽略目录。
 
 ## 验证
 

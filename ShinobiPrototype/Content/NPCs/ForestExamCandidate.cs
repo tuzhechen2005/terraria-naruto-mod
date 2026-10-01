@@ -11,11 +11,15 @@ namespace ShinobiPrototype.Content.NPCs;
 
 // Genin in the Forest of Death (specs/M2_中忍考试篇.spec.md 3.2): they run the player down and throw senbon. Who beat
 // them is judged on each player's own client (a player who landed a hit takes part), since the exam progress lives
-// there. Art: exam-genin-style-v1, two frames per sheet (<ClassName>.png, 112x88 frames facing left): standing, then
-// the throw, shown for a moment after each one. Walk frames come with the full set.
+// there. Art: exam-genin-style-v1 and exam-genin-full-v1, one sheet each (<ClassName>.png, 112x88 frames facing left):
+// standing, the throw (shown for a moment after each one), a four-frame run and the jump.
 public abstract class ForestExamCandidate : ModNPC
 {
     private const int ThrowPoseTicks = 20;
+    private const int ThrowFrame = 1;
+    private const int RunFirst = 2;
+    private const int RunFrames = 4;
+    private const int JumpFrame = RunFirst + RunFrames;
 
     protected virtual float Speed => 2.6f;
     protected virtual int ThrowInterval => 150;
@@ -23,7 +27,7 @@ public abstract class ForestExamCandidate : ModNPC
     // The local player hit this one (client side only).
     private bool hitByLocalPlayer;
 
-    public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 2;
+    public override void SetStaticDefaults() => Main.npcFrameCount[Type] = JumpFrame + 1;
 
     public override void SetDefaults()
     {
@@ -77,7 +81,22 @@ public abstract class ForestExamCandidate : ModNPC
     public override void FindFrame(int frameHeight)
     {
         NPC.spriteDirection = NPC.direction;
-        NPC.frame.Y = (NPC.ai[2] > 0f ? 1 : 0) * frameHeight;
+        int frame;
+        if (NPC.ai[2] > 0f)
+            frame = ThrowFrame;
+        else if (NPC.velocity.Y != 0f)
+            frame = JumpFrame;
+        else if (System.Math.Abs(NPC.velocity.X) > 0.3f)
+        {
+            NPC.frameCounter += System.Math.Abs(NPC.velocity.X);
+            frame = RunFirst + (int)(NPC.frameCounter / 10.0) % RunFrames;
+        }
+        else
+        {
+            NPC.frameCounter = 0;
+            frame = 0;
+        }
+        NPC.frame.Y = frame * frameHeight;
     }
 
     protected virtual void Throw(Player target)
