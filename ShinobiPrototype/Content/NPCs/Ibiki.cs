@@ -11,15 +11,16 @@ namespace ShinobiPrototype.Content.NPCs;
 
 // Morino Ibiki, proctor of the written test (specs/M2_中忍考试篇.spec.md 3.1): he stands in an Academy classroom and
 // the test starts by talking to him, with Kakashi's recommendation in hand (user, 2026-09-30: using the scroll on
-// its own felt strange). A story NPC like the Third Hokage: no house, cannot be hurt. Placeholder art: vanilla's Arms
-// Dealer until ibiki-npc-v1.
+// its own felt strange). A story NPC like the Third Hokage: no house, cannot be hurt. Art: ibiki-npc-v1, the twelve
+// NpcSheet frames plus arms folded and a pointing announcement (shown while someone talks to him).
 public sealed class Ibiki : ModNPC
 {
-    public override string Texture => $"Terraria/Images/NPC_{NPCID.ArmsDealer}";
+    private const int FoldedFrame = NpcSheet.FrameCount;
+    private const int PointFrame = NpcSheet.FrameCount + 1;
 
     public override void SetStaticDefaults()
     {
-        Main.npcFrameCount[Type] = Main.npcFrameCount[NPCID.ArmsDealer];
+        Main.npcFrameCount[Type] = NpcSheet.FrameCount + 2;
         NPCID.Sets.NoTownNPCHappiness[Type] = true;
         NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, new NPCID.Sets.NPCBestiaryDrawModifiers { Hide = true });
     }
@@ -51,7 +52,11 @@ public sealed class Ibiki : ModNPC
         NPC.direction = NPC.spriteDirection = nearest.Center.X >= NPC.Center.X ? 1 : -1;
     }
 
-    public override void FindFrame(int frameHeight) => NPC.frame.Y = 0;
+    public override void FindFrame(int frameHeight)
+    {
+        NPC.spriteDirection = NPC.direction;
+        NPC.frame.Y = (Main.LocalPlayer.talkNPC == NPC.whoAmI ? PointFrame : FoldedFrame) * frameHeight;
+    }
 
     public override string GetChat()
     {
