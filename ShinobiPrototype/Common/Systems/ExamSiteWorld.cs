@@ -52,6 +52,8 @@ public sealed class ExamSiteWorld : ModSystem
     public static Vector2? HayateFeet => Tower is ExamSite t ? Feet(t, ExamSiteDesign.HayateDx) : null;
     // The first squad lies in wait a little way past the gate; the Rain genin in the clearing before the tower.
     public static Vector2? GateAmbushSpot => Gate is ExamSite g ? Feet(g, ChuninExamRules.GateAmbushTiles) : null;
+    // Orochimaru waits halfway between the gate and the tower (where his disguise walks out of the trees).
+    public static float? OrochimaruX => Gate is ExamSite g && Tower is ExamSite t ? (g.CenterX + t.CenterX) / 2 * 16f + 8f : null;
     public static Vector2? RainClearing => Tower is ExamSite t
         ? Feet(t, -(ExamSiteDesign.TowerHalf + ChuninExamRules.RainClearingTiles)) : null;
 

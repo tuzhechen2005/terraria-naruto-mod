@@ -15,7 +15,7 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名] 或 /m0 god [on|off]";
+    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 orochimaru、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名] 或 /m0 god [on|off]";
     public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
@@ -117,6 +117,21 @@ public sealed class M0Command : ModCommand
         if (args.Length >= 1 && args[0].Equals("exam", StringComparison.OrdinalIgnoreCase))
         {
             Exam(caller, player, args.Length > 1 ? args[1] : null);
+            return;
+        }
+
+        if (args.Length == 1 && args[0].Equals("orochimaru", StringComparison.OrdinalIgnoreCase))
+        {
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                caller.Reply("召唤大蛇丸的伪装只在单人模式可用。", Color.OrangeRed);
+                return;
+            }
+            Vector2 at = player.Bottom + new Vector2(player.direction * 30 * 16f, 0f);
+            if (Common.GroundSpot.TryNear(at, 28, 56, out Vector2 ground))
+                at = ground;
+            NPC.NewNPC(player.GetSource_Misc("ShinobiM0"), (int)at.X, (int)at.Y, ModContent.NPCType<Content.NPCs.OrochimaruDisguise>());
+            caller.Reply("林子里忽然没了虫鸣……（要算进考试进度，需处在第二试抢卷阶段）", Color.LightGreen);
             return;
         }
 

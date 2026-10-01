@@ -77,6 +77,8 @@ public abstract class ExamBoss : ModNPC
         Player target = Main.player[NPC.target];
         if (!target.active || target.dead || Vector2.Distance(target.Center, NPC.Center) > 3000f)
         {
+            if (TargetGone(target))
+                return;
             // Everyone fled or fell: leave the field.
             NPC.velocity.X *= 0.9f;
             if (++leaveTicks > 180)
@@ -95,6 +97,9 @@ public abstract class ExamBoss : ModNPC
     }
 
     protected abstract void Fight(Player target);
+
+    // Everyone fled or fell; true if the boss deals with it itself (otherwise it leaves the field after a while).
+    protected virtual bool TargetGone(Player target) => false;
 
     protected void Enter(float state)
     {

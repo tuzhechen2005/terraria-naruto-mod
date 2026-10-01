@@ -92,6 +92,18 @@ public sealed class Kakashi : ModNPC
         Player player = Main.LocalPlayer;
         string objective = player.GetModPlayer<StoryPlayer>().CurrentObjective();
 
+        // The first time after the player met Orochimaru in the forest.
+        ChuninExamPlayer exam = player.GetModPlayer<ChuninExamPlayer>();
+        if (exam.OrochimaruDone && !exam.KakashiHeardOrochimaru)
+        {
+            exam.KakashiHeardOrochimaru = true;
+            return "……喂喂，你那脸色是怎么回事。\n\n" +
+                   "（听你说完，他把小书收了起来）长头发，蛇一样的眼睛，脖子还能伸那么长……那家伙是大蛇丸。" +
+                   "木叶出去的叛忍，以前的三忍之一。\n\n" +
+                   "……老实说，你还能站在这里，运气相当不错哦。这件事我会报告火影大人。" +
+                   "考试照常考——不过下次再看见那双眼睛，别逞强，掉头就跑。";
+        }
+
         // Characters made before the handbook existed (or who lost it) get one from him.
         int handbook = ModContent.ItemType<NinjaHandbook>();
         if (!player.HasItem(handbook))
@@ -110,7 +122,6 @@ public sealed class Kakashi : ModNPC
         }
 
         // Wave Country done: back to the Leaf, and the recommendation for the Chūnin Exams (M2 spec, section 2).
-        ChuninExamPlayer exam = player.GetModPlayer<ChuninExamPlayer>();
         int recommendation = ModContent.ItemType<ExamAdmissionScroll>();
         if (exam.Stage == ExamStage.Recommend)
         {

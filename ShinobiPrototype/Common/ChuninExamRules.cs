@@ -111,6 +111,15 @@ public static class ChuninExamRules
     public const int RainAmbushRetryTicks = 20 * 60;
     public const int RainAmbushWarnTicks = 120;
 
+    // Orochimaru, halfway between the gate and the tower, after the squad at the gate (user, 2026-10-01): he waits for
+    // whoever comes by until he has been met; the Rain genin wait for him to have been met.
+    public const int OrochimaruReachTiles = 30;
+    public const int OrochimaruRetryTicks = 30 * 60;
+    public const int OrochimaruWarnTicks = 150;
+
+    public static bool OrochimaruDue(ExamStage stage, bool gateDone, bool met, float tilesFromSpot, bool alive) =>
+        stage == ExamStage.ForestHunt && gateDone && !met && tilesFromSpot <= OrochimaruReachTiles && !alive;
+
     public static bool GateAmbushDue(ExamStage stage, bool done, float tilesFromSpot, bool squadAlive) =>
         stage == ExamStage.ForestHunt && !done && tilesFromSpot <= EncounterReachTiles && !squadAlive;
 

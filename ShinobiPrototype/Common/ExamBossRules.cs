@@ -105,7 +105,9 @@ public static class ExamBossRules
 
     public static int AddSeal(int stacks) => Math.Min(SealMaxStacks, stacks + 1);
 
-    // --- Orochimaru's encounter in the Forest of Death (optional; retreats at half life, ThresholdRetreatRules).
+    // --- Orochimaru's encounter in the Forest of Death: a fight that cannot be won, on the way to the tower (user,
+    // 2026-10-01). It ends when he is down to half life (ThresholdRetreatRules), when the player has held out long
+    // enough, or when the player falls (he spares them); a player not yet strong enough takes less and holds out less.
     public const int OrochimaruLife = 5000;
     public const int OrochimaruDefense = 12;
     public const int KillingIntentTicks = 120;   // frozen by fear unless the player substitutes out
@@ -127,9 +129,33 @@ public static class ExamBossRules
     public static bool SummonSnakes(float lifeShare, int summonsSoFar) =>
         summonsSoFar == 0 && lifeShare <= SnakeSummonAt || summonsSoFar == 1 && lifeShare <= SecondSnakeSummonAt;
 
-    // Rarely met again in the forest; the shed skin calls him back for another try at the eye.
-    public const float ForestRematchChancePerCheck = 0.0005f;
+    // The shed skin calls him back for another try at the eye (the first meeting always leaves it).
     public const float SharinganVialChance = 0.25f;
+
+    public const int OrochimaruHoldOutTicks = 90 * 60;
+    public const int OrochimaruHoldOutWeakTicks = 60 * 60;
+    public const float OrochimaruWeakDamage = 0.7f;
+    // The giant snake: summoned once, when he is down to three quarters or a while into the fight.
+    public const float GiantSnakeAt = 0.75f;
+    public const int GiantSnakeAfterTicks = 35 * 60;
+    public const int GiantSnakeDamage = 46;
+    public const int GiantSnakeWarnTicks = 90;
+
+    public enum OrochimaruEnd { None, HalfLife, HeldOut, PlayerFell }
+
+    public static OrochimaruEnd OrochimaruEnds(int life, int lifeMax, int fightTicks, bool ready, bool playerFell)
+    {
+        if (playerFell)
+            return OrochimaruEnd.PlayerFell;
+        if (ThresholdRetreatRules.Reached(life, lifeMax))
+            return OrochimaruEnd.HalfLife;
+        return fightTicks >= (ready ? OrochimaruHoldOutTicks : OrochimaruHoldOutWeakTicks) ? OrochimaruEnd.HeldOut : OrochimaruEnd.None;
+    }
+
+    public static int OrochimaruDamage(int damage, bool ready) => ready ? damage : (int)(damage * OrochimaruWeakDamage);
+
+    public static bool GiantSnakeDue(bool summoned, int life, int lifeMax, int fightTicks) =>
+        !summoned && (life <= lifeMax * GiantSnakeAt || fightTicks >= GiantSnakeAfterTicks);
 
     // Movement locks (sand coffin, killing intent) break the moment the player substitutes.
     public static bool BreaksOnSubstitution(int bindTicks, int fearTicks) => bindTicks > 0 || fearTicks > 0;

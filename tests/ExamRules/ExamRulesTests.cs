@@ -121,6 +121,23 @@ for (int x = -ExamSiteDesign.FieldHalf; x <= ExamSiteDesign.FieldHalf; x++)
         sky &= stadium.CellAt(x, y) is null;
 Check(sky && stadium.Arena.Width >= 45, "The stadium field is open to the sky and wide enough for Gaara");
 
+// Orochimaru in the forest.
+Check(OrochimaruDue(ExamStage.ForestHunt, true, false, 10f, false) && !OrochimaruDue(ExamStage.ForestHunt, false, false, 10f, false) &&
+      !OrochimaruDue(ExamStage.ForestHunt, true, true, 10f, false) && !OrochimaruDue(ExamStage.ForestHunt, true, false, OrochimaruReachTiles + 1, false) &&
+      !OrochimaruDue(ExamStage.ForestHunt, true, false, 10f, true),
+    "Orochimaru waits halfway, after the squad at the gate, until he has been met");
+Check(ExamBossRules.OrochimaruEnds(5000, 5000, 0, true, true) == ExamBossRules.OrochimaruEnd.PlayerFell &&
+      ExamBossRules.OrochimaruEnds(2500, 5000, 10, true, false) == ExamBossRules.OrochimaruEnd.HalfLife &&
+      ExamBossRules.OrochimaruEnds(5000, 5000, ExamBossRules.OrochimaruHoldOutTicks, true, false) == ExamBossRules.OrochimaruEnd.HeldOut &&
+      ExamBossRules.OrochimaruEnds(5000, 5000, ExamBossRules.OrochimaruHoldOutWeakTicks, false, false) == ExamBossRules.OrochimaruEnd.HeldOut &&
+      ExamBossRules.OrochimaruEnds(5000, 5000, ExamBossRules.OrochimaruHoldOutWeakTicks, true, false) == ExamBossRules.OrochimaruEnd.None,
+    "Orochimaru leaves at half life, after the player holds out (sooner for a weaker one), or when the player falls");
+Check(ExamBossRules.OrochimaruDamage(40, false) < 40 && ExamBossRules.OrochimaruDamage(40, true) == 40,
+    "A player not yet strong enough takes less from him");
+Check(ExamBossRules.GiantSnakeDue(false, 3700, 5000, 0) && ExamBossRules.GiantSnakeDue(false, 5000, 5000, ExamBossRules.GiantSnakeAfterTicks) &&
+      !ExamBossRules.GiantSnakeDue(true, 1000, 5000, 9999) && !ExamBossRules.GiantSnakeDue(false, 4000, 5000, 60),
+    "The giant snake comes once: at three quarters life or a while into the fight");
+
 // The exam fights.
 Check(Enumerable.Range(0, 40).All(i => ExamBossRules.ChooseDosuMove(i % 20, DosuMove.Quake, i / 40f) != DosuMove.Quake) &&
       Enumerable.Range(0, 40).All(i => ExamBossRules.ChooseDosuMove(3f, DosuMove.Drill, i / 40f) != DosuMove.Drill),

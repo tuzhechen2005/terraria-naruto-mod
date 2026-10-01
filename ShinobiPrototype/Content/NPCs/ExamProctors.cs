@@ -77,7 +77,19 @@ public sealed class Anko : ExamProctor
 {
     protected override Vector2? Feet => ExamSiteWorld.AnkoFeet;
 
-    public override string GetChat() => Exam.Stage switch
+    public override string GetChat()
+    {
+        // The first time after the player met Orochimaru in the forest (Anko bears his curse mark).
+        if (Exam.OrochimaruDone && !Exam.AnkoHeardOrochimaru)
+        {
+            Exam.AnkoHeardOrochimaru = true;
+            return "……你说什么？长头发，蛇一样的眼睛？\n\n" +
+                   "（她的手不自觉地按住了脖子后面）……那家伙的事，交给我。你只管往塔走——那不是你能应付的对手。";
+        }
+        return Chat();
+    }
+
+    private static string Chat() => Exam.Stage switch
     {
         ExamStage.ForestGate =>
             "哟，又来一个送死的。我是第二试的监考官，御手洗红豆。\n\n" +

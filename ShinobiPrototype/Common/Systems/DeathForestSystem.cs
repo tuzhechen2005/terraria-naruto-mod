@@ -13,7 +13,8 @@ namespace ShinobiPrototype.Common.Systems;
 // The Forest of Death (specs/M2_中忍考试篇.spec.md 3.2; redesigned with the user 2026-10-01), run by the server (or
 // single player) from each player's synced progress. Fixed encounters on the way from the gate to the tower:
 // - past the gate, a squad lies in wait (carrying the same scroll as the player);
-// - in the clearing before the tower, the Rain genin (carrying the missing one).
+// - halfway, Orochimaru in the guise of a lone Grass candidate (after the squad at the gate);
+// - in the clearing before the tower, the Rain genin (carrying the missing one; after Orochimaru).
 // Each waits at its spot and tries again if the player runs or falls. Elsewhere in the forest, squads roam as an
 // optional fight (no scroll, no announcement) once the first encounter is behind the player. Everyone is placed on
 // open ground (GroundSpot).
@@ -22,6 +23,9 @@ public sealed class DeathForestSystem : ModSystem
     private const int MemberWidth = 28, MemberHeight = 56;
 
     private static int gateCooldown;
+    private static int orochimaruCooldown;
+    private static int orochimaruWarn = -1;
+    private static int orochimaruTarget = -1;
     private static int rainCooldown;
     private static int rainWarn = -1;
     private static int rainTarget = -1;
@@ -34,7 +38,8 @@ public sealed class DeathForestSystem : ModSystem
 
     private static void Reset()
     {
-        gateCooldown = rainCooldown = 0;
+        gateCooldown = rainCooldown = orochimaruCooldown = 0;
+        orochimaruWarn = orochimaruTarget = -1;
         rainWarn = rainTarget = -1;
         nextSquad = 1;
         System.Array.Clear(squadWait);
@@ -49,6 +54,10 @@ public sealed class DeathForestSystem : ModSystem
             gateCooldown--;
         if (rainCooldown > 0)
             rainCooldown--;
+        if (orochimaruCooldown > 0)
+            orochimaruCooldown--;
+        if (orochimaruWarn >= 0 && --orochimaruWarn < 0)
+            SendDisguise();
         if (rainWarn >= 0 && --rainWarn < 0)
             SpawnRain();
         if (Main.GameUpdateCount % 30 != 0)
@@ -68,7 +77,18 @@ public sealed class DeathForestSystem : ModSystem
                 gateCooldown = ChuninExamRules.GateAmbushRetryTicks;
                 SpawnGateSquad(player);
             }
-            if (rainCooldown <= 0 && rainWarn < 0 && ExamSiteWorld.RainClearing is Vector2 clearing &&
+            bool orochimaruAbout = NPC.AnyNPCs(ModContent.NPCType<OrochimaruDisguise>()) || NPC.AnyNPCs(ModContent.NPCType<Orochimaru>());
+            if (orochimaruCooldown <= 0 && orochimaruWarn < 0 && ExamSiteWorld.OrochimaruX is float midway &&
+                ChuninExamRules.OrochimaruDue(exam.Stage, exam.GateSquadDone, exam.OrochimaruDone,
+                    System.Math.Abs(player.Center.X - midway) / 16f, orochimaruAbout))
+            {
+                orochimaruCooldown = ChuninExamRules.OrochimaruRetryTicks;
+                orochimaruWarn = ChuninExamRules.OrochimaruWarnTicks;
+                orochimaruTarget = player.whoAmI;
+                Tell(player, "林子里忽然没了虫鸣……");
+            }
+            // The Rain genin wait until Orochimaru has been met.
+            if (exam.OrochimaruDone && rainCooldown <= 0 && rainWarn < 0 && ExamSiteWorld.RainClearing is Vector2 clearing &&
                 ChuninExamRules.RainAmbushDue(exam.Stage, exam.RainAmbushDone, Vector2.Distance(player.Bottom, clearing) / 16f,
                     NPC.AnyNPCs(rain), exam.HasBothScrolls))
             {
@@ -100,6 +120,22 @@ public sealed class DeathForestSystem : ModSystem
         SpawnMember(type, player.Bottom + new Vector2(dir * 21 * 16f, 0f), squad, code);
         SpawnMember(type, player.Bottom + new Vector2(-dir * 10 * 16f, 0f), squad, code);
         Tell(player, "……树上有人。");
+    }
+
+    // A lone Grass candidate walks out of the trees ahead, towards the tower.
+    private static void SendDisguise()
+    {
+        Player player = orochimaruTarget >= 0 ? Main.player[orochimaruTarget] : null;
+        orochimaruTarget = -1;
+        if (player is not { active: true, dead: false })
+        {
+            orochimaruCooldown = 0;
+            return;
+        }
+        int dir = ExamSiteWorld.Gate is ExamSite gate ? gate.Dir : 1;
+        if (!GroundSpot.TryNear(player.Bottom + new Vector2(dir * 34 * 16f, 0f), MemberWidth, MemberHeight, out Vector2 at, 12, 16, 20))
+            at = player.Bottom + new Vector2(dir * 34 * 16f, 0f);
+        NPC.NewNPC(new EntitySource_WorldEvent(), (int)at.X, (int)at.Y, ModContent.NPCType<OrochimaruDisguise>());
     }
 
     // One on each side of the clearing, one dropping from the trees above the player.

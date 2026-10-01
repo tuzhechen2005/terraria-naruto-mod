@@ -22,6 +22,10 @@ public sealed class ChuninExamPlayer : ModPlayer
     public bool RainAmbushDone { get; private set; }
     // The squad lying in wait past the gate has been beaten (the second test's first encounter).
     public bool GateSquadDone { get; private set; }
+    // Orochimaru has been met halfway through the forest (and left); Kakashi and Anko have had their word about it.
+    public bool OrochimaruDone { get; private set; }
+    public bool KakashiHeardOrochimaru { get; set; }
+    public bool AnkoHeardOrochimaru { get; set; }
     public int SquadsBeaten { get; private set; }
     public bool TowerReached { get; private set; }
     public bool PrelimsPassed { get; private set; }
@@ -43,7 +47,7 @@ public sealed class ChuninExamPlayer : ModPlayer
     public override void Initialize()
     {
         Recommended = WrittenPassed = GaveUpWritten = DawnSinceGivingUp = RainAmbushDone = TowerReached = PrelimsPassed =
-            GateSquadDone = false;
+            GateSquadDone = OrochimaruDone = KakashiHeardOrochimaru = AnkoHeardOrochimaru = false;
         Issued = ExamScroll.None;
         SquadsBeaten = 0;
     }
@@ -82,6 +86,28 @@ public sealed class ChuninExamPlayer : ModPlayer
         SquadsBeaten++;
         Main.NewText($"倒在地上的考生怀里，露出一角{ScrollName(Issued)}——和你的一样。\n" +
                      $"考生：“……哼，想要{ScrollName(ChuninExamRules.Other(Issued))}？去塔那边碰碰运气吧……雨……”", 180, 200, 170);
+    }
+
+    // Took part in the encounter with Orochimaru (he left: held off, held out against, or the player fell). The first
+    // time he leaves the Sharingan in a vial behind (user, 2026-10-01: like the Eight Gates from Gaara).
+    public void CreditOrochimaru()
+    {
+        if (Stage != ExamStage.ForestHunt || OrochimaruDone)
+            return;
+        OrochimaruDone = true;
+        vialPending = true;
+    }
+
+    // Handed over once the player is up again (they may have fallen in the fight).
+    private bool vialPending;
+
+    private void HandOverVial()
+    {
+        if (!vialPending || Player.dead)
+            return;
+        vialPending = false;
+        Player.QuickSpawnItem(Player.GetSource_Misc("Orochimaru"), ModContent.ItemType<Content.Items.StyleCores.SharinganCore1>());
+        Main.NewText("……地上还滚着一支试管，里面泡着一只红色的眼睛。", new Color(190, 150, 230));
     }
 
     // A squad met anywhere else in the forest: an optional fight, no scroll, no announcement.
@@ -145,6 +171,7 @@ public sealed class ChuninExamPlayer : ModPlayer
     {
         if (Player.whoAmI != Main.myPlayer)
             return;
+        HandOverVial();
         if (GaveUpWritten && !wasDay && Main.dayTime)
             DawnSinceGivingUp = true;
         wasDay = Main.dayTime;
@@ -174,6 +201,7 @@ public sealed class ChuninExamPlayer : ModPlayer
         Issued = stage >= ExamStage.ForestHunt ? ExamScroll.Heaven : ExamScroll.None;
         RainAmbushDone = stage >= ExamStage.Prelims;
         GateSquadDone = stage >= ExamStage.Prelims;
+        OrochimaruDone = stage >= ExamStage.Prelims;
         TowerReached = stage >= ExamStage.Prelims;
         PrelimsPassed = stage >= ExamStage.Training;
     }
@@ -185,6 +213,7 @@ public sealed class ChuninExamPlayer : ModPlayer
             tag["examScroll"] = (byte)Issued;
         if (SquadsBeaten > 0)
             tag["examSquads"] = SquadsBeaten;
+        tag["examFlags2"] = (byte)Flags2;
         if (GaaraFirstWin)
             tag["gaaraFirstWin"] = true;
     }
@@ -194,6 +223,7 @@ public sealed class ChuninExamPlayer : ModPlayer
         Flags = tag.GetByte("examFlags");
         Issued = (ExamScroll)tag.GetByte("examScroll");
         SquadsBeaten = tag.GetInt("examSquads");
+        Flags2 = tag.GetByte("examFlags2");
         GaaraFirstWin = tag.GetBool("gaaraFirstWin");
     }
 
@@ -214,6 +244,17 @@ public sealed class ChuninExamPlayer : ModPlayer
         }
     }
 
+    private BitsByte Flags2
+    {
+        get => new(OrochimaruDone, KakashiHeardOrochimaru, AnkoHeardOrochimaru);
+        set
+        {
+            OrochimaruDone = value[0];
+            KakashiHeardOrochimaru = value[1];
+            AnkoHeardOrochimaru = value[2];
+        }
+    }
+
     // Multiplayer: the server keeps a copy for spawning (see DeathForestSystem).
     public override void SyncPlayer(int toWho, int fromWho, bool newPlayer)
     {
@@ -228,6 +269,7 @@ public sealed class ChuninExamPlayer : ModPlayer
     {
         ChuninExamPlayer copy = (ChuninExamPlayer)targetCopy;
         copy.Flags = Flags;
+        copy.Flags2 = Flags2;
         copy.Issued = Issued;
         copy.SquadsBeaten = SquadsBeaten;
     }
@@ -235,13 +277,14 @@ public sealed class ChuninExamPlayer : ModPlayer
     public override void SendClientChanges(ModPlayer clientPlayer)
     {
         ChuninExamPlayer old = (ChuninExamPlayer)clientPlayer;
-        if ((byte)old.Flags != (byte)Flags || old.Issued != Issued || old.SquadsBeaten != SquadsBeaten)
+        if ((byte)old.Flags != (byte)Flags || (byte)old.Flags2 != (byte)Flags2 || old.Issued != Issued || old.SquadsBeaten != SquadsBeaten)
             SyncPlayer(-1, Main.myPlayer, false);
     }
 
     private void Write(BinaryWriter writer)
     {
         writer.Write((byte)Flags);
+        writer.Write((byte)Flags2);
         writer.Write((byte)Issued);
         writer.Write((ushort)System.Math.Min(SquadsBeaten, ushort.MaxValue));
     }
@@ -249,6 +292,7 @@ public sealed class ChuninExamPlayer : ModPlayer
     internal void Read(BinaryReader reader)
     {
         Flags = reader.ReadByte();
+        Flags2 = reader.ReadByte();
         Issued = (ExamScroll)reader.ReadByte();
         SquadsBeaten = reader.ReadUInt16();
     }
