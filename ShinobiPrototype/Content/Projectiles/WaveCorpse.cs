@@ -11,9 +11,10 @@ namespace ShinobiPrototype.Content.Projectiles;
 
 // A fallen Zabuza or Haku, lying where they dropped until the epilogue ends (user, 2026-09-29). Not an NPC, so the
 // fight's "is a boss still here" checks are unaffected. During the epilogue the one who fell last says their lines,
-// then gets up, staggers over at a slow fixed pace and collapses at the other's side (WaveEpilogueRules). Art: wave-corpses-v1 (Zabuza_Lying /
-// Haku_Lying) and wave-epilogue-walk-v1 (Rise / Stagger / Collapse); until those frames arrive, the kneeling and
-// unarmed frames stand in.
+// then gets up, staggers over at a slow fixed pace and collapses at the other's side (WaveEpilogueRules). Art:
+// wave-epilogue-walk-v2 (Rise / Stagger / Collapse). Lying uses the walk's own end frames (user, 2026-10-01: the
+// separate lying art did not match them): the walker lies in Rise_0 before getting up, every other body in
+// Collapse_2. The old Zabuza_Lying / Haku_Lying art is only a fallback.
 public sealed class WaveCorpse : ModProjectile
 {
     public const int Zabuza = 0;
@@ -102,9 +103,6 @@ public sealed class WaveCorpse : ModProjectile
         };
         if (action == null)
             return false;
-        // The last collapse frame hands over to the lying art.
-        if (phase == WaveEpilogueRules.WalkerPhase.Collapsing && frame >= 2 && !BossSprites.Has($"{prefix}_Collapse_2"))
-            return false;
         Vector2 feet = Projectile.Bottom;
         if (BossSprites.TryDraw(Main.spriteBatch, prefix, action, frame, frames, canvas, feet, Facing, color, Main.screenPosition))
             return true;
@@ -116,6 +114,12 @@ public sealed class WaveCorpse : ModProjectile
     {
         Color color = BossSprites.Lit(lightColor, 0.35f) * Projectile.Opacity;
         if (DrawUpright(color))
+            return false;
+        string prefix = Who == Zabuza ? "Zabuza" : "Haku";
+        BossSprites.Canvas bodyCanvas = Who == Zabuza ? BossSprites.Zabuza : BossSprites.Haku;
+        bool beforeRise = IsWalker && WaveEpilogueSystem.Phase == WaveEpilogueRules.WalkerPhase.Lying;
+        if (BossSprites.TryDraw(Main.spriteBatch, prefix, beforeRise ? "Rise" : "Collapse", beforeRise ? 0 : 2, 3,
+                bodyCanvas, Projectile.Bottom, Facing, color, Main.screenPosition))
             return false;
         string lying = Who == Zabuza ? "ShinobiPrototype/Content/NPCs/Zabuza_Lying" : "ShinobiPrototype/Content/NPCs/Haku_Lying";
         SpriteEffects flip = Facing >= 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;

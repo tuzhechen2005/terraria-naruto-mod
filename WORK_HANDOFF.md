@@ -24,6 +24,17 @@
 
 ## 当前状态（2026-10-01）
 
+**2026-10-01 Claude Code 接手后（本段）**
+
+- 用户反馈与改动（已提交，未实机）：
+  - 所有剧情 NPC 与伊比喜同高：`NpcSheet.StoryHeight`（50 像素 × 1.25）与 `ScaleFor(身体像素)`，卡卡西/达兹纳（桥头与城镇）/三代/森林少年白都按待机帧身高换算；水牢里被困的卡卡西同比例。
+  - 尾声倒地：不再用旧的 `Zabuza_Lying`/`Haku_Lying`（与起身帧对不上），行走者起身前躺 `Rise_0`，其余时候躺 `Collapse_2`（`WaveCorpse`）；湖边再不斩中千本倒下也改播 `Collapse` 0→2（`WaterPrison.DrawLying`）。旧图只作缺图兜底。
+  - 战斗台词：**只删我爱罗和大蛇丸的**（用户更正：再不斩、白、宁次、多斯的台词都保留，尾声/湖边/预告台词不是战斗台词）。我爱罗“沙之盾”格挡提示保留。
+  - 接入 `byakugan-icon-v3`（`StyleCores/ByakuganCore.png`）与 `exam-genin-style-v1`（`RainGenin.png`、`ForestCanopyCandidate.png`，2 帧：站立/投掷，投掷后显示 20 帧；去掉染色；判定框高 56）。
+  - 修复：卡卡西“回村/去忍者学校/练习替身术”与伊比喜“开始笔试”按钮在回调里关对话框，原版随后读 `npc[-1]` 报 IndexOutOfRange（client.log `Main.GUIChatDrawInner`）。改为 `NpcChatCloser.CloseNextTick()` 下一帧关。
+- 后台美术（已提交给 Codex，用 `python3 scripts/art_bridge.py status <ID>` 查）：`kakashi-npc-v3`（卡卡西按伊比喜规格重画，25 美术像素高；接入后把 `NpcSheet.KakashiBody` 改为 50 像素身高对应值）、`exam-genin-full-v1`（两种考生的 Walk 4 + Jump 1；接入后改 `ForestExamCandidate.FindFrame`）。
+- 用户已定：白眼 v3、雨隐下忍与考生样张都通过。
+
 **最近一次会话（2026-09-30 晚 ～ 10-01，全部已提交；GitHub 只推送到 `b411ffe`，之后的提交都还在本地，推送需用户明确要求）**
 
 - **工作方式（用户定）**：可玩性第一；从 M1 之后的新内容开始逐段打磨，用户实机测试后逐条反馈；美术先出样张给用户拍板，风格确认后再做完整动作，每批 2～4 个，可并行；卡卡西台词要戏谑调侃（不要“AI 味”）。
@@ -98,16 +109,16 @@
 
 **已定（2026-09-29）**：“雨隐村”是口误，指雾隐，音乐维持大桥范围；村庄方案见总纲末“地区与村庄”（木叶完整城镇，其余为生物群系 + 小地标 + 专属 BGM/怪物/背景）。
 
-**待用户决定**：白眼 v3 与杂兵样张；战斗台词与音效方案；大蛇丸重画（暂缓）；本命章节与 M3 细节（开发到时再讨论）；专家专属饰品；补充道具（手里剑、起爆符、木叶护额、鬼之兄弟独有掉落）；大师模式遗物；是否推送 GitHub。
+**待用户决定**：音效方案（台词已定：只删我爱罗、大蛇丸的）；大蛇丸重画（暂缓）；本命章节与 M3 细节（开发到时再讨论）；专家专属饰品；补充道具（手里剑、起爆符、木叶护额、鬼之兄弟独有掉落）；大师模式遗物；是否推送 GitHub。
 
-**下一步**：①等 `wave-epilogue-walk-v2` 交付 → 给用户看 → 接入；②按用户反馈继续打磨 M1 之后的流程（下一段是笔试之后：死亡森林）；③用户确认后做战斗台词与音效。旧记录：用户 Build + Reload 后按 `tests/M2_中忍考试.acceptance.md` 实机验收，并确认地区背景中景/近景是否出现（修复在 c0a96a7、c2202d8，用户上次测试时游戏里仍是 01:06 的旧包；若仍不显示，查 `client.log` 是否有 “registered as 0 x 0”）；之后分批请求 M2 美术替换占位图；再 grill M3 木叶崩溃。
+**下一步**：①（已完成：`wave-epilogue-walk-v2` 已接入，提交 `6d87a4a`；需游戏内 Build + Reload 后用 `/m0 epilogue zabuza|haku` 实机看）；②按用户反馈继续打磨 M1 之后的流程（下一段是笔试之后：死亡森林）；③用户确认后做战斗台词与音效。旧记录：用户 Build + Reload 后按 `tests/M2_中忍考试.acceptance.md` 实机验收，并确认地区背景中景/近景是否出现（修复在 c0a96a7、c2202d8，用户上次测试时游戏里仍是 01:06 的旧包；若仍不显示，查 `client.log` 是否有 “registered as 0 x 0”）；之后分批请求 M2 美术替换占位图；再 grill M3 木叶崩溃。
 
 **工具**：`scripts/build_npc_sheet.py`、`scripts/build_head_equip.py`、`tools/BridgePreview` + `scripts/render_bridge_preview.py`、`scripts/art_bridge.py`（Codex 美术）。反编译原版用 `ilspycmd 8.2`（需 `DOTNET_ROLL_FORWARD=Major`），装在旧会话 scratchpad，不在仓库。
 
 ## 工作树与后台
 
-- 分支 `main`，工作树干净，领先 origin/main 约 51 个提交未推送（推送需用户明确要求，推送前确认没有音乐文件进入提交）。
-- 无运行中的美术请求。`.art-bridge/`、`art/reference/` 为本地忽略目录。
+- 分支 `main`，领先 origin/main 23 个提交未推送（origin 在 `b411ffe`）；未跟踪：`art/deliveries/orochimaru-style-v1/`（用户说大蛇丸先不管）（推送需用户明确要求，推送前确认没有音乐文件进入提交）。
+- 运行中的美术请求：`kakashi-npc-v3`、`exam-genin-full-v1`（`.art-bridge/bg-konoha-v1.json` 显示 running 是早已被 v2 取代的陈旧状态，忽略）。`.art-bridge/`、`art/reference/` 为本地忽略目录。
 
 ## 验证
 

@@ -1,12 +1,11 @@
 using Terraria;
-using Terraria.ID;
 using ShinobiPrototype.Common;
 using ShinobiPrototype.Common.Players;
 
 namespace ShinobiPrototype.Content.Items.StyleCores;
 
 // The tier-one cores obtainable in the Chūnin Exams (specs/流派系统.spec.md section 3). Icons from m2-style-items-v1;
-// the Byakugan keeps a vanilla placeholder until byakugan-icon-v2.
+// the Byakugan from byakugan-icon-v3.
 
 // The Sharingan in a vial (one tomoe), from Orochimaru in the Forest of Death: a wider substitution window, and
 // Foresight, which takes the next hit with a free substitution.
@@ -45,7 +44,6 @@ public sealed class EightGatesCore : StyleCore
 // The Byakugan, from Neji: enemies seen through walls, melee hits seal their points, and the Rotation.
 public sealed class ByakuganCore : StyleCore
 {
-    public override string Texture => $"Terraria/Images/Item_{ItemID.Lens}";
     public override StyleSchool School => StyleSchool.Byakugan;
     public override int Tier => 1;
     public override int TechniqueCooldown => StyleCoreRules.RotationCooldownTicks;

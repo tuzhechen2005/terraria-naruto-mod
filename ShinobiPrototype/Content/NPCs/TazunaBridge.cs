@@ -32,6 +32,7 @@ public sealed class TazunaBridge : ModNPC
         NPC.lifeMax = 250;
         NPC.knockBackResist = 0f;
         NPC.npcSlots = 0f;
+        NPC.scale = NpcSheet.ScaleFor(46);
     }
 
     public override bool CanChat() => true;

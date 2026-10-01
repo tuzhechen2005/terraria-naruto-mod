@@ -52,7 +52,6 @@ public sealed class Orochimaru : ExamBoss
         {
             NPC.life = ThresholdRetreatRules.LockedLife(NPC.lifeMax);
             NPC.dontTakeDamage = true;
-            Say("……真有意思。这个孩子，将来会是个好容器。", new Color(190, 150, 230));
             Enter(Exit);
         }
         if (Deciding && State is Approach or Recovery &&
@@ -66,12 +65,9 @@ public sealed class Orochimaru : ExamBoss
         {
             case Disguise:
                 RunTo(target.Center.X, 2.2f, target);
-                if (Timer == 30f)
-                    Say("……你的卷轴，是天之卷？还是地之卷？", new Color(200, 230, 190));
                 if (Timer == IntentTick)
                 {
                     Smoke();
-                    Say("变身术——解。", new Color(190, 150, 230));
                     KillingIntent();
                 }
                 if (Timer >= DisguiseTicks)
@@ -89,7 +85,6 @@ public sealed class Orochimaru : ExamBoss
                 Telegraph(DustID.PurpleTorch, 18f);
                 if (Timer >= 36f)
                 {
-                    Say("潜影蛇手！", new Color(190, 150, 230));
                     SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     if (Deciding)
                     {
@@ -136,7 +131,6 @@ public sealed class Orochimaru : ExamBoss
                 Telegraph(DustID.Cloud, 34f);
                 if (Timer >= 40f)
                 {
-                    Say("风遁·大突破！", new Color(190, 150, 230));
                     SoundEngine.PlaySound(SoundID.Item34, NPC.Center);
                     if (Deciding)
                     {
@@ -174,8 +168,6 @@ public sealed class Orochimaru : ExamBoss
                 Face(target.Center.X);
                 NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * 6f, 0.15f);
                 Telegraph(DustID.PurpleTorch, 14f);
-                if (Timer == 1f)
-                    Say("五行封印！", new Color(190, 150, 230));
                 if (Timer >= 34f)
                 {
                     SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
@@ -242,7 +234,6 @@ public sealed class Orochimaru : ExamBoss
 
     private void SummonSnakes()
     {
-        Say("通灵之术！", new Color(190, 150, 230));
         for (int side = -1; side <= 1; side += 2)
             NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X + side * 5 * 16, (int)NPC.Bottom.Y, ModContent.NPCType<SummonedSnake>());
     }

@@ -40,6 +40,7 @@ public sealed class Hiruzen : ModNPC
         NPC.defense = 15;
         NPC.knockBackResist = 0f;
         NPC.noGravity = true;
+        NPC.scale = NpcSheet.ScaleFor(48);
     }
 
     public override bool CanChat() => true;

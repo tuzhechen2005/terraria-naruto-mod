@@ -9,26 +9,27 @@ using ShinobiPrototype.Content.Projectiles;
 
 namespace ShinobiPrototype.Content.NPCs;
 
-// Genin in the Forest of Death (specs/M2_中忍考试篇.spec.md 3.2): they run the player down and throw senbon. Placeholder
-// art: the old candidate sprite, tinted per group. Who beat them is judged on each player's own client (a player who
-// landed a hit takes part), since the exam progress lives there.
+// Genin in the Forest of Death (specs/M2_中忍考试篇.spec.md 3.2): they run the player down and throw senbon. Who beat
+// them is judged on each player's own client (a player who landed a hit takes part), since the exam progress lives
+// there. Art: exam-genin-style-v1, two frames per sheet (<ClassName>.png, 112x88 frames facing left): standing, then
+// the throw, shown for a moment after each one. Walk frames come with the full set.
 public abstract class ForestExamCandidate : ModNPC
 {
-    public override string Texture => "ShinobiPrototype/Content/NPCs/ForestExamCandidate";
+    private const int ThrowPoseTicks = 20;
 
-    protected abstract Color Tint { get; }
     protected virtual float Speed => 2.6f;
     protected virtual int ThrowInterval => 150;
 
     // The local player hit this one (client side only).
     private bool hitByLocalPlayer;
 
-    public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 1;
+    public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 2;
 
     public override void SetDefaults()
     {
         NPC.width = 28;
-        NPC.height = 46;
+        // The new art stands about 62 pixels tall.
+        NPC.height = 56;
         NPC.damage = 26;
         NPC.defense = 8;
         NPC.lifeMax = 260;
@@ -37,7 +38,6 @@ public abstract class ForestExamCandidate : ModNPC
         NPC.value = Item.buyPrice(silver: 2);
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
-        NPC.color = Tint;
     }
 
     public override void AI()
@@ -66,8 +66,18 @@ public abstract class ForestExamCandidate : ModNPC
             Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1))
         {
             NPC.ai[1] = Main.rand.Next(-30, 30);
+            NPC.ai[2] = ThrowPoseTicks;
+            NPC.netUpdate = true;
             Throw(target);
         }
+        if (NPC.ai[2] > 0f)
+            NPC.ai[2]--;
+    }
+
+    public override void FindFrame(int frameHeight)
+    {
+        NPC.spriteDirection = NPC.direction;
+        NPC.frame.Y = (NPC.ai[2] > 0f ? 1 : 0) * frameHeight;
     }
 
     protected virtual void Throw(Player target)
@@ -105,7 +115,6 @@ public abstract class ForestExamCandidate : ModNPC
 // Candidates on the jungle surface, three to a squad, for anyone hunting the other scroll.
 public sealed class ForestCanopyCandidate : ForestExamCandidate
 {
-    protected override Color Tint => new(180, 225, 170);
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo)
     {
@@ -131,7 +140,6 @@ public sealed class ForestCanopyCandidate : ForestExamCandidate
 // The Rain genin who ambush the player once in the forest; the last of the three carries the missing scroll.
 public sealed class RainGenin : ForestExamCandidate
 {
-    protected override Color Tint => new(150, 165, 200);
     protected override float Speed => 3f;
     protected override int ThrowInterval => 110;
 

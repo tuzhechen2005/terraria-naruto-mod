@@ -43,6 +43,7 @@ public sealed class Tazuna : ModNPC
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
         NPC.knockBackResist = 0.5f;
+        NPC.scale = NpcSheet.ScaleFor(46);
     }
 
     public override void FindFrame(int frameHeight) => NpcSheet.Animate(NPC, frameHeight);

@@ -412,8 +412,13 @@ public sealed class WaterPrison : ModNPC
         return false;
     }
 
+    // Felled by the needles: the epilogue's collapse (wave-epilogue-walk-v2), so his fall matches the bridge's.
     private void DrawLying(SpriteBatch spriteBatch, Vector2 screenPos, Color light)
     {
+        int fallen = (int)Tick - StoryRules.OutroZabuzaFalls;
+        if (BossSprites.TryDraw(spriteBatch, "Zabuza", "Collapse", Math.Min(2, fallen / 8), 3, BossSprites.Zabuza,
+                ZabuzaBottom, -Side, light, screenPos))
+            return;
         const string path = "ShinobiPrototype/Content/NPCs/Zabuza_Lying";
         if (!ModContent.HasAsset(path))
             return;
@@ -447,14 +452,14 @@ public sealed class WaterPrison : ModNPC
         if (ModContent.HasAsset(trapped))
         {
             Texture2D tex = ModContent.Request<Texture2D>(trapped).Value;
-            spriteBatch.Draw(tex, NPC.Center + bob - screenPos, null, light, 0f, tex.Size() / 2f, 1.1f, flip, 0f);
+            spriteBatch.Draw(tex, NPC.Center + bob - screenPos, null, light, 0f, tex.Size() / 2f, NpcSheet.ScaleFor(NpcSheet.KakashiBody), flip, 0f);
             return;
         }
         // Until the art arrives: his jump frame from the town sheet, tilted.
         Texture2D sheet = TextureAssets.Npc[ModContent.NPCType<Kakashi>()].Value;
         int height = sheet.Height / 12;
         Rectangle source = new(0, 7 * height, sheet.Width, height);
-        spriteBatch.Draw(sheet, NPC.Center + bob - screenPos, source, light, 0.25f * -Side, source.Size() / 2f, 1.1f,
+        spriteBatch.Draw(sheet, NPC.Center + bob - screenPos, source, light, 0.25f * -Side, source.Size() / 2f, NpcSheet.ScaleFor(NpcSheet.KakashiBody),
             flip, 0f);
     }
 

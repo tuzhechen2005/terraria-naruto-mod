@@ -64,8 +64,7 @@ public sealed class Kakashi : ModNPC
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
         NPC.knockBackResist = 0.5f;
-        // A touch larger than vanilla town NPCs, so the mentor stands out; drawing stays anchored at the feet.
-        NPC.scale = 1.1f;
+        NPC.scale = NpcSheet.ScaleFor(NpcSheet.KakashiBody);
     }
 
     public override bool CanTownNPCSpawn(int numTownNPCs) => true;
@@ -256,8 +255,7 @@ public sealed class Kakashi : ModNPC
         if (KonohaWorld.Site is not KonohaSite site)
             return;
         Player player = Main.LocalPlayer;
-        player.SetTalkNPC(-1);
-        Main.npcChatText = "";
+        NpcChatCloser.CloseNextTick();
         bool far = FarFromVillage(Main.LocalPlayer, site);
         // From afar: the gate. Inside the village: the street just west of the Academy, by its door.
         int academy = KonohaWorld.Design.Buildings.FindIndex(b => b.Name == "忍者学校");
@@ -312,8 +310,7 @@ public sealed class Kakashi : ModNPC
     private void StartPractice()
     {
         Player player = Main.LocalPlayer;
-        player.SetTalkNPC(-1);
-        Main.npcChatText = "";
+        NpcChatCloser.CloseNextTick();
         CombatText.NewText(NPC.getRect(), Color.White, "看好了——");
         player.GetModPlayer<SubstitutionDrillPlayer>().Start(NPC.whoAmI);
     }

@@ -17,6 +17,13 @@ internal static class NpcSheet
     public const int ThrowFirst = 9;
     public const int ThrowFrames = 3;
 
+    // Every story NPC stands as tall on screen as Ibiki, his 50-pixel body at 1.25 (user, 2026-10-01: Kakashi looked
+    // small beside him). Pass the idle frame's body height in pixels; drawing stays anchored at the feet.
+    public const float StoryHeight = 50f * 1.25f;
+    public const int KakashiBody = 46;
+
+    public static float ScaleFor(int bodyPixels) => StoryHeight / bodyPixels;
+
     // Vanilla town AI states used for animation.
     private const float SittingState = 5f;
     private const float ThrowingState = 10f;

@@ -75,7 +75,6 @@ public sealed class Gaara : ExamBoss
         if (Phase != shownPhase)
         {
             shownPhase = Phase;
-            Say(Phase == 2 ? "沙之铠……碎了？" : "……让我感受活着——杀了你！", new Color(255, 150, 110));
             SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
         }
 
@@ -124,7 +123,6 @@ public sealed class Gaara : ExamBoss
                         local.GetModPlayer<JutsuStatusPlayer>().Bind(ExamBossRules.CoffinHoldTicks);
                         Main.NewText($"被沙子裹住了！按【{ShinobiKeybinds.SubstitutionKeyName()}】用替身术脱身！", 255, 200, 120);
                     }
-                    Say("沙缚柩！", new Color(230, 200, 130));
                     Enter(CoffinHold);
                 }
                 break;
@@ -133,7 +131,6 @@ public sealed class Gaara : ExamBoss
                 NPC.velocity.X *= 0.8f;
                 if (Timer >= ExamBossRules.CoffinHoldTicks)
                 {
-                    Say("沙瀑送葬。", new Color(230, 200, 130));
                     SoundEngine.PlaySound(SoundID.Item62, CoffinAt);
                     if (Deciding)
                         JutsuHitbox.Spawn(NPC, JutsuKind.SandBurial, CoffinAt - new Vector2(0f, 48f), Vector2.Zero, 96, 110,
@@ -173,7 +170,6 @@ public sealed class Gaara : ExamBoss
                 Telegraph(DustID.Cloud, 40f);
                 if (Timer >= 34f / Tempo)
                 {
-                    Say("风遁·练空弹！", new Color(255, 230, 160));
                     SoundEngine.PlaySound(SoundID.Item45, NPC.Center);
                     if (Deciding)
                     {

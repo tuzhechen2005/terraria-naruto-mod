@@ -35,8 +35,8 @@ public sealed class Ibiki : ModNPC
         NPC.lifeMax = 250;
         NPC.knockBackResist = 0f;
         NPC.noGravity = true;
-        // A big man (user, 2026-09-30: he looked small beside the others).
-        NPC.scale = 1.25f;
+        // A big man (user, 2026-09-30: he looked small beside the others); the others now match him.
+        NPC.scale = NpcSheet.ScaleFor(50);
     }
 
     public override bool CanChat() => true;
@@ -86,8 +86,7 @@ public sealed class Ibiki : ModNPC
     {
         if (!firstButton)
             return;
-        Main.LocalPlayer.SetTalkNPC(-1);
-        Main.npcChatText = "";
+        NpcChatCloser.CloseNextTick();
         CombatText.NewText(NPC.getRect(), new Color(220, 220, 220), "——开始！", true);
         WrittenExamSystem.Open();
     }
