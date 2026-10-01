@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="docs/images/mod-icon.png" alt="鸣人、卡卡西与螺旋丸，背景为木叶村" width="320">
+  <img src="docs/images/mod-icon.png" alt="Terruto 封面：鸣人、卡卡西与螺旋丸，背景为木叶村" width="320">
 </p>
 
-<h1 align="center">Naruterria</h1>
+<h1 align="center">Terruto</h1>
 
 <p align="center">从波之国到中忍考试，重温火影第一部。</p>
 
@@ -21,7 +21,7 @@
 
 ---
 
-Naruterria 是一个基于 tModLoader 的《火影忍者》同人模组，将第一部的故事融入泰拉瑞亚的冒险流程。模组保留了原版的全部 Boss，火影的任务与战斗随着探索进度逐步展开。玩家从木叶出发，在卡卡西的引导下前往波之国，完成任务后回村参加中忍考试。
+Terruto 是一个基于 tModLoader 的《火影忍者》同人模组，将第一部的故事融入泰拉瑞亚的冒险流程。模组保留了原版的全部 Boss，火影的任务与战斗随着探索进度逐步展开。玩家从木叶出发，在卡卡西的引导下前往波之国，完成任务后回村参加中忍考试。
 
 ## 游戏内容
 

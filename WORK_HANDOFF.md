@@ -4,7 +4,7 @@
 
 ## 项目与规格入口
 
-- 模组正式名称 **Naruterria**，由 Naruto 与 Terraria 融合成一个单词。根目录 `/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组`，唯一源码 `ShinobiPrototype/`。GitHub 公开仓库：https://github.com/tuzhechen2005/terraria-naruto-mod （分支 `main`）。
+- 模组正式名称 **Terruto**（用户选定，融合 Terraria 与 Naruto）。根目录 `/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组`，唯一源码 `ShinobiPrototype/`。GitHub 公开仓库：https://github.com/tuzhechen2005/terraria-naruto-mod （分支 `main`）。
 - 上位设计：`specs/总纲_主线与支线结构.spec.md`（原版 Boss 全保留、月总为阶段门槛、主线必打链、疾风传解锁、原版职业 + 流派核心饰品、独立查克拉、尾兽/通灵兽支线、写轮眼完整路线）。旧 M1/M2 设计已作废。
 - M1 波之国：`specs/M1_波之国下忍篇.spec.md`（已实现，验收记录 `tests/M1_波之国下忍篇.acceptance.md`）。
 - Boss 战：`specs/M9_波之国双首领战.spec.md` + `specs/M10_波之国双首领战优化.spec.md`（M10 已实现）。
@@ -26,13 +26,14 @@
 
 **2026-10-01 Codex：模组命名、公开 README、素材展示与新图标**
 
-- 用户纠正命名方向：要求把 Naruto 和 Terraria 融合成一个单词，并有想象力。现采用 **Naruterria**。`build.txt` 的显示名称、中英文 README 标题与介绍、`description.txt` 的模组简介已同步；GitHub 仓库简介也已通过 API 更新为新名字。
+- 用户在头脑风暴后选定 **Terruto**，并要求把现有图标底部的 NARUTO 字标改成 TERRUTO。`build.txt` 的显示名称、中英文 README 标题与介绍、`description.txt` 的模组简介已同步，GitHub 仓库简介也已更新为 Terruto。
+- 字标编辑 `mod-icon-v5` 已完成并接入，完整源图与交付记录位于 `art/deliveries/mod-icon-v5/`。内置 imagegen 编辑 v4 的源图，只替换底部字标，保留原构图。后台 worker 在源图生成后的尺寸导出阶段停滞，已停止；开发助手使用该编辑源图完成 80×80、30×30、640×640 和尺寸预览，桥接状态明确记录人工收尾后的 delivered，无运行进程。
 - 改的是显示名称，源码目录、Mod 类名、命名空间、资源路径和本地化键仍是 `ShinobiPrototype`，与原有存档和配置所用的内部标识一致。
-- 名称验证：四个面向玩家的文件均使用 Naruterria，前两版显示名称已移除；使用独立存档目录完整打包通过、0 错误。此前命名提交已通过全部 13 组规则测试，本次只替换显示文字，未重复运行规则测试。既有编译告警和图像转换回退日志仍在；尚未进行游戏内重载验收。
+- Terruto 验证：四个面向玩家的文件均使用新名字；源图、README 与 80×80 图标的字标逐字核对为 T E R R U T O。PNG 解码、尺寸与色数通过，两版 GitHub Markdown 和浏览器首页预览通过。使用独立存档目录运行 `./scripts/verify-mac.sh`，13 组规则测试与完整打包通过、0 错误。既有编译告警和图像转换回退日志仍在；尚未进行游戏内重载验收。
 - README 改为自然正文，默认英文 `README.md`，中文 `README.zh-CN.md`，顶部有语言切换入口；旧横幅改为可编辑标题，末尾英文摘要已删除。此前相关提交 `797ae10`、`2966df3` 已按用户“推送”的要求推到 `main`。
 - `2827ab3` 已推送：补充波之国、中忍考试、剧情 NPC、流派、武器与任务道具的介绍。`docs/images/readme/` 的 20 张展示图均从当前运行时贴图导出：5 位 Boss 的四帧待机 GIF、4 位剧情 NPC、10 件道具，以及我爱罗三阶段对照。`scripts/export_readme_assets.py` 可在带 Pillow 的 Python 环境中重新生成；未修改游戏源码或原始贴图。
 - 验证：中英文图片与文档链接通过，GIF 均为四帧透明循环；GitHub Markdown API 保留全部 20 张展示图和 7 个表格；浏览器预览两版全部图片加载、无横向溢出，并已检查排版。本次为文档展示改动，未重新构建或实机测试模组。
-- 用户随后表示“仓库图标也可以换了”，确认接入已展示的 `mod-icon-v4`：少年鸣人、卡卡西、螺旋丸、木叶背景和 NARUTO 像素字标。80×80 与 30×30 图标原样接入模组，640×640 图用于两版 README，首页显示为 320×320。请求单、源图、交付图和检查记录随图标更新提交。
+- `3108f8f` 曾接入 `mod-icon-v4`：少年鸣人、卡卡西、螺旋丸、木叶背景和 NARUTO 像素字标。本次由 v5 的 TERRUTO 字标版本替换，仍为 80×80 与 30×30 游戏图标、640×640 README 图片，首页显示为 320×320。v4 作为历史原件保留。
 - 图标验证：三个目标 PNG 与交付原件一致，尺寸和解码通过；GitHub Markdown 渲染及两版浏览器首页预览通过。运行 `./scripts/verify-mac.sh` 并通过 `ExtraBuildModFlags` 指定独立存档目录，13 组规则测试及模组打包通过，0 错误；既有的编译告警与图像转换回退日志仍在。尚未在运行中的游戏里重新加载并验收图标。
 
 **2026-10-01 晚：第二试与预选赛改版（与用户 grill 定稿，见 `specs/M2_中忍考试篇.spec.md` 第十节；已提交并推送，未实机）**
@@ -148,9 +149,9 @@
 
 ## 工作树与后台
 
-- 分支 `main`。Naruterria 命名修改前已 fetch 确认与 `origin/main` 同步在 `9b510be`，早先“领先 23 个提交”的记录已过期；用户已明确授权推送 README 修改，图标更新也已推送。当前命名提交包含中英文 README、模组显示名称与简介、交接记录。
-- 未跟踪美术：`art/deliveries/kakashi-npc-v3/`（作废残留）、`art/deliveries/orochimaru-style-v1/`（暂缓）。这些不随本次图标提交接入。
-- 运行中的美术请求：无（`.art-bridge/bg-konoha-v1.json` 显示 running 是早已被 v2 取代的陈旧状态，忽略）。`.art-bridge/`、`art/reference/` 为本地忽略目录。
+- 分支 `main`。Terruto 修改基于 `40303c2`，本次提交包含两版 README、模组显示名称与简介、三张接入图标、v5 请求与交付、交接记录。用户已明确选定名称并授权字标替换，沿用本次仓库整理的推送授权。
+- 本次未接入的美术：`art/deliveries/kakashi-npc-v3/`（作废残留）、`art/deliveries/orochimaru-style-v1/`（暂缓）；整理期间另出现 `art/requests/orochimaru-style-v2.md` 与对应交付目录，由发起会话管理。上述文件不随本次图标提交接入。
+- 本次任务的 `mod-icon-v5` 已完成收尾并接入，无运行进程，不重复提交。其他会话的请求应按实际状态查询。`.art-bridge/bg-konoha-v1.json` 是早已被 v2 取代的陈旧状态，忽略。`.art-bridge/`、`art/reference/` 为本地忽略目录。
 
 ## 验证
 
