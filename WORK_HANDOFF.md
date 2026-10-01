@@ -32,6 +32,7 @@
   - 战斗台词：**只删我爱罗和大蛇丸的**（用户更正：再不斩、白、宁次、多斯的台词都保留，尾声/湖边/预告台词不是战斗台词）。我爱罗“沙之盾”格挡提示保留。
   - 接入 `byakugan-icon-v3`（`StyleCores/ByakuganCore.png`）与 `exam-genin-style-v1`（`RainGenin.png`、`ForestCanopyCandidate.png`，2 帧：站立/投掷，投掷后显示 20 帧；去掉染色；判定框高 56）。
   - 修复：卡卡西“回村/去忍者学校/练习替身术”与伊比喜“开始笔试”按钮在回调里关对话框，原版随后读 `npc[-1]` 报 IndexOutOfRange（client.log `Main.GUIChatDrawInner`）。改为 `NpcChatCloser.CloseNextTick()` 下一帧关。
+- 再不斩尾声帧重新上色（用户：倒地帧太柔、色块太大，和 Boss 战形象不一样）：`scripts/sharpen_epilogue_frames.py` 把 Rise/Stagger/Collapse 共 10 帧按战斗帧调色板重上色（蓝灰衣服色阶 + 左上光、描边分肢体、两阶肤色、绑腿灰、头部面罩白），剪影与位置逐像素不变，衔接不受影响。输入为 `6d87a4a` 时的游戏帧（Stagger 已按躯干对齐，与交付不同）。白的尾声帧未处理。
 - 后台美术（已提交给 Codex，用 `python3 scripts/art_bridge.py status <ID>` 查）：`kakashi-npc-v3`（卡卡西按伊比喜规格重画，25 美术像素高；接入后把 `NpcSheet.KakashiBody` 改为 50 像素身高对应值）、`exam-genin-full-v1`（两种考生的 Walk 4 + Jump 1；接入后改 `ForestExamCandidate.FindFrame`）。
 - 用户已定：白眼 v3、雨隐下忍与考生样张都通过。
 
