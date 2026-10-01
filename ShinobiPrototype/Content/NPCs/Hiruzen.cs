@@ -40,7 +40,8 @@ public sealed class Hiruzen : ModNPC
         NPC.defense = 15;
         NPC.knockBackResist = 0f;
         NPC.noGravity = true;
-        NPC.scale = NpcSheet.ScaleFor(46);
+        // A short old man: a touch smaller than the others (user, 2026-10-01).
+        NPC.scale = NpcSheet.ScaleFor(46) * 0.92f;
     }
 
     public override bool CanChat() => true;
