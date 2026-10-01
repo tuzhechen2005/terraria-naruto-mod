@@ -1,6 +1,6 @@
 # 当前工作交接
 
-本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。以下为 **2026-09-30 Claude Code 完成 M2 中忍考试篇（占位美术）后** 的快照。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
+本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。以下为 **2026-10-01 Claude Code 打磨 M1 收尾 → M2 开头途中** 的快照（用户要切新窗口）。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
 
 ## 项目与规格入口
 
@@ -22,7 +22,27 @@
 - 工具：`scripts/pixelize_frames.py`（拆分/缩放/对齐，含 `--auto`、`--centers`、`--scale`）、`scripts/clean_frames.py`、`scripts/recolor_clothes.py`、`scripts/terraria_native.py`、`scripts/terraria_scene_preview.py`、`tools/XnbExtract/`（解原版 XNB 贴图，仅本地对比）。
 - 环境：游戏内 Build + Reload 所需 SDK 通过 `~/.dotnet/dotnet → /usr/local/share/dotnet/x64/dotnet` 链接解决（见 `DEVELOPMENT_MAC.md`）。Codex CLI 已移到 `/Applications/ChatGPT.app/Contents/Resources/codex-cli/bin/codex`，桥接脚本已适配。
 
-## 当前状态（2026-09-30）
+## 当前状态（2026-10-01）
+
+**最近一次会话（2026-09-30 晚 ～ 10-01，均已提交并推送到 `b411ffe` 之后的本地提交；`b411ffe` 之后未推送）**
+
+- **工作方式（用户定）**：可玩性第一；从 M1 之后的新内容开始逐段打磨，用户实机测试后逐条反馈；美术先出样张给用户拍板，风格确认后再做完整动作，每批 2～4 个，可并行；卡卡西台词要戏谑调侃（不要“AI 味”）。
+- **大方向（已写进总纲“可玩性与引导”）**：提示像原版一样含蓄（氛围话 + 卡卡西当向导 + 手册写大概方向；`QuestTracker` 设置默认关）；每个 Boss 都有召唤物，剧情只负责第一次；自动出现的 Boss 先预告（5 秒）再大字标题（`BossIntroSystem`）再战后说明；对白 ≤3–4 句不锁操作；手册“首领”页 + Boss Checklist。
+- **M2 第二轮与流派（规格已更新）**：见 `specs/M2_中忍考试篇.spec.md`、`specs/流派系统.spec.md`（第一阶已定：写轮眼一勾玉/八门/白眼/仙术；体术武器；第二核心槽在佩恩之后）。我爱罗完全尾兽化放进 M3 作为打不赢之战（鸣人与文太接手），可收服的守鹤在尾兽支线。
+- **已实现（代码）**：多斯/我爱罗召唤物（音忍的对战牌、砂隐的葫芦）、蛇蜕可合成、大蛇丸五行封印；`StyleCorePlayer`（看破、开门、点穴、回天、三代传话立志）、核心 `SharinganCore1`/`EightGatesCore`/`ByakuganCore`、体术 `TaijutsuDamage` + 训练用绷带、小李的负重护腿；Boss 逐帧动画框架（`ExamBoss.Pose`/`SpritePrefix`，无图时退回占位）；Boss 血条头像 `<Name>_Head_Boss.png`；地标名牌与大地图图标（`LandmarkLabels.cs`）；木叶背景远景树林填充 + 中景上移；木叶布局 v2（每层隔墙都有门，测试走通整条街）；找地表从原版地形最高点往下扫（修好会场建在浮岛上、泥土通天墙）；笔试面板空引用修复。
+- **M1 收尾打磨（本段正在进行）**：
+  - 尾声：最后倒下的人先躺一会儿 → 站起 → 以固定慢速（0.6 像素/帧）边走边说台词 → 提前到达就站着等最后一句 → 倒下 → 才下雪与旁白；走 20 秒到不了就倒在半路（`WaveEpilogueRules`，测试在 `tests/StoryRules`）。
+  - 卡卡西：尸体消失时瞬身到玩家脚下的地面（世界里没有就生成），玩家落地站到他身边后才打开对话框（显示推荐台词，台词“……嘛……要是怕了，现在后悔也还来得及。”）；从拿到推荐书到笔试合格，第二个按钮是“回村”（远处）或“去忍者学校”（村里）。
+  - 回村庆祝：每次打赢 Boss（含原版）后回木叶，村民依次冒表情、头顶喊话（5 秒）+ 彩纸（`StoryPlayer` + `BossCelebrationNPC`）。
+  - 笔试：找忍者学校一楼门口的森乃伊比喜（`Ibiki.cs`，贴图 `ibiki-npc-v1`，1.25 倍，轮廓已改深色）开始，推荐书只是凭证。三代火影用 `hiruzen-npc-v1` 贴图。
+- **美术状态**：
+  - 已接入：我爱罗（含修补）、多斯（含修补，帧上移 2 像素对齐）、宁次完整动作；写轮眼试管、八门卷轴、绷带、负重护腿图标；三代、伊比喜；尾声 v1 帧（我自动重像素化过，**用户嫌“太柔、块太大”**）。
+  - `wave-epilogue-walk-v2`：**运行中**，要求以战斗帧为底重画尾声的 Rise/Stagger/Collapse。交付后先给用户看，确认后覆盖 `ShinobiPrototype/Content/NPCs/{Zabuza,Haku}_{Rise,Stagger,Collapse}_*.png`（对齐：再不斩 288×128 中线 144 脚底最下行 123；白 144×96 中线 72 脚底 91；检查 2×2 块）。
+  - 等用户拍板：`byakugan-icon-v3`（白眼，按用户参考图只留眼睛）、`exam-genin-style-v1`（雨隐下忍、考生样张，我认为可用）。`orochimaru-style-v1` 质量一般，**用户说大蛇丸先不管**。
+- **用户待答**：再不斩/白战斗台词与音效——我建议台词做头顶文字（原作台词安全），音效用原版泰拉瑞亚声音搭配，不用动画原声；用户同意后先列表给他过目。
+- **测试指令（新增）**：`/m0 epilogue zabuza|haku [距离]`（无需打 Boss 直接播尾声 + 卡卡西出场，会重置考试进度到等推荐）、`/m0 cheer [首领名]`（记一次庆祝，进木叶触发）、`/m0 exam [阶段|gate|tower|stadium|academy|hokage]`。木叶/场地地形改动只对新世界生效。
+- **修了一个脚本问题**：`verify-mac.sh` 把 `--nologo` 传给了测试程序，导致根目录出现名为 `--nologo` 的文件且曾被提交；已删并修好（`b1f87ca`）。
+
 
 **M1 全部完成**，用户已在游戏内验证到 0.4.0 版。要点：
 
@@ -78,9 +98,9 @@
 
 **已定（2026-09-29）**：“雨隐村”是口误，指雾隐，音乐维持大桥范围；村庄方案见总纲末“地区与村庄”（木叶完整城镇，其余为生物群系 + 小地标 + 专属 BGM/怪物/背景）。
 
-**待用户决定**：流派第一阶的被动与奥义（`specs/流派系统.spec.md` 第三节，决定后才做核心物品）；专家专属饰品；补充道具（手里剑、起爆符、木叶护额、鬼之兄弟独有掉落）；大师模式遗物；是否推送 GitHub。
+**待用户决定**：白眼 v3 与杂兵样张；战斗台词与音效方案；大蛇丸重画（暂缓）；本命章节与 M3 细节（开发到时再讨论）；专家专属饰品；补充道具（手里剑、起爆符、木叶护额、鬼之兄弟独有掉落）；大师模式遗物；是否推送 GitHub。
 
-**下一步**：用户 Build + Reload 后按 `tests/M2_中忍考试.acceptance.md` 实机验收，并确认地区背景中景/近景是否出现（修复在 c0a96a7、c2202d8，用户上次测试时游戏里仍是 01:06 的旧包；若仍不显示，查 `client.log` 是否有 “registered as 0 x 0”）；之后分批请求 M2 美术替换占位图；再 grill M3 木叶崩溃。
+**下一步**：①等 `wave-epilogue-walk-v2` 交付 → 给用户看 → 接入；②按用户反馈继续打磨 M1 之后的流程（下一段是笔试之后：死亡森林）；③用户确认后做战斗台词与音效。旧记录：用户 Build + Reload 后按 `tests/M2_中忍考试.acceptance.md` 实机验收，并确认地区背景中景/近景是否出现（修复在 c0a96a7、c2202d8，用户上次测试时游戏里仍是 01:06 的旧包；若仍不显示，查 `client.log` 是否有 “registered as 0 x 0”）；之后分批请求 M2 美术替换占位图；再 grill M3 木叶崩溃。
 
 **工具**：`scripts/build_npc_sheet.py`、`scripts/build_head_equip.py`、`tools/BridgePreview` + `scripts/render_bridge_preview.py`、`scripts/art_bridge.py`（Codex 美术）。反编译原版用 `ilspycmd 8.2`（需 `DOTNET_ROLL_FORWARD=Major`），装在旧会话 scratchpad，不在仓库。
 
