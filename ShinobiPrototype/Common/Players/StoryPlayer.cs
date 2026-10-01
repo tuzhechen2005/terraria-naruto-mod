@@ -29,6 +29,9 @@ public sealed class StoryPlayer : ModPlayer
 
     public const string WaveDuoName = "雾隐的鬼人桃地再不斩与白";
 
+    // Development shortcut (/m0 cheer): forget the first Wave homecoming so it can be seen again.
+    public void ResetWelcomeForTesting() => WelcomedHome = false;
+
     // A boss fell with this character in the fight (BossCelebrationNPC, on this character's client).
     public void QueueCelebration(string boss)
     {

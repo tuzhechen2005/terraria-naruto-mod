@@ -15,7 +15,7 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage] 或 /m0 god [on|off]";
+    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名] 或 /m0 god [on|off]";
     public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
@@ -94,6 +94,23 @@ public sealed class M0Command : ModCommand
             StoryWorld.LakeDone = stage >= 5;
             caller.Reply($"任务阶段已设为 {stage}（1 找达兹纳、2 侦察、3 回找达兹纳、4 变强/湖边、5 断桥）。\n" +
                          player.GetModPlayer<StoryPlayer>().CurrentObjective(), Color.LightGreen);
+            return;
+        }
+
+        if (args.Length >= 1 && args[0].Equals("epilogue", StringComparison.OrdinalIgnoreCase))
+        {
+            Epilogue(caller, player, args);
+            return;
+        }
+
+        if (args.Length >= 1 && args[0].Equals("cheer", StringComparison.OrdinalIgnoreCase))
+        {
+            StoryPlayer story = player.GetModPlayer<StoryPlayer>();
+            string boss = args.Length > 1 ? string.Join(" ", args[1..]) : StoryPlayer.WaveDuoName;
+            if (boss == StoryPlayer.WaveDuoName)
+                story.ResetWelcomeForTesting();
+            story.QueueCelebration(boss);
+            caller.Reply($"已记下“打倒了{boss}”。走进木叶，村民就会庆祝。（传送：/m0 exam hokage）", Color.LightGreen);
             return;
         }
 
@@ -209,6 +226,35 @@ public sealed class M0Command : ModCommand
             given++;
         }
         return given;
+    }
+
+    // The Wave epilogue without the fight: both bodies by the player (the one who walks at the player's feet, the
+    // other `distance` tiles ahead), Wave Country marked done and the exam reset to Kakashi's recommendation, so the
+    // whole scene plays: the lines, the walk, the snow, then Kakashi with the ride home.
+    private static void Epilogue(CommandCaller caller, Player player, string[] args)
+    {
+        if (Main.netMode != NetmodeID.SinglePlayer)
+        {
+            caller.Reply("尾声测试只在单人模式可用。", Color.OrangeRed);
+            return;
+        }
+        bool zabuzaWalks = args.Length < 2 || !args[1].Equals("haku", StringComparison.OrdinalIgnoreCase);
+        int distance = args.Length > 2 && int.TryParse(args[2], out int d) ? Math.Clamp(d, 3, 200) : 18;
+        int corpse = ModContent.ProjectileType<Content.Projectiles.WaveCorpse>();
+        foreach (Projectile old in Main.ActiveProjectiles)
+            if (old.type == corpse)
+                old.Kill();
+        int walker = zabuzaWalks ? Content.Projectiles.WaveCorpse.Zabuza : Content.Projectiles.WaveCorpse.Haku;
+        int dir = player.direction;
+        var source = player.GetSource_Misc("ShinobiM0");
+        Projectile.NewProjectile(source, player.Center, Vector2.Zero, corpse, 0, 0f, Main.myPlayer, walker, dir);
+        Projectile.NewProjectile(source, player.Center + new Vector2(dir * distance * 16f, 0f), Vector2.Zero, corpse, 0, 0f,
+            Main.myPlayer, 1 - walker, -dir);
+        StoryWorld.CompleteWave();
+        player.GetModPlayer<ChuninExamPlayer>().SetStageForTesting(ExamStage.Recommend);
+        WaveEpilogueSystem.Begin(hakuFellFirst: zabuzaWalks, player.Center);
+        caller.Reply($"尾声开始：{(zabuzaWalks ? "再不斩" : "白")}说完话后走向 {distance} 格外的{(zabuzaWalks ? "白" : "再不斩")}。" +
+                     "结束后卡卡西会出现（考试进度已重置为等推荐）。", Color.LightGreen);
     }
 
     // The Chunin Exams: show the stage, jump to a stage (single player), or go to one of the exam places.
