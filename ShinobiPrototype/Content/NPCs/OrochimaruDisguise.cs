@@ -12,7 +12,7 @@ namespace ShinobiPrototype.Content.NPCs;
 // only walks slowly at the player, and his eyes are a snake's. He can be hit:
 // - struck down, the body splits like a shed skin and Orochimaru rises out of the ground;
 // - left alone, he reaches the player, peels his face away and lets the killing intent loose.
-// Either way the same fight follows. Art: orochimaru-style (Orochimaru_Disguise_0); the candidate's sheet stands in.
+// Either way the same fight follows. Art: orochimaru-moves-v1 (DisguiseWalk); the candidate's sheet stands in without it.
 public sealed class OrochimaruDisguise : ModNPC
 {
     private const float RevealTiles = 3.5f;
@@ -20,7 +20,8 @@ public sealed class OrochimaruDisguise : ModNPC
 
     public override string Texture => "ShinobiPrototype/Content/NPCs/ForestCanopyCandidate";
 
-    private static bool OwnArt => BossSprites.Has("Orochimaru_Disguise_0");
+    // His walk (orochimaru-moves-v1: the long-haired Grass candidate, as in the reveal); standing, its first frame.
+    private static bool OwnArt => BossSprites.Has("Orochimaru_DisguiseWalk_0");
 
     public override void SetStaticDefaults()
     {
@@ -101,10 +102,9 @@ public sealed class OrochimaruDisguise : ModNPC
     {
         if (!OwnArt)
             return true;
-        bool walking = System.Math.Abs(NPC.velocity.X) > 0.3f && BossSprites.Has("Orochimaru_DisguiseWalk_0");
-        BossSprites.TryDraw(spriteBatch, "Orochimaru", walking ? "DisguiseWalk" : "Disguise",
-            walking ? BossSprites.Loop(10f, 4) : 0, walking ? 4 : 1, ExamBoss.PersonCanvas, NPC.Bottom, NPC.direction,
-            BossSprites.Lit(drawColor), screenPos);
+        bool walking = System.Math.Abs(NPC.velocity.X) > 0.3f;
+        BossSprites.TryDraw(spriteBatch, "Orochimaru", "DisguiseWalk", walking ? BossSprites.Loop(10f, 4) : 0, 4,
+            ExamBoss.PersonCanvas, NPC.Bottom, NPC.direction, BossSprites.Lit(drawColor), screenPos);
         return false;
     }
 }
