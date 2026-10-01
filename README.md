@@ -25,11 +25,67 @@ Shinobi Prototype is a Naruto fan mod for tModLoader. It follows the story of Pa
 
 ## Game content
 
-Development has reached the Chunin Exams arc. The Land of Waves is playable from beginning to end: you meet Tazuna by the coast, survive an ambush by the Demon Brothers, free Kakashi from a water prison at the lake, and face Zabuza and Haku on the unfinished bridge. The arc closes with an epilogue after both bosses fall.
+Development has reached the Chunin Exams arc. The sprites below are taken from the current game assets; the boss previews loop their idle animations. Some other characters still use placeholder art, and the exam fights and sites are being refined through playtesting.
 
-The Chunin Exams begin with Ibiki's written test. After passing, you enter the Forest of Death to collect the Heaven and Earth Scrolls, fight Dosu in the Central Tower's preliminary round, and face Gaara in the finals outside the village walls. The main sequence is implemented and is being refined through playtesting, including adjustments to combat, guidance, and the exam sites. Some characters still use placeholder art.
+### The Land of Waves
 
-The mod adds a separate chakra resource and a substitution technique, bound to F by default and activated just before an attack lands. Sharingan, Eight Gates, and Byakugan are available as style cores that can be used with vanilla classes. The Hidden Leaf Village is generated at spawn in new worlds and serves as a base between missions.
+You meet Tazuna by the coast, survive an ambush by the Demon Brothers, and free Kakashi from a water prison at the lake. The mission then leads to the unfinished bridge, where Zabuza and Haku fight together.
+
+| Zabuza Momochi | Haku |
+| :---: | :---: |
+| <img src="docs/images/readme/zabuza.gif" alt="Zabuza's idle animation with the Kubikiribocho" width="216" height="208"> | <img src="docs/images/readme/haku.gif" alt="Haku's masked idle animation" width="216" height="208"> |
+| Heavy sword swings, sudden dashes, and water jutsu. As the mist thickens, his attacks become harder to track. | Senbon volleys and movement between ice mirrors. The mirrors form a breakable cage around the player. |
+
+Defeating one changes the remaining boss's behaviour, so the order in which you fight them matters. Once both have fallen, the snow and dialogue bring the arc to a close.
+
+### The Chunin Exams
+
+Ibiki's written test is the first hurdle. After passing, you enter the Forest of Death to collect the Heaven and Earth Scrolls, then make your way to the Central Tower for the preliminaries. The finals take place outside the village walls, with Gaara as your opponent. Kakashi also offers an optional sparring match against Neji once the finals begin.
+
+| Dosu Kinuta | Gaara | Neji Hyuga |
+| :---: | :---: | :---: |
+| <img src="docs/images/readme/dosu.gif" alt="Dosu's idle animation" width="216" height="208"> | <img src="docs/images/readme/gaara.gif" alt="Gaara's idle animation" width="216" height="208"> | <img src="docs/images/readme/neji.gif" alt="Neji's idle animation" width="216" height="208"> |
+| The Central Tower's preliminary opponent. His arm drill, sound waves, ground quakes, and plunging attacks demand different ways to dodge. | The finals opponent. His sand defence gives way to cracked armour and a partial transformation as his health falls. | An optional fight built around Gentle Fist, Rotation, and Sixty-Four Palms. Chakra seals can cut off your substitution technique. |
+
+Gaara's three forms use separate sprites. In the last phase, his sand arm and air bullets change the reach of the fight.
+
+<p align="center">
+  <img src="docs/images/readme/gaara-phases.png" alt="Gaara's sand armour, cracked armour, and partial transformation, from left to right" width="528" height="104">
+</p>
+
+### People around the village
+
+The Hidden Leaf Village is generated at spawn in new worlds and serves as a base between missions. Kakashi points you towards the next part of the story and helps you practise substitution. Tazuna waits by the coast, while Ibiki and the Third Hokage have their own roles back in the village.
+
+| Kakashi Hatake | Tazuna | Ibiki Morino | Hiruzen Sarutobi |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/images/readme/kakashi.png" alt="Kakashi's in-game sprite" width="168" height="168"> | <img src="docs/images/readme/tazuna.png" alt="Tazuna's in-game sprite" width="168" height="168"> | <img src="docs/images/readme/ibiki.png" alt="Ibiki's in-game sprite" width="168" height="168"> | <img src="docs/images/readme/hiruzen.png" alt="The Third Hokage's in-game sprite" width="168" height="168"> |
+| Mission guidance, substitution practice, and the exam recommendation. | The bridge builder whose escort mission starts the Land of Waves arc. | The examiner who starts the written test at the Ninja Academy. | Advice on style cores and the chance to choose your ninja path. |
+
+### Chakra and fighting styles
+
+Chakra is a separate resource. Substitution is bound to **F** by default: use it just before an attack lands to escape the hit. Style cores add techniques to your build and can be worn alongside equipment for Terraria's vanilla classes.
+
+| Sharingan | Eight Gates | Byakugan |
+| :---: | :---: | :---: |
+| <img src="docs/images/readme/sharingan.png" alt="One-tomoe Sharingan core" width="96" height="96"> | <img src="docs/images/readme/eight-gates.png" alt="Eight Gates core" width="96" height="96"> | <img src="docs/images/readme/byakugan.png" alt="Byakugan core" width="96" height="96"> |
+| A wider substitution window and Foresight to evade the next hit. | Faster taijutsu attacks and a technique that opens the first three gates in sequence. | See enemies through walls, seal their chakra points with melee hits, and use Rotation. |
+
+### Weapons and mission items
+
+The Land of Waves rewards include weapons for all four vanilla classes. The Kubikiribocho is a heavy melee blade, senbon are reusable ranged needles, Water Dragon is a magic attack, and Ice Mirrors summon mirrors that fire senbon at enemies.
+
+| Kubikiribocho | Senbon | Water Dragon Jutsu | Ice Mirror Jutsu |
+| :---: | :---: | :---: | :---: |
+| <img src="docs/images/readme/kubikiribocho.png" alt="Kubikiribocho weapon sprite" width="112" height="112"> | <img src="docs/images/readme/senbon.png" alt="Senbon weapon sprite" width="112" height="112"> | <img src="docs/images/readme/water-dragon.png" alt="Water Dragon Jutsu item sprite" width="112" height="112"> | <img src="docs/images/readme/ice-mirror.png" alt="Ice Mirror Jutsu item sprite" width="112" height="112"> |
+| Melee | Ranged | Magic | Summon |
+
+The Ninja Handbook gives you clues about missions and bosses. During the Forest of Death test, you need both scrolls before you can finish the stage at the Central Tower.
+
+| Ninja Handbook | Heaven Scroll | Earth Scroll |
+| :---: | :---: | :---: |
+| <img src="docs/images/readme/ninja-handbook.png" alt="Ninja Handbook item sprite" width="112" height="112"> | <img src="docs/images/readme/heaven-scroll.png" alt="Heaven Scroll item sprite" width="112" height="112"> | <img src="docs/images/readme/earth-scroll.png" alt="Earth Scroll item sprite" width="112" height="112"> |
+| Consult it when you need a lead on where to go next. | Collect it in the Forest of Death. | Pair it with a Heaven Scroll to complete the second test. |
 
 ## Playing and building
 
@@ -59,7 +115,7 @@ Enter `/m0` to see the full command list. These commands let you jump between st
 
 The mod source and textures are in `ShinobiPrototype/`, and the arc designs are in `specs/`. The `tests/` directory contains rule tests and in-game acceptance checklists. Logic for enemy spawns, boss move selection, and site layouts is kept independent of Terraria so it can be tested on its own. GitHub Actions runs these tests on pushes to `main` and on pull requests.
 
-Art requests and deliveries are in `art/`. Build scripts, world generation checks, and pixel art tools are in `scripts/`; earlier documents are archived in `docs/archive/`. See [CONTRIBUTING.md](CONTRIBUTING.md) for playtesting feedback, bug reports, and contributions. The design documents and contribution guide are currently written in Chinese.
+Art requests and deliveries are in `art/`. Build scripts, world generation checks, and pixel art tools are in `scripts/`; earlier documents are archived in `docs/archive/`. Run `python3 scripts/export_readme_assets.py` with Pillow installed to refresh the sprite previews after changing game textures. See [CONTRIBUTING.md](CONTRIBUTING.md) for playtesting feedback, bug reports, and contributions. The design documents and contribution guide are currently written in Chinese.
 
 ## License
 
