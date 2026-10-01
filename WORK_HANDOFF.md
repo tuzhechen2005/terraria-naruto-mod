@@ -33,6 +33,14 @@
   - 接入 `byakugan-icon-v3`（`StyleCores/ByakuganCore.png`）与 `exam-genin-style-v1`（`RainGenin.png`、`ForestCanopyCandidate.png`，2 帧：站立/投掷，投掷后显示 20 帧；去掉染色；判定框高 56）。
   - 修复：卡卡西“回村/去忍者学校/练习替身术”与伊比喜“开始笔试”按钮在回调里关对话框，原版随后读 `npc[-1]` 报 IndexOutOfRange（client.log `Main.GUIChatDrawInner`）。改为 `NpcChatCloser.CloseNextTick()` 下一帧关。
 - 再不斩尾声帧重新上色（用户：倒地帧太柔、色块太大，和 Boss 战形象不一样）：`scripts/sharpen_epilogue_frames.py` 把 Rise/Stagger/Collapse 共 10 帧按战斗帧调色板重上色（蓝灰衣服色阶 + 左上光、描边分肢体、两阶肤色、绑腿灰、头部面罩白），剪影与位置逐像素不变，衔接不受影响。输入为 `6d87a4a` 时的游戏帧（Stagger 已按躯干对齐，与交付不同）。白的尾声帧未处理。
+- **2026-10-01 下午（用户实测反馈后，已提交，未实机）**：
+  - 火影岩：`bg-konoha-far-v3` 按网上找的第一部参考（`art/reference/hokage_rock_web/`，本地忽略）重画四张脸，已接入 `KonohaFar.png`。我把交付图顶部透明天空裁掉、整体上提 64 像素（底部用森林镜像补齐），脸约在第 106–229 行（旧版 41–113 行）。**待实机确认是否被中景村子挡住**；若被挡，再去掉背后的青山继续上提，或请 Codex 按指定行数重排。
+  - 砂隐中景接缝：`SunaMid.png` 截取 x=37–1014（宽 977）成无缝平铺。
+  - 再不斩/白站在水面：`Common/LiquidSurface.cs` 按实际水量算水面（水牢、桥边预告、雾中剪影），去掉白的 24 像素抬高。
+  - 考生改为真正的三人小队（`DeathForestSystem.UpdateSquads/SendSquad`，ai[3]=队号、ai[0]=队名），整队倒下才算并说明带的是什么卷；凑齐两卷后不再来小队、雨隐不再伏击、不再发卷。`/m0 squad` 叫一队。进度字段改为 `SquadsBeaten`（存档键 `examSquads`）。
+  - 防卡：`Common/GroundSpot.cs` 找站立点；`Common/Systems/StuckRescue.cs`（GlobalNPC，本模组非飞行的敌对 NPC，除再不斩与水分身）出生在方块里或脚下悬空时挪到最近空地，战斗中嵌墙或 3 秒没进展（顶墙/看不到目标/超过 40 格）就瞬身到目标身边。
+  - 伊比喜换成 `ibiki-npc-v3`（头巾护额、扣好的风衣），缩放按 46 像素身高。
+  - 大蛇丸首次出现太突然：用户说先放放，之后专门讨论。
 - **NPC 画风统一（用户 2026-10-01）**：现有剧情 NPC 风格割裂，统一成达兹纳（`tazuna-npc-v1`）那样——深色外描边、每种材质 3–4 阶硬色阶、饱和暖色、无噪点、23 美术像素高。已提交 `kakashi-npc-v4`、`ibiki-npc-v2`、`hiruzen-npc-v2`（同一段画风要求，流程须与达兹纳相同：生图后采样，不许脚本拼像素）。`kakashi-npc-v3` 作废（进程已停，状态文件可能仍显示 running；`art/deliveries/kakashi-npc-v3/` 是残留半成品，不接入）。交付后先给用户看并排预览，再用 `scripts/build_npc_sheet.py` 接入，`NpcSheet.ScaleFor` 的身体像素按新图更新；卡卡西的水牢帧 `Kakashi_Trapped_*` 与头像也要跟着换。森林少年白（`HakuForest`）风格接近达兹纳，暂不重画。
   - 交付结果（2026-10-01）：`kakashi-npc-v4`、`hiruzen-npc-v2` 画风对上达兹纳，用户同意，已接入（`build_npc_sheet.py`：卡卡西 Idle_Walk:0-6 + Idle_Jump_Sit_Throw:1-5，含新头像；三代再加 Talk:1,2，共 14 帧；三代缩放按 46 像素身高）。水牢被困帧换成 `kakashi-trapped-v2`。三代再缩到 0.92 倍（用户：稍大）。`ibiki-npc-v2` 画风对但造型错（无头巾护额、像长发、露胸、无疤），已提交 `ibiki-npc-v3` 只改造型。
 - 后台美术：见上一条（`python3 scripts/art_bridge.py status <ID>`）。`exam-genin-full-v1` 已交付并接入（考生贴图 7 帧：站立、投掷、跑 4、跳）。
@@ -121,7 +129,7 @@
 ## 工作树与后台
 
 - 分支 `main`，领先 origin/main 23 个提交未推送（origin 在 `b411ffe`）；未跟踪：`art/deliveries/orochimaru-style-v1/`（用户说大蛇丸先不管）（推送需用户明确要求，推送前确认没有音乐文件进入提交）。
-- 运行中的美术请求：`ibiki-npc-v3`（`.art-bridge/bg-konoha-v1.json` 显示 running 是早已被 v2 取代的陈旧状态，忽略）。`.art-bridge/`、`art/reference/` 为本地忽略目录。
+- 运行中的美术请求：无（`.art-bridge/bg-konoha-v1.json` 显示 running 是早已被 v2 取代的陈旧状态，忽略）。`.art-bridge/`、`art/reference/` 为本地忽略目录。
 
 ## 验证
 
