@@ -11,7 +11,7 @@ namespace ShinobiPrototype.Content.NPCs;
 
 // Morino Ibiki, proctor of the written test (specs/M2_中忍考试篇.spec.md 3.1): he stands in an Academy classroom and
 // the test starts by talking to him, with Kakashi's recommendation in hand (user, 2026-09-30: using the scroll on
-// its own felt strange). A story NPC like the Third Hokage: no house, cannot be hurt. Art: ibiki-npc-v3, the twelve
+// its own felt strange). A story NPC like the Third Hokage: no house, cannot be hurt. Art: ibiki-npc-v4 (native size, 64-pixel frames), the twelve
 // NpcSheet frames plus arms folded and a pointing announcement (shown while someone talks to him).
 public sealed class Ibiki : ModNPC
 {
@@ -35,8 +35,8 @@ public sealed class Ibiki : ModNPC
         NPC.lifeMax = 250;
         NPC.knockBackResist = 0f;
         NPC.noGravity = true;
-        // A big man (user, 2026-09-30: he looked small beside the others); the others now match him.
-        NPC.scale = NpcSheet.ScaleFor(46);
+        // Drawn at its final size (ibiki-npc-v4, 64-pixel frames), shown at 1x: no blocky upscaling (user, 2026-10-01).
+        NPC.scale = 1f;
     }
 
     public override bool CanChat() => true;
