@@ -14,16 +14,27 @@ public sealed class StoryPlayer : ModPlayer
 {
     // Whether the "three insignia collected" notice has been shown. Nothing here gates exploration or bosses.
     public bool InsigniaNoticeShown { get; private set; }
-    // The village has welcomed this character home from Wave Country (user, 2026-09-30: "让 NPC 都欢呼祝贺").
+    // The village cheers each boss this character helped beat, the next time they come home (user, 2026-09-30: "每次
+    // 打完 boss 之后村民都庆祝"). WelcomedHome is the first homecoming from Wave Country, which has its own words.
     public bool WelcomedHome { get; private set; }
+    private readonly List<string> pendingBosses = new();
     private int welcomeTicks = -1;
     private readonly List<int> cheering = new();
+    private readonly List<string> cheers = new();
 
     private static readonly string[] Cheers =
     {
-        "欢迎回来！", "听说你在波之国打倒了雾隐的鬼人！", "了不起！", "木叶的骄傲！", "辛苦了！", "一乐拉面，今天我请！",
-        "真的假的，那个桃地再不斩？", "你回来啦！",
+        "欢迎回来！", "了不起！", "木叶的骄傲！", "辛苦了！", "一乐拉面，今天我请！", "你回来啦！", "不愧是木叶的忍者！",
     };
+
+    public const string WaveDuoName = "雾隐的鬼人桃地再不斩与白";
+
+    // A boss fell with this character in the fight (BossCelebrationNPC, on this character's client).
+    public void QueueCelebration(string boss)
+    {
+        if (!pendingBosses.Contains(boss))
+            pendingBosses.Add(boss);
+    }
 
     public override void Initialize()
     {
@@ -60,7 +71,7 @@ public sealed class StoryPlayer : ModPlayer
         if (Player.whoAmI != Main.myPlayer)
             return;
 
-        if (!WelcomedHome && StoryWorld.WaveComplete && Main.GameUpdateCount % 30 == 0 && KonohaWorld.InKonoha(Player.Center))
+        if (pendingBosses.Count > 0 && welcomeTicks < 0 && Main.GameUpdateCount % 30 == 0 && KonohaWorld.InKonoha(Player.Center))
             StartWelcome();
         if (welcomeTicks >= 0)
             Welcome();
@@ -72,16 +83,25 @@ public sealed class StoryPlayer : ModPlayer
         }
     }
 
-    // Home from Wave Country: the townsfolk nearby cheer one after another, with confetti over the player.
+    // Home after a win: the townsfolk nearby cheer one after another, with confetti over the player.
     private void StartWelcome()
     {
-        WelcomedHome = true;
         welcomeTicks = 0;
         cheering.Clear();
         foreach (NPC npc in Main.ActiveNPCs)
             if (npc.townNPC && npc.Distance(Player.Center) < 70 * 16)
                 cheering.Add(npc.whoAmI);
-        Main.NewText("木叶的大家都听说了——你在波之国，打倒了雾隐的鬼人。", new Color(255, 220, 150));
+        string names = string.Join("、", pendingBosses);
+        bool wave = pendingBosses.Contains(WaveDuoName) && !WelcomedHome;
+        Main.NewText(wave ? "木叶的大家都听说了——你在波之国，打倒了雾隐的鬼人。" : $"木叶的大家都听说了——你打倒了{names}！",
+            new Color(255, 220, 150));
+        cheers.Clear();
+        cheers.AddRange(Cheers);
+        foreach (string boss in pendingBosses)
+            cheers.Add(boss == WaveDuoName ? "真的假的，那个桃地再不斩？" : $"连{boss}都被你打倒了？！");
+        if (wave)
+            WelcomedHome = true;
+        pendingBosses.Clear();
         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item4, Player.Center);
     }
 
@@ -103,7 +123,7 @@ public sealed class StoryPlayer : ModPlayer
                         Terraria.GameContent.UI.EmoteID.EmotionLove, Terraria.GameContent.UI.EmoteID.EmoteLaugh,
                         Terraria.GameContent.UI.EmoteID.EmoteHappiness, Terraria.GameContent.UI.EmoteID.PartyBalloons,
                     }), new Terraria.GameContent.UI.WorldUIAnchor(npc), 180);
-                CombatText.NewText(npc.getRect(), new Color(255, 230, 160), Main.rand.Next(Cheers), true);
+                CombatText.NewText(npc.getRect(), new Color(255, 230, 160), Main.rand.Next(cheers), true);
             }
         }
         if (++welcomeTicks > spacing * (cheering.Count + 1) + 90)
@@ -228,6 +248,8 @@ public sealed class StoryPlayer : ModPlayer
             tag["insigniaNotice"] = true;
         if (WelcomedHome)
             tag["welcomedHome"] = true;
+        if (pendingBosses.Count > 0)
+            tag["pendingCelebrations"] = new List<string>(pendingBosses);
     }
 
     public override void LoadData(TagCompound tag)
@@ -235,5 +257,7 @@ public sealed class StoryPlayer : ModPlayer
         // Saves from before the M1 rewrite stored this as journal stage 2.
         InsigniaNoticeShown = tag.GetBool("insigniaNotice") || tag.GetInt("stage") >= 2;
         WelcomedHome = tag.GetBool("welcomedHome");
+        pendingBosses.Clear();
+        pendingBosses.AddRange(tag.GetList<string>("pendingCelebrations"));
     }
 }

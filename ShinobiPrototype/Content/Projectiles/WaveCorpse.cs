@@ -10,15 +10,14 @@ using ShinobiPrototype.Content.NPCs;
 namespace ShinobiPrototype.Content.Projectiles;
 
 // A fallen Zabuza or Haku, lying where they dropped until the epilogue ends (user, 2026-09-29). Not an NPC, so the
-// fight's "is a boss still here" checks are unaffected. During the epilogue the one who fell last gets up, staggers
-// over to the other and collapses at their side (WaveEpilogueRules.Phase). Art: wave-corpses-v1 (Zabuza_Lying /
+// fight's "is a boss still here" checks are unaffected. During the epilogue the one who fell last says their lines,
+// then gets up, staggers over at a slow fixed pace and collapses at the other's side (WaveEpilogueRules). Art: wave-corpses-v1 (Zabuza_Lying /
 // Haku_Lying) and wave-epilogue-walk-v1 (Rise / Stagger / Collapse); until those frames arrive, the kneeling and
 // unarmed frames stand in.
 public sealed class WaveCorpse : ModProjectile
 {
     public const int Zabuza = 0;
     public const int Haku = 1;
-    private const float RestBesideGap = 44f;
 
     private bool sawEpilogue;
 
@@ -62,10 +61,11 @@ public sealed class WaveCorpse : ModProjectile
             {
                 float gap = other.Center.X - Projectile.Center.X;
                 // Face the other from the moment they start to rise.
-                if (WaveEpilogueRules.Phase(t) != WaveEpilogueRules.WalkerPhase.Lying)
+                if (WaveEpilogueSystem.Phase != WaveEpilogueRules.WalkerPhase.Lying)
                     Projectile.ai[1] = Math.Sign(gap) == 0 ? Projectile.ai[1] : Math.Sign(gap);
-                if (WaveEpilogueRules.Phase(t) == WaveEpilogueRules.WalkerPhase.Walking && Math.Abs(gap) > RestBesideGap)
-                    Projectile.velocity.X = Math.Sign(gap) * WaveEpilogueRules.WalkSpeed(Math.Abs(gap) - RestBesideGap, t);
+                if (WaveEpilogueSystem.Phase == WaveEpilogueRules.WalkerPhase.Walking &&
+                    Math.Abs(gap) > WaveEpilogueSystem.RestBesideGap)
+                    Projectile.velocity.X = Math.Sign(gap) * WaveEpilogueRules.WalkSpeed;
             }
             if (WaveEpilogueSystem.Fading)
                 Projectile.alpha = Math.Min(255, Projectile.alpha + 3);
@@ -84,15 +84,17 @@ public sealed class WaveCorpse : ModProjectile
         if (!IsWalker)
             return false;
         int t = WaveEpilogueSystem.Tick;
-        WaveEpilogueRules.WalkerPhase phase = WaveEpilogueRules.Phase(t);
+        WaveEpilogueRules.WalkerPhase phase = WaveEpilogueSystem.Phase;
+        int rise = WaveEpilogueRules.RiseFrom(WaveEpilogueSystem.HakuFellFirst);
+        int collapse = WaveEpilogueRules.CollapseFrom(WaveEpilogueSystem.HakuFellFirst, WaveEpilogueSystem.WalkTicks);
         string prefix = Who == Zabuza ? "Zabuza" : "Haku";
         BossSprites.Canvas canvas = Who == Zabuza ? BossSprites.Zabuza : BossSprites.Haku;
         (string action, int frame, int frames, string fallback, int fallbackFrames) = phase switch
         {
-            WaveEpilogueRules.WalkerPhase.Rising => ("Rise", (t - WaveEpilogueRules.RiseFrom) * 3 / WaveEpilogueRules.RiseTicks, 3,
+            WaveEpilogueRules.WalkerPhase.Rising => ("Rise", (t - rise) * 3 / WaveEpilogueRules.RiseTicks, 3,
                 Who == Zabuza ? "Kneel" : "Idle", 1),
             WaveEpilogueRules.WalkerPhase.Walking => ("Stagger", t / 16, 4, Who == Zabuza ? "Unarmed" : "Idle", Who == Zabuza ? 6 : 4),
-            WaveEpilogueRules.WalkerPhase.Collapsing => ("Collapse", (t - WaveEpilogueRules.CollapseFrom) * 3 / WaveEpilogueRules.CollapseTicks, 3,
+            WaveEpilogueRules.WalkerPhase.Collapsing => ("Collapse", (t - collapse) * 3 / WaveEpilogueRules.CollapseTicks, 3,
                 Who == Zabuza ? "Kneel" : "Idle", 1),
             _ => (null, 0, 0, null, 0),
         };

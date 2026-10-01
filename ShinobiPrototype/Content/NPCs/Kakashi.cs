@@ -174,13 +174,15 @@ public sealed class Kakashi : ModNPC
         exam.Recommend();
         local.QuickSpawnItem(local.GetSource_Misc("KakashiRecommendation"), ModContent.ItemType<ExamAdmissionScroll>());
         Main.NewText("卡卡西：" + RecommendationLine, new Color(200, 210, 230));
-        Main.NewText("卡卡西：……要回村的话跟我说一声，我带你一程。", new Color(200, 210, 230));
         foreach (NPC npc in Main.ActiveNPCs)
             if (npc.type == type)
             {
                 for (int i = 0; i < 20; i++)
                     Dust.NewDust(npc.position, npc.width, npc.height, DustID.Smoke, 0f, -1f, 100, default, 1.4f);
-                CombatText.NewText(npc.getRect(), new Color(200, 210, 230), "哟，辛苦了。", dramatic: true);
+                // He opens the conversation himself: the line, with the ride home on a button (user, 2026-09-30).
+                local.SetTalkNPC(npc.whoAmI);
+                Main.npcChatText = RecommendationLine;
+                break;
             }
     }
 

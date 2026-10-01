@@ -16,12 +16,19 @@ public sealed class WaveEpilogueSystem : ModSystem
     private static bool hakuFirst;
     private static int musicTicks;
     private static Vector2 origin;
+    // How long the last to fall takes to reach the other: measured when they get up (until then the longest walk).
+    private static int walkTicks = -1;
+
+    public const float RestBesideGap = 44f;
 
     public static bool Playing => tick >= 0;
     public static bool HakuFellFirst => hakuFirst;
     public static int Tick => tick;
+    public static int WalkTicks => walkTicks >= 0 ? walkTicks : WaveEpilogueRules.MaxWalkTicks;
+    public static WaveEpilogueRules.WalkerPhase Phase => WaveEpilogueRules.Phase(hakuFirst, WalkTicks, tick);
     public static bool MusicActive => musicTicks > 0;
-    public static bool Fading => Playing && tick >= WaveEpilogueRules.Length(hakuFirst) - WaveEpilogueRules.FadeTicks;
+    private static int Length => WaveEpilogueRules.Length(hakuFirst, WalkTicks);
+    public static bool Fading => Playing && tick >= Length - WaveEpilogueRules.FadeTicks;
 
     public static void Begin(bool hakuFellFirst, Vector2 where)
     {
@@ -39,6 +46,7 @@ public sealed class WaveEpilogueSystem : ModSystem
     internal static void Start(bool hakuFellFirst, Vector2 where)
     {
         tick = 0;
+        walkTicks = -1;
         hakuFirst = hakuFellFirst;
         origin = where;
         musicTicks = Main.dedServ ? 0 : WaveEpilogueRules.MusicTicks;
@@ -69,17 +77,24 @@ public sealed class WaveEpilogueSystem : ModSystem
         if (tick < 0)
             return;
 
+        // The walk is measured as the walker gets up, from where the two bodies lie.
+        if (walkTicks < 0 && tick >= WaveEpilogueRules.RiseFrom(hakuFirst))
+        {
+            Projectile zabuza = WaveCorpse.Find(WaveCorpse.Zabuza), haku = WaveCorpse.Find(WaveCorpse.Haku);
+            walkTicks = zabuza != null && haku != null
+                ? WaveEpilogueRules.WalkTicks(System.Math.Abs(zabuza.Center.X - haku.Center.X) - RestBesideGap)
+                : 0;
+        }
         if (!Main.dedServ)
         {
-            foreach (WaveEpilogueRules.Beat beat in WaveEpilogueRules.Beats(hakuFirst))
+            foreach (WaveEpilogueRules.Beat beat in WaveEpilogueRules.Beats(hakuFirst, WalkTicks))
                 if (beat.Tick == tick)
                     Speak(beat.Key);
-            float rate = WaveEpilogueRules.SnowRate(tick - WaveEpilogueRules.SnowFrom(hakuFirst),
-                WaveEpilogueRules.Length(hakuFirst) - tick);
+            float rate = WaveEpilogueRules.SnowRate(tick - WaveEpilogueRules.SnowFrom(hakuFirst, WalkTicks), Length - tick);
             if (rate > 0f)
                 Snow(rate);
         }
-        if (++tick >= WaveEpilogueRules.Length(hakuFirst))
+        if (++tick >= Length)
         {
             tick = -1;
             // Then Kakashi turns up beside the player with the Chūnin Exam recommendation (M2 spec, section 2).
