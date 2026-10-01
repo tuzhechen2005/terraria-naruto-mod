@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
 using Terraria.Graphics.CameraModifiers;
@@ -94,7 +95,33 @@ public sealed class GiantSnake : ModProjectile
             return false;
         Color light = Lighting.GetColor((int)(Projectile.Center.X / 16f), (int)(Ground / 16f) - 2);
         light = new Color(Math.Max(light.R, (byte)90), Math.Max(light.G, (byte)90), Math.Max(light.B, (byte)90));
-        SnakeBody.Draw(Main.spriteBatch, HeadBottom, Dir, Segments, SegmentSize, Tick, SnakeBody.Purple, light);
+        if (!DrawArt(light))
+            SnakeBody.Draw(Main.spriteBatch, HeadBottom, Dir, Segments, SegmentSize, Tick, SnakeBody.Purple, light);
         return false;
+    }
+
+    // With the art (giant-snake-v1: head, one body segment, tail, all facing right): each part laid along the wave and
+    // turned to follow it, tail first so the head is on top.
+    private bool DrawArt(Color light)
+    {
+        const string root = "ShinobiPrototype/Content/Projectiles/GiantSnake_";
+        if (!ModContent.HasAsset(root + "Head") || !ModContent.HasAsset(root + "Body") || !ModContent.HasAsset(root + "Tail"))
+            return false;
+        Texture2D head = ModContent.Request<Texture2D>(root + "Head").Value;
+        Texture2D body = ModContent.Request<Texture2D>(root + "Body").Value;
+        Texture2D tail = ModContent.Request<Texture2D>(root + "Tail").Value;
+        SpriteEffects flip = Dir > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+        for (int i = Segments - 1; i >= 0; i--)
+        {
+            Vector2 at = SnakeBody.Segment(HeadBottom, Dir, i, Segments, SegmentSize, Tick);
+            // The part points from the segment behind it towards the one ahead.
+            Vector2 ahead = i == 0 ? at + new Vector2(Dir, 0f) : SnakeBody.Segment(HeadBottom, Dir, i - 1, Segments, SegmentSize, Tick);
+            Vector2 along = ahead - at;
+            float angle = (float)Math.Atan2(along.Y, along.X) - (Dir > 0 ? 0f : MathHelper.Pi);
+            Texture2D part = i == 0 ? head : i == Segments - 1 ? tail : body;
+            float scale = SnakeBody.SizeAt(i, Segments, SegmentSize) / SegmentSize * (i == 0 ? 1.1f : 1f);
+            Main.EntitySpriteDraw(part, at - Main.screenPosition, null, light, angle, part.Size() / 2f, scale, flip);
+        }
+        return true;
     }
 }
