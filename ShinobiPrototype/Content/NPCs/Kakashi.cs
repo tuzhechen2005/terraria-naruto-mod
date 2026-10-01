@@ -156,7 +156,8 @@ public sealed class Kakashi : ModNPC
                     closest = player;
             if (closest != null)
             {
-                Vector2 beside = closest.Bottom + new Vector2(-closest.direction * 48f, 0f);
+                // On the ground under the player (who may be in the air), a step behind them.
+                Vector2 beside = GroundBelow(closest.Bottom + new Vector2(-closest.direction * 48f, 0f));
                 NPC kakashi = null;
                 foreach (NPC npc in Main.ActiveNPCs)
                     if (npc.type == type)
@@ -190,21 +191,33 @@ public sealed class Kakashi : ModNPC
         Main.NewText("卡卡西：" + RecommendationLine, new Color(200, 210, 230));
         // He opens the conversation himself once he stands beside the player: the line, with the ride home on a button
         // (user, 2026-09-30). Opening it the same tick he was moved broke the chat drawing.
-        pendingTalkTicks = 300;
+        pendingTalkTicks = 20 * 60;
+    }
+
+    private static Vector2 GroundBelow(Vector2 at)
+    {
+        int x = (int)(at.X / 16f);
+        for (int y = (int)(at.Y / 16f); y < Main.maxTilesY - 10 && y < at.Y / 16f + 60; y++)
+            if (WorldGen.SolidOrSlopedTile(x, y))
+                return new Vector2(at.X, y * 16f);
+        return at;
     }
 
     private static int pendingTalkTicks;
 
-    // Client side, each tick (KakashiSpawnSystem): open the pending talk when he is close enough to be talked to.
+    // Client side, each tick (KakashiSpawnSystem): open the pending talk once the player stands on the ground beside
+    // him (a player in the air drifted out of range and the talk closed at once; user, 2026-09-30).
     internal static void UpdatePendingTalk()
     {
         if (pendingTalkTicks <= 0 || Main.dedServ)
             return;
         pendingTalkTicks--;
         Player local = Main.LocalPlayer;
+        if (local.dead || local.velocity.Y != 0f)
+            return;
         int type = ModContent.NPCType<Kakashi>();
         foreach (NPC npc in Main.ActiveNPCs)
-            if (npc.type == type && npc.Distance(local.Center) < 12 * 16)
+            if (npc.type == type && npc.Distance(local.Center) < 8 * 16)
             {
                 for (int i = 0; i < 20; i++)
                     Dust.NewDust(npc.position, npc.width, npc.height, DustID.Smoke, 0f, -1f, 100, default, 1.4f);
@@ -220,13 +233,22 @@ public sealed class Kakashi : ModNPC
     public override void SetChatButtons(ref string button, ref string button2)
     {
         button = "指点";
-        button2 = OffersRideHome(Main.LocalPlayer) ? "回村" : "练习替身术";
+        button2 = RideButton(Main.LocalPlayer) ?? "练习替身术";
     }
 
-    // Right after Wave Country, far from the Leaf, he takes the player home in one Body Flicker (the bridge is a long
-    // walk from the village; user, 2026-09-30). Once, until the written test is passed.
-    private static bool OffersRideHome(Player player) =>
-        KonohaWorld.Site is KonohaSite site && player.GetModPlayer<ChuninExamPlayer>().Stage == ExamStage.Written &&
+    // From the recommendation until the written test is passed he takes the player where the test is, in one Body
+    // Flicker: home to the gate from afar (the bridge is a long walk from the village), or to the Academy from inside
+    // the village (user, 2026-09-30: the button must still be there when asked again).
+    private static string RideButton(Player player)
+    {
+        if (KonohaWorld.Site is not KonohaSite site || player.GetModPlayer<ChuninExamPlayer>().Stage != ExamStage.Written)
+            return null;
+        return FarFromVillage(player, site) ? "回村" : "去忍者学校";
+    }
+
+    private static bool OffersRideHome(Player player) => RideButton(player) != null;
+
+    private static bool FarFromVillage(Player player, KonohaSite site) =>
         System.Math.Abs(player.Center.X / 16f - site.CenterX) > KonohaDesign.HalfWidth + 60;
 
     private void RideHome()
@@ -236,7 +258,12 @@ public sealed class Kakashi : ModNPC
         Player player = Main.LocalPlayer;
         player.SetTalkNPC(-1);
         Main.npcChatText = "";
-        Vector2 gate = new(site.CenterX * 16f + 8f, site.GroundY * 16f);
+        bool far = FarFromVillage(Main.LocalPlayer, site);
+        // From afar: the gate. Inside the village: the street just west of the Academy, by its door.
+        int academy = KonohaWorld.Design.Buildings.FindIndex(b => b.Name == "忍者学校");
+        Vector2 gate = far || academy < 0
+            ? new(site.CenterX * 16f + 8f, site.GroundY * 16f)
+            : new((site.X(KonohaWorld.Design.Buildings[academy].X0) - 2 + 0.5f) * 16f, site.GroundY * 16f);
         for (int i = 0; i < 30; i++)
             Dust.NewDust(player.position, player.width, player.height, DustID.Smoke, 0f, -1f, 100, default, 1.6f);
         player.Teleport(gate - new Vector2(player.width / 2f, player.height), TeleportationStyleID.RecallPotion);
@@ -248,7 +275,7 @@ public sealed class Kakashi : ModNPC
             NPC.Bottom = gate + new Vector2(-player.direction * 48f, 0f);
             NPC.velocity = Vector2.Zero;
         }
-        Main.NewText("卡卡西：……瞬身之术。到了——欢迎回来。", new Color(200, 210, 230));
+        Main.NewText(far ? "卡卡西：……瞬身之术。到了——欢迎回来。" : "卡卡西：喏，忍者学校。主考官在教室里等你。", new Color(200, 210, 230));
     }
 
     public override void OnChatButtonClicked(bool firstButton, ref string shopName)

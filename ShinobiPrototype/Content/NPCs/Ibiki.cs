@@ -35,6 +35,8 @@ public sealed class Ibiki : ModNPC
         NPC.lifeMax = 250;
         NPC.knockBackResist = 0f;
         NPC.noGravity = true;
+        // A big man (user, 2026-09-30: he looked small beside the others).
+        NPC.scale = 1.25f;
     }
 
     public override bool CanChat() => true;
