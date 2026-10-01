@@ -24,12 +24,13 @@
 
 ## 当前状态（2026-10-01）
 
-**2026-10-01 Codex：公开 README 与素材展示（本次提交）**
+**2026-10-01 Codex：公开 README、素材展示与新图标**
 
 - README 改为自然正文，默认英文 `README.md`，中文 `README.zh-CN.md`，顶部有语言切换入口；旧横幅改为可编辑标题，末尾英文摘要已删除。此前相关提交 `797ae10`、`2966df3` 已按用户“推送”的要求推到 `main`。
-- 本次补充波之国、中忍考试、剧情 NPC、流派、武器与任务道具的介绍。`docs/images/readme/` 的 20 张展示图均从当前运行时贴图导出：5 位 Boss 的四帧待机 GIF、4 位剧情 NPC、10 件道具，以及我爱罗三阶段对照。`scripts/export_readme_assets.py` 可在带 Pillow 的 Python 环境中重新生成；未修改游戏源码或原始贴图。
+- `2827ab3` 已推送：补充波之国、中忍考试、剧情 NPC、流派、武器与任务道具的介绍。`docs/images/readme/` 的 20 张展示图均从当前运行时贴图导出：5 位 Boss 的四帧待机 GIF、4 位剧情 NPC、10 件道具，以及我爱罗三阶段对照。`scripts/export_readme_assets.py` 可在带 Pillow 的 Python 环境中重新生成；未修改游戏源码或原始贴图。
 - 验证：中英文图片与文档链接通过，GIF 均为四帧透明循环；GitHub Markdown API 保留全部 20 张展示图和 7 个表格；浏览器预览两版全部图片加载、无横向溢出，并已检查排版。本次为文档展示改动，未重新构建或实机测试模组。
-- 新图标 `mod-icon-v4` 已交付并给用户看过预览，尚未确认接入；`art/requests/mod-icon-v4.md`、`art/deliveries/mod-icon-v4/` 保持未跟踪。游戏及 README 仍使用此前的 v3 图标。
+- 用户随后表示“仓库图标也可以换了”，确认接入已展示的 `mod-icon-v4`：少年鸣人、卡卡西、螺旋丸、木叶背景和 NARUTO 像素字标。80×80 与 30×30 图标原样接入模组，640×640 图用于两版 README，首页显示为 320×320。请求单、源图、交付图和检查记录随图标更新提交。
+- 图标验证：三个目标 PNG 与交付原件一致，尺寸和解码通过；GitHub Markdown 渲染及两版浏览器首页预览通过。运行 `./scripts/verify-mac.sh` 并通过 `ExtraBuildModFlags` 指定独立存档目录，13 组规则测试及模组打包通过，0 错误；既有的编译告警与图像转换回退日志仍在。尚未在运行中的游戏里重新加载并验收图标。
 
 **2026-10-01 晚：第二试与预选赛改版（与用户 grill 定稿，见 `specs/M2_中忍考试篇.spec.md` 第十节；已提交并推送，未实机）**
 
@@ -144,8 +145,8 @@
 
 ## 工作树与后台
 
-- 分支 `main`。本次 README 展示整理前已 fetch 确认与 `origin/main` 同步在 `2966df3`，早先“领先 23 个提交”的记录已过期；用户已明确授权推送 README 修改。本次提交只包含 README、文档展示图、导出脚本和交接记录。
-- 未跟踪美术：`art/deliveries/kakashi-npc-v3/`（作废残留）、`art/deliveries/orochimaru-style-v1/`（暂缓）、`art/requests/mod-icon-v4.md` 与 `art/deliveries/mod-icon-v4/`（新图标等确认）。这些不随本次 README 提交接入。
+- 分支 `main`。图标接入前已 fetch 确认与 `origin/main` 同步在 `2827ab3`，早先“领先 23 个提交”的记录已过期；用户已明确授权推送 README 修改，并确认替换新图标。当前图标提交包含中英文 README、两个游戏图标、README 图、v4 请求与交付、交接记录。
+- 未跟踪美术：`art/deliveries/kakashi-npc-v3/`（作废残留）、`art/deliveries/orochimaru-style-v1/`（暂缓）。这些不随本次图标提交接入。
 - 运行中的美术请求：无（`.art-bridge/bg-konoha-v1.json` 显示 running 是早已被 v2 取代的陈旧状态，忽略）。`.art-bridge/`、`art/reference/` 为本地忽略目录。
 
 ## 验证

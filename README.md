@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/mod-icon.png" alt="Konoha leaf emblem" width="160">
+  <img src="docs/images/mod-icon.png" alt="Naruto and Kakashi with a Rasengan against the Hidden Leaf Village" width="320">
 </p>
 
 <h1 align="center">Terraria Naruto Mod</h1>

@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/mod-icon.png" alt="木叶叶纹徽章" width="160">
+  <img src="docs/images/mod-icon.png" alt="鸣人、卡卡西与螺旋丸，背景为木叶村" width="320">
 </p>
 
 <h1 align="center">泰拉瑞亚火影忍者模组</h1>
