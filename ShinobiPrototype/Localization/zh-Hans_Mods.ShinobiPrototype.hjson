@@ -339,6 +339,8 @@ Projectiles: {
 	HakuDashHitbox.DisplayName: 冰刃突进
 	// SenbonWarning.DisplayName: Senbon Warning
 	// ExamShuriken.DisplayName: Exam Shuriken
+	// GiantSnake.DisplayName: Giant Snake
+	// ShedSkin.DisplayName: Shed Skin
 }
 
 Dialogue: {

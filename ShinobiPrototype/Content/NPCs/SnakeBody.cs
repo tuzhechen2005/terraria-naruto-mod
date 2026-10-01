@@ -23,14 +23,14 @@ public static class SnakeBody
     {
         float spacing = size * 0.62f;
         float along = i * spacing;
-        float amplitude = size * 0.32f * Math.Min(1f, 0.25f + i / 4f) * (1f - 0.4f * i / segments);
+        float amplitude = size * 0.5f * Math.Min(1f, 0.25f + i / 4f) * (1f - 0.4f * i / segments);
         float lift = (float)Math.Sin(time * 0.2f - i * 0.75f) * amplitude;
         float sway = (float)Math.Cos(time * 0.2f - i * 0.75f) * size * 0.08f;
         return headBottom + new Vector2(-dir * along + sway, -SizeAt(i, segments, size) / 2f - Math.Max(0f, lift));
     }
 
     public static float SizeAt(int i, int segments, float size) =>
-        i == 0 ? size * 1.15f : size * (1f - 0.55f * (float)Math.Pow(i / (float)segments, 1.6));
+        i == 0 ? size * 1.15f : size * (1f - 0.4f * (float)Math.Pow(i / (float)segments, 1.6));
 
     public static void Draw(SpriteBatch spriteBatch, Vector2 headBottom, int dir, int segments, float size, float time,
         SnakeLook look, Color light, float opacity = 1f)

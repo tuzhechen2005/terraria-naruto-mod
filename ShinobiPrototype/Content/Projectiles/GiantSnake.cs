@@ -119,7 +119,8 @@ public sealed class GiantSnake : ModProjectile
             Vector2 along = ahead - at;
             float angle = (float)Math.Atan2(along.Y, along.X) - (Dir > 0 ? 0f : MathHelper.Pi);
             Texture2D part = i == 0 ? head : i == Segments - 1 ? tail : body;
-            float scale = SnakeBody.SizeAt(i, Segments, SegmentSize) / SegmentSize * (i == 0 ? 1.1f : 1f);
+            // The body parts are drawn a little thicker than the head's neck needs, so the neck joins without a step.
+            float scale = SnakeBody.SizeAt(i, Segments, SegmentSize) / SegmentSize * (i == 0 ? 1f : 1.3f);
             Main.EntitySpriteDraw(part, at - Main.screenPosition, null, light, angle, part.Size() / 2f, scale, flip);
         }
         return true;
