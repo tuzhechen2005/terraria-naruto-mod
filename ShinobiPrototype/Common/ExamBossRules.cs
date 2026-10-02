@@ -111,14 +111,14 @@ public static class ExamBossRules
     public const int OrochimaruLife = 5000;
     public const int OrochimaruDefense = 12;
     public const int KillingIntentTicks = 120;   // frozen by fear unless the player substitutes out
-    public const int SnakeHandDamage = 34;
-    public const int SnakeHandReachPx = 420;
-    public const int SnakeDashDamage = 38;
-    public const int WindBlastDamage = 30;
+    public const int SnakeHandDamage = 41;
+    public const int SnakeHandReachPx = 560;
+    public const int SnakeDashDamage = 46;
+    public const int WindBlastDamage = 36;
     public const float WindBlastKnockback = 14f;
-    public const int NeckBiteDamage = 42;
+    public const int NeckBiteDamage = 50;
     // The Five Elements Seal: the chakra stops coming back for a while (natural and on-hit recovery; pills still work).
-    public const int FiveSealDamage = 24;
+    public const int FiveSealDamage = 29;
     public const int FiveSealTicks = 480;
     // The shed skin calls him back for another try at the eye (the first meeting always leaves it).
     public const float SharinganVialChance = 0.25f;
@@ -129,10 +129,30 @@ public static class ExamBossRules
     // The giant snake: summoned once, when he is down to three quarters or a while into the fight.
     public const float GiantSnakeAt = 0.75f;
     public const int GiantSnakeAfterTicks = 35 * 60;
-    public const int GiantSnakeDamage = 46;
+    public const int GiantSnakeDamage = 55;
     public const int GiantSnakeWarnTicks = 90;
 
-    public enum OrochimaruEnd { None, HalfLife, HeldOut, PlayerFell }
+    // Bullets (user, 2026-10-02: Terraria bosses fight with projectiles; more of them, more often). Damage numbers above
+    // were raised by a fifth at the same time. The second half of the fight (after Manda) is denser.
+    public const int SwarmDamage = 30;
+    public const int VenomDamage = 28;
+    public const int VenomPoolDamage = 14;
+    public const int VenomPoolTicks = 5 * 60;
+    public const int SnakeRainDamage = 30;
+    public const int KusanagiDamage = 60;
+    public const int KusanagiReachPx = 760;
+    public const int BarrageDamage = 22;
+    public const int OrochimaruDecideTicks = 25;   // between techniques: a short walk
+    public const int OrochimaruRecoveryTicks = 20;
+    public const float OrochimaruWindupScale = 0.67f;
+
+    public static int SwarmCount(bool secondHalf) => secondHalf ? 7 : 5;
+    public static int SnakeRainCount(bool secondHalf) => secondHalf ? 9 : 6;
+    // While he walks between techniques he flicks small snakes at the player.
+    public static int BarrageEvery(bool secondHalf) => secondHalf ? 60 : 90;
+    public static int BarrageCount(bool secondHalf) => secondHalf ? 3 : 2;
+
+        public enum OrochimaruEnd { None, HalfLife, HeldOut, PlayerFell }
 
     public static OrochimaruEnd OrochimaruEnds(int life, int lifeMax, int fightTicks, bool ready, bool playerFell)
     {

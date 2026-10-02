@@ -31,6 +31,7 @@ public enum JutsuKind : byte
     ResonanceRing, // Dosu: a ring of sound spreading out from him (only the ring itself hurts)
     ImpactSlam,    // Dosu: the shock of landing from his leap
     Bite,          // Orochimaru: the snake dash and the long neck close their fangs
+    NeckHead,      // Orochimaru: rides on the head of his long neck while it lunges
 }
 
 public sealed class JutsuHitbox : ModProjectile
@@ -54,14 +55,17 @@ public sealed class JutsuHitbox : ModProjectile
     public static int Lifetime(JutsuKind kind) => kind switch
     {
         JutsuKind.Strike or JutsuKind.EchoDrill or JutsuKind.GentleFist or JutsuKind.FiveSeal or JutsuKind.Bite => 12,
-        JutsuKind.SoundWave or JutsuKind.WindBlast => 40,
+        JutsuKind.SoundWave => 40,
+        // The gust rolls on off the screen (user, 2026-10-02: it vanished after a short way).
+        JutsuKind.WindBlast => 110,
+        JutsuKind.NeckHead => 26,
         JutsuKind.SandShuriken => 120,
         JutsuKind.SandWave => 90,
         JutsuKind.SandBurial or JutsuKind.SixtyFour => 20,
         JutsuKind.AirBullet => 150,
         JutsuKind.SandArm => 22,
         JutsuKind.Rotation => ExamBossRules.RotationTicks,
-        JutsuKind.SnakeHand => 44,
+        JutsuKind.SnakeHand => 30,
         JutsuKind.GroundQuake => 75,
         JutsuKind.ResonanceRing => 50,
         JutsuKind.ImpactSlam => 14,
@@ -85,8 +89,8 @@ public sealed class JutsuHitbox : ModProjectile
             Projectile.Resize((int)Projectile.ai[1], (int)Projectile.ai[2]);
             Projectile.timeLeft = Lifetime(Kind);
             Projectile.localAI[1] = Projectile.timeLeft;
-            // The snake hands remember whose sleeve they come out of (each machine for itself).
-            if (Kind == JutsuKind.SnakeHand)
+            // The snake hands and the neck remember whose they are (each machine for itself).
+            if (Kind is JutsuKind.SnakeHand or JutsuKind.NeckHead)
             {
                 NPC owner = null;
                 foreach (NPC npc in Main.ActiveNPCs)
@@ -111,6 +115,22 @@ public sealed class JutsuHitbox : ModProjectile
                 break;
             case JutsuKind.GroundQuake:
                 Projectile.velocity.Y = 0f;
+                break;
+            case JutsuKind.WindBlast:
+            {
+                // It grows as it goes.
+                float t = 1f - Projectile.timeLeft / Projectile.localAI[1];
+                Vector2 center = Projectile.Center;
+                Projectile.Resize((int)(Projectile.ai[1] * (1f + t)), (int)(Projectile.ai[2] * (1f + 0.6f * t)));
+                Projectile.Center = center;
+                break;
+            }
+            case JutsuKind.NeckHead:
+                if (Projectile.localAI[2] > 0f && Main.npc[(int)Projectile.localAI[2] - 1] is { active: true, ModNPC: NPCs.Orochimaru o })
+                    Projectile.Center = o.NeckHead;
+                else
+                    Projectile.Kill();
+                Projectile.velocity = Vector2.Zero;
                 break;
             case JutsuKind.ResonanceRing:
             {

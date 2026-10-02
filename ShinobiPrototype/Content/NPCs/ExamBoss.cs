@@ -41,6 +41,16 @@ public abstract class ExamBoss : ModNPC
     protected virtual string SpritePrefix => null;
     // Pose plays its frames starting from this one (to hold, say, only the last frames of an action).
     protected virtual int PoseFirstFrame => 0;
+    // Art pixels sunk into the ground (a boss leaving through the floor).
+    protected virtual float SinkPixels => 0f;
+
+    // Smoothness (user, 2026-10-02: the bosses looked choppy; vanilla's few frames move smoothly): a bob with the
+    // steps and a lean into the walk, a crouch at the start of a technique, a red flash when hit instead of a
+    // hurt frame.
+    private float stepPhase;
+    private float lean;
+    private float lastState = -1f;
+    private int stateAge;
     private protected virtual BossSprites.Canvas CanvasFor(string action) => PersonCanvas;
     // The animation to show now: its frame count, ticks per frame, and whether it loops (otherwise it plays once
     // from the start of the current state).
@@ -97,6 +107,11 @@ public abstract class ExamBoss : ModNPC
         if (HurtTicks > 0)
             HurtTicks--;
         Fight(target);
+        // The look of the movement (client side, drawing only).
+        stepPhase += System.Math.Abs(NPC.velocity.X) * 0.09f;
+        lean = MathHelper.Lerp(lean, MathHelper.Clamp(NPC.velocity.X * 0.012f, -0.07f, 0.07f), 0.15f);
+        stateAge = State == lastState ? stateAge + 1 : 0;
+        lastState = State;
     }
 
     protected abstract void Fight(Player target);
@@ -181,12 +196,22 @@ public abstract class ExamBoss : ModNPC
     {
         if (SpritePrefix == null)
             return true;
-        (string action, int frames, int ticksPerFrame, bool loop) = HurtTicks > 0 ? ("Hurt", 1, 10, true) : Pose;
-        int first = HurtTicks > 0 ? 0 : PoseFirstFrame;
+        (string action, int frames, int ticksPerFrame, bool loop) = Pose;
+        int first = PoseFirstFrame;
         int frame = first + (loop ? (int)(Main.GameUpdateCount / (uint)ticksPerFrame) % frames
             : System.Math.Min(frames - 1, (int)(Timer / ticksPerFrame)));
-        return !BossSprites.TryDraw(spriteBatch, SpritePrefix, action, frame, first + frames, CanvasFor(action), NPC.Bottom,
-            NPC.direction, BossSprites.Lit(drawColor), screenPos, ArtScale);
+
+        bool walking = NPC.velocity.Y == 0f && System.Math.Abs(NPC.velocity.X) > 0.4f;
+        float bob = walking ? -(float)System.Math.Abs(System.Math.Sin(stepPhase)) * 2f * ArtScale : 0f;
+        // A small crouch for the first few ticks of a new technique, easing back.
+        float crouch = stateAge < 8 && State != 0f ? 1f - stateAge / 8f : 0f;
+        Vector2 stretch = new(1f + 0.05f * crouch, 1f - 0.07f * crouch);
+        Color color = BossSprites.Lit(drawColor);
+        if (HurtTicks > 0)
+            color = Color.Lerp(color, new Color(255, 110, 110), 0.55f * HurtTicks / 8f);
+        return !BossSprites.TryDraw(spriteBatch, SpritePrefix, action, frame, first + frames, CanvasFor(action),
+            NPC.Bottom + new Vector2(0f, (float)System.Math.Round(bob)), NPC.direction, color, screenPos, ArtScale, lean, stretch,
+            SinkPixels);
     }
 
     public override void HitEffect(NPC.HitInfo hit)

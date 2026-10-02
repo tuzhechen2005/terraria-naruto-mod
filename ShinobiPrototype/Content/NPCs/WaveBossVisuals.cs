@@ -27,9 +27,11 @@ internal static class BossSprites
 
     public static bool Has(string name) => ModContent.HasAsset(AssetPath(name));
 
+    // rotation and stretch (x, y on top of scale) pivot on the feet; sink draws the figure that many art pixels lower,
+    // with what would be under the ground cut away.
     public static bool TryDraw(SpriteBatch spriteBatch, string prefix, string action, int frame,
         int frameCount, Canvas canvas, Vector2 worldBottom, int direction, Color color,
-        Vector2 screenPos, float scale = 1f)
+        Vector2 screenPos, float scale = 1f, float rotation = 0f, Vector2? stretch = null, float sink = 0f)
     {
         int index = ((frame % frameCount) + frameCount) % frameCount;
         string path = AssetPath($"{prefix}_{action}_{index}");
@@ -41,7 +43,17 @@ internal static class BossSprites
         position = new Vector2((float)Math.Round(position.X), (float)Math.Round(position.Y));
         Vector2 origin = new(facingRight ? canvas.CenterX : canvas.Width - canvas.CenterX,
             canvas.BaselineY);
-        spriteBatch.Draw(texture, position, null, color, 0f, origin, scale,
+        Vector2 size = (stretch ?? Vector2.One) * scale;
+        Rectangle? source = null;
+        if (sink > 0f)
+        {
+            int keep = Math.Max(0, (int)(canvas.BaselineY - sink));
+            if (keep == 0)
+                return true;
+            source = new Rectangle(0, 0, texture.Width, keep);
+            position.Y += (float)Math.Round(sink * size.Y);
+        }
+        spriteBatch.Draw(texture, position, source, color, rotation, origin, size,
             facingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
         return true;
     }

@@ -136,7 +136,10 @@ public sealed class GiantSnake : ModProjectile
             float angle = (float)Math.Atan2(along.Y, along.X) - (Dir > 0 ? 0f : MathHelper.Pi);
             Texture2D part = i == 0 ? head : i == Segments - 1 ? tail : body;
             Vector2 position = new((float)Math.Round(at.X - Main.screenPosition.X), (float)Math.Round(at.Y - Main.screenPosition.Y));
-            Main.EntitySpriteDraw(part, position, null, light, angle, part.Size() / 2f, Scale(i), flip);
+            // Each part lit where it is, never darker than a dim daylight (user, 2026-10-02: it turned black as a whole
+            // when the head passed through the dark).
+            Color partLight = BossSprites.Lit(Lighting.GetColor((int)(at.X / 16f), (int)(at.Y / 16f)), 0.6f);
+            Main.EntitySpriteDraw(part, position, null, partLight, angle, part.Size() / 2f, Scale(i), flip);
         }
         return true;
     }

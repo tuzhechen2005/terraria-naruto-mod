@@ -35,11 +35,22 @@ public sealed class Orochimaru : ExamBoss
     private const float Recovery = 7f;
     private const float Exit = 8f;
     private const float SealWindup = 9f;
+    // Bullets (user, 2026-10-02).
+    private const float SwarmWindup = 11f;
+    private const float VenomWindup = 12f;
+    private const float RainWindup = 13f;
+    private const float SwordWindup = 14f;
 
     private const int RevealTicks = 70;
     private const int EmergeTicks = 60;
+    private const int ExitTalkTicks = 70;     // standing while he speaks, then sinking for the rest of the exit
+    private const int NeckLaunch = 10;
+    private const int NeckReachTicks = 14;
 
     private int fightTicks;
+    private int barrage;
+    private float lastMove = -1f;
+    private bool secondIntent;
     private bool giantSnake;
     private bool? ready;
     private bool rematch;
@@ -91,8 +102,12 @@ public sealed class Orochimaru : ExamBoss
             DashWindup or Dash => Or(("Dash", 2, 6, true)),
             WindWindup => Or(("Wind", 2, 20, false)),
             NeckWindup => Or(("Neck", 1, 10, true)),
-            SealWindup => Or(("Seal", 2, 17, false)),
-            Exit => Or(("Sink", 3, ThresholdRetreatRules.ExitInvulnerableTicks / 3, false)),
+            SealWindup => Or(("Seal", 2, 12, false)),
+            SwarmWindup => Or(("Hands", 3, 7, false)),
+            VenomWindup or SwordWindup => Or(("Wind", 2, 12, false)),
+            RainWindup => Or(("Summon", 2, 12, false)),
+            Exit when Timer < ExitTalkTicks => Or(("Idle", 4, 12, true)),
+            Exit => Or(("Sink", 3, (ThresholdRetreatRules.ExitInvulnerableTicks - ExitTalkTicks) / 3, false)),
             _ => Has("Walk") ? Moving("Walk", "Idle") : ("Idle", 4, 12, true),
         };
 
@@ -102,6 +117,16 @@ public sealed class Orochimaru : ExamBoss
     protected override int Defense => ExamBossRules.OrochimaruDefense;
 
     private Vector2 Mark => new(NPC.ai[2], NPC.ai[3]);
+
+    // The long neck: from his collar to the head, which lunges out over NeckReachTicks and stays there to bite.
+    private Vector2 NeckRoot => NPC.Top + new Vector2(NPC.direction * 12f, 10f);
+    private float NeckReach => State != NeckWindup || Timer < NeckLaunch ? 0f : Math.Min(1f, (Timer - NeckLaunch) / NeckReachTicks);
+    public Vector2 NeckHead => Vector2.Lerp(NeckRoot, Mark, NeckReach);
+
+    // Sinking into the ground once he has had his say (ExamBoss draws him that many art pixels lower, cut at the ground).
+    protected override float SinkPixels => State == Exit && Timer > ExitTalkTicks
+        ? 64f * (Timer - ExitTalkTicks) / (ThresholdRetreatRules.ExitInvulnerableTicks - ExitTalkTicks)
+        : 0f;
 
     protected override void Fight(Player target)
     {
@@ -122,13 +147,32 @@ public sealed class Orochimaru : ExamBoss
                 case ExamBossRules.OrochimaruEnd.HalfLife:
                     NPC.life = ThresholdRetreatRules.LockedLife(NPC.lifeMax);
                     NPC.dontTakeDamage = true;
+                    Speak("……呵呵呵，你的身体，比我想的还要有意思呢。下次见面之前，可别随随便便就死掉哦。");
                     Enter(Exit);
                     break;
                 case ExamBossRules.OrochimaruEnd.HeldOut:
                     NPC.dontTakeDamage = true;
+                    Speak("……拼命挣扎的样子，也挺可爱的嘛。时机还没到——好好留着这条命，等我来取。");
                     Enter(Exit);
                     break;
             }
+        // Once more, a quarter of the way down (user, 2026-10-02).
+        if (!secondIntent && State is Approach or Recovery && NPC.life <= NPC.lifeMax * 0.75f)
+        {
+            secondIntent = true;
+            KillingIntent();
+        }
+        // Between techniques he flicks small snakes at the player as he walks; thicker after Manda.
+        if (Deciding && State is Approach or Recovery && ++barrage >= ExamBossRules.BarrageEvery(giantSnake))
+        {
+            barrage = 0;
+            Vector2 aim = NPC.DirectionTo(target.Center);
+            int count = ExamBossRules.BarrageCount(giantSnake);
+            for (int i = 0; i < count; i++)
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(NPC.direction * 20f, -10f),
+                    aim.RotatedBy((i - (count - 1) / 2f) * 0.16f) * 8.5f, ModContent.ProjectileType<SnakeBullet>(),
+                    Dmg(ExamBossRules.BarrageDamage), 0f, Main.myPlayer);
+        }
         if (Deciding && State is Approach or Recovery &&
             ExamBossRules.GiantSnakeDue(giantSnake, NPC.life, NPC.lifeMax, fightTicks))
         {
@@ -165,20 +209,22 @@ public sealed class Orochimaru : ExamBoss
                 {
                     NPC.alpha = 0;
                     Face(target.Center.X);
+                    // Out of the ground, the killing intent (both openings have it; user 2026-10-02).
+                    KillingIntent();
                     Enter(Approach);
                 }
                 break;
 
             case Approach:
                 RunTo(target.Center.X - Math.Sign(target.Center.X - NPC.Center.X) * 9 * 16, 3.2f, target);
-                if (Deciding && Timer > 55f)
+                if (Deciding && Timer > ExamBossRules.OrochimaruDecideTicks)
                     Choose(target);
                 break;
 
             case HandsWindup:
                 NPC.velocity.X *= 0.8f;
                 Telegraph(DustID.PurpleTorch, 18f);
-                if (Timer >= 36f)
+                if (Timer >= 18f)
                 {
                     SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     if (Deciding)
@@ -199,7 +245,7 @@ public sealed class Orochimaru : ExamBoss
                 if (Main.netMode != NetmodeID.Server)
                     Dust.NewDustPerfect(new Vector2(MathHelper.Lerp(NPC.Center.X, Mark.X, Main.rand.NextFloat()), NPC.Bottom.Y - 2f),
                         DustID.Venom, Vector2.Zero, 0, default, 1.1f).noGravity = true;
-                if (Timer >= 30f)
+                if (Timer >= 20f)
                 {
                     SoundEngine.PlaySound(SoundID.Item18, NPC.Center);
                     Enter(Dash);
@@ -224,13 +270,13 @@ public sealed class Orochimaru : ExamBoss
             case WindWindup:
                 NPC.velocity.X *= 0.8f;
                 Telegraph(DustID.Cloud, 34f);
-                if (Timer >= 40f)
+                if (Timer >= 27f)
                 {
                     SoundEngine.PlaySound(SoundID.Item34, NPC.Center);
                     if (Deciding)
                     {
                         JutsuHitbox.Spawn(NPC, JutsuKind.WindBlast, NPC.Center + new Vector2(NPC.direction * 40f, 0f),
-                            new Vector2(NPC.direction * 9f, 0f), 90, 130, Dmg(ExamBossRules.WindBlastDamage), ExamBossRules.WindBlastKnockback);
+                            new Vector2(NPC.direction * 11f, 0f), 90, 130, Dmg(ExamBossRules.WindBlastDamage), ExamBossRules.WindBlastKnockback);
                         // Blown back, then the snakes follow.
                         NPC.ai[2] = target.Center.X + NPC.direction * 10 * 16;
                         NPC.ai[3] = target.Center.Y;
@@ -242,20 +288,22 @@ public sealed class Orochimaru : ExamBoss
                 break;
 
             case NeckWindup:
+                // A short coil, then the head lunges at where the player is now and bites on contact
+                // (user, 2026-10-02: it was slow and its touch did nothing).
                 NPC.velocity.X *= 0.8f;
-                // The long neck snakes out to where the player stood.
-                if (Main.netMode != NetmodeID.Server)
+                if (Timer == NeckLaunch)
                 {
-                    Vector2 along = Vector2.Lerp(NPC.Top, Mark, Main.rand.NextFloat() * Math.Min(1f, Timer / 40f));
-                    Dust.NewDustPerfect(along, DustID.PurpleTorch, Vector2.Zero, 0, default, 1f).noGravity = true;
-                }
-                if (Timer >= 48f)
-                {
-                    SoundEngine.PlaySound(SoundID.Item2, Mark);
+                    NPC.ai[2] = target.Center.X;
+                    NPC.ai[3] = target.Center.Y;
+                    NPC.netUpdate = true;
+                    SoundEngine.PlaySound(SoundID.Item2, NPC.Center);
                     if (Deciding)
-                        JutsuHitbox.Spawn(NPC, JutsuKind.Bite, Mark, Vector2.Zero, 44, 44, Dmg(ExamBossRules.NeckBiteDamage));
-                    Enter(Recovery);
+                        JutsuHitbox.Spawn(NPC, JutsuKind.NeckHead, NeckHead, Vector2.Zero, 40, 40, Dmg(ExamBossRules.NeckBiteDamage));
                 }
+                if (Timer == NeckLaunch + NeckReachTicks && Deciding)
+                    JutsuHitbox.Spawn(NPC, JutsuKind.Bite, Mark, Vector2.Zero, 44, 44, Dmg(ExamBossRules.NeckBiteDamage));
+                if (Timer >= NeckLaunch + NeckReachTicks + 12)
+                    Enter(Recovery);
                 break;
 
             case SealWindup:
@@ -264,7 +312,7 @@ public sealed class Orochimaru : ExamBoss
                 NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * 6f, 0.15f);
                 if (!FxArt.Has("FxSealFlame_0"))
                     Telegraph(DustID.PurpleTorch, 14f);
-                if (Timer >= 34f)
+                if (Timer >= 23f)
                 {
                     SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
                     if (Deciding)
@@ -274,47 +322,128 @@ public sealed class Orochimaru : ExamBoss
                 }
                 break;
 
+            case SwarmWindup:
+                // A fan of snakes straight at the player.
+                NPC.velocity.X *= 0.8f;
+                Face(target.Center.X);
+                if (Timer >= 20f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
+                    if (Deciding)
+                    {
+                        Vector2 aim = NPC.DirectionTo(target.Center);
+                        int count = ExamBossRules.SwarmCount(giantSnake);
+                        for (int i = 0; i < count; i++)
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(NPC.direction * 24f, -8f),
+                                aim.RotatedBy((i - (count - 1) / 2f) * 0.15f) * 10f, ModContent.ProjectileType<SnakeBullet>(),
+                                Dmg(ExamBossRules.SwarmDamage), 0f, Main.myPlayer);
+                    }
+                    Enter(Recovery);
+                }
+                break;
+
+            case VenomWindup:
+                // Three globs of venom in arcs around the player; each leaves a pool.
+                NPC.velocity.X *= 0.8f;
+                Face(target.Center.X);
+                if (Timer >= 24f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item95, NPC.Center);
+                    if (Deciding)
+                        for (int i = -1; i <= 1; i++)
+                        {
+                            float dx = target.Center.X + i * 4 * 16f - NPC.Center.X;
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Top + new Vector2(NPC.direction * 12f, 14f),
+                                new Vector2(MathHelper.Clamp(dx / 42f, -11f, 11f), -8f), ModContent.ProjectileType<VenomGlob>(),
+                                Dmg(ExamBossRules.VenomDamage), 0f, Main.myPlayer);
+                        }
+                    Enter(Recovery);
+                }
+                break;
+
+            case RainWindup:
+                // Snakes hang above the player, glinting, then drop one after another.
+                NPC.velocity.X *= 0.8f;
+                if (Timer >= 20f)
+                {
+                    SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
+                    if (Deciding)
+                    {
+                        int count = ExamBossRules.SnakeRainCount(giantSnake);
+                        for (int i = 0; i < count; i++)
+                        {
+                            float x = target.Center.X + (i - (count - 1) / 2f) * 52f + Main.rand.NextFloat(-12f, 12f);
+                            Projectile.NewProjectile(NPC.GetSource_FromAI(), new Vector2(x, target.Center.Y - 380f), Vector2.Zero,
+                                ModContent.ProjectileType<SnakeBullet>(), Dmg(ExamBossRules.SnakeRainDamage), 0f, Main.myPlayer,
+                                30 + i * 5);
+                        }
+                    }
+                    Enter(Recovery);
+                }
+                break;
+
+            case SwordWindup:
+                // The Kusanagi out of his mouth: an aiming line, then the blade along it.
+                NPC.velocity.X *= 0.7f;
+                if (Timer == 1f)
+                {
+                    Face(target.Center.X);
+                    if (Deciding)
+                    {
+                        Vector2 mouth = NPC.Top + new Vector2(NPC.direction * 14f, 16f);
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), mouth, Vector2.Zero, ModContent.ProjectileType<KusanagiBlade>(),
+                            Dmg(ExamBossRules.KusanagiDamage), 6f, Main.myPlayer, (target.Center - mouth).ToRotation());
+                    }
+                }
+                if (Timer >= KusanagiBlade.AimTicks + 16)
+                    Enter(Recovery);
+                break;
+
             case Recovery:
                 NPC.velocity.X *= 0.85f;
-                if (Timer >= 40f)
+                if (Timer >= ExamBossRules.OrochimaruRecoveryTicks)
                     Enter(Approach);
                 break;
 
             case Exit:
+                // He has his say first, then sinks into the ground as snakes (user, 2026-10-02: he just vanished).
                 NPC.velocity.X *= 0.8f;
-                if (Main.netMode != NetmodeID.Server)
-                    Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Venom, 0f, 2f, 0, default, 1.3f);
+                if (Timer >= ExitTalkTicks && Main.netMode != NetmodeID.Server)
+                    for (int i = 0; i < 2; i++)
+                        Dust.NewDustPerfect(new Vector2(Main.rand.NextFloat(NPC.Left.X - 16f, NPC.Right.X + 16f), NPC.Bottom.Y - 4f),
+                            Main.rand.NextBool() ? DustID.Venom : DustID.Dirt, new Vector2(0f, Main.rand.NextFloat(0.5f, 2f)), 0, default, 1.3f);
                 if (Timer >= ThresholdRetreatRules.ExitInvulnerableTicks)
                     Leave();
                 break;
         }
     }
 
+    // Nine techniques; never the same one twice running. Far off, the bullets come up more often.
     private void Choose(Player target)
     {
         Face(target.Center.X);
         NPC.ai[2] = target.Center.X;
         NPC.ai[3] = target.Center.Y;
-        switch (Main.rand.Next(5))
-        {
-            case 4:
-                Enter(SealWindup);
-                break;
-            case 0:
-                Enter(HandsWindup);
-                break;
-            case 1:
-                // Round behind the player.
-                NPC.ai[2] = target.Center.X + Math.Sign(target.Center.X - NPC.Center.X) * 5 * 16;
-                Enter(DashWindup);
-                break;
-            case 2:
-                Enter(WindWindup);
-                break;
-            default:
-                Enter(NeckWindup);
-                break;
-        }
+        bool far = Math.Abs(target.Center.X - NPC.Center.X) > 18 * 16;
+        float[] options = far
+            ? new[] { SwarmWindup, VenomWindup, RainWindup, SwordWindup, HandsWindup, WindWindup, DashWindup, SwarmWindup, RainWindup }
+            : new[] { HandsWindup, DashWindup, WindWindup, NeckWindup, SealWindup, SwarmWindup, VenomWindup, RainWindup, SwordWindup };
+        float next = options[Main.rand.Next(options.Length)];
+        if (next == lastMove)
+            next = options[(Array.IndexOf(options, next) + 1) % options.Length];
+        lastMove = next;
+        if (next == DashWindup)
+            // Round behind the player.
+            NPC.ai[2] = target.Center.X + Math.Sign(target.Center.X - NPC.Center.X) * 5 * 16;
+        Enter(next);
+    }
+
+    // A line said over his head and in the chat.
+    private void Speak(string line)
+    {
+        Tell("大蛇丸：“" + line + "”", new Color(190, 150, 230));
+        if (Main.netMode != NetmodeID.Server)
+            CombatText.NewText(NPC.getRect(), new Color(200, 160, 240), line, true);
     }
 
     // Everyone near enough freezes (each client for its own player) until they substitute out.
@@ -376,14 +505,14 @@ public sealed class Orochimaru : ExamBoss
     private void DrawNeck(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
         const string root = "ShinobiPrototype/Content/NPCs/Orochimaru_";
-        if (State != NeckWindup || !ModContent.HasAsset(root + "NeckSegment") || !ModContent.HasAsset(root + "NeckHead"))
+        if (NeckReach <= 0f || !ModContent.HasAsset(root + "NeckSegment") || !ModContent.HasAsset(root + "NeckHead"))
             return;
         var segment = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>(root + "NeckSegment").Value;
         var head = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>(root + "NeckHead").Value;
         Color light = BossSprites.Lit(drawColor);
         // From the collar out towards where the player stood, snaking a little on the way.
-        Vector2 from = NPC.Top + new Vector2(NPC.direction * 9f, 6f);
-        Vector2 to = Vector2.Lerp(from, Mark, Math.Min(1f, Timer / 40f));
+        Vector2 from = NeckRoot;
+        Vector2 to = NeckHead;
         float length = Vector2.Distance(from, to);
         Vector2 dir = length > 0f ? (to - from) / length : Vector2.UnitX;
         Vector2 side = new(-dir.Y, dir.X);
