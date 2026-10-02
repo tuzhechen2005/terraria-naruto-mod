@@ -65,7 +65,7 @@ public sealed class JutsuHitbox : ModProjectile
         JutsuKind.AirBullet => 150,
         JutsuKind.SandArm => 22,
         JutsuKind.Rotation => ExamBossRules.RotationTicks,
-        JutsuKind.SnakeHand => 30,
+        JutsuKind.SnakeHand => 40,
         JutsuKind.GroundQuake => 75,
         JutsuKind.ResonanceRing => 50,
         JutsuKind.ImpactSlam => 14,

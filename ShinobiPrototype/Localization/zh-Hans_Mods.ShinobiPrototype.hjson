@@ -341,6 +341,10 @@ Projectiles: {
 	// ExamShuriken.DisplayName: Exam Shuriken
 	// GiantSnake.DisplayName: Giant Snake
 	// ShedSkin.DisplayName: Shed Skin
+	// KusanagiBlade.DisplayName: Kusanagi Blade
+	// SnakeBullet.DisplayName: Snake Bullet
+	// VenomGlob.DisplayName: Venom Glob
+	// VenomPool.DisplayName: Venom Pool
 }
 
 Dialogue: {

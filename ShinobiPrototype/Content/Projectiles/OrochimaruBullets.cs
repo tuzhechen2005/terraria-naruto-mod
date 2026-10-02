@@ -14,13 +14,16 @@ namespace ShinobiPrototype.Content.Projectiles;
 // Orochimaru's bullets (user, 2026-10-02: Terraria bosses fight with projectiles). Art: orochimaru-bullets-v1
 // (FxSnakeBullet, FxVenomGlob, FxVenomPool, FxKusanagi); until it is in, the snake-hand head and dust stand in.
 
-// A small snake flung at the player: the swarm, the snakes he flicks while walking, and the snake rain. With ai[0] > 0
-// it is one of the rain: it hangs unseen above the player for that many ticks (a glint marks where), then drops.
+// A small snake flung at the player: the swarm and the snakes he flicks while walking. The snake rain uses it too
+// (ai[1] = 1): it hangs over the player for ai[0] ticks, plainly visible and blinking, with a line down to where it
+// will land (user, 2026-10-02: the rain was hard to see), then drops, slower and bigger than a flung one.
 public sealed class SnakeBullet : ModProjectile
 {
     public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";
 
+    private bool Rain => Projectile.ai[1] > 0f;
     private bool Waiting => Projectile.ai[0] > 0f;
+    private float Size => Rain ? 2.25f : 1.5f;
 
     public override void SetDefaults()
     {
@@ -28,7 +31,7 @@ public sealed class SnakeBullet : ModProjectile
         Projectile.height = 18;
         Projectile.hostile = true;
         Projectile.penetrate = 1;
-        Projectile.timeLeft = 240;
+        Projectile.timeLeft = 300;
         Projectile.aiStyle = -1;
         Projectile.tileCollide = false;
     }
@@ -37,16 +40,20 @@ public sealed class SnakeBullet : ModProjectile
 
     public override void AI()
     {
+        if (Rain && Projectile.localAI[0] == 0f)
+        {
+            Projectile.localAI[0] = 1f;
+            Projectile.Resize(26, 26);
+        }
         if (Waiting)
         {
             Projectile.velocity = Vector2.Zero;
+            Projectile.rotation = MathHelper.PiOver2;
             if (--Projectile.ai[0] <= 0f)
             {
-                Projectile.velocity = new Vector2(0f, 12f);
+                Projectile.velocity = new Vector2(0f, 9f);
                 SoundEngine.PlaySound(SoundID.Item17 with { Volume = 0.5f }, Projectile.Center);
             }
-            else if (!Main.dedServ && Main.GameUpdateCount % 3 == 0)
-                Dust.NewDustPerfect(Projectile.Center, DustID.PurpleTorch, Vector2.Zero, 0, default, 1.2f).noGravity = true;
             return;
         }
         Projectile.rotation = Projectile.velocity.ToRotation();
@@ -56,16 +63,41 @@ public sealed class SnakeBullet : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
+        // Rain snakes are drawn bright whatever the light, so they show against the sky and the trees.
+        Color color = Rain ? Color.White : BossSprites.Lit(lightColor, 0.6f);
         if (Waiting)
-            return false;
+        {
+            DrawDropLine();
+            // Blinking faster as it is about to drop.
+            int period = Projectile.ai[0] < 20f ? 4 : 8;
+            if ((int)(Projectile.ai[0] / period) % 2 == 1)
+                color *= 0.45f;
+        }
         Texture2D art = FxArt.Frame("FxSnakeBullet", (int)(Main.GameUpdateCount / 6), 2) ??
                         (FxArt.Has("FxSnakeHand_Head") ? FxArt.Get("FxSnakeHand_Head") : null);
         if (art == null)
             return false;
         bool left = Projectile.velocity.X < 0f;
-        FxArt.Draw(art, Projectile.Center, BossSprites.Lit(lightColor, 0.6f), left ? Projectile.rotation - MathHelper.Pi : Projectile.rotation,
-            1.5f, left ? -1 : 1);
+        FxArt.Draw(art, Projectile.Center, color, left ? Projectile.rotation - MathHelper.Pi : Projectile.rotation, Size, left ? -1 : 1);
         return false;
+    }
+
+    // A dashed violet line straight down from the waiting snake to the ground below it.
+    private void DrawDropLine()
+    {
+        Texture2D pixel = TextureAssets.MagicPixel.Value;
+        int x = (int)(Projectile.Center.X / 16f);
+        int y0 = (int)(Projectile.Center.Y / 16f);
+        int ground = y0;
+        while (ground < y0 + 40 && WorldGen.InWorld(x, ground) && !WorldGen.SolidTile(x, ground))
+            ground++;
+        float bottom = ground * 16f;
+        for (float y = Projectile.Center.Y + 16f; y < bottom; y += 14f)
+        {
+            Vector2 at = new Vector2(Projectile.Center.X - 1f, y) - Main.screenPosition;
+            Main.EntitySpriteDraw(pixel, at, new Rectangle(0, 0, 1, 1), new Color(230, 120, 255) * 0.75f, 0f, Vector2.Zero,
+                new Vector2(3f, 7f), SpriteEffects.None);
+        }
     }
 }
 

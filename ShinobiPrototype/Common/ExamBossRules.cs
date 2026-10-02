@@ -134,22 +134,24 @@ public static class ExamBossRules
 
     // Bullets (user, 2026-10-02: Terraria bosses fight with projectiles; more of them, more often). Damage numbers above
     // were raised by a fifth at the same time. The second half of the fight (after Manda) is denser.
-    public const int SwarmDamage = 30;
-    public const int VenomDamage = 28;
+    public const int SwarmDamage = 26;
+    public const int VenomDamage = 24;
     public const int VenomPoolDamage = 14;
     public const int VenomPoolTicks = 5 * 60;
-    public const int SnakeRainDamage = 30;
-    public const int KusanagiDamage = 60;
+    public const int SnakeRainDamage = 26;
+    public const int KusanagiDamage = 52;
     public const int KusanagiReachPx = 760;
-    public const int BarrageDamage = 22;
-    public const int OrochimaruDecideTicks = 25;   // between techniques: a short walk
-    public const int OrochimaruRecoveryTicks = 20;
+    public const int BarrageDamage = 18;
+    public const int OrochimaruDecideTicks = 35;   // between techniques: a short walk (eased a little, user 2026-10-02)
+    public const int OrochimaruRecoveryTicks = 28;
     public const float OrochimaruWindupScale = 0.67f;
 
     public static int SwarmCount(bool secondHalf) => secondHalf ? 7 : 5;
-    public static int SnakeRainCount(bool secondHalf) => secondHalf ? 9 : 6;
+    public static int SnakeRainCount(bool secondHalf) => secondHalf ? 7 : 5;
+    // Wide gaps between the falling snakes to slip through (user, 2026-10-02).
+    public const float SnakeRainGapPx = 88f;
     // While he walks between techniques he flicks small snakes at the player.
-    public static int BarrageEvery(bool secondHalf) => secondHalf ? 60 : 90;
+    public static int BarrageEvery(bool secondHalf) => secondHalf ? 85 : 120;
     public static int BarrageCount(bool secondHalf) => secondHalf ? 3 : 2;
 
         public enum OrochimaruEnd { None, HalfLife, HeldOut, PlayerFell }

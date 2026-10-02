@@ -137,8 +137,9 @@ Check(ExamBossRules.OrochimaruDamage(40, false) < 40 && ExamBossRules.Orochimaru
 Check(ExamBossRules.SwarmCount(true) > ExamBossRules.SwarmCount(false) && ExamBossRules.BarrageEvery(true) < ExamBossRules.BarrageEvery(false) &&
       ExamBossRules.BarrageCount(true) > ExamBossRules.BarrageCount(false) && ExamBossRules.SnakeRainCount(true) > ExamBossRules.SnakeRainCount(false),
     "After Manda his bullets come thicker and faster");
-Check(ExamBossRules.OrochimaruDecideTicks + ExamBossRules.OrochimaruRecoveryTicks <= 50,
-    "Little more than half a second between his techniques");
+Check(ExamBossRules.OrochimaruDecideTicks + ExamBossRules.OrochimaruRecoveryTicks <= 70,
+    "About a second between his techniques");
+Check(ExamBossRules.SnakeRainGapPx >= 4 * 16, "The snake rain leaves gaps wide enough to stand in");
 Check(ExamBossRules.GiantSnakeDue(false, 3700, 5000, 0) && ExamBossRules.GiantSnakeDue(false, 5000, 5000, ExamBossRules.GiantSnakeAfterTicks) &&
       !ExamBossRules.GiantSnakeDue(true, 1000, 5000, 9999) && !ExamBossRules.GiantSnakeDue(false, 4000, 5000, 60),
     "The giant snake comes once: at three quarters life or a while into the fight");

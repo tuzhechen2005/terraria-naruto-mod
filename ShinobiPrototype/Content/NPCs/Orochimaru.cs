@@ -236,7 +236,7 @@ public sealed class Orochimaru : ExamBoss
             case HandsWindup:
                 NPC.velocity.X *= 0.8f;
                 Telegraph(DustID.PurpleTorch, 18f);
-                if (Timer >= 18f)
+                if (Timer >= 24f)
                 {
                     SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     if (Deciding)
@@ -384,10 +384,10 @@ public sealed class Orochimaru : ExamBoss
                         int count = ExamBossRules.SnakeRainCount(giantSnake);
                         for (int i = 0; i < count; i++)
                         {
-                            float x = target.Center.X + (i - (count - 1) / 2f) * 52f + Main.rand.NextFloat(-12f, 12f);
+                            float x = target.Center.X + (i - (count - 1) / 2f) * ExamBossRules.SnakeRainGapPx;
                             Projectile.NewProjectile(NPC.GetSource_FromAI(), new Vector2(x, target.Center.Y - 380f), Vector2.Zero,
                                 ModContent.ProjectileType<SnakeBullet>(), Dmg(ExamBossRules.SnakeRainDamage), 0f, Main.myPlayer,
-                                30 + i * 5);
+                                45 + i * 8, 1f);
                         }
                     }
                     Enter(Recovery);
