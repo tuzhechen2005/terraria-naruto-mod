@@ -61,6 +61,14 @@ public sealed class Orochimaru : ExamBoss
     // without its frames yet stands in with the idle frames; without any, the tinted placeholder is drawn.
     protected override string SpritePrefix => Has("Idle") ? "Orochimaru" : null;
 
+    // Drawn one to one (user, 2026-10-02: shrunk into the 1.5x format the art lost all its detail; orochimaru-base-v11
+    // and orochimaru-set-v11a/b): about 104 pixels tall on a 224x136 canvas, feet on row 131.
+    private static readonly BossSprites.Canvas DenseCanvas = new(224, 136, 112, 132);
+
+    private protected override BossSprites.Canvas CanvasFor(string action) => DenseCanvas;
+
+    protected override float SpriteScale => 1f;
+
     private static bool Has(string action) => BossSprites.Has($"Orochimaru_{action}_0");
 
     private static int IdleFrames => BossSprites.Has("Orochimaru_Idle_5") ? 6 : 4;
@@ -98,8 +106,8 @@ public sealed class Orochimaru : ExamBoss
                     continue;
                 Vector2 bottom = NPC.oldPos[i] + new Vector2(NPC.width / 2f, NPC.height);
                 float fade = 0.5f * (1f - i / (float)NPC.oldPos.Length);
-                BossSprites.TryDraw(spriteBatch, "Orochimaru", "Dash", 0, 2, PersonCanvas, bottom, NPC.direction,
-                    new Color(170, 110, 230) * fade, screenPos, ArtScale);
+                BossSprites.TryDraw(spriteBatch, "Orochimaru", "Dash", 0, 2, DenseCanvas, bottom, NPC.direction,
+                    new Color(170, 110, 230) * fade, screenPos, SpriteScale);
             }
         return base.PreDraw(spriteBatch, screenPos, drawColor);
     }
@@ -131,14 +139,14 @@ public sealed class Orochimaru : ExamBoss
     private Vector2 Mark => new(NPC.ai[2], NPC.ai[3]);
 
     // The long neck: from his collar to the head, which lunges out over NeckReachTicks and stays there to bite.
-    // The collar of the neck frame (orochimaru-set-v5c).
-    private Vector2 NeckRoot => NPC.Top + new Vector2(NPC.direction * 15f, 13f);
+    // The collar of the neck frame (orochimaru-set-v11b: canvas (120, 46), feet at (112, 132), drawn one to one).
+    private Vector2 NeckRoot => NPC.Bottom + new Vector2(NPC.direction * 8f, -86f);
     private float NeckReach => State != NeckWindup || Timer < NeckLaunch ? 0f : Math.Min(1f, (Timer - NeckLaunch) / NeckReachTicks);
     public Vector2 NeckHead => Vector2.Lerp(NeckRoot, Mark, NeckReach);
 
     // Sinking into the ground once he has had his say (ExamBoss draws him that many art pixels lower, cut at the ground).
     protected override float SinkPixels => State == Exit && Timer > ExitTalkTicks
-        ? 64f * (Timer - ExitTalkTicks) / (ThresholdRetreatRules.ExitInvulnerableTicks - ExitTalkTicks)
+        ? 100f * (Timer - ExitTalkTicks) / (ThresholdRetreatRules.ExitInvulnerableTicks - ExitTalkTicks)
         : 0f;
 
     protected override void Fight(Player target)
@@ -502,7 +510,7 @@ public sealed class Orochimaru : ExamBoss
     private void DrawTechniqueFx(Color drawColor)
     {
         if (State == SealWindup && FxArt.Frame("FxSealFlame", (int)(Main.GameUpdateCount / 6), 3) is { } flame)
-            FxArt.Draw(flame, NPC.Center + new Vector2(NPC.direction * 49f, -30f), Color.White, 0f, ArtScale, NPC.direction);
+            FxArt.Draw(flame, NPC.Bottom + new Vector2(NPC.direction * 48f, -76f), Color.White, 0f, ArtScale, NPC.direction);
         if (summonPose > 0 && FxArt.Has("FxSummonCircle"))
         {
             float grow = Math.Min(1f, (40 - summonPose) / 12f);
@@ -529,17 +537,17 @@ public sealed class Orochimaru : ExamBoss
         float length = Vector2.Distance(from, to);
         Vector2 dir = length > 0f ? (to - from) / length : Vector2.UnitX;
         Vector2 side = new(-dir.Y, dir.X);
-        int steps = (int)(length / (6f * ArtScale));
+        int steps = (int)(length / 9f);
         for (int i = 0; i < steps; i++)
         {
             float t = i / (float)Math.Max(1, steps);
             Vector2 at = from + dir * length * t + side * (float)Math.Sin(t * MathHelper.TwoPi * 1.5f + Main.GameUpdateCount * 0.2f) * 15f * t;
-            spriteBatch.Draw(segment, at - screenPos, null, light, 0f, segment.Size() / 2f, ArtScale,
+            spriteBatch.Draw(segment, at - screenPos, null, light, 0f, segment.Size() / 2f, SpriteScale,
                 Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
         }
         float angle = (float)Math.Atan2(dir.Y, dir.X);
         bool left = dir.X < 0f;
-        spriteBatch.Draw(head, to - screenPos, null, light, left ? angle - MathHelper.Pi : angle, head.Size() / 2f, ArtScale,
+        spriteBatch.Draw(head, to - screenPos, null, light, left ? angle - MathHelper.Pi : angle, head.Size() / 2f, SpriteScale,
             left ? Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally : Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
     }
 

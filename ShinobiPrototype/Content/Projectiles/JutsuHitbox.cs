@@ -199,7 +199,8 @@ public sealed class JutsuHitbox : ModProjectile
         NPC owner = Projectile.localAI[2] > 0f ? Main.npc[(int)Projectile.localAI[2] - 1] : null;
         if (owner is not { active: true })
             return;
-        Vector2 from = owner.Center + new Vector2(owner.direction * 22f, -10f);
+        // From his raised hand (orochimaru-set-v11a: he stands with it up while the snakes are out).
+        Vector2 from = owner.Center + new Vector2(owner.direction * 20f, -36f);
         Vector2 to = Projectile.Center;
         Vector2 line = to - from;
         float length = line.Length();
