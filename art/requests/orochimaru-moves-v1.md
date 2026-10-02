@@ -1,6 +1,6 @@
 # 素材请求：orochimaru-moves-v1
 
-- 状态：requested
+- 状态：superseded by orochimaru-moves-v3（帧与 v3 画法不一致）
 - 提出者及提交号：Claude Code（基于当前 main；用户 2026-10-01 认可 orochimaru-style-v3 画风，出全套动作——第 1 份：移动、开场与退场）
 - 资产类型：Boss 动作帧
 - 游戏用途：死亡森林中段的大蛇丸遭遇战（规格 `specs/M2_中忍考试篇.spec.md` 第五节）。
