@@ -9,8 +9,8 @@ namespace ShinobiPrototype.Content.Projectiles;
 
 // The exam bosses' techniques (Dosu, Gaara, Neji, Orochimaru): one hostile hitbox whose kind (ai[0]) decides how it
 // moves, what it looks like and what it does to the player it hits. ai[1] and ai[2] are its width and height in
-// pixels. Orochimaru's techniques are drawn from their own art when it is there (FxArt: the snake hands, the gust, the
-// bite); everything else is still dust.
+// pixels. Some techniques are drawn from their own art when it is there (FxArt: Orochimaru's snake hands, gust and
+// bite; Gaara's sand shuriken and sand wave); everything else is still dust.
 public enum JutsuKind : byte
 {
     Strike,        // a plain melee hit
@@ -153,6 +153,8 @@ public sealed class JutsuHitbox : ModProjectile
         JutsuKind.SnakeHand => FxArt.Has("FxSnakeHand_Head") && FxArt.Has("FxSnakeHand_Segment"),
         JutsuKind.WindBlast => FxArt.Has("FxWind_0"),
         JutsuKind.Bite => FxArt.Has("FxBite_0"),
+        JutsuKind.SandShuriken => FxArt.Has("FxSandShuriken_0"),
+        JutsuKind.SandWave => FxArt.Has("FxSandWave_0"),
         _ => false,
     };
 
@@ -176,6 +178,15 @@ public sealed class JutsuHitbox : ModProjectile
             case JutsuKind.Bite:
                 Microsoft.Xna.Framework.Graphics.Texture2D bite = FxArt.Frame("FxBite", age / 4, 3) ?? FxArt.Get("FxBite_0");
                 FxArt.Draw(bite, Projectile.Center, light, 0f, 1.5f);
+                break;
+            case JutsuKind.SandShuriken:
+                FxArt.Draw(FxArt.Frame("FxSandShuriken", age / 4, 2), Projectile.Center, light, Projectile.rotation, 1.5f);
+                break;
+            case JutsuKind.SandWave:
+                // Rolling along the ground, its foot on the bottom of the hitbox.
+                Microsoft.Xna.Framework.Graphics.Texture2D wave = FxArt.Frame("FxSandWave", age / 6, 3);
+                FxArt.Draw(wave, Projectile.Bottom - new Vector2(0f, wave.Height * 0.75f), light, 0f, 1.5f,
+                    Projectile.velocity.X >= 0f ? 1 : -1);
                 break;
         }
         return false;

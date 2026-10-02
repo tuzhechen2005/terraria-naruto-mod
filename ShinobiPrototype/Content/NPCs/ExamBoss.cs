@@ -60,6 +60,19 @@ public abstract class ExamBoss : ModNPC
     protected (string, int, int, bool) Moving(string walk, string idle, int walkFrames = 4, int idleFrames = 4) =>
         System.Math.Abs(NPC.velocity.X) > 0.4f ? (walk, walkFrames, walkFrames >= 8 ? 5 : 7, true) : (idle, idleFrames, idleFrames >= 6 ? 9 : 10, true);
 
+    // How many idle and walk frames the art has (the unified sets have 6 and 8; older ones 4).
+    protected int ArtIdleFrames => BossSprites.Has($"{SpritePrefix}_Idle_5") ? 6 : 4;
+    protected int ArtWalkFrames => BossSprites.Has($"{SpritePrefix}_Walk_7") ? 8 : 4;
+
+    // A technique opens on its in-between frame (<Action>In_0) for the first few ticks, when the art has one.
+    protected (string, int, int, bool) WithLeadIn((string Action, int Frames, int Ticks, bool Loop) pose)
+    {
+        const int leadInTicks = 6;
+        if (Timer < leadInTicks && BossSprites.Has($"{SpritePrefix}_{pose.Action}In_0"))
+            return (pose.Action + "In", 1, leadInTicks, true);
+        return pose;
+    }
+
     public override void SetStaticDefaults()
     {
         Main.npcFrameCount[Type] = 1;

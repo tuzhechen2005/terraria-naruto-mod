@@ -161,9 +161,20 @@ Check(ExamBossRules.DosuLife < 1800 * 1.4f && ExamBossRules.DosuLife > 1800,
     "Dosu is a mini boss: a little tougher than Zabuza's life, at a later stage");
 Check(ExamBossRules.GaaraPhase(5200, 5200) == 1 && ExamBossRules.GaaraPhase(2600, 5200) == 2 && ExamBossRules.GaaraPhase(1300, 5200) == 3,
     "Gaara: armour cracks at half, partial transformation at a quarter");
-Check(ExamBossRules.ShieldBlocks(1, 1, 1, false) && !ExamBossRules.ShieldBlocks(1, 1, -1, false) &&
-      !ExamBossRules.ShieldBlocks(1, 1, 1, true) && !ExamBossRules.ShieldBlocks(2, 1, 1, false),
-    "The sand shield stops hits from the front, not from behind or during recovery, and falls with the armour");
+Check(ExamBossRules.GuardBlocks(true, 1, 1) && !ExamBossRules.GuardBlocks(true, 1, -1) && !ExamBossRules.GuardBlocks(false, 1, 1),
+    "The Sand Guard stops hits from the front only, and only while it is up");
+Check(ExamBossRules.GuardDamageMultiplier <= 0.1f + 1e-6f && ExamBossRules.GuardTicks == 180 && ExamBossRules.GuardStaggerTicks == 120,
+    "Behind the guard a frontal hit loses 90%; he stands three seconds, then two seconds winded");
+Check(ExamBossRules.GuardInterval(0f) == 480 && ExamBossRules.GuardInterval(1f) == 600 && ExamBossRules.GuardInterval(2f) == 600,
+    "The guard comes every 8 to 10 seconds");
+Check(ExamBossRules.GuardDue(1, 600, 600, 0) && !ExamBossRules.GuardDue(1, 100, 600, 0) &&
+      ExamBossRules.GuardDue(2, 100, 600, ExamBossRules.GuardEarlyDamage) && !ExamBossRules.GuardDue(3, 900, 600, 9999),
+    "The guard comes on time or early after heavy frontal damage, and not once he transforms");
+Check(ExamBossRules.ShurikenFan(2) > ExamBossRules.ShurikenFan(1) && ExamBossRules.QuicksandSpots(2) > ExamBossRules.QuicksandSpots(1) &&
+      ExamBossRules.PelletEvery(2) < ExamBossRules.PelletEvery(1),
+    "Gaara's bullets thicken once the armour cracks");
+Check(ExamBossRules.QuicksandGapPx >= 80 && ExamBossRules.QuicksandWarnTicks >= 45,
+    "The quicksand spots are marked long enough and far enough apart to step between");
 Check(ExamBossRules.GaaraTempo(3) > ExamBossRules.GaaraTempo(2) && ExamBossRules.GaaraTempo(2) > ExamBossRules.GaaraTempo(1),
     "Gaara speeds up each phase");
 Check(ExamBossRules.CoffinHoldTicks >= 60, "Caught in the coffin, there is time to substitute out");

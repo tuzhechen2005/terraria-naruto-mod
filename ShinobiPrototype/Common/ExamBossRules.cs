@@ -59,10 +59,7 @@ public static class ExamBossRules
     public const int GaaraDefense = 14;
     public const float ShieldPhaseTwo = 0.5f;     // the sand armour cracks
     public const float ShieldPhaseThree = 0.25f;  // the partial transformation
-    // The Absolute Defence: a hit from the side Gaara faces only chips the sand unless he is recovering from an attack.
-    public const float ShieldDamageMultiplier = 0.2f;
     public const int ShurikenDamage = 24;
-    public const int ShurikenCount = 5;
     public const int CoffinWarnTicks = 60;
     public const int CoffinRadiusPx = 56;
     public const int CoffinHoldTicks = 90;     // caught: this long to substitute out before the Sand Burial
@@ -77,9 +74,34 @@ public static class ExamBossRules
         return share <= ShieldPhaseThree ? 3 : share <= ShieldPhaseTwo ? 2 : 1;
     }
 
-    // Whether the shield takes the hit: from the front, and Gaara not in an attack's recovery.
-    public static bool ShieldBlocks(int phase, int facing, int hitFromSide, bool recovering) =>
-        phase == 1 && !recovering && hitFromSide == facing;
+    // The Sand Guard (user, 2026-10-02; replaces the old shield that took every hit from the front): every 8 to 10
+    // seconds, or sooner once he has taken a lot from the front, a wall of sand rises in front of him and he stands
+    // behind it for three seconds. Hits from the front lose 90%, hits from behind land in full. Then two seconds
+    // winded, open from every side. Gone once he transforms.
+    public const int GuardTicks = 180;
+    public const int GuardStaggerTicks = 120;
+    public const int GuardIntervalMin = 480;
+    public const int GuardIntervalMax = 600;
+    public const int GuardEarlyDamage = 260;
+    public const float GuardDamageMultiplier = 0.1f;
+
+    public static int GuardInterval(float roll) =>
+        GuardIntervalMin + (int)(Math.Clamp(roll, 0f, 1f) * (GuardIntervalMax - GuardIntervalMin));
+
+    public static bool GuardDue(int phase, int ticksSinceGuard, int interval, int frontalDamage) =>
+        phase < 3 && (ticksSinceGuard >= interval || frontalDamage >= GuardEarlyDamage);
+
+    public static bool GuardBlocks(bool guarding, int facing, int hitFromSide) => guarding && hitFromSide == facing;
+
+    // His bullets, thicker once the armour cracks: the sand shuriken fan, the quicksand (marked spots on the ground,
+    // then pillars of sand) and the pellets of sand he flicks while walking.
+    public static int ShurikenFan(int phase) => phase >= 2 ? 7 : 5;
+    public const int QuicksandDamage = 32;
+    public const int QuicksandWarnTicks = 50;
+    public const int QuicksandGapPx = 96;
+    public static int QuicksandSpots(int phase) => phase >= 2 ? 5 : 3;
+    public const int SandPelletDamage = 18;
+    public static int PelletEvery(int phase) => phase >= 2 ? 40 : 65;
 
     // Faster once the armour cracks, faster again when transformed.
     public static float GaaraTempo(int phase) => phase switch { 1 => 1f, 2 => 1.3f, _ => 1.5f };
