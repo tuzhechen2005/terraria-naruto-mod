@@ -1,6 +1,6 @@
 # 素材请求：giant-snake-v3
 
-- 状态：requested
+- 状态：integrated（用户 2026-10-01 同意）
 - 提出者及提交号：Claude Code（用户 2026-10-01：万蛇 v2 交给 Codex 修）
 - 资产类型：分节怪物部件（3 张），修 `art/deliveries/giant-snake-v2/`
 - **v2 已经对的（保留）**：淡紫色蛇身、侧面白线、深色环纹、绿色竖瞳、后脑尖角；文件名、尺寸、朝向、身体节左右截面一致，都不变。原作参考仍是 `art/reference/manda_web/`（本机），文字与图冲突时以图为准。
