@@ -70,6 +70,8 @@ public sealed class Orochimaru : ExamBoss
     // A little larger than one to one (user, 2026-10-02: "可以再稍微大一些"), about 120 pixels tall.
     protected override float SpriteScale => 1.15f;
 
+    protected override bool Tilts => false;
+
     private static bool Has(string action) => BossSprites.Has($"Orochimaru_{action}_0");
 
     private static int IdleFrames => BossSprites.Has("Orochimaru_Idle_5") ? 6 : 4;
@@ -80,12 +82,34 @@ public sealed class Orochimaru : ExamBoss
         if (!Has(pose.Action))
             return ("Idle", IdleFrames, 10, true);
         // A technique opens on its in-between frame (orochimaru-tween-v1) for the first few ticks.
-        if (Timer < InTicks && Has(pose.Action + "In"))
+        if (Timer < InTicks && State != Dash && State != Recovery && Has(pose.Action + "In"))
             return (pose.Action + "In", 1, InTicks, true);
         return pose;
     }
 
     private const int InTicks = 6;
+    private const int HoldTicks = 10;
+    private const int OutTicks = 8;
+
+    private static int DashFrames => BossSprites.Has("Orochimaru_Dash_3") ? 4 : 2;
+
+    // The technique a state shows, how many frames it has, and whether its last pose is held after it (not the neck:
+    // its last frame has no head).
+    private static (string Action, int Frames, bool Hold)? TechniqueOf(float state) => state switch
+    {
+        HandsWindup or SwarmWindup => ("Hands", 1, true),
+        DashWindup or Dash => ("Dash", 1, true),
+        WindWindup or VenomWindup or SwordWindup => ("Wind", 2, true),
+        NeckWindup => ("Neck", 1, false),
+        SealWindup => ("Seal", 2, true),
+        RainWindup => ("Summon", 2, true),
+        _ => null,
+    };
+
+    private (string Action, int Frames, bool Hold)? lastTechnique;
+
+    protected override int PoseFirstFrame =>
+        State == Recovery && lastTechnique is { Hold: true } held && Timer < HoldTicks && Has(held.Action) ? held.Frames - 1 : 0;
 
     private int summonPose;
 
@@ -93,7 +117,7 @@ public sealed class Orochimaru : ExamBoss
     {
         base.SetStaticDefaults();
         // Where he was a moment ago: the after-images of the snake dash.
-        NPCID.Sets.TrailCacheLength[Type] = 6;
+        NPCID.Sets.TrailCacheLength[Type] = 7;
         NPCID.Sets.TrailingMode[Type] = 0;
     }
 
@@ -101,12 +125,13 @@ public sealed class Orochimaru : ExamBoss
     public override bool PreDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
         if (State == Dash && SpritePrefix != null)
-            for (int i = NPC.oldPos.Length - 1; i >= 1; i--)
+            // Two after-images, well apart (user, 2026-10-02: six close together flickered).
+            for (int i = 6; i >= 3; i -= 3)
             {
-                if (NPC.oldPos[i] == Vector2.Zero)
+                if (i >= NPC.oldPos.Length || NPC.oldPos[i] == Vector2.Zero)
                     continue;
                 Vector2 bottom = NPC.oldPos[i] + new Vector2(NPC.width / 2f, NPC.height);
-                float fade = 0.5f * (1f - i / (float)NPC.oldPos.Length);
+                float fade = i == 3 ? 0.4f : 0.2f;
                 BossSprites.TryDraw(spriteBatch, "Orochimaru", "Dash", 0, 2, DenseCanvas, bottom, NPC.direction,
                     new Color(170, 110, 230) * fade, screenPos, SpriteScale);
             }
@@ -119,14 +144,21 @@ public sealed class Orochimaru : ExamBoss
         {
             Reveal => Or(("Reveal", 3, RevealTicks / 3, false)),
             Emerge => Or(("Emerge", 3, EmergeTicks / 3, false)),
-            HandsWindup => Or(("Hands", 3, 14, false)),
-            DashWindup or Dash => Or(("Dash", 2, 6, true)),
+            // One sleeve held out, open, while the snakes come out of it (the reaching frames looked like pipes).
+            HandsWindup => Or(("Hands", 1, 12, true)),
+            DashWindup or Dash => Or(("Dash", DashFrames, 8, true)),
             WindWindup => Or(("Wind", 2, 20, false)),
+            // The head stays on until the neck starts to stretch (it went missing for a few ticks before).
+            NeckWindup when Timer < NeckLaunch && Has("NeckIn") => ("NeckIn", 1, NeckLaunch, true),
             NeckWindup => Or(("Neck", 1, 10, true)),
             SealWindup => Or(("Seal", 2, 12, false)),
-            SwarmWindup => Or(("Hands", 3, 7, false)),
+            SwarmWindup => Or(("Hands", 1, 12, true)),
             VenomWindup or SwordWindup => Or(("Wind", 2, 12, false)),
             RainWindup => Or(("Summon", 2, 12, false)),
+            // After a technique: its last pose held a moment, then one in-between frame back to standing.
+            Recovery when lastTechnique is { } held && held.Hold && Timer < HoldTicks => Or((held.Action, 1, HoldTicks, true)),
+            Recovery when lastTechnique is { } back && Timer < (back.Hold ? HoldTicks : 0) + OutTicks && Has(back.Action + "Out") =>
+                (back.Action + "Out", 1, OutTicks, true),
             Exit when Timer < ExitTalkTicks => ("Idle", IdleFrames, 10, true),
             Exit => Or(("Sink", 3, (ThresholdRetreatRules.ExitInvulnerableTicks - ExitTalkTicks) / 3, false)),
             _ => Has("Walk") ? Moving("Walk", "Idle", WalkFrames, IdleFrames) : ("Idle", IdleFrames, 10, true),
@@ -140,9 +172,26 @@ public sealed class Orochimaru : ExamBoss
     private Vector2 Mark => new(NPC.ai[2], NPC.ai[3]);
 
     // The long neck: from his collar to the head, which lunges out over NeckReachTicks and stays there to bite.
-    // The collar of the neck frame (orochimaru-set-v11b: canvas (120, 46), feet at (112, 132), drawn one to one).
-    private Vector2 NeckRoot => NPC.Bottom + new Vector2(NPC.direction * 8f, -86f) * SpriteScale;
-    private float NeckReach => State != NeckWindup || Timer < NeckLaunch ? 0f : Math.Min(1f, (Timer - NeckLaunch) / NeckReachTicks);
+    // The end of the neck stump in the neck frame (orochimaru-moves-v11c: canvas (134, 45), feet at (112, 132)).
+    private Vector2 NeckRoot => NPC.Bottom + new Vector2(NPC.direction * 22f, -87f) * SpriteScale;
+    private const int NeckHoldTicks = 12;
+    private const int NeckBackTicks = 8;
+
+    // Out over NeckReachTicks, held while it bites, then drawn back in before he straightens.
+    private float NeckReach
+    {
+        get
+        {
+            if (State != NeckWindup || Timer < NeckLaunch)
+                return 0f;
+            float t = Timer - NeckLaunch;
+            if (t < NeckReachTicks)
+                return (t + 1f) / NeckReachTicks;
+            if (t < NeckReachTicks + NeckHoldTicks)
+                return 1f;
+            return Math.Max(0f, 1f - (t - NeckReachTicks - NeckHoldTicks + 1f) / NeckBackTicks);
+        }
+    }
     public Vector2 NeckHead => Vector2.Lerp(NeckRoot, Mark, NeckReach);
 
     // Sinking into the ground once he has had his say (ExamBoss draws him that many art pixels lower, cut at the ground).
@@ -153,6 +202,8 @@ public sealed class Orochimaru : ExamBoss
     protected override void Fight(Player target)
     {
         NPC.color = Tint;
+        if (State != Recovery)
+            lastTechnique = TechniqueOf(State);
         if (summonPose > 0)
             summonPose--;
         if (ready == null)
@@ -246,7 +297,8 @@ public sealed class Orochimaru : ExamBoss
             case HandsWindup:
                 NPC.velocity.X *= 0.8f;
                 Telegraph(DustID.PurpleTorch, 18f);
-                if (Timer >= 24f)
+                // The snakes leave his sleeves at the 24th tick; he holds his arms out until they are back in.
+                if ((int)Timer == 24)
                 {
                     SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     if (Deciding)
@@ -257,8 +309,9 @@ public sealed class Orochimaru : ExamBoss
                             JutsuHitbox.Spawn(NPC, JutsuKind.SnakeHand, NPC.Center, aim.RotatedBy(i * 0.12f) * speed, 22, 22,
                                 Dmg(ExamBossRules.SnakeHandDamage));
                     }
-                    Enter(Recovery);
                 }
+                if (Timer >= 24 + JutsuHitbox.Lifetime(JutsuKind.SnakeHand))
+                    Enter(Recovery);
                 break;
 
             case DashWindup:
@@ -324,7 +377,7 @@ public sealed class Orochimaru : ExamBoss
                 }
                 if (Timer == NeckLaunch + NeckReachTicks && Deciding)
                     JutsuHitbox.Spawn(NPC, JutsuKind.Bite, Mark, Vector2.Zero, 44, 44, Dmg(ExamBossRules.NeckBiteDamage));
-                if (Timer >= NeckLaunch + NeckReachTicks + 12)
+                if (Timer >= NeckLaunch + NeckReachTicks + NeckHoldTicks + NeckBackTicks)
                     Enter(Recovery);
                 break;
 
@@ -524,6 +577,11 @@ public sealed class Orochimaru : ExamBoss
         }
     }
 
+    // Where the neck joins the head in the NeckHead art (orochimaru-moves-v11c: the left edge, rows 19 to 26).
+    private static Vector2 NeckAttach(Microsoft.Xna.Framework.Graphics.Texture2D head) => new(0f, 22.5f);
+
+    // The long neck as one smooth tube (user, 2026-10-02: flat pieces stacked like stairs looked odd): pieces close
+    // together along an S-curve that is pinned at the collar and the head, each turned along the curve.
     private void DrawNeck(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
         const string root = "ShinobiPrototype/Content/NPCs/Orochimaru_";
@@ -532,23 +590,35 @@ public sealed class Orochimaru : ExamBoss
         var segment = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>(root + "NeckSegment").Value;
         var head = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>(root + "NeckHead").Value;
         Color light = BossSprites.Lit(drawColor);
-        // From the collar out towards where the player stood, snaking a little on the way.
+        // The head is drawn centred on NeckHead (where it bites), so the neck ends half a head short of it.
         Vector2 from = NeckRoot;
-        Vector2 to = NeckHead;
+        Vector2 aim = NeckHead - from;
+        if (aim.Length() < 2f)
+            return;
+        Vector2 to = NeckHead - Vector2.Normalize(aim) * Math.Min(aim.Length() - 1f, head.Width / 2f * SpriteScale);
         float length = Vector2.Distance(from, to);
-        Vector2 dir = length > 0f ? (to - from) / length : Vector2.UnitX;
+        Vector2 dir = (to - from) / length;
         Vector2 side = new(-dir.Y, dir.X);
-        int steps = (int)(length / (9f * SpriteScale));
-        for (int i = 0; i < steps; i++)
+        float sway = Math.Min(14f * SpriteScale, length * 0.12f);
+        Vector2 At(float t) => from + dir * length * t +
+            side * (float)(Math.Sin(t * MathHelper.TwoPi * 1.5f + Main.GameUpdateCount * 0.18f) * Math.Sin(t * MathHelper.Pi)) * sway;
+        float step = segment.Width * SpriteScale * 0.35f;
+        int steps = Math.Max(2, (int)(length / step));
+        for (int i = 0; i <= steps; i++)
         {
-            float t = i / (float)Math.Max(1, steps);
-            Vector2 at = from + dir * length * t + side * (float)Math.Sin(t * MathHelper.TwoPi * 1.5f + Main.GameUpdateCount * 0.2f) * 15f * t;
-            spriteBatch.Draw(segment, at - screenPos, null, light, 0f, segment.Size() / 2f, SpriteScale,
+            float t = i / (float)steps;
+            Vector2 at = At(t);
+            Vector2 along = At(Math.Min(1f, t + 0.02f)) - At(Math.Max(0f, t - 0.02f));
+            spriteBatch.Draw(segment, at - screenPos, null, light, (float)Math.Atan2(along.Y, along.X), segment.Size() / 2f, SpriteScale,
                 Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
         }
-        float angle = (float)Math.Atan2(dir.Y, dir.X);
-        bool left = dir.X < 0f;
-        spriteBatch.Draw(head, to - screenPos, null, light, left ? angle - MathHelper.Pi : angle, head.Size() / 2f, SpriteScale,
+        Vector2 end = At(1f) - At(0.97f);
+        float angle = (float)Math.Atan2(end.Y, end.X);
+        bool left = end.X < 0f;
+        Vector2 attach = NeckAttach(head);
+        if (left)
+            attach.X = head.Width - attach.X;
+        spriteBatch.Draw(head, to - screenPos, null, light, left ? angle - MathHelper.Pi : angle, attach, SpriteScale,
             left ? Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally : Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
     }
 

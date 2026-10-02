@@ -193,14 +193,17 @@ public sealed class JutsuHitbox : ModProjectile
         return false;
     }
 
+    // The snakes are drawn one to one like him, at his 1.15x (orochimaru-moves-v11c).
+    private const float SnakeScale = 1.15f;
+
     // A snake from Orochimaru's sleeve out to the hitbox: body segments along the line, writhing, the head at the end.
     private void DrawSnakeHand(Color light)
     {
         NPC owner = Projectile.localAI[2] > 0f ? Main.npc[(int)Projectile.localAI[2] - 1] : null;
         if (owner is not { active: true })
             return;
-        // From his raised hand (orochimaru-set-v11a: he stands with it up while the snakes are out).
-        Vector2 from = owner.Center + new Vector2(owner.direction * 23f, -41f);
+        // From the open sleeve he holds out while the snakes are out (orochimaru-moves-v11c: canvas (146, 63), at 1.15x).
+        Vector2 from = owner.Center + new Vector2(owner.direction * 39f, -38f);
         Vector2 to = Projectile.Center;
         Vector2 line = to - from;
         float length = line.Length();
@@ -209,16 +212,16 @@ public sealed class JutsuHitbox : ModProjectile
         Vector2 dir = line / length, side = new(-dir.Y, dir.X);
         Microsoft.Xna.Framework.Graphics.Texture2D segment = FxArt.Get("FxSnakeHand_Segment");
         Microsoft.Xna.Framework.Graphics.Texture2D head = FxArt.Get("FxSnakeHand_Head");
-        float step = segment.Width * 1.5f * 0.7f;
+        float step = segment.Width * SnakeScale * 0.7f;
         float time = Main.GameUpdateCount + Projectile.whoAmI * 7;
         for (float d = 0f; d < length - step; d += step)
         {
             float wave = (float)System.Math.Sin(d * 0.06f - time * 0.4f) * 6f * System.Math.Min(1f, d / 40f);
-            FxArt.Draw(segment, from + dir * d + side * wave, light, (float)System.Math.Atan2(dir.Y, dir.X), 1.5f);
+            FxArt.Draw(segment, from + dir * d + side * wave, light, (float)System.Math.Atan2(dir.Y, dir.X), SnakeScale);
         }
         bool left = dir.X < 0f;
         float angle = (float)System.Math.Atan2(dir.Y, dir.X);
-        FxArt.Draw(head, to, light, left ? angle - MathHelper.Pi : angle, 1.5f, left ? -1 : 1);
+        FxArt.Draw(head, to, light, left ? angle - MathHelper.Pi : angle, SnakeScale, left ? -1 : 1);
     }
 
     private void Effects()

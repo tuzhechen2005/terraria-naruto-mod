@@ -41,6 +41,9 @@ public abstract class ExamBoss : ModNPC
     // How much this boss's frames are enlarged. Art drawn at Zabuza's density (user, 2026-10-02: the 1.5x heads were
     // too few pixels to hold a face; Orochimaru first) is drawn as it is.
     protected virtual float SpriteScale => ArtScale;
+    // Whether the figure leans into its steps and crouches into a technique. Fine one-to-one art shimmers when it is
+    // turned or squashed by fractions (user, 2026-10-02: Orochimaru flickered stooping and starting techniques).
+    protected virtual bool Tilts => true;
     protected virtual string SpritePrefix => null;
     // Pose plays its frames starting from this one (to hold, say, only the last frames of an action).
     protected virtual int PoseFirstFrame => 0;
@@ -221,18 +224,19 @@ public abstract class ExamBoss : ModNPC
         bool walking = NPC.velocity.Y == 0f && System.Math.Abs(NPC.velocity.X) > 0.4f;
         float bob = walking ? -(float)System.Math.Abs(System.Math.Sin(stepPhase)) * 2f * SpriteScale : 0f;
         // A small crouch for the first few ticks of a new technique, easing back.
-        float crouch = stateAge < 8 && State != 0f ? 1f - stateAge / 8f : 0f;
+        float crouch = Tilts && stateAge < 8 && State != 0f ? 1f - stateAge / 8f : 0f;
         Vector2 stretch = new(1f + 0.05f * crouch, 1f - 0.07f * crouch);
+        float tilt = Tilts ? lean : 0f;
         Color color = BossSprites.Lit(drawColor);
         if (HurtTicks > 0)
             color = Color.Lerp(color, new Color(255, 110, 110), 0.55f * HurtTicks / 8f);
         Vector2 feet = NPC.Bottom + new Vector2(0f, (float)System.Math.Round(bob));
         if (BossSprites.TryDraw(spriteBatch, SpritePrefix, action, frame, first + frames, CanvasFor(action), feet, NPC.direction,
-                color, screenPos, SpriteScale, lean, stretch, SinkPixels))
+                color, screenPos, SpriteScale, tilt, stretch, SinkPixels))
             return false;
         // A frame that is not there: stand rather than fall back on the old placeholder figure.
         BossSprites.TryDraw(spriteBatch, SpritePrefix, "Idle", 0, 1, CanvasFor("Idle"), feet, NPC.direction, color, screenPos,
-            SpriteScale, lean, stretch, SinkPixels);
+            SpriteScale, tilt, stretch, SinkPixels);
         return false;
     }
 
