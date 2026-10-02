@@ -53,11 +53,13 @@ public sealed class Dosu : ExamBoss
 
     private float Scale => ExamBossRules.DosuWindupScale(NPC.life, NPC.lifeMax);
 
+    // Only while those frames are the pose (user, 2026-10-02: late in a recovery the walk took the offset and asked for
+    // walk frames that do not exist, and the old placeholder figure showed).
     protected override int PoseFirstFrame => State switch
     {
-        QuakeRecovery when HasSlam => 1,
+        QuakeRecovery when HasSlam && Timer < 30f => 1,
         LeapAir when HasLeap => 1,
-        LeapRecovery when HasLeap => 2,
+        LeapRecovery when HasLeap && Timer < 20f => 2,
         _ => 0,
     };
 

@@ -210,9 +210,14 @@ public abstract class ExamBoss : ModNPC
         Color color = BossSprites.Lit(drawColor);
         if (HurtTicks > 0)
             color = Color.Lerp(color, new Color(255, 110, 110), 0.55f * HurtTicks / 8f);
-        return !BossSprites.TryDraw(spriteBatch, SpritePrefix, action, frame, first + frames, CanvasFor(action),
-            NPC.Bottom + new Vector2(0f, (float)System.Math.Round(bob)), NPC.direction, color, screenPos, ArtScale, lean, stretch,
-            SinkPixels);
+        Vector2 feet = NPC.Bottom + new Vector2(0f, (float)System.Math.Round(bob));
+        if (BossSprites.TryDraw(spriteBatch, SpritePrefix, action, frame, first + frames, CanvasFor(action), feet, NPC.direction,
+                color, screenPos, ArtScale, lean, stretch, SinkPixels))
+            return false;
+        // A frame that is not there: stand rather than fall back on the old placeholder figure.
+        BossSprites.TryDraw(spriteBatch, SpritePrefix, "Idle", 0, 1, CanvasFor("Idle"), feet, NPC.direction, color, screenPos,
+            ArtScale, lean, stretch, SinkPixels);
+        return false;
     }
 
     public override void HitEffect(NPC.HitInfo hit)
