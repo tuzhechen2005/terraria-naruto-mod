@@ -183,8 +183,9 @@ public sealed class JutsuHitbox : ModProjectile
                 FxArt.Draw(FxArt.Frame("FxSandShuriken", age / 4, 2), Projectile.Center, light, Projectile.rotation, 1.5f);
                 break;
             case JutsuKind.SandWave:
-                // Rolling along the ground, its foot on the bottom of the hitbox.
-                Microsoft.Xna.Framework.Graphics.Texture2D wave = FxArt.Frame("FxSandWave", age / 6, 3);
+                // Rolling along the ground, its foot on the bottom of the hitbox: it swells (frames 0, 1), then curls
+                // over and over (1, 2).
+                Microsoft.Xna.Framework.Graphics.Texture2D wave = FxArt.Frame("FxSandWave", age < 6 ? 0 : 1 + age / 7 % 2, 3);
                 FxArt.Draw(wave, Projectile.Bottom - new Vector2(0f, wave.Height * 0.75f), light, 0f, 1.5f,
                     Projectile.velocity.X >= 0f ? 1 : -1);
                 break;

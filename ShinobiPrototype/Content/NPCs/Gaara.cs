@@ -334,12 +334,13 @@ public sealed class Gaara : ExamBoss
         CountFrontal(projectile.Center.X - projectile.velocity.X * 4f, damageDone);
     }
 
-    // The wall of sand in front of him (gaara-fx-v1), rising over the first few ticks.
+    // The wall of sand in front of him (gaara-fx-v1): frame 0 is the sand rising, then 1 and 2 churn in turn.
     public override void PostDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
-        if (!Guarding || FxArt.Frame("FxSandWall", (int)(Main.GameUpdateCount / 7), 3) is not { } wall)
+        int frame = Timer < 10f ? 0 : 1 + (int)(Main.GameUpdateCount / 8) % 2;
+        if (!Guarding || FxArt.Frame("FxSandWall", frame, 3) is not { } wall)
             return;
-        float rise = Math.Min(1f, Timer / 8f);
+        float rise = Math.Min(1f, 0.4f + Timer / 10f);
         Vector2 foot = new(WallAt.X, NPC.Bottom.Y);
         Main.EntitySpriteDraw(wall, new Vector2(MathF.Round(foot.X - screenPos.X), MathF.Round(foot.Y - screenPos.Y)), null,
             BossSprites.Lit(drawColor, 0.6f), 0f, new Vector2(wall.Width / 2f, wall.Height), new Vector2(ArtScale, ArtScale * rise),
