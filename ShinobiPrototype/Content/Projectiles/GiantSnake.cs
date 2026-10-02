@@ -11,17 +11,22 @@ using ShinobiPrototype.Content.NPCs;
 
 namespace ShinobiPrototype.Content.Projectiles;
 
-// Orochimaru's giant summoned snake (user, 2026-10-01): the ground shakes for a moment on one side of the screen, then
-// a snake as tall as a house writhes across along the ground and is gone. Jump it or substitute. ai[0] is the way it
-// goes (+1 east), ai[1] the ground row (world pixels) it crawls along.
+// Orochimaru's giant summoned snake, Manda (user, 2026-10-01): the ground shakes for a moment on one side of the
+// screen, then a snake as long as the screen is wide slides across along the ground and is gone. Too thick to jump
+// without help: substitute, or get up high. ai[0] is the way it goes (+1 east), ai[1] the ground row (world pixels).
 public sealed class GiantSnake : ModProjectile
 {
-    private const int Segments = 16;
-    private const float SegmentSize = 44f;
+    // Long and thick, sliding along the ground (user, 2026-10-01: about a quarter of the view above the ground, and
+    // as long as the screen is wide). The parts (giant-snake-v3) are drawn at whole multiples of their 2x2 art pixels.
+    private const int Segments = 24;
+    private const float PartScale = 3.5f;   // 2-pixel art blocks become 7 screen pixels
+    private const float HeadScale = 4f;
+    private const float BodyWidth = 56f, BodyHeight = 42f, HeadHeight = 62f;
+    private const float Spacing = BodyWidth * PartScale * 0.62f;
     private const float Speed = 15f;
-    // The head starts this far behind where it was called (off screen) and crawls this far past.
+    // The head starts this far behind where it was called (off screen) and crawls on until the tail is well past.
     private const float StartBehind = 1100f;
-    private const float Travel = 2600f;
+    private const float Travel = StartBehind * 2f + Segments * Spacing;
 
     public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";
 
@@ -38,7 +43,7 @@ public sealed class GiantSnake : ModProjectile
         Projectile.friendly = false;
         Projectile.penetrate = -1;
         Projectile.tileCollide = false;
-        Projectile.timeLeft = 600;
+        Projectile.timeLeft = 900;
         Projectile.aiStyle = -1;
     }
 
@@ -46,7 +51,7 @@ public sealed class GiantSnake : ModProjectile
     {
         Projectile.localAI[0]++;
         if (Tick == 1)
-            Projectile.Center = new Vector2(Projectile.Center.X - Dir * StartBehind, Ground - SegmentSize / 2f);
+            Projectile.Center = new Vector2(Projectile.Center.X - Dir * StartBehind, Ground - 40f);
         if (!Coming)
         {
             Projectile.velocity = Vector2.Zero;
@@ -67,23 +72,30 @@ public sealed class GiantSnake : ModProjectile
         if (Tick == ExamBossRules.GiantSnakeWarnTicks)
             SoundEngine.PlaySound(SoundID.Roar, Projectile.Center);
         Projectile.velocity = new Vector2(Dir * Speed, 0f);
-        Projectile.Center = new Vector2(Projectile.Center.X, Ground - SegmentSize / 2f);
+        Projectile.Center = new Vector2(Projectile.Center.X, Ground - 40f);
         if ((Tick - ExamBossRules.GiantSnakeWarnTicks) * Speed > Travel)
             Projectile.Kill();
     }
 
-    private Vector2 HeadBottom => new(Projectile.Center.X, Ground);
+    private float Scale(int i) => i == 0 ? HeadScale : PartScale * (1f - 0.35f * (float)Math.Pow(i / (float)Segments, 1.6));
+
+    // Each part's centre: behind the head along the ground, resting on it, with a low ripple running back the body.
+    private Vector2 Part(int i)
+    {
+        float height = (i == 0 ? HeadHeight : BodyHeight) * Scale(i);
+        float ripple = Math.Max(0f, (float)Math.Sin(Tick * 0.2f - i * 0.6f)) * 0.12f * BodyHeight * PartScale * Math.Min(1f, i / 3f);
+        return new Vector2(Projectile.Center.X - Dir * i * Spacing, Ground - height / 2f - ripple);
+    }
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         if (!Coming)
             return false;
-        float time = Tick;
         for (int i = 0; i < Segments; i++)
         {
-            Vector2 at = SnakeBody.Segment(HeadBottom, Dir, i, Segments, SegmentSize, time);
-            float s = SnakeBody.SizeAt(i, Segments, SegmentSize) * 0.85f;
-            if (new Rectangle((int)(at.X - s / 2f), (int)(at.Y - s / 2f), (int)s, (int)s).Intersects(targetHitbox))
+            Vector2 at = Part(i);
+            float w = BodyWidth * Scale(i) * 0.9f, h = (i == 0 ? HeadHeight : BodyHeight) * Scale(i) * 0.85f;
+            if (new Rectangle((int)(at.X - w / 2f), (int)(at.Y - h / 2f), (int)w, (int)h).Intersects(targetHitbox))
                 return true;
         }
         return false;
@@ -96,12 +108,13 @@ public sealed class GiantSnake : ModProjectile
         Color light = Lighting.GetColor((int)(Projectile.Center.X / 16f), (int)(Ground / 16f) - 2);
         light = new Color(Math.Max(light.R, (byte)90), Math.Max(light.G, (byte)90), Math.Max(light.B, (byte)90));
         if (!DrawArt(light))
-            SnakeBody.Draw(Main.spriteBatch, HeadBottom, Dir, Segments, SegmentSize, Tick, SnakeBody.Purple, light);
+            SnakeBody.Draw(Main.spriteBatch, new Vector2(Projectile.Center.X, Ground), Dir, Segments, BodyHeight * PartScale, Tick,
+                SnakeBody.Purple, light);
         return false;
     }
 
-    // With the art (giant-snake-v1: head, one body segment, tail, all facing right): each part laid along the wave and
-    // turned to follow it, tail first so the head is on top.
+    // Each part (head, body segments, tail, all facing right) laid along the ground and turned to follow the ripple,
+    // tail first so the head is on top.
     private bool DrawArt(Color light)
     {
         const string root = "ShinobiPrototype/Content/Projectiles/GiantSnake_";
@@ -113,15 +126,12 @@ public sealed class GiantSnake : ModProjectile
         SpriteEffects flip = Dir > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
         for (int i = Segments - 1; i >= 0; i--)
         {
-            Vector2 at = SnakeBody.Segment(HeadBottom, Dir, i, Segments, SegmentSize, Tick);
-            // The part points from the segment behind it towards the one ahead.
-            Vector2 ahead = i == 0 ? at + new Vector2(Dir, 0f) : SnakeBody.Segment(HeadBottom, Dir, i - 1, Segments, SegmentSize, Tick);
-            Vector2 along = ahead - at;
+            Vector2 at = Part(i);
+            Vector2 along = (i == 0 ? at + new Vector2(Dir, 0f) : Part(i - 1)) - at;
             float angle = (float)Math.Atan2(along.Y, along.X) - (Dir > 0 ? 0f : MathHelper.Pi);
             Texture2D part = i == 0 ? head : i == Segments - 1 ? tail : body;
-            // The body parts are drawn a little thicker than the head's neck needs, so the neck joins without a step.
-            float scale = SnakeBody.SizeAt(i, Segments, SegmentSize) / SegmentSize * (i == 0 ? 1f : 1.3f);
-            Main.EntitySpriteDraw(part, at - Main.screenPosition, null, light, angle, part.Size() / 2f, scale, flip);
+            Vector2 position = new((float)Math.Round(at.X - Main.screenPosition.X), (float)Math.Round(at.Y - Main.screenPosition.Y));
+            Main.EntitySpriteDraw(part, position, null, light, angle, part.Size() / 2f, Scale(i), flip);
         }
         return true;
     }

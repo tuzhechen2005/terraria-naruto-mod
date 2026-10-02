@@ -120,15 +120,6 @@ public static class ExamBossRules
     // The Five Elements Seal: the chakra stops coming back for a while (natural and on-hit recovery; pills still work).
     public const int FiveSealDamage = 24;
     public const int FiveSealTicks = 480;
-    public const int SnakeLife = 220;
-    public const int SnakeDamage = 26;
-    // Summons: once above half life, once more on the way down (the fight ends at half).
-    public const float SnakeSummonAt = 0.8f;
-    public const float SecondSnakeSummonAt = 0.62f;
-
-    public static bool SummonSnakes(float lifeShare, int summonsSoFar) =>
-        summonsSoFar == 0 && lifeShare <= SnakeSummonAt || summonsSoFar == 1 && lifeShare <= SecondSnakeSummonAt;
-
     // The shed skin calls him back for another try at the eye (the first meeting always leaves it).
     public const float SharinganVialChance = 0.25f;
 

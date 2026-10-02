@@ -8,7 +8,7 @@ namespace ShinobiPrototype.Content.NPCs;
 
 // Orochimaru's snakes drawn in code, chunky pixel blocks like the rest of the art: a head and a tapering body of
 // segments trailing behind it, with a wave running from the head to the tail so the body writhes as it goes (user,
-// 2026-10-01: the snakes must wriggle). Used for the small summoned snakes and the giant one.
+// 2026-10-01: the snakes must wriggle). The giant snake falls back on it when its art is missing.
 public readonly record struct SnakeLook(Color Body, Color Belly, Color Outline, Color Eye);
 
 public static class SnakeBody

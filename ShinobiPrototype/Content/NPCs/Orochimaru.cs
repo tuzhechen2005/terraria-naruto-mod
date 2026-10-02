@@ -16,8 +16,8 @@ namespace ShinobiPrototype.Content.NPCs;
 // 2026-10-01), a fight that cannot be won. He comes as a Grass candidate (OrochimaruDisguise) and starts here either
 // revealed (he reached the player: the killing intent, broken by substitution) or emerging from the ground (the
 // disguise was struck down). Then Hidden Shadow Snake Hands, a snake dash round behind the player, the Great
-// Breakthrough gust, the Five Elements Seal (chakra stops recovering), summoned snakes, the long neck, and once the
-// giant snake writhing across the ground. He sinks away as snakes at half life, once the player has held out long
+// Breakthrough gust, the Five Elements Seal (chakra stops recovering), the long neck, and once the giant snake (Manda)
+// sliding across the ground. He sinks away as snakes at half life, once the player has held out long
 // enough, or when the player falls (ExamBossRules.OrochimaruEnds); a player not yet strong enough takes less and holds
 // out less. The first meeting always leaves the Sharingan in a vial (ChuninExamPlayer.CreditOrochimaru); the shed skin
 // he leaves calls him back for another try at it (then by chance).
@@ -39,7 +39,6 @@ public sealed class Orochimaru : ExamBoss
     private const int RevealTicks = 70;
     private const int EmergeTicks = 60;
 
-    private int snakeSummons;
     private int fightTicks;
     private bool giantSnake;
     private bool? ready;
@@ -113,12 +112,6 @@ public sealed class Orochimaru : ExamBoss
             summonPose = 40;
             Projectile.NewProjectile(NPC.GetSource_FromAI(), target.Center, Vector2.Zero, ModContent.ProjectileType<GiantSnake>(),
                 Dmg(ExamBossRules.GiantSnakeDamage), 9f, Main.myPlayer, Main.rand.NextBool() ? 1f : -1f, target.Bottom.Y);
-        }
-        if (Deciding && State is Approach or Recovery &&
-            ExamBossRules.SummonSnakes(NPC.life / (float)NPC.lifeMax, snakeSummons))
-        {
-            snakeSummons++;
-            SummonSnakes();
         }
 
         switch (State)
@@ -310,23 +303,6 @@ public sealed class Orochimaru : ExamBoss
         Main.NewText($"杀气……身体动不了！按【{ShinobiKeybinds.SubstitutionKeyName()}】用替身术挣脱！", 220, 90, 110);
     }
 
-    private void SummonSnakes()
-    {
-        summonPose = 40;
-        for (int side = -1; side <= 1; side += 2)
-            NPC.NewNPC(NPC.GetSource_FromAI(), (int)NPC.Center.X + side * 5 * 16, (int)NPC.Bottom.Y, ModContent.NPCType<SummonedSnake>());
-    }
-
-    // The player fell: he spares them (the encounter still counts).
-    protected override bool TargetGone(Player target)
-    {
-        if (!target.dead || State == Exit)
-            return false;
-        Tell("大蛇丸：“……还不是时候。”", new Color(190, 150, 230));
-        Leave();
-        return true;
-    }
-
     private void Leave()
     {
         Smoke();
@@ -343,12 +319,6 @@ public sealed class Orochimaru : ExamBoss
             Tell("大蛇丸化作一群蛇，钻进了土里。地上只留下一张蛇蜕——在丛林里用它，还能把他引出来。", new Color(190, 150, 230));
             if (Main.netMode == NetmodeID.Server)
                 NetMessage.SendData(MessageID.WorldData);
-            foreach (NPC snake in Main.ActiveNPCs)
-                if (snake.type == ModContent.NPCType<SummonedSnake>())
-                {
-                    snake.active = false;
-                    snake.netUpdate = true;
-                }
         }
         NPC.active = false;
         NPC.netUpdate = true;
@@ -363,22 +333,22 @@ public sealed class Orochimaru : ExamBoss
         var head = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>(root + "NeckHead").Value;
         Color light = BossSprites.Lit(drawColor);
         // From the collar out towards where the player stood, snaking a little on the way.
-        Vector2 from = NPC.Top + new Vector2(NPC.direction * 6f, 14f);
+        Vector2 from = NPC.Top + new Vector2(NPC.direction * 9f, 6f);
         Vector2 to = Vector2.Lerp(from, Mark, Math.Min(1f, Timer / 40f));
         float length = Vector2.Distance(from, to);
         Vector2 dir = length > 0f ? (to - from) / length : Vector2.UnitX;
         Vector2 side = new(-dir.Y, dir.X);
-        int steps = (int)(length / 6f);
+        int steps = (int)(length / (6f * ArtScale));
         for (int i = 0; i < steps; i++)
         {
             float t = i / (float)Math.Max(1, steps);
-            Vector2 at = from + dir * length * t + side * (float)Math.Sin(t * MathHelper.TwoPi * 1.5f + Main.GameUpdateCount * 0.2f) * 10f * t;
-            spriteBatch.Draw(segment, at - screenPos, null, light, 0f, segment.Size() / 2f, 1f,
+            Vector2 at = from + dir * length * t + side * (float)Math.Sin(t * MathHelper.TwoPi * 1.5f + Main.GameUpdateCount * 0.2f) * 15f * t;
+            spriteBatch.Draw(segment, at - screenPos, null, light, 0f, segment.Size() / 2f, ArtScale,
                 Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
         }
         float angle = (float)Math.Atan2(dir.Y, dir.X);
         bool left = dir.X < 0f;
-        spriteBatch.Draw(head, to - screenPos, null, light, left ? angle - MathHelper.Pi : angle, head.Size() / 2f, 1f,
+        spriteBatch.Draw(head, to - screenPos, null, light, left ? angle - MathHelper.Pi : angle, head.Size() / 2f, ArtScale,
             left ? Microsoft.Xna.Framework.Graphics.SpriteEffects.FlipHorizontally : Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
     }
 
@@ -394,51 +364,6 @@ public sealed class Orochimaru : ExamBoss
     {
         NPC.life = ThresholdRetreatRules.LockedLife(NPC.lifeMax);
         NPC.dontTakeDamage = true;
-        return false;
-    }
-}
-
-// A snake summoned by Orochimaru: crawls at the player along the ground, writhing (drawn in code, SnakeBody).
-public sealed class SummonedSnake : ModNPC
-{
-    public override string Texture => "ShinobiPrototype/Content/NPCs/ForestExamCandidate";
-
-    public override void SetStaticDefaults() => Main.npcFrameCount[Type] = 1;
-
-    public override void SetDefaults()
-    {
-        NPC.width = 36;
-        NPC.height = 18;
-        NPC.lifeMax = ExamBossRules.SnakeLife;
-        NPC.damage = ExamBossRules.SnakeDamage;
-        NPC.defense = 6;
-        NPC.knockBackResist = 0.2f;
-        NPC.aiStyle = -1;
-        NPC.HitSound = SoundID.NPCHit1;
-        NPC.DeathSound = SoundID.NPCDeath1;
-    }
-
-    public override void AI()
-    {
-        NPC.TargetClosest();
-        Player target = Main.player[NPC.target];
-        if (!target.active || target.dead)
-        {
-            NPC.EncourageDespawn(30);
-            return;
-        }
-        NPC.direction = NPC.spriteDirection = target.Center.X >= NPC.Center.X ? 1 : -1;
-        NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * 4f, 0.06f);
-        if (NPC.collideX && NPC.velocity.Y == 0f)
-            NPC.velocity.Y = -6.5f;
-    }
-
-    // A green snake writhing along the ground behind its head (SnakeBody).
-    public override bool PreDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
-    {
-        float time = Main.GameUpdateCount + NPC.whoAmI * 13;
-        SnakeBody.Draw(spriteBatch, NPC.Bottom + new Vector2(NPC.direction * 12f, 0f), NPC.direction, 9, 16f, time,
-            SnakeBody.Green, BossSprites.Lit(drawColor, 0.35f));
         return false;
     }
 }

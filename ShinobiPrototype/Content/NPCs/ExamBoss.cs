@@ -35,6 +35,9 @@ public abstract class ExamBoss : ModNPC
     // Frame-by-frame art (BossSprites: "<Prefix>_<Action>_<n>.png" in Content/NPCs). Until the frames are there the
     // tinted placeholder is drawn instead.
     internal static readonly BossSprites.Canvas PersonCanvas = new(112, 88, 56, 84);
+    // The exam bosses stand as tall as Zabuza (user, 2026-10-01): their 2x2-pixel art at 1.5x, so every art pixel is a
+    // clean 3x3 block (about 90-100 pixels tall against his 92).
+    public const float ArtScale = 1.5f;
     protected virtual string SpritePrefix => null;
     // Pose plays its frames starting from this one (to hold, say, only the last frames of an action).
     protected virtual int PoseFirstFrame => 0;
@@ -55,8 +58,8 @@ public abstract class ExamBoss : ModNPC
 
     public override void SetDefaults()
     {
-        NPC.width = 28;
-        NPC.height = 46;
+        NPC.width = 40;
+        NPC.height = 72;
         NPC.scale = 1.15f;
         NPC.boss = true;
         NPC.lifeMax = LifeMax;
@@ -183,7 +186,7 @@ public abstract class ExamBoss : ModNPC
         int frame = first + (loop ? (int)(Main.GameUpdateCount / (uint)ticksPerFrame) % frames
             : System.Math.Min(frames - 1, (int)(Timer / ticksPerFrame)));
         return !BossSprites.TryDraw(spriteBatch, SpritePrefix, action, frame, first + frames, CanvasFor(action), NPC.Bottom,
-            NPC.direction, BossSprites.Lit(drawColor), screenPos);
+            NPC.direction, BossSprites.Lit(drawColor), screenPos, ArtScale);
     }
 
     public override void HitEffect(NPC.HitInfo hit)

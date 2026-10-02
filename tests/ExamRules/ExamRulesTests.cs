@@ -164,9 +164,6 @@ Check(ExamBossRules.CoffinHoldTicks >= 60, "Caught in the coffin, there is time 
 Check(ExamBossRules.SealedChakra(1) == 20 && ExamBossRules.SealedChakra(5) == 60 && ExamBossRules.AddSeal(3) == 3,
     "Each chakra point seal takes 20 maximum chakra, three at most");
 Check(!ExamBossRules.SubstitutionSealed(2) && ExamBossRules.SubstitutionSealed(3), "Three seals stop substitution");
-Check(ExamBossRules.SummonSnakes(0.79f, 0) && !ExamBossRules.SummonSnakes(0.9f, 0) && ExamBossRules.SummonSnakes(0.6f, 1) &&
-      !ExamBossRules.SummonSnakes(0.7f, 1) && !ExamBossRules.SummonSnakes(0.1f, 2),
-    "Orochimaru summons snakes twice before he leaves at half");
-Check(ExamBossRules.SecondSnakeSummonAt > ThresholdRetreatRules.DefaultThreshold, "The second summon comes before the retreat");
+Check(ExamBossRules.GiantSnakeAt > ThresholdRetreatRules.DefaultThreshold, "The giant snake comes before he retreats at half life");
 Check(ExamBossRules.BreaksOnSubstitution(10, 0) && ExamBossRules.BreaksOnSubstitution(0, 10) && !ExamBossRules.BreaksOnSubstitution(0, 0),
     "Substitution breaks the sand coffin and the killing intent");

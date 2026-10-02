@@ -29,7 +29,7 @@ internal static class BossSprites
 
     public static bool TryDraw(SpriteBatch spriteBatch, string prefix, string action, int frame,
         int frameCount, Canvas canvas, Vector2 worldBottom, int direction, Color color,
-        Vector2 screenPos)
+        Vector2 screenPos, float scale = 1f)
     {
         int index = ((frame % frameCount) + frameCount) % frameCount;
         string path = AssetPath($"{prefix}_{action}_{index}");
@@ -41,7 +41,7 @@ internal static class BossSprites
         position = new Vector2((float)Math.Round(position.X), (float)Math.Round(position.Y));
         Vector2 origin = new(facingRight ? canvas.CenterX : canvas.Width - canvas.CenterX,
             canvas.BaselineY);
-        spriteBatch.Draw(texture, position, null, color, 0f, origin, 1f,
+        spriteBatch.Draw(texture, position, null, color, 0f, origin, scale,
             facingRight ? SpriteEffects.None : SpriteEffects.FlipHorizontally, 0f);
         return true;
     }
