@@ -49,6 +49,7 @@ public sealed class Gaara : ExamBoss
     private float Tempo => ExamBossRules.GaaraTempo(Phase);
     private Vector2 CoffinAt => new(NPC.ai[2], NPC.ai[3]);
 
+    // Every frame derived from one base drawn to Tazuna's standard (gaara-base-v2, gaara-set-v2, gaara-beast-v2).
     protected override string SpritePrefix => "Gaara";
 
     private static readonly BossSprites.Canvas BeastCanvas = new(176, 104, 64, 100);
