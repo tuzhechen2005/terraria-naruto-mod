@@ -84,7 +84,8 @@ public sealed class Gaara : ExamBoss
         {
             shownPhase = Phase;
             SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
-            if (Guarding)
+            // Transformed, he has no more use for the wall.
+            if (Guarding && Phase == 3)
                 Enter(Approach);
         }
         if (!Guarding && State != Winded)
