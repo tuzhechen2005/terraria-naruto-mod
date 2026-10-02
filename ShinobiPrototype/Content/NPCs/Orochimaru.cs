@@ -67,7 +67,8 @@ public sealed class Orochimaru : ExamBoss
 
     private protected override BossSprites.Canvas CanvasFor(string action) => DenseCanvas;
 
-    protected override float SpriteScale => 1f;
+    // A little larger than one to one (user, 2026-10-02: "可以再稍微大一些"), about 120 pixels tall.
+    protected override float SpriteScale => 1.15f;
 
     private static bool Has(string action) => BossSprites.Has($"Orochimaru_{action}_0");
 
@@ -140,7 +141,7 @@ public sealed class Orochimaru : ExamBoss
 
     // The long neck: from his collar to the head, which lunges out over NeckReachTicks and stays there to bite.
     // The collar of the neck frame (orochimaru-set-v11b: canvas (120, 46), feet at (112, 132), drawn one to one).
-    private Vector2 NeckRoot => NPC.Bottom + new Vector2(NPC.direction * 8f, -86f);
+    private Vector2 NeckRoot => NPC.Bottom + new Vector2(NPC.direction * 8f, -86f) * SpriteScale;
     private float NeckReach => State != NeckWindup || Timer < NeckLaunch ? 0f : Math.Min(1f, (Timer - NeckLaunch) / NeckReachTicks);
     public Vector2 NeckHead => Vector2.Lerp(NeckRoot, Mark, NeckReach);
 
@@ -510,7 +511,7 @@ public sealed class Orochimaru : ExamBoss
     private void DrawTechniqueFx(Color drawColor)
     {
         if (State == SealWindup && FxArt.Frame("FxSealFlame", (int)(Main.GameUpdateCount / 6), 3) is { } flame)
-            FxArt.Draw(flame, NPC.Bottom + new Vector2(NPC.direction * 48f, -76f), Color.White, 0f, ArtScale, NPC.direction);
+            FxArt.Draw(flame, NPC.Bottom + new Vector2(NPC.direction * 48f, -76f) * SpriteScale, Color.White, 0f, ArtScale, NPC.direction);
         if (summonPose > 0 && FxArt.Has("FxSummonCircle"))
         {
             float grow = Math.Min(1f, (40 - summonPose) / 12f);
@@ -537,7 +538,7 @@ public sealed class Orochimaru : ExamBoss
         float length = Vector2.Distance(from, to);
         Vector2 dir = length > 0f ? (to - from) / length : Vector2.UnitX;
         Vector2 side = new(-dir.Y, dir.X);
-        int steps = (int)(length / 9f);
+        int steps = (int)(length / (9f * SpriteScale));
         for (int i = 0; i < steps; i++)
         {
             float t = i / (float)Math.Max(1, steps);

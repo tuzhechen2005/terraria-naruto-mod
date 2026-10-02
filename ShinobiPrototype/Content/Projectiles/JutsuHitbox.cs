@@ -200,7 +200,7 @@ public sealed class JutsuHitbox : ModProjectile
         if (owner is not { active: true })
             return;
         // From his raised hand (orochimaru-set-v11a: he stands with it up while the snakes are out).
-        Vector2 from = owner.Center + new Vector2(owner.direction * 20f, -36f);
+        Vector2 from = owner.Center + new Vector2(owner.direction * 23f, -41f);
         Vector2 to = Projectile.Center;
         Vector2 line = to - from;
         float length = line.Length();
