@@ -65,17 +65,17 @@ public sealed class Dosu : ExamBoss
 
     protected override (string Action, int Frames, int TicksPerFrame, bool Loop) Pose => State switch
     {
-        DrillWindup => ("DrillWindup", 2, 12, true),
+        DrillWindup => WithLeadIn(("DrillWindup", 2, 12, true)),
         DrillDash or DrillTurn => ("Drill", 2, 7, false),
         DrillRecovery when Timer < 14f => ("Drill", 2, 7, false),
-        WaveWindup or RingWindup => ("Wave", 1, 10, true),
+        WaveWindup or RingWindup => WithLeadIn(("Wave", 1, 10, true)),
         WaveRecovery or RingRecovery when Timer < 24f => ("Wave", 3, 8, false),
-        QuakeWindup => HasSlam ? ("Slam", 1, 10, true) : ("Wave", 1, 10, true),
+        QuakeWindup => HasSlam ? WithLeadIn(("Slam", 1, 10, true)) : ("Wave", 1, 10, true),
         QuakeRecovery when Timer < 30f => HasSlam ? ("Slam", 2, 15, false) : ("Wave", 3, 8, false),
-        LeapWindup => HasLeap ? ("Leap", 1, 10, true) : ("DrillWindup", 2, 12, true),
+        LeapWindup => HasLeap ? WithLeadIn(("Leap", 1, 10, true)) : ("DrillWindup", 2, 12, true),
         LeapAir => HasLeap ? ("Leap", 1, 10, true) : ("Drill", 1, 10, true),
         LeapRecovery when Timer < 20f => HasLeap ? ("Leap", 1, 10, true) : ("Drill", 2, 7, false),
-        _ => Moving("Walk", "Idle"),
+        _ => Moving("Walk", "Idle", ArtWalkFrames, ArtIdleFrames),
     };
 
     protected override void Fight(Player target)
