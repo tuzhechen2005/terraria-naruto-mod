@@ -131,7 +131,8 @@ public sealed class Orochimaru : ExamBoss
     private Vector2 Mark => new(NPC.ai[2], NPC.ai[3]);
 
     // The long neck: from his collar to the head, which lunges out over NeckReachTicks and stays there to bite.
-    private Vector2 NeckRoot => NPC.Top + new Vector2(NPC.direction * 12f, 10f);
+    // The collar of the neck frame (orochimaru-set-v5c).
+    private Vector2 NeckRoot => NPC.Top + new Vector2(NPC.direction * 15f, 13f);
     private float NeckReach => State != NeckWindup || Timer < NeckLaunch ? 0f : Math.Min(1f, (Timer - NeckLaunch) / NeckReachTicks);
     public Vector2 NeckHead => Vector2.Lerp(NeckRoot, Mark, NeckReach);
 
@@ -501,7 +502,7 @@ public sealed class Orochimaru : ExamBoss
     private void DrawTechniqueFx(Color drawColor)
     {
         if (State == SealWindup && FxArt.Frame("FxSealFlame", (int)(Main.GameUpdateCount / 6), 3) is { } flame)
-            FxArt.Draw(flame, NPC.Center + new Vector2(NPC.direction * 34f, -18f), Color.White, 0f, ArtScale, NPC.direction);
+            FxArt.Draw(flame, NPC.Center + new Vector2(NPC.direction * 49f, -30f), Color.White, 0f, ArtScale, NPC.direction);
         if (summonPose > 0 && FxArt.Has("FxSummonCircle"))
         {
             float grow = Math.Min(1f, (40 - summonPose) / 12f);
