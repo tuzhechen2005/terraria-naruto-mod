@@ -49,7 +49,7 @@ public sealed class ShedSkin : ModProjectile
         Color skin = new Color(214, 206, 186).MultiplyRGB(lightColor) * Projectile.Opacity;
         int facing = Projectile.ai[0] >= 0f ? 1 : -1;
         Main.EntitySpriteDraw(texture, Projectile.Bottom - Main.screenPosition + new Vector2(0f, -8f), frame, skin,
-            facing * MathHelper.PiOver2, new Vector2(frame.Width / 2f, frame.Height - 6f), NPCs.ExamBoss.ArtScale,
+            facing * MathHelper.PiOver2, new Vector2(frame.Width / 2f, frame.Height - 6f), 1f,
             facing > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally);
         return false;
     }

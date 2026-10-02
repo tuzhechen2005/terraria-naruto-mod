@@ -35,6 +35,11 @@ public sealed class GiantSnake : ModProjectile
     private int Tick => (int)Projectile.localAI[0];
     private bool Coming => Tick >= ExamBossRules.GiantSnakeWarnTicks;
 
+    // Vanilla stops drawing a projectile once its hitbox (here the head) is this far off screen; the body trails a
+    // screen's width behind the head, so keep drawing until the tail is gone too (user, 2026-10-01: it vanished
+    // halfway across).
+    public override void SetStaticDefaults() => ProjectileID.Sets.DrawScreenCheckFluff[Type] = (int)(Segments * Spacing) + 800;
+
     public override void SetDefaults()
     {
         Projectile.width = 60;

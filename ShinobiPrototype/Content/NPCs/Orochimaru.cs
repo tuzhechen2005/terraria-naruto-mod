@@ -57,6 +57,30 @@ public sealed class Orochimaru : ExamBoss
 
     private int summonPose;
 
+    public override void SetStaticDefaults()
+    {
+        base.SetStaticDefaults();
+        // Where he was a moment ago: the after-images of the snake dash.
+        NPCID.Sets.TrailCacheLength[Type] = 6;
+        NPCID.Sets.TrailingMode[Type] = 0;
+    }
+
+    // The snake dash leaves a fading violet trail of after-images (orochimaru effects, user 2026-10-01).
+    public override bool PreDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+    {
+        if (State == Dash && SpritePrefix != null)
+            for (int i = NPC.oldPos.Length - 1; i >= 1; i--)
+            {
+                if (NPC.oldPos[i] == Vector2.Zero)
+                    continue;
+                Vector2 bottom = NPC.oldPos[i] + new Vector2(NPC.width / 2f, NPC.height);
+                float fade = 0.5f * (1f - i / (float)NPC.oldPos.Length);
+                BossSprites.TryDraw(spriteBatch, "Orochimaru", "Dash", 0, 2, PersonCanvas, bottom, NPC.direction,
+                    new Color(170, 110, 230) * fade, screenPos, ArtScale);
+            }
+        return base.PreDraw(spriteBatch, screenPos, drawColor);
+    }
+
     protected override (string Action, int Frames, int TicksPerFrame, bool Loop) Pose => summonPose > 0
         ? Or(("Summon", 2, 20, false))
         : State switch
@@ -191,7 +215,7 @@ public sealed class Orochimaru : ExamBoss
                     NPC.velocity.X = 0f;
                     Face(target.Center.X);
                     if (Deciding)
-                        JutsuHitbox.Spawn(NPC, JutsuKind.Strike, NPC.Center + new Vector2(NPC.direction * 26f, 0f), Vector2.Zero, 44, 44,
+                        JutsuHitbox.Spawn(NPC, JutsuKind.Bite, NPC.Center + new Vector2(NPC.direction * 30f, 0f), Vector2.Zero, 48, 48,
                             Dmg(ExamBossRules.SnakeDashDamage));
                     Enter(Recovery);
                 }
@@ -229,7 +253,7 @@ public sealed class Orochimaru : ExamBoss
                 {
                     SoundEngine.PlaySound(SoundID.Item2, Mark);
                     if (Deciding)
-                        JutsuHitbox.Spawn(NPC, JutsuKind.Strike, Mark, Vector2.Zero, 40, 40, Dmg(ExamBossRules.NeckBiteDamage));
+                        JutsuHitbox.Spawn(NPC, JutsuKind.Bite, Mark, Vector2.Zero, 44, 44, Dmg(ExamBossRules.NeckBiteDamage));
                     Enter(Recovery);
                 }
                 break;
@@ -238,7 +262,8 @@ public sealed class Orochimaru : ExamBoss
                 // He closes in with the seal glowing on his fingertips, then presses it on.
                 Face(target.Center.X);
                 NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * 6f, 0.15f);
-                Telegraph(DustID.PurpleTorch, 14f);
+                if (!FxArt.Has("FxSealFlame_0"))
+                    Telegraph(DustID.PurpleTorch, 14f);
                 if (Timer >= 34f)
                 {
                     SoundEngine.PlaySound(SoundID.Item8, NPC.Center);
@@ -325,6 +350,30 @@ public sealed class Orochimaru : ExamBoss
     }
 
     public override void PostDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
+    {
+        DrawTechniqueFx(drawColor);
+        DrawNeck(spriteBatch, screenPos, drawColor);
+    }
+
+    // The violet flames on his fingertips before the Five Elements Seal, and the summoning formula spread on the ground
+    // as he calls Manda (orochimaru-fx-seal-v1).
+    private void DrawTechniqueFx(Color drawColor)
+    {
+        if (State == SealWindup && FxArt.Frame("FxSealFlame", (int)(Main.GameUpdateCount / 6), 3) is { } flame)
+            FxArt.Draw(flame, NPC.Center + new Vector2(NPC.direction * 34f, -18f), Color.White, 0f, ArtScale, NPC.direction);
+        if (summonPose > 0 && FxArt.Has("FxSummonCircle"))
+        {
+            float grow = Math.Min(1f, (40 - summonPose) / 12f);
+            FxArt.Draw(FxArt.Get("FxSummonCircle"), NPC.Bottom + new Vector2(0f, -8f), BossSprites.Lit(drawColor, 0.6f), 0f,
+                ArtScale * (0.4f + 0.6f * grow));
+            if (summonPose == 1 && !Main.dedServ)
+                for (int i = 0; i < 40; i++)
+                    Dust.NewDustPerfect(NPC.Bottom + Main.rand.NextVector2Circular(90f, 30f), DustID.Smoke,
+                        Main.rand.NextVector2Circular(3f, 3f) - new Vector2(0f, 2f), 60, Color.White, 2.2f);
+        }
+    }
+
+    private void DrawNeck(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
         const string root = "ShinobiPrototype/Content/NPCs/Orochimaru_";
         if (State != NeckWindup || !ModContent.HasAsset(root + "NeckSegment") || !ModContent.HasAsset(root + "NeckHead"))

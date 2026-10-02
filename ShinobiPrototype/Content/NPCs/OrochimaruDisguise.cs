@@ -31,9 +31,9 @@ public sealed class OrochimaruDisguise : ModNPC
 
     public override void SetDefaults()
     {
-        // He is Orochimaru: drawn at the bosses' size (ExamBoss.ArtScale).
-        NPC.width = 40;
-        NPC.height = 72;
+        // As big as any candidate (user, 2026-10-01): nothing about his size gives him away.
+        NPC.width = 28;
+        NPC.height = 56;
         NPC.lifeMax = 180;
         NPC.damage = 0;
         NPC.defense = 0;
@@ -105,7 +105,7 @@ public sealed class OrochimaruDisguise : ModNPC
             return true;
         bool walking = System.Math.Abs(NPC.velocity.X) > 0.3f;
         BossSprites.TryDraw(spriteBatch, "Orochimaru", "DisguiseWalk", walking ? BossSprites.Loop(10f, 4) : 0, 4,
-            ExamBoss.PersonCanvas, NPC.Bottom, NPC.direction, BossSprites.Lit(drawColor), screenPos, ExamBoss.ArtScale);
+            ExamBoss.PersonCanvas, NPC.Bottom, NPC.direction, BossSprites.Lit(drawColor), screenPos);
         return false;
     }
 }

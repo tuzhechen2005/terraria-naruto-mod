@@ -17,6 +17,11 @@ public sealed class JutsuStatusPlayer : ModPlayer
     public int TinnitusTicks { get; private set; }
     public int Seals { get; private set; }
     public int RegenSealTicks { get; private set; }
+    // The Five Elements Seal's mark shows on the body for a moment when it lands (SealGlyphLayer).
+    public int SealGlyphTicks { get; private set; }
+    public const int SealGlyphShowTicks = 75;
+
+    public void ShowSealGlyph() => SealGlyphTicks = SealGlyphShowTicks;
     private int sealTicks;
 
     public bool Bound => ExamBossRules.BreaksOnSubstitution(BindTicks, FearTicks);
@@ -80,6 +85,8 @@ public sealed class JutsuStatusPlayer : ModPlayer
             TinnitusTicks--;
         if (RegenSealTicks > 0)
             RegenSealTicks--;
+        if (SealGlyphTicks > 0)
+            SealGlyphTicks--;
         if (sealTicks > 0 && --sealTicks == 0)
             Seals = 0;
     }

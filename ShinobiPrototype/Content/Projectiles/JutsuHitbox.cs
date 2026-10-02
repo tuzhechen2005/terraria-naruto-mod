@@ -9,7 +9,8 @@ namespace ShinobiPrototype.Content.Projectiles;
 
 // The exam bosses' techniques (Dosu, Gaara, Neji, Orochimaru): one hostile hitbox whose kind (ai[0]) decides how it
 // moves, what it looks like and what it does to the player it hits. ai[1] and ai[2] are its width and height in
-// pixels. Drawn with dust only: placeholder visuals until the bosses have their art.
+// pixels. Orochimaru's techniques are drawn from their own art when it is there (FxArt: the snake hands, the gust, the
+// bite); everything else is still dust.
 public enum JutsuKind : byte
 {
     Strike,        // a plain melee hit
@@ -29,6 +30,7 @@ public enum JutsuKind : byte
     GroundQuake,   // Dosu: a sound wave crawling along the floor (jump it)
     ResonanceRing, // Dosu: a ring of sound spreading out from him (only the ring itself hurts)
     ImpactSlam,    // Dosu: the shock of landing from his leap
+    Bite,          // Orochimaru: the snake dash and the long neck close their fangs
 }
 
 public sealed class JutsuHitbox : ModProjectile
@@ -47,12 +49,11 @@ public sealed class JutsuHitbox : ModProjectile
         Projectile.tileCollide = false;
         Projectile.timeLeft = 30;
         Projectile.aiStyle = -1;
-        Projectile.hide = true;
     }
 
     public static int Lifetime(JutsuKind kind) => kind switch
     {
-        JutsuKind.Strike or JutsuKind.EchoDrill or JutsuKind.GentleFist or JutsuKind.FiveSeal => 12,
+        JutsuKind.Strike or JutsuKind.EchoDrill or JutsuKind.GentleFist or JutsuKind.FiveSeal or JutsuKind.Bite => 12,
         JutsuKind.SoundWave or JutsuKind.WindBlast => 40,
         JutsuKind.SandShuriken => 120,
         JutsuKind.SandWave => 90,
@@ -84,6 +85,16 @@ public sealed class JutsuHitbox : ModProjectile
             Projectile.Resize((int)Projectile.ai[1], (int)Projectile.ai[2]);
             Projectile.timeLeft = Lifetime(Kind);
             Projectile.localAI[1] = Projectile.timeLeft;
+            // The snake hands remember whose sleeve they come out of (each machine for itself).
+            if (Kind == JutsuKind.SnakeHand)
+            {
+                NPC owner = null;
+                foreach (NPC npc in Main.ActiveNPCs)
+                    if (npc.type == ModContent.NPCType<NPCs.Orochimaru>() &&
+                        (owner == null || npc.Distance(Projectile.Center) < owner.Distance(Projectile.Center)))
+                        owner = npc;
+                Projectile.localAI[2] = owner?.whoAmI + 1 ?? 0;
+            }
         }
         switch (Kind)
         {
@@ -112,8 +123,69 @@ public sealed class JutsuHitbox : ModProjectile
                 break;
             }
         }
-        if (Main.netMode != NetmodeID.Server)
+        if (Main.netMode != NetmodeID.Server && !DrawsArt)
             Effects();
+    }
+
+    // Kinds with their own art (and the art present) skip the dust.
+    private bool DrawsArt => Kind switch
+    {
+        JutsuKind.SnakeHand => FxArt.Has("FxSnakeHand_Head") && FxArt.Has("FxSnakeHand_Segment"),
+        JutsuKind.WindBlast => FxArt.Has("FxWind_0"),
+        JutsuKind.Bite => FxArt.Has("FxBite_0"),
+        _ => false,
+    };
+
+    public override bool PreDraw(ref Color lightColor)
+    {
+        if (!DrawsArt)
+            return false;
+        Color light = NPCs.BossSprites.Lit(lightColor, 0.55f);
+        int age = (int)(Projectile.localAI[1] - Projectile.timeLeft);
+        switch (Kind)
+        {
+            case JutsuKind.SnakeHand:
+                DrawSnakeHand(light);
+                break;
+            case JutsuKind.WindBlast:
+                // The gust, stretched over the hitbox, rolling forward.
+                Microsoft.Xna.Framework.Graphics.Texture2D gust = FxArt.Frame("FxWind", age / 6, 4);
+                float scale = Projectile.width / (float)gust.Width * 1.25f;
+                FxArt.Draw(gust, Projectile.Center, light, 0f, scale, Projectile.velocity.X >= 0f ? 1 : -1);
+                break;
+            case JutsuKind.Bite:
+                Microsoft.Xna.Framework.Graphics.Texture2D bite = FxArt.Frame("FxBite", age / 4, 3) ?? FxArt.Get("FxBite_0");
+                FxArt.Draw(bite, Projectile.Center, light, 0f, 1.5f);
+                break;
+        }
+        return false;
+    }
+
+    // A snake from Orochimaru's sleeve out to the hitbox: body segments along the line, writhing, the head at the end.
+    private void DrawSnakeHand(Color light)
+    {
+        NPC owner = Projectile.localAI[2] > 0f ? Main.npc[(int)Projectile.localAI[2] - 1] : null;
+        if (owner is not { active: true })
+            return;
+        Vector2 from = owner.Center + new Vector2(owner.direction * 22f, -10f);
+        Vector2 to = Projectile.Center;
+        Vector2 line = to - from;
+        float length = line.Length();
+        if (length < 4f)
+            return;
+        Vector2 dir = line / length, side = new(-dir.Y, dir.X);
+        Microsoft.Xna.Framework.Graphics.Texture2D segment = FxArt.Get("FxSnakeHand_Segment");
+        Microsoft.Xna.Framework.Graphics.Texture2D head = FxArt.Get("FxSnakeHand_Head");
+        float step = segment.Width * 1.5f * 0.7f;
+        float time = Main.GameUpdateCount + Projectile.whoAmI * 7;
+        for (float d = 0f; d < length - step; d += step)
+        {
+            float wave = (float)System.Math.Sin(d * 0.06f - time * 0.4f) * 6f * System.Math.Min(1f, d / 40f);
+            FxArt.Draw(segment, from + dir * d + side * wave, light, (float)System.Math.Atan2(dir.Y, dir.X), 1.5f);
+        }
+        bool left = dir.X < 0f;
+        float angle = (float)System.Math.Atan2(dir.Y, dir.X);
+        FxArt.Draw(head, to, light, left ? angle - MathHelper.Pi : angle, 1.5f, left ? -1 : 1);
     }
 
     private void Effects()
@@ -210,6 +282,7 @@ public sealed class JutsuHitbox : ModProjectile
                 break;
             case JutsuKind.FiveSeal:
                 status.SealRegen(ExamBossRules.FiveSealTicks);
+                status.ShowSealGlyph();
                 break;
         }
     }
