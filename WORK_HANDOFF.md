@@ -36,6 +36,13 @@
 - `3108f8f` 曾接入 `mod-icon-v4`：少年鸣人、卡卡西、螺旋丸、木叶背景和 NARUTO 像素字标。本次由 v5 的 TERRUTO 字标版本替换，仍为 80×80 与 30×30 游戏图标、640×640 README 图片，首页显示为 320×320。v4 作为历史原件保留。
 - 图标验证：三个目标 PNG 与交付原件一致，尺寸和解码通过；GitHub Markdown 渲染及两版浏览器首页预览通过。运行 `./scripts/verify-mac.sh` 并通过 `ExtraBuildModFlags` 指定独立存档目录，13 组规则测试及模组打包通过，0 错误；既有的编译告警与图像转换回退日志仍在。尚未在运行中的游戏里重新加载并验收图标。
 
+**2026-10-01 深夜：大蛇丸改为第二试必经遭遇（规格第五节已重写；已提交，未推送，未实机）**
+
+- 流程：入口小队 → 森林中段（`ExamSiteWorld.OrochimaruX`）孤身的草隐考生 `OrochimaruDisguise`（被打倒→`ShedSkin` 蛇蜕 + 本体从地里钻出 `Emerge`；走到跟前→撕脸 `Reveal` + 杀气）→ 塔前雨隐（需 `OrochimaruDone`）。结束：半血 / 撑满 90 秒（弱玩家 60 秒、伤害七成）/ 玩家倒下（`TargetGone`，"还不是时候"）。第一次必给写轮眼试管（`ChuninExamPlayer.CreditOrochimaru`，倒下则复活后给），蛇蜕重打 25%。卡卡西、红豆各一句反应（`Flags2`）。`/m0 orochimaru` 叫出伪装。
+- 通灵巨蛇 `Projectiles/GiantSnake`：震动预警后贴地扭动冲过，按原作万蛇画（`giant-snake-v3` 已接入，头/身/尾沿波浪转角度）；小蛇用 `SnakeBody` 代码绘制扭动。
+- 美术：大蛇丸全套已接入（`orochimaru-moves-v3` 全部从用户认可的 v3 站立图逐像素改出，走路只有腿动；招式 `orochimaru-moves-v2`；长颈的头和脖子节由 `Orochimaru.PostDraw` 沿曲线拼）。教训：同一角色的帧必须从同一张底稿改，否则游戏里会"两个形象交替"。
+- 用户已定：MIT 许可证（版权方 tuzhechen2005）、README 改成口语；三位新 NPC（伊比喜 v4、红豆、疾风）按原尺寸 1 倍显示。
+
 **2026-10-01 晚：第二试与预选赛改版（与用户 grill 定稿，见 `specs/M2_中忍考试篇.spec.md` 第十节；已提交并推送，未实机）**
 
 - 已实现：场地 v2（大门 + 监考小屋 + 长铁丝网、59×56 中央塔 + 结印石像、空心巨树、警告牌（林中休息处用户嫌粗糙已删，rebuild 会清掉旧的），镜像 `ExamSite.Dir`，`/m0 exam rebuild`）；红豆发卷、疾风开始预选赛（`Content/NPCs/ExamProctors.cs`，`Packet.StartPrelims`）；固定节点（入口埋伏小队、塔前雨隐，`DeathForestSystem` 重写）；游荡小队只掉材料；考生苦无/手里剑/烟雾弹，雨隐千本雨/分身（`RainClone`）；多斯五招（`Dosu.cs`、`ExamBossRules.ChooseDosuMove`，`JutsuKind.GroundQuake/ResonanceRing/ImpactSlam`）；删 Boss 大字标题（`BossIntroSystem` 已删）、关大蛇丸自然触发；删雾隐侦察兵，标记改为鬼之兄弟 2 + 达兹纳 1。
