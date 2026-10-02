@@ -1,6 +1,6 @@
 # 素材请求：orochimaru-fx-seal-v1
 
-- 状态：requested
+- 状态：integrated（用户 2026-10-01 认可设计）
 - 提出者及提交号：Claude Code（同上，大蛇丸攻击特效第 3 份）
 - 资产类型：招式特效（五行封印 + 通灵之术）
 - 用途：
