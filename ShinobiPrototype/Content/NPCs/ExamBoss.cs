@@ -56,8 +56,9 @@ public abstract class ExamBoss : ModNPC
     // from the start of the current state).
     protected virtual (string Action, int Frames, int TicksPerFrame, bool Loop) Pose => ("Idle", 4, 10, true);
 
-    protected (string, int, int, bool) Moving(string walk, string idle) =>
-        System.Math.Abs(NPC.velocity.X) > 0.4f ? (walk, 4, 7, true) : (idle, 4, 10, true);
+    // Walking or standing; the frame counts are those of the art (the in-between frames added more, user 2026-10-02).
+    protected (string, int, int, bool) Moving(string walk, string idle, int walkFrames = 4, int idleFrames = 4) =>
+        System.Math.Abs(NPC.velocity.X) > 0.4f ? (walk, walkFrames, walkFrames >= 8 ? 5 : 7, true) : (idle, idleFrames, idleFrames >= 6 ? 9 : 10, true);
 
     public override void SetStaticDefaults()
     {

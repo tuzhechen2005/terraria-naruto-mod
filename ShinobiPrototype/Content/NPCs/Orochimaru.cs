@@ -63,8 +63,20 @@ public sealed class Orochimaru : ExamBoss
 
     private static bool Has(string action) => BossSprites.Has($"Orochimaru_{action}_0");
 
-    private static (string, int, int, bool) Or((string Action, int Frames, int Ticks, bool Loop) pose) =>
-        Has(pose.Action) ? pose : ("Idle", 4, 12, true);
+    private static int IdleFrames => BossSprites.Has("Orochimaru_Idle_5") ? 6 : 4;
+    private static int WalkFrames => BossSprites.Has("Orochimaru_Walk_7") ? 8 : 4;
+
+    private (string, int, int, bool) Or((string Action, int Frames, int Ticks, bool Loop) pose)
+    {
+        if (!Has(pose.Action))
+            return ("Idle", IdleFrames, 10, true);
+        // A technique opens on its in-between frame (orochimaru-tween-v1) for the first few ticks.
+        if (Timer < InTicks && Has(pose.Action + "In"))
+            return (pose.Action + "In", 1, InTicks, true);
+        return pose;
+    }
+
+    private const int InTicks = 6;
 
     private int summonPose;
 
@@ -106,9 +118,9 @@ public sealed class Orochimaru : ExamBoss
             SwarmWindup => Or(("Hands", 3, 7, false)),
             VenomWindup or SwordWindup => Or(("Wind", 2, 12, false)),
             RainWindup => Or(("Summon", 2, 12, false)),
-            Exit when Timer < ExitTalkTicks => Or(("Idle", 4, 12, true)),
+            Exit when Timer < ExitTalkTicks => ("Idle", IdleFrames, 10, true),
             Exit => Or(("Sink", 3, (ThresholdRetreatRules.ExitInvulnerableTicks - ExitTalkTicks) / 3, false)),
-            _ => Has("Walk") ? Moving("Walk", "Idle") : ("Idle", 4, 12, true),
+            _ => Has("Walk") ? Moving("Walk", "Idle", WalkFrames, IdleFrames) : ("Idle", IdleFrames, 10, true),
         };
 
     // Damage, eased for a player not yet strong enough.

@@ -1,6 +1,6 @@
 # 素材请求：orochimaru-tween-v1
 
-- 状态：requested
+- 状态：integrated（2026-10-02）
 - 提出者及提交号：Claude Code（用户 2026-10-02：Boss 动作卡顿，补帧让动作流畅）
 - 资产类型：Boss 补帧（大蛇丸）
 - 底稿：`ShinobiPrototype/Content/NPCs/Orochimaru_Idle_0.png`（= 用户认可的 orochimaru-style-v3），招式参考同目录的 `Orochimaru_Hands_*`、`Dash_*`、`Wind_*`、`Seal_*`、`Summon_*`、`Neck_0`。
