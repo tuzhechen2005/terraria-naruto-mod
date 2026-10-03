@@ -26,8 +26,8 @@ Check(ClampDamage(600, 1000, 300) == 100 && ClampDamage(500, 1000, 50) == 0 && C
 Check(ExitInvulnerableTicks >= 120, "The exit plays out with the boss untouchable");
 
 // The tier-one designs (specs/流派系统.spec.md section 3).
-Check(LogRegenTicks(0) == 600 && LogRegenTicks(1) == 480 && LogRegenTicks(2) == 420 && LogRegenTicks(3) == 360,
-    "The Sharingan brings logs back sooner: 10 / 8 / 7 / 6 s");
+Check(LogRegenTicks(0) == 1200 && LogRegenTicks(1) == 960 && LogRegenTicks(2) == 840 && LogRegenTicks(3) == 720,
+    "The Sharingan brings logs back sooner: 20 / 16 / 14 / 12 s");
 Check(ForesightTicks(1) == 240 && ForesightTicks(2) == 300, "Foresight lasts four seconds, five from two tomoe");
 Check(NextGates(0) == 1 && NextGates(2) == 3 && NextGates(3) == 0, "Each press opens a gate; the press after the third closes");
 Check(GatePressCost(0) == GateCost && GatePressCost(3) == 0, "Opening a gate costs chakra, closing is free");

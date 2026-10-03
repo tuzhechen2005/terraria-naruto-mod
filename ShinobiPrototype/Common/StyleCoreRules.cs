@@ -26,10 +26,10 @@ public static class StyleCoreRules
     // substitution window, which the logs made moot, 2026-10-03).
     public static int LogRegenTicks(int sharinganTier) => sharinganTier switch
     {
-        <= 0 => ChakraRules.LogRegenTicks,   // 10 s
-        1 => 480,                           // 8 s
-        2 => 420,                           // 7 s
-        _ => 360,                           // 6 s
+        <= 0 => ChakraRules.LogRegenTicks,   // 20 s
+        1 => 960,                           // 16 s
+        2 => 840,                           // 14 s
+        _ => 720,                           // 12 s
     };
 
     public const int ForesightCost = 30;

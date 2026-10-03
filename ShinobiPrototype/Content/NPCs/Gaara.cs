@@ -199,11 +199,13 @@ public sealed class Gaara : ExamBoss
                 if (Timer >= ExamBossRules.CoffinWarnTicks / Tempo)
                 {
                     Player local = Main.LocalPlayer;
+                    // Still on the quicksand when it closes: a log takes it, or the sand does (user, 2026-10-03).
                     if (Main.netMode != NetmodeID.Server && local.active && !local.dead &&
-                        Math.Abs(local.Center.X - CoffinAt.X) < ExamBossRules.CoffinRadiusPx && Math.Abs(local.Bottom.Y - CoffinAt.Y) < 64f)
+                        Math.Abs(local.Center.X - CoffinAt.X) < ExamBossRules.CoffinRadiusPx && Math.Abs(local.Bottom.Y - CoffinAt.Y) < 64f &&
+                        !local.GetModPlayer<SubstitutionPlayer>().TakeBind(local.Center.X >= CoffinAt.X ? 1 : -1))
                     {
                         local.GetModPlayer<JutsuStatusPlayer>().Bind(ExamBossRules.CoffinHoldTicks);
-                        Main.NewText($"被沙子裹住了！按【{ShinobiKeybinds.SubstitutionKeyName()}】用替身术脱身！", 255, 200, 120);
+                        Main.NewText("被沙子裹住了！", 255, 200, 120);
                     }
                     Enter(CoffinHold);
                 }

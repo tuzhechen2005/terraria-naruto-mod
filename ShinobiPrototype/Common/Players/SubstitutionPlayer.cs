@@ -12,10 +12,11 @@ namespace ShinobiPrototype.Common.Players;
 
 // Substitution Jutsu as logs (specs/装备与忍术系统.spec.md; user, 2026-10-03: pressing a key just before a hit was no
 // use in a boss fight, where all attention goes to moving). An enemy's hit takes a log instead of the player, with
-// nothing to press: the player is swapped to one side, the log falls where they stood, and two seconds of stealth
-// follow (StealthPlayer). Logs come back with time, sooner for every hit landed. The key spends a log on purpose:
-// out of a bind (sand coffin, killing intent), or otherwise a blink in the direction held, into stealth. Sealed
-// chakra points (Neji) stop both. Kakashi's drill still trains a press just before a hit (its own free standby).
+// nothing to press: the player is swapped to one side and the log falls where they stood. A warned bind (the sand
+// coffin closing, the killing intent falling) takes a log the same way; caught without one, the player is caught.
+// Logs come back slowly, a little sooner for every hit landed. The key spends two logs on purpose for a blink in the
+// direction held, into five seconds of stealth (StealthPlayer). Sealed chakra points (Neji) stop both. Kakashi's
+// drill still trains a press just before a hit (its own free standby).
 public sealed class SubstitutionPlayer : ModPlayer
 {
     private int standby;
@@ -86,7 +87,7 @@ public sealed class SubstitutionPlayer : ModPlayer
 
     private void TryActivate()
     {
-        if (Player.dead || Player.CCed && !Player.GetModPlayer<JutsuStatusPlayer>().Bound)
+        if (Player.dead || Player.CCed)
             return;
         JutsuStatusPlayer status = Player.GetModPlayer<JutsuStatusPlayer>();
         if (status.SubstitutionSealed)
@@ -108,34 +109,27 @@ public sealed class SubstitutionPlayer : ModPlayer
         }
 
         ChakraPlayer chakra = Player.GetModPlayer<ChakraPlayer>();
-        // Bound by sand or frozen by killing intent: a log takes the player's place at once (no chakra needed).
-        int cost = status.Bound ? 0 : ChakraRules.SubstitutionCost;
+        int cost = ChakraRules.SubstitutionCost;
         switch (ChakraRules.CheckSubstitution(chakra.Chakra, Cooldown, cost, Logs))
         {
             case ChakraRules.Activation.CoolingDown:
                 return;
             case ChakraRules.Activation.NoLog:
-                CombatText.NewText(Player.getRect(), new Color(200, 170, 110), "没有木头了");
+                CombatText.NewText(Player.getRect(), new Color(200, 170, 110), $"木头不够（要 {ChakraRules.SubstitutionLogs} 根）");
                 return;
             case ChakraRules.Activation.NotEnoughChakra:
                 CombatText.NewText(Player.getRect(), new Color(120, 180, 255), "查克拉不足");
                 return;
         }
 
-        if (cost > 0)
-            chakra.TrySpend(cost);
-        Logs--;
+        chakra.TrySpend(cost);
+        Logs -= ChakraRules.SubstitutionLogs;
         Cooldown = ChakraRules.SubstitutionCooldownTicks;
         Mastered = true;
-        if (status.Bound)
-        {
-            status.Break();
-            Substitute(-Player.direction, ChakraRules.SubstitutionImmuneTicks);
-            return;
-        }
         // A blink the way the player is heading (or facing), into stealth.
         int heading = Player.controlLeft ? -1 : Player.controlRight ? 1 : Player.direction;
         Substitute(heading, ChakraRules.BlinkImmuneTicks);
+        Player.GetModPlayer<StealthPlayer>().Grant(ChakraRules.StealthTicks);
     }
 
     public override bool FreeDodge(Player.HurtInfo info)
@@ -157,6 +151,17 @@ public sealed class SubstitutionPlayer : ModPlayer
         Logs--;
         Substitute(away, ChakraRules.SubstitutionImmuneTicks);
         Hint();
+        return true;
+    }
+
+    // A warned bind falls on the player (Gaara's coffin closing, Orochimaru's killing intent): a log takes it like a hit.
+    // False if there is none, and the bind holds.
+    public bool TakeBind(int awayDirection)
+    {
+        if (!ChakraRules.AutoSubstitutes(Logs, Player.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed, true))
+            return false;
+        Logs--;
+        Substitute(awayDirection, ChakraRules.SubstitutionImmuneTicks);
         return true;
     }
 
@@ -206,7 +211,6 @@ public sealed class SubstitutionPlayer : ModPlayer
         }
 
         Player.SetImmuneTimeForAllTypes(immuneTicks);
-        Player.GetModPlayer<StealthPlayer>().Grant(ChakraRules.StealthTicks);
         SoundEngine.PlaySound(SoundID.DoubleJump, Player.Center);
         CombatText.NewText(Player.getRect(), new Color(200, 170, 110), "替身术！");
     }
@@ -243,8 +247,8 @@ public sealed class SubstitutionPlayer : ModPlayer
             return;
         HintsShown++;
         ticksSinceHint = 0;
-        Main.NewText($"提示：木头替你挡下了这一击（还剩 {Logs} 根，会慢慢恢复，打中敌人恢复更快）。" +
-            $"按【{ShinobiKeybinds.SubstitutionKeyName()}】可以主动替身：朝移动方向瞬移并潜伏，下一击必定暴击；被沙子裹住时也靠它挣脱。",
+        Main.NewText($"提示：木头替你挡下了这一击（还剩 {Logs} 根，会慢慢恢复，打中敌人恢复得快一点）。" +
+            $"按【{ShinobiKeybinds.SubstitutionKeyName()}】可以主动替身：用两根木头朝移动方向瞬移，潜伏 5 秒，下一击必定暴击。",
             255, 220, 120);
     }
 

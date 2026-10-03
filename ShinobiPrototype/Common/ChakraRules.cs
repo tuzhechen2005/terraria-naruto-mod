@@ -24,16 +24,19 @@ public static class ChakraRules
 
     // Substitution as logs (specs/装备与忍术系统.spec.md; user, 2026-10-03: pressing a key just before a hit was no use
     // in a boss fight, where all attention goes to moving). An enemy's hit takes a log instead of the player, with
-    // nothing to press; logs come back with time, sooner for every hit landed. The key spends a log on purpose: out of a
-    // bind (sand coffin, killing intent), or a blink into stealth.
+    // nothing to press; logs come back slowly, a little sooner for every hit landed. The key spends two logs on purpose
+    // for a blink into a long stealth (user, 2026-10-03: logs came back so fast they never ran out; stealth was too
+    // short). Binds (sand coffin, killing intent) are warned and dodged; a log takes them like a hit, and without one
+    // the player is caught.
     public const int StartingLogs = 2;
-    public const int LogRegenTicks = 600;
-    public const int LogRegenPerHitTicks = 30;
-    public const int SubstitutionCost = 15;          // chakra for a blink, on top of the log
+    public const int LogRegenTicks = 1200;
+    public const int LogRegenPerHitTicks = 6;
+    public const int SubstitutionLogs = 2;           // logs for a blink
+    public const int SubstitutionCost = 15;          // chakra for a blink, on top of the logs
     public const int SubstitutionCooldownTicks = 30; // only so a double press does not spend two logs
     public const int SubstitutionImmuneTicks = 60;
     public const int BlinkImmuneTicks = 30;
-    public const int StealthTicks = 120;
+    public const int StealthTicks = 300;
     public const float StealthDamageBonus = 0.3f;
     public const int SubstitutionMaxHints = 3;
     public const int SubstitutionHintSpacingTicks = 1800;
@@ -71,9 +74,10 @@ public static class ChakraRules
     public static int HitRegen(int restoredThisWindow) =>
         Math.Clamp(HitRegenPerSecondCap - restoredThisWindow, 0, HitRegenPerHit);
 
-    public static Activation CheckSubstitution(float chakra, int cooldown, int cost = SubstitutionCost, int logs = 1) =>
+    public static Activation CheckSubstitution(float chakra, int cooldown, int cost = SubstitutionCost,
+        int logs = SubstitutionLogs, int logsNeeded = SubstitutionLogs) =>
         cooldown > 0 ? Activation.CoolingDown :
-        logs <= 0 ? Activation.NoLog :
+        logs < logsNeeded ? Activation.NoLog :
         chakra < cost ? Activation.NotEnoughChakra :
         Activation.Ready;
 

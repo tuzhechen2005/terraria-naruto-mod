@@ -7,31 +7,23 @@ using Terraria.ModLoader;
 
 namespace ShinobiPrototype.Common.Players;
 
-// Stealth (specs/装备与忍术系统.spec.md): for a moment after a substitution the player is hard to see, and the next
-// hit lands as a stealth strike: always critical, harder, with a burst of smoke. Minions and sentries do not use it.
+// Stealth (specs/装备与忍术系统.spec.md): for five seconds after a blink (two logs) the player is hard to see, and the
+// next hit lands as a stealth strike: always critical, harder, with a burst of smoke. It is a buff (StealthBuff). Minions and sentries do not use it.
 // Ninja tools get their own stealth strikes later; this is the shared part every weapon gets.
 public sealed class StealthPlayer : ModPlayer
 {
-    public int Ticks { get; private set; }
+    private static int BuffType => ModContent.BuffType<Content.Buffs.StealthBuff>();
 
-    public bool Hidden => Ticks > 0;
+    public bool Hidden => Player.HasBuff(BuffType);
 
-    public void Grant(int ticks)
-    {
-        if (ticks > Ticks)
-            Ticks = ticks;
-    }
+    public void Grant(int ticks) => Player.AddBuff(BuffType, ticks);
 
     public override void PostUpdate()
     {
-        if (Ticks <= 0)
-            return;
-        Ticks--;
-        if (Main.netMode != NetmodeID.Server && Main.rand.NextBool(4))
+        if (Hidden && Main.netMode != NetmodeID.Server && Main.rand.NextBool(4))
             Dust.NewDustPerfect(Player.Center + Main.rand.NextVector2Circular(12f, 20f), DustID.Smoke,
                 new Vector2(0f, -0.6f), 150, default, 0.9f).noGravity = true;
     }
-
     private static bool Strikes(Projectile projectile) =>
         !projectile.minion && !projectile.sentry && !ProjectileID.Sets.MinionShot[projectile.type] &&
         !ProjectileID.Sets.SentryShot[projectile.type];
@@ -65,7 +57,7 @@ public sealed class StealthPlayer : ModPlayer
     {
         if (!Hidden)
             return;
-        Ticks = 0;
+        Player.ClearBuff(BuffType);
         if (Main.netMode == NetmodeID.Server)
             return;
         SoundEngine.PlaySound(SoundID.Item71 with { Pitch = 0.3f }, target.Center);
@@ -78,7 +70,6 @@ public sealed class StealthPlayer : ModPlayer
         for (int i = 0; i < 10; i++)
             Dust.NewDustPerfect(target.Center, DustID.GoldFlame, Main.rand.NextVector2Circular(4f, 4f), 0, default, 1.2f)
                 .noGravity = true;
-        CombatText.NewText(target.getRect(), new Color(255, 210, 120), "潜伏一击！", true);
     }
 
     // Hard to see while hidden.
@@ -100,6 +91,4 @@ public sealed class StealthPlayer : ModPlayer
         drawInfo.colorArmorBody *= a;
         drawInfo.colorArmorLegs *= a;
     }
-
-    public override void OnRespawn() => Ticks = 0;
 }

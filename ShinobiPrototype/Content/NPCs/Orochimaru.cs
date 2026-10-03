@@ -51,6 +51,9 @@ public sealed class Orochimaru : ExamBoss
     private int barrage;
     private float lastMove = -1f;
     private bool secondIntent;
+    // The killing intent is a stare (ExamBossRules): warned for a second, a red wedge where he is looking, then it falls.
+    private int stareTicks;
+    private float stareAim;
     private bool giantSnake;
     private bool? ready;
     private bool rematch;
@@ -202,6 +205,7 @@ public sealed class Orochimaru : ExamBoss
     protected override void Fight(Player target)
     {
         NPC.color = Tint;
+        UpdateStare();
         if (State != Recovery)
             lastTechnique = TechniqueOf(State);
         if (summonPose > 0)
@@ -522,14 +526,58 @@ public sealed class Orochimaru : ExamBoss
     }
 
     // Everyone near enough freezes (each client for its own player) until they substitute out.
+    // His eyes in the idle frame (canvas (119, 38), feet at (112, 132)), at his size.
+    private Vector2 Eyes => NPC.Bottom + new Vector2(NPC.direction * 7f, -94f) * SpriteScale;
+
+    // The killing intent starts: he stares at where the player is now (user, 2026-10-03: it used to freeze at once, with
+    // no way to avoid it).
     private void KillingIntent()
     {
+        if (stareTicks > 0)
+            return;
+        stareTicks = ExamBossRules.KillingIntentWarnTicks;
+        stareAim = (Main.player[NPC.target].Center - Eyes).ToRotation();
+        SoundEngine.PlaySound(SoundID.Item8 with { Pitch = -0.7f, Volume = 0.9f }, NPC.Center);
+    }
+
+    // It falls (each client for its own player): inside the wedge and in his sight, a log takes it, or the player freezes.
+    private void UpdateStare()
+    {
+        if (stareTicks <= 0 || --stareTicks > 0)
+            return;
         SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
         Player local = Main.LocalPlayer;
-        if (Main.netMode == NetmodeID.Server || !local.active || local.dead || Vector2.Distance(local.Center, NPC.Center) > 60 * 16)
+        if (Main.netMode == NetmodeID.Server || !local.active || local.dead)
+            return;
+        Vector2 d = local.Center - Eyes;
+        if (!ExamBossRules.InStare(d.X, d.Y, stareAim) || !Collision.CanHitLine(Eyes, 1, 1, local.position, local.width, local.height))
+            return;
+        if (local.GetModPlayer<SubstitutionPlayer>().TakeBind(local.Center.X >= NPC.Center.X ? 1 : -1))
             return;
         local.GetModPlayer<JutsuStatusPlayer>().Fear(ExamBossRules.KillingIntentTicks);
-        Main.NewText($"杀气……身体动不了！按【{ShinobiKeybinds.SubstitutionKeyName()}】用替身术挣脱！", 220, 90, 110);
+        Main.NewText("杀气……身体动不了！", 220, 90, 110);
+    }
+
+    // The stare's warning: his eyes burn red and a red wedge fans out where he is looking, brighter as it nears.
+    private void DrawStare(Vector2 screenPos)
+    {
+        if (stareTicks <= 0)
+            return;
+        float t = 1f - stareTicks / (float)ExamBossRules.KillingIntentWarnTicks;
+        bool blink = stareTicks < 15 && stareTicks / 3 % 2 == 0;
+        Microsoft.Xna.Framework.Graphics.Texture2D pixel = Terraria.GameContent.TextureAssets.MagicPixel.Value;
+        Vector2 from = Eyes - screenPos;
+        const int rays = 14;
+        for (int k = -rays; k <= rays; k++)
+        {
+            float angle = stareAim + ExamBossRules.KillingIntentHalfAngle * k / rays;
+            bool edge = System.Math.Abs(k) == rays;
+            Color c = new Color(230, 30, 50) * ((edge ? 0.55f : 0.12f) + (edge ? 0.35f : 0.1f) * t) * (blink ? 1.6f : 1f);
+            Main.EntitySpriteDraw(pixel, from, new Rectangle(0, 0, 1, 1), c, angle, new Vector2(0f, 0.5f),
+                new Vector2(ExamBossRules.KillingIntentRangePx, edge ? 2f : 3f), Microsoft.Xna.Framework.Graphics.SpriteEffects.None);
+        }
+        Main.EntitySpriteDraw(pixel, from - new Vector2(4f, 2f), new Rectangle(0, 0, 1, 1), new Color(255, 60, 60), 0f, Vector2.Zero,
+            new Vector2(8f, 3f), Microsoft.Xna.Framework.Graphics.SpriteEffects.None);
     }
 
     private void Leave()
@@ -556,6 +604,7 @@ public sealed class Orochimaru : ExamBoss
     public override void PostDraw(Microsoft.Xna.Framework.Graphics.SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
     {
         DrawTechniqueFx(drawColor);
+        DrawStare(screenPos);
         DrawNeck(spriteBatch, screenPos, drawColor);
     }
 

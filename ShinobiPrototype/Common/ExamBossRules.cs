@@ -132,7 +132,22 @@ public static class ExamBossRules
     // enough, or when the player falls (he spares them); a player not yet strong enough takes less and holds out less.
     public const int OrochimaruLife = 5000;
     public const int OrochimaruDefense = 12;
-    public const int KillingIntentTicks = 120;   // frozen by fear unless the player substitutes out
+    public const int KillingIntentTicks = 120;   // frozen by fear when caught without a log
+    // The killing intent is a stare (user, 2026-10-03: it could not be avoided): his eyes glow and a red wedge shows
+    // where he is looking for a second; whoever is still inside it, in his sight, when it falls is caught.
+    public const int KillingIntentWarnTicks = 60;
+    public const float KillingIntentRangePx = 640f;
+    public const float KillingIntentHalfAngle = 0.4f;   // about 23 degrees either side
+
+    // Whether a point (dx, dy from his eyes) is inside the stare aimed at `aim` radians.
+    public static bool InStare(float dx, float dy, float aim)
+    {
+        if (dx * dx + dy * dy > KillingIntentRangePx * KillingIntentRangePx)
+            return false;
+        float diff = MathF.Atan2(dy, dx) - aim;
+        diff = MathF.IEEERemainder(diff, MathF.PI * 2f);
+        return MathF.Abs(diff) <= KillingIntentHalfAngle;
+    }
     public const int SnakeHandDamage = 41;
     public const int SnakeHandReachPx = 560;
     public const int SnakeDashDamage = 46;

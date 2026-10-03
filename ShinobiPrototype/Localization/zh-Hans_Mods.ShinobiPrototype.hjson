@@ -399,6 +399,11 @@ Buffs: {
 		Description: 冰镜会为你作战
 	}
 
+	StealthBuff: {
+		DisplayName: 潜伏
+		Description: 下一击必定暴击，伤害 +30%
+	}
+
 	ChakraSickness: {
 		DisplayName: 兵粮丸冷却
 		Description: 暂时不能再服用兵粮丸

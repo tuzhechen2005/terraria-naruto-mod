@@ -38,7 +38,7 @@ public sealed class ChakraHud : ModSystem
         Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value,
             new Rectangle(x + 3, y + 25, (int)(160f * player.Chakra / player.MaxChakra), 12), new Color(45, 170, 235));
         DrawLogs(x + 2, y + 43);
-        int line = y + 67;
+        int line = y + 81;
         if (Main.LocalPlayer.GetModPlayer<DebugGodPlayer>().Enabled)
         {
             Utils.DrawBorderString(Main.spriteBatch, "M0 测试无敌", new Vector2(x + 2, line), Color.Gold, 0.75f);
@@ -55,7 +55,7 @@ public sealed class ChakraHud : ModSystem
     {
         SubstitutionPlayer logs = Main.LocalPlayer.GetModPlayer<SubstitutionPlayer>();
         Texture2D log = ModContent.Request<Texture2D>("ShinobiPrototype/Content/Projectiles/SubstitutionLog").Value;
-        const float scale = 0.6f;
+        const float scale = 1f;
         int w = (int)(log.Width * scale), h = (int)(log.Height * scale);
         bool sealedPoints = Main.LocalPlayer.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed;
         for (int i = 0; i < logs.MaxLogs; i++)

@@ -399,6 +399,11 @@ Buffs: {
 		Description: The ice mirror fights for you
 	}
 
+	StealthBuff: {
+		DisplayName: Stealth
+		Description: Your next hit is a critical strike with +30% damage
+	}
+
 	ChakraSickness: {
 		DisplayName: Pill Cooldown
 		Description: Cannot eat another soldier pill yet

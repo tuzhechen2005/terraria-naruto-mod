@@ -1,3 +1,4 @@
+using System;
 using ShinobiPrototype.Common;
 using static ShinobiPrototype.Common.ChuninExamRules;
 
@@ -181,6 +182,11 @@ Check(ExamBossRules.CoffinHoldTicks >= 60, "Caught in the coffin, there is time 
 Check(ExamBossRules.SealedChakra(1) == 20 && ExamBossRules.SealedChakra(5) == 60 && ExamBossRules.AddSeal(3) == 3,
     "Each chakra point seal takes 20 maximum chakra, three at most");
 Check(!ExamBossRules.SubstitutionSealed(2) && ExamBossRules.SubstitutionSealed(3), "Three seals stop substitution");
+Check(ExamBossRules.InStare(300f, 0f, 0f) && ExamBossRules.InStare(300f, 100f, 0f) && !ExamBossRules.InStare(300f, 200f, 0f) &&
+      !ExamBossRules.InStare(-300f, 0f, 0f) && !ExamBossRules.InStare(700f, 0f, 0f),
+    "The killing intent catches only those inside the red wedge: in front of him, within about 23 degrees and 40 tiles");
+Check(ExamBossRules.InStare(-300f, 10f, MathF.PI) && ExamBossRules.KillingIntentWarnTicks >= 60,
+    "The stare works facing left too, and is shown for a second before it falls");
 Check(ExamBossRules.GiantSnakeAt > ThresholdRetreatRules.DefaultThreshold, "The giant snake comes before he retreats at half life");
 Check(ExamBossRules.BreaksOnSubstitution(10, 0) && ExamBossRules.BreaksOnSubstitution(0, 10) && !ExamBossRules.BreaksOnSubstitution(0, 0),
     "Substitution breaks the sand coffin and the killing intent");
