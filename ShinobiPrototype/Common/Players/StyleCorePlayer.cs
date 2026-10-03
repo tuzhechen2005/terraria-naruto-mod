@@ -42,7 +42,7 @@ public sealed class StyleCorePlayer : ModPlayer
     public bool Byakugan { get; set; }
     private int rotationTicks;
 
-    public int SubstitutionWindowTicks => StyleCoreRules.SubstitutionWindowTicks(SharinganTier);
+    public int LogRegenTicks => StyleCoreRules.LogRegenTicks(SharinganTier);
 
     public override void ResetEffects()
     {

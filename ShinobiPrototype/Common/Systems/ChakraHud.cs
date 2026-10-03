@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
@@ -36,11 +37,8 @@ public sealed class ChakraHud : ModSystem
         Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(x, y + 22, 166, 18), Color.Black * 0.8f);
         Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value,
             new Rectangle(x + 3, y + 25, (int)(160f * player.Chakra / player.MaxChakra), 12), new Color(45, 170, 235));
-        int cooldown = Main.LocalPlayer.GetModPlayer<SubstitutionPlayer>().Cooldown;
-        Utils.DrawBorderString(Main.spriteBatch,
-            cooldown > 0 ? $"替身术 {cooldown / 60f:0.0}s" : $"替身术 [{ShinobiKeybinds.SubstitutionKeyName()}]",
-            new Vector2(x + 2, y + 43), cooldown > 0 ? Color.Gray : new Color(200, 170, 110), 0.75f);
-        int line = y + 63;
+        DrawLogs(x + 2, y + 43);
+        int line = y + 67;
         if (Main.LocalPlayer.GetModPlayer<DebugGodPlayer>().Enabled)
         {
             Utils.DrawBorderString(Main.spriteBatch, "M0 测试无敌", new Vector2(x + 2, line), Color.Gold, 0.75f);
@@ -49,6 +47,39 @@ public sealed class ChakraHud : ModSystem
         if (config.QuestTracker)
             DrawTracker(x + 2, line);
         return true;
+    }
+
+    // The substitution logs (specs/装备与忍术系统.spec.md): one log per charge, the missing ones dark, the next one
+    // filling up from the bottom as it comes back; the key after them.
+    private static void DrawLogs(int x, int y)
+    {
+        SubstitutionPlayer logs = Main.LocalPlayer.GetModPlayer<SubstitutionPlayer>();
+        Texture2D log = ModContent.Request<Texture2D>("ShinobiPrototype/Content/Projectiles/SubstitutionLog").Value;
+        const float scale = 0.6f;
+        int w = (int)(log.Width * scale), h = (int)(log.Height * scale);
+        bool sealedPoints = Main.LocalPlayer.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed;
+        for (int i = 0; i < logs.MaxLogs; i++)
+        {
+            Vector2 at = new(x + i * (w + 4), y);
+            if (i < logs.Logs)
+            {
+                Main.spriteBatch.Draw(log, at, null, sealedPoints ? new Color(120, 140, 200) : Color.White, 0f, Vector2.Zero, scale,
+                    SpriteEffects.None, 0f);
+                continue;
+            }
+            Main.spriteBatch.Draw(log, at, null, Color.Black * 0.6f, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            if (i == logs.Logs)
+            {
+                // The part already back, from the bottom up.
+                int shown = (int)(log.Height * logs.NextLog);
+                if (shown > 0)
+                    Main.spriteBatch.Draw(log, at + new Vector2(0f, (log.Height - shown) * scale),
+                        new Rectangle(0, log.Height - shown, log.Width, shown), Color.White * 0.55f, 0f, Vector2.Zero, scale,
+                        SpriteEffects.None, 0f);
+            }
+        }
+        Utils.DrawBorderString(Main.spriteBatch, sealedPoints ? "替身术被封" : $"替身 [{ShinobiKeybinds.SubstitutionKeyName()}]",
+            new Vector2(x + logs.MaxLogs * (w + 4) + 4, y + h / 2f - 8f), sealedPoints ? new Color(150, 170, 230) : new Color(200, 170, 110), 0.75f);
     }
 
     private static void DrawTracker(int x, int y)

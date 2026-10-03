@@ -2,7 +2,7 @@ using System;
 
 namespace ShinobiPrototype.Common;
 
-// Chakra and Substitution Jutsu numbers (M1 spec). Kept free of Terraria types so the rule tests can run them.
+// Chakra and Substitution Jutsu numbers (M1 spec; substitution reworked into logs 2026-10-03). Kept free of Terraria types so the rule tests can run them.
 public static class ChakraRules
 {
     public const int BaseMaxChakra = 100;
@@ -22,12 +22,23 @@ public static class ChakraRules
     public const int PillRestore = 40;
     public const int PillSicknessTicks = 600;
 
-    public const int SubstitutionCost = 20;
-    public const int SubstitutionWindowTicks = 24;
-    public const int SubstitutionCooldownTicks = 240;
+    // Substitution as logs (specs/装备与忍术系统.spec.md; user, 2026-10-03: pressing a key just before a hit was no use
+    // in a boss fight, where all attention goes to moving). An enemy's hit takes a log instead of the player, with
+    // nothing to press; logs come back with time, sooner for every hit landed. The key spends a log on purpose: out of a
+    // bind (sand coffin, killing intent), or a blink into stealth.
+    public const int StartingLogs = 2;
+    public const int LogRegenTicks = 600;
+    public const int LogRegenPerHitTicks = 30;
+    public const int SubstitutionCost = 15;          // chakra for a blink, on top of the log
+    public const int SubstitutionCooldownTicks = 30; // only so a double press does not spend two logs
     public const int SubstitutionImmuneTicks = 60;
+    public const int BlinkImmuneTicks = 30;
+    public const int StealthTicks = 120;
+    public const float StealthDamageBonus = 0.3f;
     public const int SubstitutionMaxHints = 3;
     public const int SubstitutionHintSpacingTicks = 1800;
+    // Kakashi's drill still trains a press just before the hit: this long a standby after the press.
+    public const int SubstitutionWindowTicks = 24;
 
     // Kakashi's drill: he throws kunai at the player one at a time, after an unpredictable aim. During the drill the
     // jutsu is free and recovers quickly, and he never throws while it is cooling down, so only timing is practised.
@@ -43,7 +54,7 @@ public static class ChakraRules
     public const int PracticeEarlyWindowTicks = 90;
     public const int PracticeLeashTiles = 50;
 
-    public enum Activation { Ready, CoolingDown, NotEnoughChakra }
+    public enum Activation { Ready, CoolingDown, NoLog, NotEnoughChakra }
 
     public enum PracticeOutcome { Substituted, TooEarly, TooLate, Evaded }
 
@@ -60,10 +71,23 @@ public static class ChakraRules
     public static int HitRegen(int restoredThisWindow) =>
         Math.Clamp(HitRegenPerSecondCap - restoredThisWindow, 0, HitRegenPerHit);
 
-    public static Activation CheckSubstitution(float chakra, int cooldown, int cost = SubstitutionCost) =>
+    public static Activation CheckSubstitution(float chakra, int cooldown, int cost = SubstitutionCost, int logs = 1) =>
         cooldown > 0 ? Activation.CoolingDown :
+        logs <= 0 ? Activation.NoLog :
         chakra < cost ? Activation.NotEnoughChakra :
         Activation.Ready;
+
+    // Whether a hit is taken by a log: an enemy's hit, a log left, and no sealed chakra points.
+    public static bool AutoSubstitutes(int logs, bool sealedPoints, bool fromEnemy) => logs > 0 && !sealedPoints && fromEnemy;
+
+    // One tick of log recovery (plus any ticks earned by hits): progress builds to the next log; at the cap it waits.
+    public static (int Logs, int Progress) TickLogs(int logs, int maxLogs, int progress, int regenTicks, int bonusTicks = 0)
+    {
+        if (logs >= maxLogs)
+            return (maxLogs, 0);
+        progress += 1 + Math.Max(0, bonusTicks);
+        return progress >= regenTicks ? (logs + 1, 0) : (logs, progress);
+    }
 
     public static int SubstitutionCostFor(bool practising) => practising ? 0 : SubstitutionCost;
 
@@ -92,9 +116,9 @@ public static class ChakraRules
         substituted * 2 >= total ? "还行。再练几次，身体自己就会记住时机。" :
         "看苦无，不要看我。再来一次吧。";
 
-    public static bool ShouldShowHint(bool mastered, int hintsShown, int ticksSinceLastHint, float chakra, int cooldown) =>
-        !mastered && hintsShown < SubstitutionMaxHints && ticksSinceLastHint >= SubstitutionHintSpacingTicks &&
-        CheckSubstitution(chakra, cooldown) == Activation.Ready;
+    // After a log takes a hit, a few times, until the player has used the key themselves.
+    public static bool ShouldShowHint(bool mastered, int hintsShown, int ticksSinceLastHint) =>
+        !mastered && hintsShown < SubstitutionMaxHints && ticksSinceLastHint >= SubstitutionHintSpacingTicks;
 
     // Landing offsets in tiles, best first: away from the attacker, then toward it; each distance tries
     // level ground, then stepping up, then down. The caller rejects spots that are solid, lava or out of sight.

@@ -10,16 +10,29 @@ using ShinobiPrototype.Content.Projectiles;
 
 namespace ShinobiPrototype.Common.Players;
 
-// Substitution Jutsu: press the key just before a hit to trade places with a log.
+// Substitution Jutsu as logs (specs/装备与忍术系统.spec.md; user, 2026-10-03: pressing a key just before a hit was no
+// use in a boss fight, where all attention goes to moving). An enemy's hit takes a log instead of the player, with
+// nothing to press: the player is swapped to one side, the log falls where they stood, and two seconds of stealth
+// follow (StealthPlayer). Logs come back with time, sooner for every hit landed. The key spends a log on purpose:
+// out of a bind (sand coffin, killing intent), or otherwise a blink in the direction held, into stealth. Sealed
+// chakra points (Neji) stop both. Kakashi's drill still trains a press just before a hit (its own free standby).
 public sealed class SubstitutionPlayer : ModPlayer
 {
     private int standby;
     private int ticksSinceHint;
     private int ticksSinceActivation;
+    private int logProgress;
+    private int hitBonusTicks;
 
     public int Cooldown { get; private set; }
     public bool Mastered { get; private set; }
     public int HintsShown { get; private set; }
+    public int Logs { get; private set; }
+    // Extra logs from equipment, reset every tick (accessories and armour add to it in UpdateEquip).
+    public int ExtraLogs { get; set; }
+    public int MaxLogs => ChakraRules.StartingLogs + ExtraLogs;
+    // How far the next log has come back, 0 to 1 (the HUD).
+    public float NextLog => Logs >= MaxLogs ? 1f : logProgress / (float)Player.GetModPlayer<StyleCorePlayer>().LogRegenTicks;
 
     public override void Initialize()
     {
@@ -27,8 +40,18 @@ public sealed class SubstitutionPlayer : ModPlayer
         Cooldown = 0;
         Mastered = false;
         HintsShown = 0;
+        Logs = ChakraRules.StartingLogs;
+        logProgress = 0;
         ticksSinceHint = ChakraRules.SubstitutionHintSpacingTicks;
         ticksSinceActivation = ChakraRules.PracticeEarlyWindowTicks + 1;
+    }
+
+    public override void ResetEffects() => ExtraLogs = 0;
+
+    public override void OnRespawn()
+    {
+        Logs = MaxLogs;
+        logProgress = 0;
     }
 
     public override void ProcessTriggers(TriggersSet triggersSet)
@@ -47,11 +70,23 @@ public sealed class SubstitutionPlayer : ModPlayer
             ticksSinceHint++;
         if (ticksSinceActivation <= ChakraRules.PracticeEarlyWindowTicks)
             ticksSinceActivation++;
+        if (Logs > MaxLogs)
+            Logs = MaxLogs;
+        (Logs, logProgress) = ChakraRules.TickLogs(Logs, MaxLogs, logProgress,
+            Player.GetModPlayer<StyleCorePlayer>().LogRegenTicks, hitBonusTicks);
+        hitBonusTicks = 0;
+    }
+
+    // Every hit landed brings the next log a little sooner.
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+    {
+        if (!target.friendly && target.lifeMax > 5)
+            hitBonusTicks = ChakraRules.LogRegenPerHitTicks;
     }
 
     private void TryActivate()
     {
-        if (Player.dead || Player.CCed)
+        if (Player.dead || Player.CCed && !Player.GetModPlayer<JutsuStatusPlayer>().Bound)
             return;
         JutsuStatusPlayer status = Player.GetModPlayer<JutsuStatusPlayer>();
         if (status.SubstitutionSealed)
@@ -60,13 +95,27 @@ public sealed class SubstitutionPlayer : ModPlayer
             return;
         }
 
+        // Kakashi's drill: a free standby, as before, to train the timing.
+        if (Player.GetModPlayer<SubstitutionDrillPlayer>().Active)
+        {
+            if (Cooldown > 0)
+                return;
+            standby = ChakraRules.SubstitutionWindowTicks;
+            Cooldown = ChakraRules.SubstitutionCooldownFor(true);
+            ticksSinceActivation = 0;
+            SoundEngine.PlaySound(SoundID.Item7, Player.Center);
+            return;
+        }
+
         ChakraPlayer chakra = Player.GetModPlayer<ChakraPlayer>();
-        bool drilling = Player.GetModPlayer<SubstitutionDrillPlayer>().Active;
-        int cost = ChakraRules.SubstitutionCostFor(drilling);
-        switch (ChakraRules.CheckSubstitution(chakra.Chakra, Cooldown, cost))
+        // Bound by sand or frozen by killing intent: a log takes the player's place at once (no chakra needed).
+        int cost = status.Bound ? 0 : ChakraRules.SubstitutionCost;
+        switch (ChakraRules.CheckSubstitution(chakra.Chakra, Cooldown, cost, Logs))
         {
             case ChakraRules.Activation.CoolingDown:
-                CombatText.NewText(Player.getRect(), Color.LightGray, $"替身术冷却中 {Cooldown / 60f:0.0}s");
+                return;
+            case ChakraRules.Activation.NoLog:
+                CombatText.NewText(Player.getRect(), new Color(200, 170, 110), "没有木头了");
                 return;
             case ChakraRules.Activation.NotEnoughChakra:
                 CombatText.NewText(Player.getRect(), new Color(120, 180, 255), "查克拉不足");
@@ -75,37 +124,39 @@ public sealed class SubstitutionPlayer : ModPlayer
 
         if (cost > 0)
             chakra.TrySpend(cost);
-        // The Sharingan widens the window (StyleCorePlayer).
-        standby = Player.GetModPlayer<StyleCorePlayer>().SubstitutionWindowTicks;
-        Cooldown = ChakraRules.SubstitutionCooldownFor(drilling);
-        ticksSinceActivation = 0;
-        SoundEngine.PlaySound(SoundID.Item7, Player.Center);
-        for (int i = 0; i < 6; i++)
-            Dust.NewDust(Player.position, Player.width, Player.height, DustID.Smoke, 0f, -1f, 120, default, 0.9f);
-        // Bound by sand or frozen by killing intent: the log takes the player's place at once.
+        Logs--;
+        Cooldown = ChakraRules.SubstitutionCooldownTicks;
+        Mastered = true;
         if (status.Bound)
         {
             status.Break();
-            Substitute(-Player.direction);
+            Substitute(-Player.direction, ChakraRules.SubstitutionImmuneTicks);
+            return;
         }
+        // A blink the way the player is heading (or facing), into stealth.
+        int heading = Player.controlLeft ? -1 : Player.controlRight ? 1 : Player.direction;
+        Substitute(heading, ChakraRules.BlinkImmuneTicks);
     }
 
     public override bool FreeDodge(Player.HurtInfo info)
     {
         if (Player.whoAmI != Main.myPlayer)
             return false;
-        // Sharingan foresight: the first hit while it lasts is substituted for free.
+        int away = info.HitDirection != 0 ? info.HitDirection : -Player.direction;
+        // Sharingan foresight: the first hit while it lasts is substituted without spending a log.
         StyleCorePlayer styles = Player.GetModPlayer<StyleCorePlayer>();
         if (styles.ForesightTicks > 0)
         {
             styles.ForesightTook(AttackerOf(info));
-            Substitute(info.HitDirection != 0 ? info.HitDirection : -Player.direction);
+            Substitute(away, ChakraRules.SubstitutionImmuneTicks);
             return true;
         }
-        if (standby <= 0)
+        bool fromEnemy = info.DamageSource.SourceNPCIndex >= 0 || info.DamageSource.SourceProjectileType > 0;
+        if (!ChakraRules.AutoSubstitutes(Logs, Player.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed, fromEnemy))
             return false;
-
-        Substitute(info.HitDirection != 0 ? info.HitDirection : -Player.direction);
+        Logs--;
+        Substitute(away, ChakraRules.SubstitutionImmuneTicks);
+        Hint();
         return true;
     }
 
@@ -130,21 +181,20 @@ public sealed class SubstitutionPlayer : ModPlayer
     {
         ChakraRules.PracticeOutcome outcome = ChakraRules.JudgePracticeHit(standby > 0, ticksSinceActivation);
         if (outcome == ChakraRules.PracticeOutcome.Substituted)
-            Substitute(awayDirection);
+            Substitute(awayDirection, ChakraRules.SubstitutionImmuneTicks);
         return outcome;
     }
 
-    private void Substitute(int awayDirection)
+    private void Substitute(int direction, int immuneTicks)
     {
         standby = 0;
-        Mastered = true;
 
         // The log is 32 px tall; centre it so it stands where the player's feet were.
         Projectile.NewProjectile(Player.GetSource_Misc("Substitution"), Player.Bottom - new Vector2(0f, 16f), Vector2.Zero,
             ModContent.ProjectileType<SubstitutionLog>(), 0, 0f, Player.whoAmI);
         Puff(Player.Center);
 
-        if (FindLanding(awayDirection, out Vector2 landing))
+        if (FindLanding(direction, out Vector2 landing))
         {
             Player.RemoveAllGrapplingHooks();
             Player.position = landing;
@@ -155,7 +205,8 @@ public sealed class SubstitutionPlayer : ModPlayer
                 NetMessage.SendData(MessageID.PlayerControls, number: Player.whoAmI);
         }
 
-        Player.SetImmuneTimeForAllTypes(ChakraRules.SubstitutionImmuneTicks);
+        Player.SetImmuneTimeForAllTypes(immuneTicks);
+        Player.GetModPlayer<StealthPlayer>().Grant(ChakraRules.StealthTicks);
         SoundEngine.PlaySound(SoundID.DoubleJump, Player.Center);
         CombatText.NewText(Player.getRect(), new Color(200, 170, 110), "替身术！");
     }
@@ -185,19 +236,15 @@ public sealed class SubstitutionPlayer : ModPlayer
                 Main.rand.NextVector2Circular(2f, 2f), 100, default, 1.4f);
     }
 
-    public override void OnHurt(Player.HurtInfo info)
+    // The first few logs taken explain the key, until the player has used it.
+    private void Hint()
     {
-        if (Player.whoAmI != Main.myPlayer)
+        if (!ShinobiClientConfig.Instance.ShowSubstitutionHints || !ChakraRules.ShouldShowHint(Mastered, HintsShown, ticksSinceHint))
             return;
-
-        bool fromEnemy = info.DamageSource.SourceNPCIndex >= 0 || info.DamageSource.SourceProjectileType > 0;
-        if (!fromEnemy || !ShinobiClientConfig.Instance.ShowSubstitutionHints || !ChakraRules.ShouldShowHint(Mastered, HintsShown, ticksSinceHint,
-                Player.GetModPlayer<ChakraPlayer>().Chakra, Cooldown))
-            return;
-
         HintsShown++;
         ticksSinceHint = 0;
-        Main.NewText($"提示：按【{ShinobiKeybinds.SubstitutionKeyName()}】施展替身术——在受击前一刻使用，可完全闪避这次伤害。",
+        Main.NewText($"提示：木头替你挡下了这一击（还剩 {Logs} 根，会慢慢恢复，打中敌人恢复更快）。" +
+            $"按【{ShinobiKeybinds.SubstitutionKeyName()}】可以主动替身：朝移动方向瞬移并潜伏，下一击必定暴击；被沙子裹住时也靠它挣脱。",
             255, 220, 120);
     }
 

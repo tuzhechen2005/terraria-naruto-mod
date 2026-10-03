@@ -22,13 +22,14 @@ public static class StyleCoreRules
     public static bool Includes(StyleSchool school, int tier, StyleSchool askedSchool, int askedTier) =>
         school == askedSchool && tier >= askedTier;
 
-    // --- Sharingan: one tomoe dodges, two see, three counter.
-    public static int SubstitutionWindowTicks(int sharinganTier) => sharinganTier switch
+    // --- Sharingan: one tomoe dodges, two see, three counter. Each tomoe brings logs back sooner (it used to widen the
+    // substitution window, which the logs made moot, 2026-10-03).
+    public static int LogRegenTicks(int sharinganTier) => sharinganTier switch
     {
-        <= 0 => ChakraRules.SubstitutionWindowTicks,   // 0.4 s
-        1 => 36,                                       // 0.6 s
-        2 => 42,                                       // 0.7 s
-        _ => 48,                                       // 0.8 s
+        <= 0 => ChakraRules.LogRegenTicks,   // 10 s
+        1 => 480,                           // 8 s
+        2 => 420,                           // 7 s
+        _ => 360,                           // 6 s
     };
 
     public const int ForesightCost = 30;

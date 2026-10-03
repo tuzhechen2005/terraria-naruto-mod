@@ -254,15 +254,17 @@ internal sealed class HandbookState : UIState
     private static string JutsuText()
     {
         SubstitutionPlayer substitution = Main.LocalPlayer.GetModPlayer<SubstitutionPlayer>();
-        string status = substitution.Cooldown > 0 ? $"冷却 {substitution.Cooldown / 60f:0.0} 秒" : "就绪";
+        float regen = Main.LocalPlayer.GetModPlayer<StyleCorePlayer>().LogRegenTicks / 60f;
         return "替身术（基础忍术，所有职业可用）\n" +
-               $"· 按键：【{ShinobiKeybinds.SubstitutionKeyName()}】（可在“设置 → 控制”中修改）\n" +
-               $"· 消耗 {ChakraRules.SubstitutionCost} 查克拉；按下后 {Main.LocalPlayer.GetModPlayer<StyleCorePlayer>().SubstitutionWindowTicks / 60f:0.0} 秒内受到的攻击会被完全闪避\n" +
-               "· 成功时原地留下一截木头，你出现在附近的安全位置，并短暂无敌\n" +
-               $"· 无论成功与否，冷却 {ChakraRules.SubstitutionCooldownTicks / 60} 秒\n" +
-               "· 诀窍：看准敌人出手的瞬间再按；按早了会白白浪费查克拉\n" +
-               "· 想练习，可以找卡卡西点“练习替身术”\n\n" +
-               $"状态：{(substitution.Mastered ? "已掌握" : "尚未成功施展过")}　当前：{status}";
+               $"· 你身上备着几根替身木头（查克拉条下方的木头图标，开局 {ChakraRules.StartingLogs} 根）\n" +
+               "· 被敌人打中时自动用掉一根：你换到旁边，原地落下木头，这一击无效；不需要按键\n" +
+               $"· 木头每 {regen:0} 秒恢复一根，每打中敌人一次恢复得更快\n" +
+               "· 替身之后会潜伏 2 秒：下一击必定暴击，伤害更高\n" +
+               $"· 按【{ShinobiKeybinds.SubstitutionKeyName()}】主动替身：用一根木头和 {ChakraRules.SubstitutionCost} 查克拉，朝移动方向瞬移并潜伏\n" +
+               "· 被沙子裹住、被杀气震住时，按这个键用一根木头挣脱\n" +
+               "· 点穴满三层时，木头也会被封住\n" +
+               "· 想练习按键时机，可以找卡卡西点“练习替身术”\n\n" +
+               $"当前：木头 {substitution.Logs}/{substitution.MaxLogs}";
     }
 
     private static IEnumerable<HandbookIconGrid.Entry> RewardIcons()

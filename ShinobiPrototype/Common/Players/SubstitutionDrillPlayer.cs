@@ -38,7 +38,7 @@ public sealed class SubstitutionDrillPlayer : ModPlayer
         Mentor.DrillTarget = Player.whoAmI;
         Main.NewText($"卡卡西：我会朝你扔 {ChakraRules.PracticeThrows} 支苦无，瞄准的时间每次都不一样。" +
                      $"站到离我 {ChakraRules.PracticeMinRangeTiles}–{ChakraRules.PracticeMaxRangeTiles} 格的地方，" +
-                     "盯住苦无，在它快到身上时按替身术。练习期间替身术不耗查克拉、冷却很短；冷却没好我不会出手。",
+                     "盯住苦无，在它快到身上时按替身键。练习用的苦无不会让木头自己替你挨，全看你的时机；练习期间不耗木头和查克拉。",
             255, 220, 120);
     }
 

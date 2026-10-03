@@ -81,7 +81,7 @@ Items: {
 
 	SharinganCore1: {
 		DisplayName: Sharingan in a Vial (One Tomoe)
-		Tooltip: Style core: Sharingan (tier one, one tomoe)\nSubstitution window lengthened to 0.6 s\nStyle technique [Foresight]: 30 chakra, 20 s cooldown. The first hit within 4 s is substituted automatically; then +15% damage for 3 s\nKunai and senbon always crit the enemy seen through\nOnly one style core can be worn
+		Tooltip: Style core: Sharingan (tier one, one tomoe)\nSubstitution logs come back sooner (one every 8 s)\nStyle technique [Foresight]: 30 chakra, 20 s cooldown. The first hit within 4 s is substituted automatically; then +15% damage for 3 s\nKunai and senbon always crit the enemy seen through\nOnly one style core can be worn
 	}
 
 	EightGatesCore: {
@@ -345,6 +345,8 @@ Projectiles: {
 	SnakeBullet.DisplayName: Snake Bullet
 	VenomGlob.DisplayName: Venom Glob
 	VenomPool.DisplayName: Venom Pool
+	Quicksand.DisplayName: Quicksand
+	SandPellet.DisplayName: Sand Pellet
 }
 
 Dialogue: {
@@ -441,7 +443,7 @@ Configs: {
 
 		ShowSubstitutionHints: {
 			Label: Show Substitution Jutsu hints
-			Tooltip: When an enemy hits you, explain how to use Substitution (up to 3 times, none after the first success)
+			Tooltip: When a substitution log takes a hit for you, explain the substitution key (up to 3 times, none once you have used it)
 		}
 	}
 }

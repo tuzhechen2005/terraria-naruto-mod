@@ -21,17 +21,24 @@ for (int hit = 0; hit < 10; hit++)
 Check(restored == HitRegenPerSecondCap, "Any number of hits in one second restores at most 5");
 Check(HitRegen(0) == HitRegenPerHit && HitRegen(4) == 1, "A single hit restores 2, trimmed at the cap");
 
-Check(CheckSubstitution(SubstitutionCost, 0) == Activation.Ready, "Substitution ready with 20 chakra");
-Check(CheckSubstitution(SubstitutionCost - 1, 0) == Activation.NotEnoughChakra, "Substitution needs 20 chakra");
-Check(CheckSubstitution(100, 1) == Activation.CoolingDown, "Substitution blocked while cooling down");
-Check(SubstitutionWindowTicks == 24 && SubstitutionCooldownTicks == 240, "0.4 s standby, 4 s cooldown");
-Check(SubstitutionCooldownTicks > SubstitutionWindowTicks, "Cooldown outlasts the standby window");
+Check(CheckSubstitution(SubstitutionCost, 0) == Activation.Ready, "A blink is ready with 15 chakra and a log");
+Check(CheckSubstitution(SubstitutionCost - 1, 0) == Activation.NotEnoughChakra, "A blink needs 15 chakra");
+Check(CheckSubstitution(100, 0, SubstitutionCost, 0) == Activation.NoLog, "A blink needs a log");
+Check(CheckSubstitution(100, 1) == Activation.CoolingDown, "No second blink on the same press");
+Check(SubstitutionCooldownTicks <= 30, "The key is never kept waiting: logs, not a cooldown, set the pace");
 
-Check(ShouldShowHint(false, 0, SubstitutionHintSpacingTicks, 100, 0), "First hit shows the hint");
-Check(!ShouldShowHint(true, 0, SubstitutionHintSpacingTicks, 100, 0), "No hint once the jutsu has succeeded");
-Check(!ShouldShowHint(false, SubstitutionMaxHints, SubstitutionHintSpacingTicks, 100, 0), "At most three hints");
-Check(!ShouldShowHint(false, 1, SubstitutionHintSpacingTicks - 1, 100, 0), "Hints are spaced apart");
-Check(!ShouldShowHint(false, 0, SubstitutionHintSpacingTicks, 5, 0), "No hint when the jutsu could not be used");
+Check(StartingLogs == 2 && LogRegenTicks == 600 && LogRegenPerHitTicks == 30, "Two logs to start, one back every 10 s, half a second sooner per hit");
+Check(AutoSubstitutes(1, false, true) && !AutoSubstitutes(0, false, true) && !AutoSubstitutes(2, true, true) && !AutoSubstitutes(2, false, false),
+    "A log takes an enemy's hit by itself, unless none is left or the chakra points are sealed; falls and lava are not dodged");
+Check(TickLogs(0, 2, LogRegenTicks - 1, LogRegenTicks) == (1, 0), "A log comes back after 10 s");
+Check(TickLogs(1, 2, 0, LogRegenTicks, LogRegenPerHitTicks) == (1, 1 + LogRegenPerHitTicks), "Landing a hit brings the next log sooner");
+Check(TickLogs(2, 2, 300, LogRegenTicks) == (2, 0), "At the cap nothing builds up");
+Check(StealthTicks == 120 && StealthDamageBonus > 0f, "Two seconds of stealth after a substitution, the next hit stronger");
+
+Check(ShouldShowHint(false, 0, SubstitutionHintSpacingTicks), "The first log taken explains the key");
+Check(!ShouldShowHint(true, 0, SubstitutionHintSpacingTicks), "No hint once the player has used the key");
+Check(!ShouldShowHint(false, SubstitutionMaxHints, SubstitutionHintSpacingTicks), "At most three hints");
+Check(!ShouldShowHint(false, 1, SubstitutionHintSpacingTicks - 1), "Hints are spaced apart");
 
 var offsets = LandingOffsets(1);
 Check(offsets[0] == (8, 0), "Landing tries level ground away from the attacker first");
@@ -40,7 +47,6 @@ Check(offsets.Take(offsets.Length / 2).All(o => o.X > 0) && offsets.Skip(offsets
 Check(LandingOffsets(-1)[0] == (-8, 0), "Direction flips with the hit");
 
 Check(SubstitutionCostFor(true) == 0 && SubstitutionCostFor(false) == SubstitutionCost, "Drill substitutions are free");
-Check(SubstitutionCooldownFor(true) < SubstitutionCooldownFor(false), "Drill cooldown is shorter");
 Check(SubstitutionCooldownFor(true) < PracticeGapMinTicks, "Jutsu is ready again before the next drill kunai");
 Check(CheckSubstitution(0, 0, SubstitutionCostFor(true)) == Activation.Ready, "Drill works with empty chakra");
 Check(PracticeWindupMinTicks < PracticeWindupMaxTicks && PracticeGapMinTicks < PracticeGapMaxTicks,
