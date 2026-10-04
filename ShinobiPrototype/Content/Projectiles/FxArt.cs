@@ -1,7 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
-using Terraria.ModLoader;
+using ShinobiPrototype.Common.Systems;
 
 namespace ShinobiPrototype.Content.Projectiles;
 
@@ -10,17 +10,14 @@ namespace ShinobiPrototype.Content.Projectiles;
 // stays in place, so every caller checks Has first.
 public static class FxArt
 {
-    private const string Root = "ShinobiPrototype/Content/Projectiles/";
+    public static bool Has(string name) => ClientVisualAssets.Has(ClientVisualAssets.Projectiles, name);
 
-    public static bool Has(string name) => ModContent.HasAsset(Root + name);
-
-    public static Texture2D Get(string name) => ModContent.Request<Texture2D>(Root + name).Value;
+    public static Texture2D Get(string name) => ClientVisualAssets.Get(ClientVisualAssets.Projectiles, name);
 
     // Frame i of an animation (wrapping), or null if the animation is not there.
     public static Texture2D Frame(string name, int i, int frames)
     {
-        string path = $"{name}_{((i % frames) + frames) % frames}";
-        return Has(path) ? Get(path) : null;
+        return ClientVisualAssets.Frame(ClientVisualAssets.Projectiles, name, i, frames);
     }
 
     // Drawn centred, at whole pixels; facing left mirrors art drawn facing right.

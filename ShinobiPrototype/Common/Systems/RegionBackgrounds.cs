@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -40,12 +39,7 @@ public static class RegionBackgrounds
 
 public abstract class RegionBackground : ModSurfaceBackgroundStyle
 {
-    // Ground rows of the close layers, read from the textures once (BackgroundLayoutRules.GroundRow).
-    private static readonly Dictionary<int, int> groundRows = new();
-
     protected abstract string Region { get; }
-
-    public override void Unload() => groundRows.Clear();
 
     private int Layer(string layer)
     {
@@ -62,28 +56,15 @@ public abstract class RegionBackground : ModSurfaceBackgroundStyle
         if (Main.backgroundWidth[slot] > 0 && Main.backgroundHeight[slot] > 0)
             return true;
         Asset<Texture2D> texture = TextureAssets.Background[slot];
-        // Drawing runs on the main thread, where a texture that never finished loading can be loaded on the spot.
+        // Never force a synchronous texture load from the drawing pass; skip this layer until its request is ready.
         if (!texture.IsLoaded)
-            texture = ModContent.Request<Texture2D>($"ShinobiPrototype/Backgrounds/{Region}{layer}", AssetRequestMode.ImmediateLoad);
+            texture = ModContent.Request<Texture2D>($"ShinobiPrototype/Backgrounds/{Region}{layer}", AssetRequestMode.AsyncLoad);
         if (!texture.IsLoaded)
             return false;
         Main.backgroundWidth[slot] = texture.Width();
         Main.backgroundHeight[slot] = texture.Height();
         Mod.Logger.Info($"Background {Region}{layer} was registered as 0 x 0; size taken from the loaded texture.");
         return true;
-    }
-
-    private static int GroundRow(int slot)
-    {
-        if (!groundRows.TryGetValue(slot, out int row))
-        {
-            Texture2D texture = TextureAssets.Background[slot].Value;
-            Color[] pixels = new Color[texture.Width * texture.Height];
-            texture.GetData(pixels);
-            byte[] alpha = System.Array.ConvertAll(pixels, pixel => pixel.A);
-            groundRows[slot] = row = BackgroundLayoutRules.GroundRow(alpha, texture.Width, texture.Height);
-        }
-        return row;
     }
 
     // Fade this style in and every other one out, as vanilla does between biomes.
@@ -102,7 +83,7 @@ public abstract class RegionBackground : ModSurfaceBackgroundStyle
     {
         int slot = Layer("Close");
         if (slot >= 0)
-            b += BackgroundLayoutRules.CloseOffset(Main.screenHeight, Main.worldSurface, GroundRow(slot));
+            b += BackgroundLayoutRules.CloseOffset(Main.screenHeight, Main.worldSurface, BackgroundLayoutData.Close(Region).GroundRow);
         return slot;
     }
 }
