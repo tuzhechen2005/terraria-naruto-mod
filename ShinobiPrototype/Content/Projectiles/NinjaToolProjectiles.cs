@@ -51,7 +51,8 @@ public sealed class ShurikenThrown : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
-        if (FxArt.Frame("ShurikenThrown", (int)(Main.GameUpdateCount / 3), 2) is { } art)
+        // One frame, turned by the code (the second drawn frame was only a few scattered pixels).
+        if (FxArt.Has("ShurikenThrown_0") && FxArt.Get("ShurikenThrown_0") is { } art)
         {
             FxArt.Draw(art, Projectile.Center, lightColor, Projectile.rotation, 1f);
             return false;
