@@ -22,7 +22,7 @@ public sealed class WaveRewardPlayer : ModPlayer
         var source = Player.GetSource_Misc("WaveFirstWin");
         Player.QuickSpawnItem(source, ModContent.ItemType<ChakraCrystal>());
         Player.QuickSpawnItem(source, ModContent.ItemType<WaveCountryMedal>());
-        Main.NewText("首次击败再不斩与白：获得查克拉结晶与波之国功绩牌。", new Color(255, 215, 120));
+        Main.NewText(Loc.Get("Wave.FirstWin"), new Color(255, 215, 120));
     }
 
     public override void SaveData(TagCompound tag)

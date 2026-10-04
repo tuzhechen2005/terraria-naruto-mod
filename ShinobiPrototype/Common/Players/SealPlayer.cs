@@ -68,23 +68,23 @@ public sealed class SealPlayer : ModPlayer
             return;
         if (Player.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed)
         {
-            CombatText.NewText(Player.getRect(), new Color(170, 200, 255), "点穴：查克拉被封，结不了印");
+            CombatText.NewText(Player.getRect(), new Color(170, 200, 255), Loc.Get("Status.SealedNoJutsu"));
             return;
         }
         SealScroll scroll = ScrollFor(seals);
         if (scroll == null)
         {
-            CombatText.NewText(Player.getRect(), Color.LightGray, $"{seals} 印位没有卷轴");
+            CombatText.NewText(Player.getRect(), Color.LightGray, Loc.Get("Seal.EmptySlot", seals));
             return;
         }
         if (cooldowns[SealRules.SlotIndex(seals)] > 0)
         {
-            CombatText.NewText(Player.getRect(), Color.LightGray, $"{scroll.Item.Name}冷却中 {cooldowns[SealRules.SlotIndex(seals)] / 60f:0.0}s");
+            CombatText.NewText(Player.getRect(), Color.LightGray, Loc.Get("Seal.Cooldown", scroll.Item.Name, (cooldowns[SealRules.SlotIndex(seals)] / 60f).ToString("0.0")));
             return;
         }
         if (Player.GetModPlayer<ChakraPlayer>().Chakra < scroll.ChakraCost)
         {
-            CombatText.NewText(Player.getRect(), new Color(120, 180, 255), "查克拉不足");
+            CombatText.NewText(Player.getRect(), new Color(120, 180, 255), Loc.Get("Chakra.NotEnough"));
             return;
         }
         target = seals;
@@ -139,7 +139,7 @@ public sealed class SealPlayer : ModPlayer
     public override void OnHurt(Player.HurtInfo info)
     {
         if (Weaving)
-            Cancel("结印被打断了");
+            Cancel(Loc.Get("Seal.Interrupted"));
     }
 
     private void Cast()
@@ -152,7 +152,7 @@ public sealed class SealPlayer : ModPlayer
             return;
         if (!Player.GetModPlayer<ChakraPlayer>().TrySpend(scroll.ChakraCost))
         {
-            CombatText.NewText(Player.getRect(), new Color(120, 180, 255), "查克拉不足");
+            CombatText.NewText(Player.getRect(), new Color(120, 180, 255), Loc.Get("Chakra.NotEnough"));
             return;
         }
         CombatText.NewText(Player.getRect(), new Color(255, 225, 150), scroll.Item.Name);

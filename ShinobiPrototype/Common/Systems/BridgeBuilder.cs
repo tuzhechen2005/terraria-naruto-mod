@@ -44,7 +44,7 @@ internal static class BridgeBuilder
         site = default;
         if (!player.ZoneBeach)
         {
-            reason = "要站在海滩上、面朝大海使用施工图。";
+            reason = Loc.Get("Bridge.OnBeach");
             return false;
         }
 
@@ -57,13 +57,13 @@ internal static class BridgeBuilder
                 continue;
             if (!TryMakeSite(x - dir, dir, out site))
             {
-                reason = "这里离世界边缘太近，或者海太浅，放不下大桥。";
+                reason = Loc.Get("Bridge.NoRoom");
                 return false;
             }
             reason = "";
             return true;
         }
-        reason = "前方 60 格内没有找到海。请面朝大海使用。";
+        reason = Loc.Get("Bridge.NoSea");
         return false;
     }
 
@@ -137,14 +137,14 @@ internal static class BridgeBuilder
         {
             if (!WorldGen.InWorld(x, y, 10))
             {
-                reason = "大桥会超出世界边界。";
+                reason = Loc.Get("Bridge.OutOfWorld");
                 return false;
             }
             Tile tile = Main.tile[x, y];
             if (tile.WallType != WallID.None && Main.wallHouse[tile.WallType] ||
                 tile.HasTile && !IsNatural(tile.TileType))
             {
-                reason = $"建桥范围内有玩家放置的方块或墙（约在 {x}, {y}），请先清理或换个地方。";
+                reason = Loc.Get("Bridge.Blocked", x, y);
                 return false;
             }
         }
@@ -325,10 +325,10 @@ internal static class BridgeBuilder
                 WorldGen.PlaceObject(x, y, TileID.Chairs, mute: true, direction: -site.Dir);
                 break;
             case Fixture.IslandSign:
-                PlaceSign(Math.Min(x, x + site.Dir), y, "波之国");
+                PlaceSign(Math.Min(x, x + site.Dir), y, Loc.Get("Sign.LandOfWaves"));
                 break;
             case Fixture.BridgeSign:
-                PlaceSign(Math.Min(x, x + site.Dir), y, "鸣人大桥\n——以及所有守护这座桥的忍者");
+                PlaceSign(Math.Min(x, x + site.Dir), y, Loc.Get("Sign.NarutoBridge"));
                 break;
             case Fixture.Chest:
                 FillChest(WorldGen.PlaceChest(Math.Min(x, x + site.Dir), y, TileID.Containers,

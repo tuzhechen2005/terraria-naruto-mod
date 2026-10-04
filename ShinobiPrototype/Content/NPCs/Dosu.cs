@@ -262,7 +262,7 @@ public sealed class Dosu : ExamBoss
     public override void OnKill()
     {
         StoryWorld.DownedDosu = true;
-        Tell("月光疾风：“（咳）……胜者，木叶的考生。预选赛合格。”正式赛在一个月后，于木叶的考试会场举行。", new Color(255, 220, 120));
+        Tell(new Color(255, 220, 120), "Dosu.Down");
         if (Main.netMode == NetmodeID.Server)
             NetMessage.SendData(MessageID.WorldData);
     }

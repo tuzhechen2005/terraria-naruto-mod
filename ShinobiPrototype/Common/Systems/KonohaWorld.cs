@@ -35,7 +35,7 @@ public sealed class KonohaWorld : ModSystem
     // The layout the village was built from (the same for every world of this version).
     public static KonohaDesign Design => design ??= KonohaDesign.Create();
 
-    // Inside a building's outline (walls to roof, ground floor up), e.g. "忍者学校" for the written test.
+    // Inside a building's outline (walls to roof, ground floor up), e.g. the Academy for the written test.
     public static bool InBuilding(string name, Vector2 worldPosition)
     {
         if (Site is not KonohaSite site)
@@ -84,7 +84,7 @@ public sealed class KonohaWorld : ModSystem
 
     private static void Generate(GenerationProgress progress, GameConfiguration configuration)
     {
-        progress.Message = "建造木叶隐村";
+        progress.Message = Loc.Get("WorldGen.Konoha");
         Site = KonohaBuilder.Build(Main.spawnTileX);
         BuiltVersion = KonohaDesign.Version;
         ExamSiteWorld.Generate(progress);

@@ -227,12 +227,12 @@ public sealed class Orochimaru : ExamBoss
                 case ExamBossRules.OrochimaruEnd.HalfLife:
                     NPC.life = ThresholdRetreatRules.LockedLife(NPC.lifeMax);
                     NPC.dontTakeDamage = true;
-                    Speak("……呵呵呵，你的身体，比我想的还要有意思呢。下次见面之前，可别随随便便就死掉哦。");
+                    Speak("Orochimaru.Interesting");
                     Enter(Exit);
                     break;
                 case ExamBossRules.OrochimaruEnd.HeldOut:
                     NPC.dontTakeDamage = true;
-                    Speak("……拼命挣扎的样子，也挺可爱的嘛。时机还没到——好好留着这条命，等我来取。");
+                    Speak("Orochimaru.Struggle");
                     Enter(Exit);
                     break;
             }
@@ -284,7 +284,7 @@ public sealed class Orochimaru : ExamBoss
                 if (Main.netMode != NetmodeID.Server)
                     Dust.NewDust(NPC.BottomLeft + new Vector2(0f, -6f), NPC.width, 6, DustID.Dirt, 0f, -2f);
                 if (Timer == 1f)
-                    Tell("大蛇丸：“……真着急啊。”", new Color(190, 150, 230));
+                    Tell(new Color(190, 150, 230), "Orochimaru.Hurry");
                 if (Timer >= EmergeTicks)
                 {
                     NPC.alpha = 0;
@@ -520,11 +520,12 @@ public sealed class Orochimaru : ExamBoss
     }
 
     // A line said over his head and in the chat.
-    private void Speak(string line)
+    // key: the bare line over his head; key + "Chat": the line in chat, with his name.
+    private void Speak(string key)
     {
-        Tell("大蛇丸：“" + line + "”", new Color(190, 150, 230));
+        Tell(new Color(190, 150, 230), key + "Chat");
         if (Main.netMode != NetmodeID.Server)
-            CombatText.NewText(NPC.getRect(), new Color(200, 160, 240), line, true);
+            CombatText.NewText(NPC.getRect(), new Color(200, 160, 240), Loc.Get(key), true);
     }
 
     // Everyone near enough freezes (each client for its own player) until they substitute out.
@@ -557,7 +558,7 @@ public sealed class Orochimaru : ExamBoss
         if (local.GetModPlayer<SubstitutionPlayer>().TakeBind(local.Center.X >= NPC.Center.X ? 1 : -1))
             return;
         local.GetModPlayer<JutsuStatusPlayer>().Fear(ExamBossRules.KillingIntentTicks);
-        Main.NewText("杀气……身体动不了！", 220, 90, 110);
+        Main.NewText(Loc.Get("Orochimaru.FrozenByFear"), 220, 90, 110);
     }
 
     // The stare's warning: his eyes burn red and a red wedge fans out where he is looking, brighter as it nears.
@@ -595,7 +596,7 @@ public sealed class Orochimaru : ExamBoss
             // Called back with the shed skin: the eye only by chance.
             if (rematch && Main.rand.NextFloat() < ExamBossRules.SharinganVialChance)
                 Item.NewItem(NPC.GetSource_Loot(), NPC.getRect(), ModContent.ItemType<Items.StyleCores.SharinganCore1>());
-            Tell("大蛇丸化作一群蛇，钻进了土里。地上只留下一张蛇蜕——在丛林里用它，还能把他引出来。", new Color(190, 150, 230));
+            Tell(new Color(190, 150, 230), "Orochimaru.Left");
             if (Main.netMode == NetmodeID.Server)
                 NetMessage.SendData(MessageID.WorldData);
         }

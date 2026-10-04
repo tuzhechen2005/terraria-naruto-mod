@@ -140,9 +140,9 @@ public static class ChakraRules
         PracticeOutcome.TooLate;
 
     public static string PracticeVerdict(int substituted, int total) =>
-        substituted * 8 >= total * 7 ? "已经很熟练了。实战里也要这么冷静。" :
-        substituted * 2 >= total ? "还行。再练几次，身体自己就会记住时机。" :
-        "看苦无，不要看我。再来一次吧。";
+        substituted * 8 >= total * 7 ? "Drill.VerdictGreat" :
+        substituted * 2 >= total ? "Drill.VerdictOkay" :
+        "Drill.VerdictPoor";
 
     // After a log takes a hit, a few times, until the player has used the key themselves.
     public static bool ShouldShowHint(bool mastered, int hintsShown, int ticksSinceLastHint) =>

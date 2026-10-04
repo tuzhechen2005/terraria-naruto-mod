@@ -76,7 +76,7 @@ public sealed class ExamSiteWorld : ModSystem
         if (site is not ExamSite s)
             return "";
         int dx = s.CenterX - (int)(player.Center.X / 16f);
-        return Math.Abs(dx) < 20 ? "（就在附近）" : $"（在{(dx < 0 ? "西" : "东")}边）";
+        return Math.Abs(dx) < 20 ? Loc.Get("Dir.NearbyParen") : Loc.Get("Dir.SideParen", Loc.Get(StoryRules.Direction(dx)));
     }
 
     public static Vector2? Where(ExamSite? site) =>
@@ -98,7 +98,7 @@ public sealed class ExamSiteWorld : ModSystem
     {
         if (KonohaWorld.Site is not KonohaSite village)
             return;
-        progress.Message = "布置中忍考试的场地";
+        progress.Message = Loc.Get("WorldGen.ExamSites");
         (int jungleWest, int jungleEast)? jungle = ExamSiteBuilder.JungleSurface();
         if (jungle is (int west, int east))
         {

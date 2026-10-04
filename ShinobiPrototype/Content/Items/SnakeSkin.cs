@@ -3,6 +3,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.NPCs;
+using ShinobiPrototype.Common;
 
 namespace ShinobiPrototype.Content.Items;
 
@@ -30,7 +31,7 @@ public sealed class SnakeSkin : ModItem
         if (player.ZoneJungle && player.ZoneOverworldHeight)
             return true;
         if (player.whoAmI == Main.myPlayer)
-            Main.NewText("蛇蜕上还留着那股气味……要在丛林的地表才能把他引出来。", 190, 150, 230);
+            Main.NewText(Loc.Get("Orochimaru.SkinWrongPlace"), 190, 150, 230);
         return false;
     }
 

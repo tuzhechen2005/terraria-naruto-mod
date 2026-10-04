@@ -1258,10 +1258,9 @@ public sealed class ZabuzaBoss : ModNPC
         WaveRewards.Settle(lastBoss);
         if (Main.netMode == NetmodeID.Server)
             NetMessage.SendData(MessageID.WorldData);
-        const string message = "再不斩与白已被击败。波之国主线完成，中忍考试现已开放。";
-        if (Main.netMode == NetmodeID.Server)
-            ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message), new Color(100, 220, 160));
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            Main.NewText(Loc.Get("Wave.Complete"), 100, 220, 160);
         else
-            Main.NewText(message, 100, 220, 160);
+            Loc.Broadcast(new Color(100, 220, 160), "Wave.Complete");
     }
 }

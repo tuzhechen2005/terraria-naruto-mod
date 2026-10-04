@@ -6,6 +6,7 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common.Systems;
+using ShinobiPrototype.Common;
 
 namespace ShinobiPrototype.Content.NPCs;
 
@@ -182,19 +183,14 @@ public abstract class ExamBoss : ModNPC
             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Smoke, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 1f), 100, default, 1.6f);
     }
 
-    public static void Tell(string text, Color color)
-    {
-        if (Main.netMode == NetmodeID.Server)
-            ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
-        else if (Main.netMode == NetmodeID.SinglePlayer)
-            Main.NewText(text, color);
-    }
+    // A line in everyone's chat, by its text key (Loc).
+    public static void Tell(Color color, string key, params object[] args) => Loc.Broadcast(color, key, args);
 
-    // A line said over the boss's head (every client draws it).
-    protected void Say(string text, Color color)
+    // A line said over the boss's head (every client draws it), by its text key.
+    protected void Say(string key, Color color)
     {
         if (Main.netMode != NetmodeID.Server)
-            CombatText.NewText(NPC.getRect(), color, text, true);
+            CombatText.NewText(NPC.getRect(), color, Loc.Get(key), true);
     }
 
     public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone)

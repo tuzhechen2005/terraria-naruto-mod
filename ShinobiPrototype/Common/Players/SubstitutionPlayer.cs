@@ -110,7 +110,7 @@ public sealed class SubstitutionPlayer : ModPlayer
         JutsuStatusPlayer status = Player.GetModPlayer<JutsuStatusPlayer>();
         if (status.SubstitutionSealed)
         {
-            CombatText.NewText(Player.getRect(), new Color(170, 200, 255), "点穴：查克拉被封，结不了印");
+            CombatText.NewText(Player.getRect(), new Color(170, 200, 255), Loc.Get("Status.SealedNoJutsu"));
             return;
         }
 
@@ -133,10 +133,10 @@ public sealed class SubstitutionPlayer : ModPlayer
             case ChakraRules.Activation.CoolingDown:
                 return;
             case ChakraRules.Activation.NoLog:
-                CombatText.NewText(Player.getRect(), new Color(200, 170, 110), $"木头不够（要 {ChakraRules.SubstitutionLogs} 根）");
+                CombatText.NewText(Player.getRect(), new Color(200, 170, 110), Loc.Get("Substitution.NoLogs", ChakraRules.SubstitutionLogs));
                 return;
             case ChakraRules.Activation.NotEnoughChakra:
-                CombatText.NewText(Player.getRect(), new Color(120, 180, 255), "查克拉不足");
+                CombatText.NewText(Player.getRect(), new Color(120, 180, 255), Loc.Get("Chakra.NotEnough"));
                 return;
         }
 
@@ -175,7 +175,7 @@ public sealed class SubstitutionPlayer : ModPlayer
             !ChakraRules.AutoSubstitutes(Logs, Player.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed, fromEnemy))
             return false;
         Spend(1, ChakraRules.LogRegenMultiplier(info.Damage, Player.statLifeMax2));
-        DebugDamagePlayer.Report(Player, info, "木头挡下");
+        DebugDamagePlayer.Report(Player, info, Loc.Get("Debug.TakenByLog"));
         Substitute(away, ChakraRules.SubstitutionImmuneTicks);
         Hint();
         return true;
@@ -251,7 +251,7 @@ public sealed class SubstitutionPlayer : ModPlayer
 
         Player.SetImmuneTimeForAllTypes(immuneTicks);
         SoundEngine.PlaySound(SoundID.DoubleJump, Player.Center);
-        CombatText.NewText(Player.getRect(), new Color(200, 170, 110), "替身术！");
+        CombatText.NewText(Player.getRect(), new Color(200, 170, 110), Loc.Get("Substitution.Cast"));
     }
 
     private bool FindLanding(int awayDirection, out Vector2 landing)
@@ -286,9 +286,8 @@ public sealed class SubstitutionPlayer : ModPlayer
             return;
         HintsShown++;
         ticksSinceHint = 0;
-        Main.NewText($"提示：木头替你挡下了这一击（还剩 {Logs} 根，会慢慢恢复，打中敌人恢复得快一点）。" +
-            $"按【{ShinobiKeybinds.SubstitutionKeyName()}】可以主动替身：用两根木头朝移动方向瞬移，潜伏 5 秒，下一击必定暴击。",
-            255, 220, 120);
+        Main.NewText(Loc.Get("Substitution.Hint", Logs, ShinobiKeybinds.SubstitutionKeyName(), ChakraRules.SubstitutionLogs,
+            ChakraRules.StealthTicks / 60), 255, 220, 120);
     }
 
     public override void SaveData(TagCompound tag)

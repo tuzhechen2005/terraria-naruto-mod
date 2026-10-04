@@ -39,7 +39,7 @@ public readonly record struct KWallCell(int Dx, int Dy, KWall Wall);
 
 // Dy is the bottom row of the fixture (the row resting on the floor) except lanterns and banners, which hang with
 // their top at Dy, and wall hangings (paintings, weapon racks), whose centre is at (Dx, Dy). Text is for signs.
-public readonly record struct KPlace(int Dx, int Dy, KFix Fix, string Text = "", int Style = 0);
+public readonly record struct KPlace(int Dx, int Dy, KFix Fix, string Text = "", int Style = 0);   // Text: a sign's text key (Loc)
 
 // A home's interior (inclusive), and the building it belongs to.
 public readonly record struct KRoom(int X0, int X1, int Top, int Bottom, string Building)
@@ -49,6 +49,19 @@ public readonly record struct KRoom(int X0, int X1, int Top, int Bottom, string 
 }
 
 public readonly record struct KBuilding(string Name, int X0, int X1, int Top);
+
+// The village's building ids; where a name is shown (the map labels) it is the text Place.<id>.
+public static class KonohaBuildings
+{
+    public const string Gate = "AUnGate";
+    public const string WestWall = "WestWall";
+    public const string EastWall = "EastWall";
+    public const string Academy = "Academy";
+    public const string HokageTower = "HokageTower";
+    public const string Hospital = "Hospital";
+    public const string Ichiraku = "Ichiraku";
+    public const string TrainingGround3 = "TrainingGround3";
+}
 
 public sealed class KonohaDesign
 {
@@ -114,25 +127,25 @@ public sealed class KonohaDesign
         d.Academy(-94);
         d.Places.Add(new KPlace(-100, -1, KFix.Tree));
         d.Places.Add(new KPlace(-104, -1, KFix.Tree));
-        d.Apartment("住宅 A", -133, KMat.Stucco, KMat.RedShingle, KWall.Shoji);
-        d.Apartment("住宅 B", -162, KMat.Stucco, KMat.BlueShingle, KWall.Palm);
-        d.Apartment("住宅 C", -191, KMat.Stucco, KMat.RedShingle, KWall.Shoji);
+        d.Apartment("HouseA", -133, KMat.Stucco, KMat.RedShingle, KWall.Shoji);
+        d.Apartment("HouseB", -162, KMat.Stucco, KMat.BlueShingle, KWall.Palm);
+        d.Apartment("HouseC", -191, KMat.Stucco, KMat.RedShingle, KWall.Shoji);
 
         // East: Ichiraku, the shopping street, the hospital, homes, Training Ground 3.
         d.Ichiraku(26);
-        d.Shop("商店 1", 43, KMat.RedShingle);
-        d.Shop("商店 2", 60, KMat.BlueShingle);
-        d.Shop("商店 3", 77, KMat.RedShingle);
+        d.Shop("Shop1", 43, KMat.RedShingle);
+        d.Shop("Shop2", 60, KMat.BlueShingle);
+        d.Shop("Shop3", 77, KMat.RedShingle);
         d.Hospital(94);
-        d.Apartment("住宅 D", 132, KMat.Stucco, KMat.RedShingle, KWall.Palm);
+        d.Apartment("HouseD", 132, KMat.Stucco, KMat.RedShingle, KWall.Palm);
         d.TrainingGround(162);
 
         foreach (int x in new[] { -18, 17, -62, -98, -136, -165, 40, 128, 158 })
             d.Places.Add(new KPlace(x, -1, KFix.LampPost));
-        d.Places.Add(new KPlace(-3, -1, KFix.Sign, "木叶隐村\n——火之国·阿吽之门"));
+        d.Places.Add(new KPlace(-3, -1, KFix.Sign, "Sign.KonohaGate"));
         // The gate's two door leaves carry 阿 and 吽; here they are signs at each side of the gateway.
-        d.Places.Add(new KPlace(-12, -1, KFix.Sign, "阿"));
-        d.Places.Add(new KPlace(11, -1, KFix.Sign, "吽"));
+        d.Places.Add(new KPlace(-12, -1, KFix.Sign, "Sign.A"));
+        d.Places.Add(new KPlace(11, -1, KFix.Sign, "Sign.Un"));
         d.Places.Add(new KPlace(-15, -1, KFix.Bench));
         d.Places.Add(new KPlace(14, -1, KFix.Bench));
         d.Places.Add(new KPlace(161, -1, KFix.Tree));
@@ -185,7 +198,7 @@ public sealed class KonohaDesign
                 for (int y = -1; y >= -height; y--)
                     SetWall(x, y, i < 7 ? KWall.DoorLeaf : KWall.Brick);
             }
-        Buildings.Add(new KBuilding("阿吽大门", -beamHalf - 1, beamHalf + 1, -GateHeight - 8));
+        Buildings.Add(new KBuilding(KonohaBuildings.Gate, -beamHalf - 1, beamHalf + 1, -GateHeight - 8));
     }
 
     // A tall stone wall with a gateway at the bottom (brick behind, beam posts at its edges, so it reads as an
@@ -215,7 +228,7 @@ public sealed class KonohaDesign
             for (int y = -1; y >= -WallHeight + 4; y--)
                 SetWall(x, y, KWall.Brick);
         }
-        Buildings.Add(new KBuilding(side < 0 ? "西墙" : "东墙", x0, x1, -WallHeight - 1));
+        Buildings.Add(new KBuilding(side < 0 ? KonohaBuildings.WestWall : KonohaBuildings.EastWall, x0, x1, -WallHeight - 1));
     }
 
     // A block of homes: `rooms` side by side on each of `stories` floors. Ground rooms open through doors in the
@@ -362,12 +375,12 @@ public sealed class KonohaDesign
     private void Academy(int x0)
     {
         const int interior = 13;
-        int roof = Block("忍者学校", x0, 2, interior, 2, KMat.Stucco, KMat.Wood, KWall.Palm);
+        int roof = Block(KonohaBuildings.Academy, x0, 2, interior, 2, KMat.Stucco, KMat.Wood, KWall.Palm);
         int x1 = x0 + 2 * (interior + 1);
         Roof(x0 - 2, x1 + 2, roof - 1, KMat.RedShingle, 4);
         foreach (KRoom room in Rooms)
         {
-            if (room.Building != "忍者学校")
+            if (room.Building != KonohaBuildings.Academy)
                 continue;
             if (room.Bottom == -1)
                 Places.Add(new KPlace(room.X0 + 4, -1, KFix.Bookcase));
@@ -375,7 +388,7 @@ public sealed class KonohaDesign
                 // Kunai and shuriken on the classroom wall.
                 Places.Add(new KPlace(room.X0 + 6, room.Top + 1, KFix.WeaponRack));
         }
-        Places.Add(new KPlace(x0 + 3, roof - 5, KFix.Sign, "忍者学校"));
+        Places.Add(new KPlace(x0 + 3, roof - 5, KFix.Sign, "Sign.Academy"));
         IbikiSpot = (x0 + 2, -1);
     }
 
@@ -383,7 +396,7 @@ public sealed class KonohaDesign
     private void HokageTower(int x0)
     {
         const int interior = 14;
-        int roof = Block("火影楼", x0, 2, interior, 3, KMat.RedBrick, KMat.Wood, KWall.RedStucco, topAccess: true);
+        int roof = Block(KonohaBuildings.HokageTower, x0, 2, interior, 3, KMat.RedBrick, KMat.Wood, KWall.RedStucco, topAccess: true);
         int x1 = x0 + 2 * (interior + 1);
         // The office: one wide room on top.
         int floorRow = roof;
@@ -397,14 +410,14 @@ public sealed class KonohaDesign
             for (int x = x0 + 1; x < x1; x++)
                 SetWall(x, y, KWall.Shoji);
         }
-        Rooms.Add(new KRoom(x0 + 1, x1 - 1, ceiling + 1, floorRow - 1, "火影楼"));
+        Rooms.Add(new KRoom(x0 + 1, x1 - 1, ceiling + 1, floorRow - 1, KonohaBuildings.HokageTower));
         // The desk and chair to one side and a lantern at each end, leaving the emblem clear.
         Places.Add(new KPlace(x1 - 4, floorRow - 1, KFix.Table));
         Places.Add(new KPlace(x1 - 6, floorRow - 1, KFix.Chair));
         Places.Add(new KPlace(x0 + 6, ceiling + 1, KFix.Lantern));
         Places.Add(new KPlace(x1 - 3, ceiling + 1, KFix.Lantern));
         Places.Add(new KPlace(x0 + 4, floorRow - 1, KFix.Bookcase));
-        Places.Add(new KPlace(x0 + 8, floorRow - 1, KFix.Sign, "火影办公室"));
+        Places.Add(new KPlace(x0 + 8, floorRow - 1, KFix.Sign, "Sign.HokageOffice"));
         HokageSpot = (x1 - 9, floorRow - 1);
         // Rounded shoulders down the tower's sides.
         for (int s = 0; s < 4; s++)
@@ -446,14 +459,14 @@ public sealed class KonohaDesign
             Set(l, y, KMat.RedShingle, KShape.TopRisesEast);
             Set(r, y, KMat.RedShingle, KShape.TopRisesWest);
         }
-        Buildings[^1] = new KBuilding("火影楼", x0 - 1, x1 + 1, ceiling - domeRows);
-        Places.Add(new KPlace(x1 + 3, -1, KFix.Sign, "火影楼\n——火"));
+        Buildings[^1] = new KBuilding(KonohaBuildings.HokageTower, x0 - 1, x1 + 1, ceiling - domeRows);
+        Places.Add(new KPlace(x1 + 3, -1, KFix.Sign, "Sign.HokageTower"));
     }
 
     private void Hospital(int x0)
     {
         const int interior = 14;
-        int roof = Block("木叶医院", x0, 2, interior, 3, KMat.Marble, KMat.Marble, KWall.Marble, beds: true);
+        int roof = Block(KonohaBuildings.Hospital, x0, 2, interior, 3, KMat.Marble, KMat.Marble, KWall.Marble, beds: true);
         int x1 = x0 + 2 * (interior + 1);
         for (int x = x0 - 1; x <= x1 + 1; x++)
             Set(x, roof - 1, KMat.Marble);
@@ -463,8 +476,8 @@ public sealed class KonohaDesign
             Set(cx, y, KMat.RedBrick);
         for (int x = cx - 2; x <= cx + 2; x++)
             Set(x, roof - 4, KMat.RedBrick);
-        Buildings[^1] = new KBuilding("木叶医院", x0 - 1, x1 + 1, roof - 6);
-        Places.Add(new KPlace(x0 + 3, roof - 2, KFix.Sign, "木叶医院"));
+        Buildings[^1] = new KBuilding(KonohaBuildings.Hospital, x0 - 1, x1 + 1, roof - 6);
+        Places.Add(new KPlace(x0 + 3, roof - 2, KFix.Sign, "Sign.Hospital"));
     }
 
     private void Shop(string name, int x0, KMat roofMat)
@@ -479,7 +492,7 @@ public sealed class KonohaDesign
     private void Ichiraku(int x0)
     {
         const int interior = 10;
-        int roof = Block("一乐拉面", x0, 1, interior, 1, KMat.DynastyWood, KMat.Wood, KWall.Shoji, pots: false);
+        int roof = Block(KonohaBuildings.Ichiraku, x0, 1, interior, 1, KMat.DynastyWood, KMat.Wood, KWall.Shoji, pots: false);
         int x1 = x0 + interior + 1;
         Roof(x0 - 6, x1 + 1, roof - 1, KMat.RedShingle, 2);
         // Awning posts and the counter out front.
@@ -490,8 +503,8 @@ public sealed class KonohaDesign
         Places.Add(new KPlace(x0 - 3, -1, KFix.Table));
         Places.Add(new KPlace(x0 - 3, roof + 1, KFix.Banner, Style: 3));
         Places.Add(new KPlace(x0 - 4, roof + 1, KFix.Banner, Style: 3));
-        Places.Add(new KPlace(x0 - 7, -1, KFix.Sign, "一乐拉面"));
-        Buildings[^1] = new KBuilding("一乐拉面", x0 - 6, x1 + 1, roof - 2);
+        Places.Add(new KPlace(x0 - 7, -1, KFix.Sign, "Sign.Ichiraku"));
+        Buildings[^1] = new KBuilding(KonohaBuildings.Ichiraku, x0 - 6, x1 + 1, roof - 2);
     }
 
     // Training Ground 3: three wooden posts in the grass.
@@ -500,7 +513,7 @@ public sealed class KonohaDesign
         foreach (int x in new[] { x0 + 6, x0 + 12, x0 + 18 })
             for (int y = -1; y >= -3; y--)
                 Set(x, y, KMat.LivingWood);
-        Places.Add(new KPlace(x0 + 2, -1, KFix.Sign, "第三演习场"));
-        Buildings.Add(new KBuilding("第三演习场", x0, x0 + 24, -3));
+        Places.Add(new KPlace(x0 + 2, -1, KFix.Sign, "Sign.TrainingGround3"));
+        Buildings.Add(new KBuilding(KonohaBuildings.TrainingGround3, x0, x0 + 24, -3));
     }
 }

@@ -97,7 +97,7 @@ public sealed class Gaara : ExamBoss
             sinceGuard = frontalDamage = 0;
             guardInterval = ExamBossRules.GuardInterval(Main.rand.NextFloat());
             SoundEngine.PlaySound(SoundID.Item74 with { Pitch = -0.4f }, NPC.Center);
-            Say("沙之守护", new Color(230, 200, 130));
+            Say("Gaara.Guard", new Color(230, 200, 130));
             Enter(Guard);
         }
 
@@ -205,7 +205,7 @@ public sealed class Gaara : ExamBoss
                         !local.GetModPlayer<SubstitutionPlayer>().TakeBind(local.Center.X >= CoffinAt.X ? 1 : -1))
                     {
                         local.GetModPlayer<JutsuStatusPlayer>().Bind(ExamBossRules.CoffinHoldTicks);
-                        Main.NewText("被沙子裹住了！", 255, 200, 120);
+                        Main.NewText(Loc.Get("Gaara.Caught"), 255, 200, 120);
                     }
                     Enter(CoffinHold);
                 }
@@ -364,7 +364,7 @@ public sealed class Gaara : ExamBoss
         exam.ClaimGaaraFirstWin();
         player.QuickSpawnItem(source, ModContent.ItemType<Items.StyleCores.EightGatesCore>());
         player.QuickSpawnItem(source, ModContent.ItemType<Items.Taijutsu.LeeLegWeights>());
-        Main.NewText("首次击败我爱罗：得到八门遁甲之卷（流派核心）与小李的负重护腿。", new Color(255, 215, 120));
+        Main.NewText(Loc.Get("Gaara.FirstWin"), new Color(255, 215, 120));
     }
 
     public override void ModifyNPCLoot(NPCLoot npcLoot)
@@ -376,8 +376,7 @@ public sealed class Gaara : ExamBoss
     public override void OnKill()
     {
         StoryWorld.DownedGaara = true;
-        Tell("我爱罗倒下了……可他身上涌出的查克拉，已经不属于人类。会场上空，羽毛般的幻术落了下来——木叶崩溃开始了。（M3 开发中）",
-            new Color(255, 170, 120));
+        Tell(new Color(255, 170, 120), "Gaara.Down");
         if (Main.netMode == NetmodeID.Server)
             NetMessage.SendData(MessageID.WorldData);
     }

@@ -5,6 +5,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.Items;
+using ShinobiPrototype.Common;
 
 namespace ShinobiPrototype.Content.NPCs;
 
@@ -52,18 +53,7 @@ public sealed class Tazuna : ModNPC
 
     public override List<string> SetNPCNameList() => new() { this.GetLocalizedValue("GivenName") };
 
-    public override string GetChat() => Main.rand.Next(new[]
-    {
-        "桥修好了！多亏了你们。要买点什么？",
-        "船又能进港了，市场也热闹起来了。",
-        "那座桥啊，大家都叫它“鸣人大桥”。",
-        "再不斩和那个孩子……说到底，他们也是被这个世道逼的吧。",
-        "伊那利现在天天跑到桥上去，说长大了要当英雄。",
-        "卡多一倒，他的手下全跑光了。这个国家总算能喘口气了。",
-        "要木材？我这儿多的是，造桥剩下的。",
-        "听说木叶要办中忍考试？你也要去吧，加油啊。",
-        "回去替我谢谢那个木叶的老头子（三代）。这趟任务，我可是只付了 C 级的钱啊。",
-    });
+    public override string GetChat() => Loc.Pick("Tazuna.Line", 9);
 
     public override void SetChatButtons(ref string button, ref string button2) =>
         button = Language.GetTextValue("LegacyInterface.28");

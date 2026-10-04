@@ -7,6 +7,7 @@ using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.Items;
 using ShinobiPrototype.Content.Items.NinjaTools;
 using ShinobiPrototype.Content.Items.Weapons;
+using ShinobiPrototype.Common;
 
 namespace ShinobiPrototype.Content.NPCs;
 
@@ -59,18 +60,13 @@ public sealed class ToolShopkeeper : ModNPC
 
     public override string GetChat()
     {
-        var lines = new List<string>
-        {
-            "欢迎光临！苦无、手里剑、起爆符，木叶最齐全的就是我这儿。",
-            "忍具要拿在手里用熟了，出手时才藏得住杀气——潜伏投掷就是这么回事。",
-            "起爆符别揣在怀里乱跑，贴错地方可不是闹着玩的。",
-            "我家那丫头天天，整天嚷嚷着要当像纲手大人那样的忍者。",
-            "手里剑碰墙会弹回来，角度算好了，能打到墙后面的人。",
-        };
+        var lines = new List<string>();
+        for (int i = 1; i <= 5; i++)
+            lines.Add(Loc.Get($"ToolShopkeeper.Line{i}"));
         if (StoryWorld.WaveComplete)
-            lines.Add("听说你从波之国带回了雾隐的千本？我这儿也进了一批，比那个白用的差不了多少。");
+            lines.Add(Loc.Get("ToolShopkeeper.AfterWave"));
         if (StoryWorld.DownedGaara)
-            lines.Add("中忍考试辛苦了！天天说她在会场看到你了，回头让她来店里帮忙。");
+            lines.Add(Loc.Get("ToolShopkeeper.AfterExams"));
         return Main.rand.Next(lines);
     }
 

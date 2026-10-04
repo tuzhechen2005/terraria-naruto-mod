@@ -33,7 +33,7 @@ public sealed class ChakraHud : ModSystem
         int x = 20 + config.ChakraBarOffsetX;
         int y = 70 + config.ChakraBarOffsetY;
 
-        Utils.DrawBorderString(Main.spriteBatch, $"查克拉 {player.Chakra}/{player.MaxChakra}", new Vector2(x + 2, y), Color.White, 0.8f);
+        Utils.DrawBorderString(Main.spriteBatch, Loc.Get("Hud.Chakra", player.Chakra, player.MaxChakra), new Vector2(x + 2, y), Color.White, 0.8f);
         Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(x, y + 22, 166, 18), Color.Black * 0.8f);
         Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value,
             new Rectangle(x + 3, y + 25, (int)(160f * player.Chakra / player.MaxChakra), 12), new Color(45, 170, 235));
@@ -45,7 +45,7 @@ public sealed class ChakraHud : ModSystem
             line += 44;
         if (Main.LocalPlayer.GetModPlayer<DebugGodPlayer>().Enabled)
         {
-            Utils.DrawBorderString(Main.spriteBatch, "M0 测试无敌", new Vector2(x + 2, line), Color.Gold, 0.75f);
+            Utils.DrawBorderString(Main.spriteBatch, Loc.Get("Hud.GodMode"), new Vector2(x + 2, line), Color.Gold, 0.75f);
             line += 20;
         }
         if (config.QuestTracker)
@@ -82,7 +82,7 @@ public sealed class ChakraHud : ModSystem
                         SpriteEffects.None, 0f);
             }
         }
-        Utils.DrawBorderString(Main.spriteBatch, sealedPoints ? "替身术被封" : $"替身 [{ShinobiKeybinds.SubstitutionKeyName()}]",
+        Utils.DrawBorderString(Main.spriteBatch, sealedPoints ? Loc.Get("Hud.SubstitutionSealed") : Loc.Get("Hud.Substitution", ShinobiKeybinds.SubstitutionKeyName()),
             new Vector2(x + logs.MaxLogs * (w + 4) + 4, y + h / 2f - 8f), sealedPoints ? new Color(150, 170, 230) : new Color(200, 170, 110), 0.75f);
     }
 
@@ -116,7 +116,7 @@ public sealed class ChakraHud : ModSystem
             Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(x + 1, y + 3, (int)(88 * meter), 6),
                 ready ? new Color(230, 180, 255) : new Color(150, 90, 200));
         }
-        Utils.DrawBorderString(Main.spriteBatch, ready ? "潜伏投掷" : "潜伏", new Vector2(x + 100, y - 1),
+        Utils.DrawBorderString(Main.spriteBatch, Loc.Get(ready ? "Hud.StealthThrow" : "Hud.Stealth"), new Vector2(x + 100, y - 1),
             ready ? new Color(230, 190, 255) : new Color(160, 130, 190), 0.7f);
         return true;
     }
@@ -166,13 +166,14 @@ public sealed class ChakraHud : ModSystem
     {
         Player player = Main.LocalPlayer;
         (string title, Vector2? where) = player.GetModPlayer<StoryPlayer>().Tracker();
-        string text = "任务：" + title;
+        string text = Loc.Get("Hud.Tracker", title);
         if (where is Vector2 at)
         {
             Vector2 d = (at - player.Center) / 16f;
-            text += d.Length() < 20f ? "（就在附近）"
-                : $"　→ {(d.X < 0 ? "西" : "东")} {System.Math.Abs((int)d.X)} 格" +
-                  (System.Math.Abs(d.Y) > 30f ? $"，{(d.Y < 0 ? "上" : "下")} {System.Math.Abs((int)d.Y)} 格" : "");
+            text += d.Length() < 20f ? Loc.Get("Dir.NearbyParen")
+                : Loc.Get("Hud.TrackerAcross", Loc.Get(StoryRules.Direction((int)d.X)), System.Math.Abs((int)d.X)) +
+                  (System.Math.Abs(d.Y) > 30f
+                      ? Loc.Get("Hud.TrackerDepth", Loc.Get(d.Y < 0 ? "Dir.Up" : "Dir.Down"), System.Math.Abs((int)d.Y)) : "");
         }
         Utils.DrawBorderString(Main.spriteBatch, text, new Vector2(x, y), new Color(255, 230, 160), 0.75f);
     }

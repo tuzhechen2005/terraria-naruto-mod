@@ -77,26 +77,20 @@ public sealed class Hiruzen : ModNPC
         changePending = false;
         Player player = Main.LocalPlayer;
         StyleSchool vow = player.GetModPlayer<StyleCorePlayer>().Vow;
-        string[] greetings =
-        {
-            "（吐出一口烟）……来了啊。",
-            "村子里的每一个人，都是我的家人。你也一样。",
-            "火之意志，会一直传下去的。",
-        };
         if (vow == StyleSchool.None && player.GetModPlayer<StyleCorePlayer>().VowCalled)
-            return "……你来了。听卡卡西说，你已经摸到了一条路的门槛。\n\n" +
-                   "忍者要走哪一条路，得自己决定。想好了，就戴着那个流派的核心，点“立志”。" +
-                   "仙术要等木叶崩溃之后才能取得——想走那条路的话，也可以等。";
-        string status = vow == StyleSchool.None
-            ? "你还没有立志。取得流派核心之后，戴着它来找我。"
-            : $"你的忍道：{VowRules.SchoolName(vow)}。";
-        return $"{Main.rand.Next(greetings)}\n\n{status}";
+            return Loc.Get("Hiruzen.Called");
+        string status = vow == StyleSchool.None ? Loc.Get("Hiruzen.NoVow") : Loc.Get("Hiruzen.YourPath", School(vow));
+        return Loc.Pick("Hiruzen.Greeting", 3) + "\n\n" + status;
     }
+
+    private static string School(StyleSchool school) => Loc.Get(VowRules.SchoolKey(school));
+
+    private static string Chapter(StyleSchool school) => Loc.Get(VowRules.ChapterKey(school));
 
     public override void SetChatButtons(ref string button, ref string button2)
     {
-        button = "立志";
-        button2 = "关于流派";
+        button = Loc.Get("Hiruzen.ButtonVow");
+        button2 = Loc.Get("Hiruzen.ButtonAbout");
     }
 
     public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -114,36 +108,24 @@ public sealed class Hiruzen : ModNPC
         switch (outcome)
         {
             case VowOutcome.NoCore:
-                return "立志，要有能立的东西。流派核心的第一阶，都在中忍考试到木叶崩溃之间：" +
-                       "写轮眼在死亡森林，白眼在宁次那里，八门在我爱罗那一战。\n\n" +
-                       "仙术要等木叶崩溃之后才能取得——想走那条路的话，可以等。\n\n" +
-                       "取得了核心，就戴着它来找我。";
+                return Loc.Get("Hiruzen.NoCore");
             case VowOutcome.AlreadyVowed:
-                return $"你早已立下了志向：{VowRules.SchoolName(worn)}。……把它走到底吧。";
+                return Loc.Get("Hiruzen.AlreadyVowed", School(worn));
             case VowOutcome.Vow:
                 styles.Vow = worn;
-                return $"……好。从今天起，{VowRules.SchoolName(worn)}就是你的忍道。\n\n" +
-                       $"属于这条路的修行——“{VowRules.ChapterName(worn)}”——以后会找上你的。（本命章节开发中）\n\n" +
-                       "仙术要等木叶崩溃之后才能取得。将来若改了主意，也可以再来找我。";
+                return Loc.Get("Hiruzen.Vowed", School(worn), Chapter(worn));
             case VowOutcome.NeedsFee:
                 changePending = true;
-                return $"想从{VowRules.SchoolName(styles.Vow)}改投{VowRules.SchoolName(worn)}？\n\n" +
-                       $"可以。但要交 {VowRules.ChangeFee / 10000} 金币——就当是给村子的修缮费。" +
-                       "之前那条路上得到的东西会留在你身上，只是不再起作用。\n\n想清楚了，再点一次“立志”。";
+                return Loc.Get("Hiruzen.NeedsFee", School(styles.Vow), School(worn), VowRules.ChangeFee / 10000);
             case VowOutcome.CannotPay:
-                return $"改投要 {VowRules.ChangeFee / 10000} 金币。钱不够的话，先去攒一攒吧。";
+                return Loc.Get("Hiruzen.CannotPay", VowRules.ChangeFee / 10000);
             default:
                 player.BuyItem(VowRules.ChangeFee);
                 StyleSchool old = styles.Vow;
                 styles.Vow = worn;
-                return $"……好。放下{VowRules.SchoolName(old)}，走{VowRules.SchoolName(worn)}这条路。\n\n" +
-                       $"“{VowRules.ChapterName(worn)}”的修行，以后会找上你的。";
+                return Loc.Get("Hiruzen.Changed", School(old), School(worn), Chapter(worn));
         }
     }
 
-    private static string AboutSchools() =>
-        "流派是跨职业的修行之路，靠“流派核心”承载。核心谁都能戴，一次只能戴一个，按【流派奥义】键施展。\n\n" +
-        "立志，是认定其中一条作为自己的忍道。认定之后，会有只属于这条路的修行等着你：\n" +
-        "· 写轮眼——咒印　· 八门——凯的修行\n· 白眼——日向宗家与分家　· 仙术——妙木山\n\n" +
-        "仙术要等木叶崩溃之后才能取得。改投也可以，但要付出代价。";
+    private static string AboutSchools() => Loc.Get("Hiruzen.About");
 }

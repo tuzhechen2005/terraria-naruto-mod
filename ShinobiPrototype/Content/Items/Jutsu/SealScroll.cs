@@ -15,7 +15,8 @@ public abstract class SealScroll : ModItem
 {
     public abstract int Seals { get; }
     // The hand seals shown overhead as they form (zodiac seals).
-    public abstract string Signs { get; }
+    // The hand seals, in order: zodiac sign ids, each shown as the text Seal.Sign.<id>.
+    public abstract string[] Signs { get; }
     public abstract int ChakraCost { get; }
     // Time before it can be cast again (the great techniques).
     public virtual int CooldownTicks => 0;
@@ -49,7 +50,7 @@ public abstract class SealScroll : ModItem
 public sealed class ScrollClone : SealScroll
 {
     public override int Seals => 2;
-    public override string Signs => "未巳";
+    public override string[] Signs => new[] { "Ram", "Snake" };
     public override int ChakraCost => 15;
     protected override int BaseDamage => 0;
     protected override string ArtName => "ScrollClone";
@@ -70,7 +71,7 @@ public sealed class ScrollClone : SealScroll
 public sealed class ScrollFireball : SealScroll
 {
     public override int Seals => 4;
-    public override string Signs => "巳未申亥";
+    public override string[] Signs => new[] { "Snake", "Ram", "Monkey", "Boar" };
     public override int ChakraCost => SealRules.FireballCost;
     public override int CooldownTicks => SealRules.FireballCooldownTicks;
     protected override int BaseDamage => 32;
@@ -91,7 +92,7 @@ public sealed class ScrollFireball : SealScroll
 public sealed class ScrollChidori : SealScroll
 {
     public override int Seals => 6;
-    public override string Signs => "丑卯申卯申卯";
+    public override string[] Signs => new[] { "Ox", "Hare", "Monkey", "Hare", "Monkey", "Hare" };
     public override int ChakraCost => SealRules.ChidoriCost;
     public override int CooldownTicks => SealRules.ChidoriCooldownTicks;
     protected override int BaseDamage => 120;

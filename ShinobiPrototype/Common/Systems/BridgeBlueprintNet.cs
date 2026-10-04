@@ -53,7 +53,7 @@ public sealed class BridgeBlueprintNet : ModSystem
 
     private static void Report(bool built, string reason, int requester)
     {
-        string text = built ? "达兹纳的大桥立起来了——桥头小屋里，造桥工正等着你。" : reason;
+        string text = built ? Loc.Get("Bridge.Built") : reason;
         Color color = built ? new Color(150, 220, 255) : new Color(250, 150, 100);
         if (Main.netMode == NetmodeID.Server)
             ChatHelper.SendChatMessageToClient(NetworkText.FromLiteral(text), color, requester);

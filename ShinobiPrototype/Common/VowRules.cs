@@ -35,21 +35,8 @@ public static class VowRules
     public static bool ChapterActive(StyleSchool vowed, StyleSchool chapterSchool) =>
         vowed != StyleSchool.None && vowed == chapterSchool;
 
-    public static string SchoolName(StyleSchool school) => school switch
-    {
-        StyleSchool.Sharingan => "写轮眼",
-        StyleSchool.EightGates => "八门",
-        StyleSchool.Byakugan => "白眼 · 柔拳",
-        StyleSchool.Sage => "仙术 · 九尾",
-        _ => "无",
-    };
+    // Text keys (Loc) for a school's name and its own chapter.
+    public static string SchoolKey(StyleSchool school) => "Vow.School." + (school == StyleSchool.None ? "None" : school.ToString());
 
-    public static string ChapterName(StyleSchool school) => school switch
-    {
-        StyleSchool.Sharingan => "咒印",
-        StyleSchool.EightGates => "凯的修行",
-        StyleSchool.Byakugan => "日向宗家与分家",
-        StyleSchool.Sage => "妙木山",
-        _ => "",
-    };
+    public static string ChapterKey(StyleSchool school) => "Vow.Chapter." + (school == StyleSchool.None ? "None" : school.ToString());
 }

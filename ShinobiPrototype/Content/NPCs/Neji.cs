@@ -46,7 +46,7 @@ public sealed class Neji : ExamBoss
         if (Timer == 1f && State == Approach && NPC.localAI[0] == 0f)
         {
             NPC.localAI[0] = 1f;
-            Say("……来吧。让你看看，什么叫做命运。", new Color(200, 220, 255));
+            Say("Neji.Begin", new Color(200, 220, 255));
         }
         switch (State)
         {
@@ -84,7 +84,7 @@ public sealed class Neji : ExamBoss
                 Telegraph(DustID.IceTorch, 40f);
                 if (Timer >= EnemyDamageRules.Neji.RotationWindupTicks)
                 {
-                    Say("八卦掌·回天！", new Color(190, 220, 255));
+                    Say("Neji.Rotation", new Color(190, 220, 255));
                     SoundEngine.PlaySound(SoundID.Item60, NPC.Center);
                     if (Deciding)
                         JutsuHitbox.Spawn(NPC, JutsuKind.Rotation, NPC.Center, Vector2.Zero,
@@ -103,14 +103,14 @@ public sealed class Neji : ExamBoss
             case SixtyFourWarn:
                 NPC.velocity.X *= 0.6f;
                 if (Timer == 1f)
-                    Say("你已在我八卦的范围之内。", new Color(190, 220, 255));
+                    Say("Neji.InRange", new Color(190, 220, 255));
                 if (Main.netMode != NetmodeID.Server)
                     for (int i = 0; i < 4; i++)
                         Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2CircularEdge(ExamBossRules.SixtyFourRadiusPx,
                             ExamBossRules.SixtyFourRadiusPx), DustID.IceTorch, Vector2.Zero, 0, default, 1.3f).noGravity = true;
                 if (Timer >= ExamBossRules.SixtyFourWarnTicks)
                 {
-                    Say("八卦六十四掌！", new Color(190, 220, 255));
+                    Say("Neji.SixtyFour", new Color(190, 220, 255));
                     SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
                     lastWasSixtyFour = true;
                     if (Deciding)
@@ -163,7 +163,7 @@ public sealed class Neji : ExamBoss
     public override void OnKill()
     {
         StoryWorld.DownedNeji = true;
-        Tell("宁次：……命运，并不是早就注定的吗。你让我……看到了不一样的东西。（切磋书可以再用，随时奉陪。）", new Color(200, 220, 255));
+        Tell(new Color(200, 220, 255), "Neji.Down");
         if (Main.netMode == NetmodeID.Server)
             NetMessage.SendData(MessageID.WorldData);
     }

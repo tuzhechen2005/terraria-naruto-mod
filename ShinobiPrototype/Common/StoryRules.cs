@@ -58,7 +58,7 @@ public static class StoryRules
         width >= LakeMinWidth && depth >= LakeMinDepth;
 
     // Where the nearest lake lies, for the objective text.
-    public static string Direction(int dx) => dx < 0 ? "西" : "东";
+    public static string Direction(int dx) => dx < 0 ? "Dir.West" : "Dir.East";   // a text key (Loc)
 
     // The ambush: numbers are first values for testing in play.
     public const int PrisonLife = 1800;

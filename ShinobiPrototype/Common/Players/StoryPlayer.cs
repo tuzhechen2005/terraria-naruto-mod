@@ -22,12 +22,12 @@ public sealed class StoryPlayer : ModPlayer
     private readonly List<int> cheering = new();
     private readonly List<string> cheers = new();
 
-    private static readonly string[] Cheers =
-    {
-        "欢迎回来！", "了不起！", "木叶的骄傲！", "辛苦了！", "一乐拉面，今天我请！", "你回来啦！", "不愧是木叶的忍者！",
-    };
+    private const int CheerCount = 7;   // Story.Cheer1..7
 
-    public const string WaveDuoName = "雾隐的鬼人桃地再不斩与白";
+    // The Wave pair in the celebration queue (an id, shown as Story.WaveDuoName). Saves made before the text moved to
+    // the localization files hold the old Chinese name, read back as this id.
+    public const string WaveDuoName = "WaveDuo";
+    private const string LegacyWaveDuoName = "雾隐的鬼人桃地再不斩与白";   // text-check: allow (old saves)
 
     // Development shortcut (/m0 cheer): forget the first Wave homecoming so it can be seen again.
     public void ResetWelcomeForTesting() => WelcomedHome = false;
@@ -82,7 +82,7 @@ public sealed class StoryPlayer : ModPlayer
         if (!InsigniaNoticeShown && WaveStage == WaveStage.Showdown && Player.CountItem(ModContent.ItemType<MistInsignia>()) >= 3)
         {
             InsigniaNoticeShown = true;
-            Main.NewText("已收集三枚雾隐标记。现在可在工作台制作再不斩挑战卷轴，去断桥与再不斩和白决战。", 100, 200, 245);
+            Main.NewText(Loc.Get("Story.InsigniaReady"), 100, 200, 245);
         }
     }
 
@@ -94,14 +94,15 @@ public sealed class StoryPlayer : ModPlayer
         foreach (NPC npc in Main.ActiveNPCs)
             if (npc.townNPC && npc.Distance(Player.Center) < 70 * 16)
                 cheering.Add(npc.whoAmI);
-        string names = string.Join("、", pendingBosses);
+        static string Shown(string boss) => boss == WaveDuoName ? Loc.Get("Story.WaveDuoName") : boss;
+        string names = string.Join(Loc.Get("Story.NameSeparator"), pendingBosses.ConvertAll(Shown));
         bool wave = pendingBosses.Contains(WaveDuoName) && !WelcomedHome;
-        Main.NewText(wave ? "木叶的大家都听说了——你在波之国，打倒了雾隐的鬼人。" : $"木叶的大家都听说了——你打倒了{names}！",
-            new Color(255, 220, 150));
+        Main.NewText(wave ? Loc.Get("Story.WelcomeWave") : Loc.Get("Story.WelcomeBosses", names), new Color(255, 220, 150));
         cheers.Clear();
-        cheers.AddRange(Cheers);
+        for (int i = 1; i <= CheerCount; i++)
+            cheers.Add(Loc.Get($"Story.Cheer{i}"));
         foreach (string boss in pendingBosses)
-            cheers.Add(boss == WaveDuoName ? "真的假的，那个桃地再不斩？" : $"连{boss}都被你打倒了？！");
+            cheers.Add(boss == WaveDuoName ? Loc.Get("Story.CheerWave") : Loc.Get("Story.CheerBoss", boss));
         if (wave)
             WelcomedHome = true;
         pendingBosses.Clear();
@@ -141,25 +142,16 @@ public sealed class StoryPlayer : ModPlayer
         if (StoryWorld.WaveComplete || StoryWorld.DownedGaara)
             return ExamObjective();
         int insignia = System.Math.Min(3, Player.CountItem(ModContent.ItemType<MistInsignia>()));
-        string noBridge = WaveBridgeWorld.Site.HasValue ? "" : "（这个世界还没有大桥：先找卡卡西要达兹纳的施工图。）";
+        string noBridge = WaveBridgeWorld.Site.HasValue ? "" : Loc.Get("Story.Objective.NoBridge");
         return WaveStage switch
         {
-            WaveStage.FindTazuna =>
-                $"C 级任务：护送造桥工达兹纳返回波之国。他先回了桥头——海边起雾的地方有座没修完的大桥，去桥头小屋找他。{noBridge}",
-            WaveStage.Scout =>
-                "C 级任务：达兹纳说，雾隐的忍者常在桥这一带的海雾里出没。去起雾的海边走一走——他们会找上门来。",
-            WaveStage.ReportToTazuna =>
-                "伏击你们的是雾隐的中忍，而他们的目标是达兹纳。回桥头小屋，问个清楚。",
-            WaveStage.GetStronger =>
-                "A 级任务：卡多雇来的是雾隐的鬼人——桃地再不斩。以现在的实力还不够，先去变强" +
-                $"（击败克苏鲁之眼，或生命上限达到 {StoryRules.LakeLifeThreshold}）。",
-            WaveStage.Lake =>
-                $"A 级任务：护送途中，再不斩会在地表的湖边动手。{LakeAmbushSystem.NearestLakeHint(Player)}",
-            WaveStage.Bridge =>
-                "再不斩被追杀部队带走了——可用千本的追杀部队，不会是来杀他的。雾隐的人一定会去断桥，回大桥看看。",
-            _ =>
-                $"再不斩还活着，就在断桥的雾里。集齐雾隐标记（{insignia}/3：鬼之兄弟各一枚，达兹纳给的一枚），在工作台制作再不斩挑战卷轴（不消耗），" +
-                "到大桥一带使用，击败再不斩与白。",
+            WaveStage.FindTazuna => Loc.Get("Story.Objective.FindTazuna", noBridge),
+            WaveStage.Scout => Loc.Get("Story.Objective.Scout"),
+            WaveStage.ReportToTazuna => Loc.Get("Story.Objective.ReportToTazuna"),
+            WaveStage.GetStronger => Loc.Get("Story.Objective.GetStronger", StoryRules.LakeLifeThreshold),
+            WaveStage.Lake => Loc.Get("Story.Objective.Lake", LakeAmbushSystem.NearestLakeHint(Player)),
+            WaveStage.Bridge => Loc.Get("Story.Objective.Bridge"),
+            _ => Loc.Get("Story.Objective.Showdown", insignia),
         };
     }
 
@@ -169,31 +161,28 @@ public sealed class StoryPlayer : ModPlayer
         switch (exam.Stage)
         {
             case ExamStage.NoVillage:
-                return "波之国篇完成。中忍考试在木叶隐村举行，而这个世界没有木叶——中忍考试篇需要新建的世界。其余内容可以继续自由探索。";
+                return Loc.Get("Story.Objective.NoVillage");
             case ExamStage.Recommend:
-                return "波之国篇完成。回木叶去——卡卡西有话要说。";
+                return Loc.Get("Story.Objective.Recommend");
             case ExamStage.Written:
-                string lost = Player.HasItem(ModContent.ItemType<ExamAdmissionScroll>()) ? "" : "（推荐书不在身上：找卡卡西再要一份。）";
-                return exam.CanSitWritten
-                    ? $"中忍考试第一试·笔试：带着推荐书到木叶的忍者学校（阿吽之门往西），找教室里的主考官森乃伊比喜。{lost}"
-                    : "第一试：你在第十题放弃了。等明天天亮，再去忍者学校重考。" + lost;
+                string lost = Player.HasItem(ModContent.ItemType<ExamAdmissionScroll>()) ? "" : Loc.Get("Story.Objective.LostRecommendation");
+                return Loc.Get(exam.CanSitWritten ? "Story.Objective.Written" : "Story.Objective.WrittenRetry", lost);
             case ExamStage.ForestGate:
-                return $"中忍考试第二试·死亡森林：到丛林边的第四十四演习场入口领取卷轴{ExamSiteWorld.GateHint(Player)}。";
+                return Loc.Get("Story.Objective.ForestGate", ExamSiteWorld.GateHint(Player));
             case ExamStage.ForestHunt:
-                string other = ChuninExamRules.Other(exam.Issued) == ExamScroll.Heaven ? "天之卷" : "地之卷";
+                string other = Loc.Get(ChuninExamRules.Other(exam.Issued) == ExamScroll.Heaven ? "Handbook.Exam.Heaven" : "Handbook.Exam.Earth");
                 if (ChuninExamRules.HasBoth(Player.CountItem(ModContent.ItemType<HeavenScroll>()),
                         Player.CountItem(ModContent.ItemType<EarthScroll>())))
-                    return $"第二试：天、地两卷已经齐了，进入丛林中部的中央塔{ExamSiteWorld.TowerHint(Player)}。";
-                return $"第二试：从其他考生手里夺取{other}——在丛林地表走动，三人一组的考生小队会找上门来" +
-                       $"（已击败 {exam.SquadsBeaten} 队）。带齐两卷去中央塔{ExamSiteWorld.TowerHint(Player)}。";
+                    return Loc.Get("Story.Objective.ForestBoth", ExamSiteWorld.TowerHint(Player));
+                return Loc.Get("Story.Objective.ForestHunt", other, exam.SquadsBeaten, ExamSiteWorld.TowerHint(Player));
             case ExamStage.Prelims:
-                return "第二试合格。预选赛：走进中央塔大厅，与音忍多斯一对一。被他的响鸣穿打中会耳鸣——左右会暂时颠倒。";
+                return Loc.Get("Story.Objective.Prelims");
             case ExamStage.Training:
-                return $"预选赛合格。正式赛在一个月后——先去变强（击败骷髅王，或生命上限达到 {ChuninExamRules.FinalsLifeThreshold}）。";
+                return Loc.Get("Story.Objective.Training", ChuninExamRules.FinalsLifeThreshold);
             case ExamStage.Finals:
-                return $"中忍考试正式赛：走进木叶城墙外的考试会场{ExamSiteWorld.StadiumHint(Player)}。对手是砂隐的我爱罗——他的沙会挡下正面的攻击。";
+                return Loc.Get("Story.Objective.Finals", ExamSiteWorld.StadiumHint(Player));
             default:
-                return "中忍考试篇完成：我爱罗倒下的那一刻，木叶崩溃开始了。（M3 开发中）";
+                return Loc.Get("Story.Objective.Done");
         }
     }
 
@@ -206,17 +195,17 @@ public sealed class StoryPlayer : ModPlayer
             ChuninExamPlayer exam = Player.GetModPlayer<ChuninExamPlayer>();
             return exam.Stage switch
             {
-                ExamStage.Recommend => ("去找卡卡西", NpcWhere(ModContent.NPCType<Content.NPCs.Kakashi>())),
-                ExamStage.Written => ("第一试：忍者学校", KonohaWorld.BuildingWhere("忍者学校")),
-                ExamStage.ForestGate => ("第二试：演习场入口", ExamSiteWorld.Where(ExamSiteWorld.Gate)),
+                ExamStage.Recommend => (Loc.Get("Story.Tracker.Kakashi"), NpcWhere(ModContent.NPCType<Content.NPCs.Kakashi>())),
+                ExamStage.Written => (Loc.Get("Story.Tracker.Written"), KonohaWorld.BuildingWhere(KonohaBuildings.Academy)),
+                ExamStage.ForestGate => (Loc.Get("Story.Tracker.ForestGate"), ExamSiteWorld.Where(ExamSiteWorld.Gate)),
                 ExamStage.ForestHunt when ChuninExamRules.HasBoth(Player.CountItem(ModContent.ItemType<HeavenScroll>()),
-                    Player.CountItem(ModContent.ItemType<EarthScroll>())) => ("第二试：进中央塔", ExamSiteWorld.Where(ExamSiteWorld.Tower)),
-                ExamStage.ForestHunt => ("第二试：夺取另一卷（丛林地表）", null),
-                ExamStage.Prelims => ("预选赛：中央塔大厅", ExamSiteWorld.Where(ExamSiteWorld.Tower)),
-                ExamStage.Training => ("修整：击败骷髅王或生命达到 400", null),
-                ExamStage.Finals => ("正式赛：考试会场", ExamSiteWorld.Where(ExamSiteWorld.Stadium)),
-                ExamStage.NoVillage => ("中忍考试需要新世界", null),
-                _ => ("木叶崩溃（开发中）", null),
+                    Player.CountItem(ModContent.ItemType<EarthScroll>())) => (Loc.Get("Story.Tracker.Tower"), ExamSiteWorld.Where(ExamSiteWorld.Tower)),
+                ExamStage.ForestHunt => (Loc.Get("Story.Tracker.Hunt"), null),
+                ExamStage.Prelims => (Loc.Get("Story.Tracker.Prelims"), ExamSiteWorld.Where(ExamSiteWorld.Tower)),
+                ExamStage.Training => (Loc.Get("Story.Tracker.Training", ChuninExamRules.FinalsLifeThreshold), null),
+                ExamStage.Finals => (Loc.Get("Story.Tracker.Finals"), ExamSiteWorld.Where(ExamSiteWorld.Stadium)),
+                ExamStage.NoVillage => (Loc.Get("Story.Tracker.NoVillage"), null),
+                _ => (Loc.Get("Story.Tracker.Destruction"), null),
             };
         }
         Vector2? bridge = WaveBridgeWorld.Site is BridgeSite site
@@ -224,12 +213,12 @@ public sealed class StoryPlayer : ModPlayer
             : null;
         return WaveStage switch
         {
-            WaveStage.FindTazuna => ("去桥头找达兹纳", bridge),
-            WaveStage.Scout => ("去大桥一带的海雾里巡视", bridge),
-            WaveStage.ReportToTazuna => ("回桥头问达兹纳", bridge),
-            WaveStage.GetStronger => ("变强：击败克苏鲁之眼或生命达到 200", null),
-            WaveStage.Lake => ("去地表的湖边", LakeAmbushSystem.NearestLake(Player)),
-            _ => ("去断桥", bridge),
+            WaveStage.FindTazuna => (Loc.Get("Story.Tracker.FindTazuna"), bridge),
+            WaveStage.Scout => (Loc.Get("Story.Tracker.Scout"), bridge),
+            WaveStage.ReportToTazuna => (Loc.Get("Story.Tracker.ReportToTazuna"), bridge),
+            WaveStage.GetStronger => (Loc.Get("Story.Tracker.GetStronger", StoryRules.LakeLifeThreshold), null),
+            WaveStage.Lake => (Loc.Get("Story.Tracker.Lake"), LakeAmbushSystem.NearestLake(Player)),
+            _ => (Loc.Get("Story.Tracker.Bridge"), bridge),
         };
     }
 
@@ -263,6 +252,7 @@ public sealed class StoryPlayer : ModPlayer
         InsigniaNoticeShown = tag.GetBool("insigniaNotice") || tag.GetInt("stage") >= 2;
         WelcomedHome = tag.GetBool("welcomedHome");
         pendingBosses.Clear();
-        pendingBosses.AddRange(tag.GetList<string>("pendingCelebrations"));
+        foreach (string boss in tag.GetList<string>("pendingCelebrations"))
+            pendingBosses.Add(boss == LegacyWaveDuoName ? WaveDuoName : boss);
     }
 }

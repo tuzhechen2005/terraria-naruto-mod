@@ -58,7 +58,7 @@ public sealed class ExamBoutSystem : ModSystem
             {
                 Rectangle field = stadium.ArenaWorld();
                 Schedule(ModContent.NPCType<Gaara>(), new Vector2(FarSide(field, player), field.Bottom),
-                    $"主考官：“中忍考试正式赛，第一场——{player.name} 对 砂隐的我爱罗！”");
+                    "Exam.FinalsAnnounce", player.name);
                 return;
             }
         }
@@ -86,7 +86,7 @@ public sealed class ExamBoutSystem : ModSystem
             return;
         Rectangle hall = tower.ArenaWorld();
         Schedule(ModContent.NPCType<Dosu>(), new Vector2(FarSide(hall, player), hall.Bottom),
-            $"月光疾风：“（咳）……预选赛，{player.name} 对 音忍·多斯。——开始。”", PrelimsAnnounceTicks);
+            "Exam.PrelimsAnnounce", player.name, PrelimsAnnounceTicks);
     }
 
     public static bool BoutUnderway => announce >= 0 || AnyBout();
@@ -99,12 +99,13 @@ public sealed class ExamBoutSystem : ModSystem
     private static float FarSide(Rectangle arena, Player player) =>
         player.Center.X < arena.Center.X ? arena.Right - 64 : arena.Left + 64;
 
-    private static void Schedule(int type, Vector2 at, string line, int ticks = AnnounceTicks)
+    // The proctor's announcement (a text key, with the player's name) as the bout is set up.
+    private static void Schedule(int type, Vector2 at, string key, string playerName, int ticks = AnnounceTicks)
     {
         pendingType = type;
         pendingAt = at;
         announce = ticks;
         cooldown = RetryTicks;
-        ExamBoss.Tell(line, new Color(255, 220, 120));
+        ExamBoss.Tell(new Color(255, 220, 120), key, playerName);
     }
 }

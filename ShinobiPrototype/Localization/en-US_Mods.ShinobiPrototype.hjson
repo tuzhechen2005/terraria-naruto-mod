@@ -723,3 +723,1066 @@ Biomes: {
 }
 
 DamageClasses.TaijutsuDamage.DisplayName: taijutsu damage
+
+# Text shown by the code (Loc.Get("Area.Name")): dialogue, objectives, the handbook, hints. {0}, {1}... are filled in by the code.
+Text: {
+	Bridge: {
+		OnBeach: Use the blueprint standing on a beach, facing the sea.
+		NoRoom: Too close to the edge of the world, or the sea is too shallow: the bridge won't fit here.
+		NoSea: No sea within 60 tiles ahead. Use it facing the sea.
+		OutOfWorld: The bridge would run past the edge of the world.
+		Blocked: Something you built is in the bridge's way (near {0}, {1}). Clear it first, or pick another spot.
+		AlreadyBuilt: This world already has the bridge.
+		Outline: The blueprint shows the bridge's outline (in green). If it looks right, stay where you are and use the blueprint again to build it.
+		Built: Tazuna's bridge stands. The bridge builder is waiting for you in the hut at its end.
+	}
+
+	Vow: {
+		School: {
+			None: none
+			Sharingan: Sharingan
+			EightGates: Eight Gates
+			Byakugan: Byakugan · Gentle Fist
+			Sage: Sage Arts · Nine-Tails
+		}
+
+		Chapter: {
+			None: ""
+			Sharingan: The Curse Mark
+			EightGates: Training with Guy
+			Byakugan: The Hyuga Main and Branch Houses
+			Sage: Mount Myoboku
+		}
+	}
+
+	Hiruzen: {
+		Greeting1: (He breathes out a puff of smoke.) ...So you've come.
+		Greeting2: Everyone in this village is my family. You too.
+		Greeting3: The Will of Fire will always be passed on.
+		Called:
+			'''
+			...You've come. Kakashi tells me you've reached the threshold of a path.
+
+			Which path a ninja walks is theirs to decide. When you've made up your mind, wear that style's core and choose "Take a vow". Sage Arts can only be learned after the Destruction of the Leaf; if that is your path, you may wait.
+			'''
+		NoVow: You have not taken a vow yet. Once you have a style core, wear it and come to me.
+		YourPath: Your ninja way: {0}.
+		ButtonVow: Take a vow
+		ButtonAbout: About styles
+		NoCore:
+			'''
+			To take a vow, you need something to vow to. The first tier of every style core lies between the Chunin Exams and the Destruction of the Leaf: the Sharingan in the Forest of Death, the Byakugan with Neji, the Eight Gates in the fight with Gaara.
+
+			Sage Arts come only after the Destruction of the Leaf; if that is your path, you may wait.
+
+			When you have a core, wear it and come to me.
+			'''
+		AlreadyVowed: You vowed long ago: {0}. ...Walk it to the end.
+		Vowed:
+			'''
+			...Very well. From today, {0} is your ninja way.
+
+			The training that belongs to this path, "{1}", will find you in time. (This chapter is still in development.)
+
+			Sage Arts come only after the Destruction of the Leaf. If you change your mind one day, come and see me again.
+			'''
+		NeedsFee:
+			'''
+			You want to leave {0} for {1}?
+
+			You may. But it costs {2} gold; think of it as a gift toward the village's repairs. What you gained on the old path stays with you, but it will no longer work.
+
+			If you are sure, choose "Take a vow" once more.
+			'''
+		CannotPay: Changing paths costs {0} gold. If you don't have it, save up first.
+		Changed:
+			'''
+			...Very well. Set down {0} and walk the way of {1}.
+
+			The training of "{2}" will find you in time.
+			'''
+		About:
+			'''
+			Styles are paths of training that cross every class, carried by style cores. Anyone may wear a core, one at a time, and use it with the [Style Technique] key.
+
+			To take a vow is to choose one as your own ninja way. Then training that belongs to that path alone awaits you:
+			- Sharingan — the Curse Mark    - Eight Gates — training with Guy
+			- Byakugan — the Hyuga Main and Branch Houses    - Sage Arts — Mount Myoboku
+
+			Sage Arts come only after the Destruction of the Leaf. You may change paths, but it has a price.
+			'''
+	}
+
+	Anko: {
+		HeardOrochimaru:
+			'''
+			...What did you say? Long hair, eyes like a snake?
+
+			(Her hand goes to the back of her neck without her meaning it to.) ...Leave him to me. You just head for the tower. He's not someone you can handle.
+			'''
+		Rules:
+			'''
+			Well, well, another one come to die. I'm the proctor of the second test, Mitarashi Anko.
+
+			The rules are simple: one scroll each, Heaven or Earth. Take the other kind from someone else and bring both to the central tower, deep in the forest. No time limit. Though the longer you stay in these woods, the likelier you end up as bug food.
+			'''
+		Hurry: Still dawdling here? The central tower is in the heart of the forest. ...Don't make me go in and fetch your body.
+		NotYet: This is the second test. Brats who haven't passed the written test, keep out.
+		Survived: You actually came out alive? ...Heh. Interesting.
+		ButtonScroll: Take a scroll
+		Issue:
+			'''
+			(She tosses you a scroll.) The {0}. Hang on to it.
+
+			...And no peeking inside on the way, okay? People die doing that.
+			'''
+	}
+
+	Hayate: {
+		Prelims:
+			'''
+			(Cough.) ...I am the proctor of the preliminaries, Gekko Hayate.
+
+			Too many of you passed the second test, so there will be a match here first. One on one, until one of you falls. ...Tell me when you are ready.
+			'''
+		Passed: (Cough.) ...Congratulations. The finals are a month away. Prepare well.
+		NotYet: (Cough.) ...This is where the second test ends. Come back with both the Heaven and Earth Scrolls.
+		ButtonStart: Begin the preliminaries
+	}
+
+	Exam: {
+		WrittenPassed: First test passed ({0} of the first nine right, {1} silver earned). Second test: the Forest of Death. Collect your scroll at the gate of Training Ground 44 in the jungle.{2}
+		GateSquad:
+			'''
+			A corner of a scroll shows in the fallen candidate's jacket: the {0}, the same as yours.
+			Candidate: "...Hmph. Want the {1}? Try your luck near the tower... the Rain..."
+			'''
+		Vial: ...A vial rolls on the ground. Floating in it is a red eye.
+		RainTrioDown: The Rain trio is down, and they carried just the scroll you were missing
+		GotScroll: "{0}: you got the {1}! Bring both scrolls to the central tower in the middle of the jungle.{2}"
+		PrelimsPassedFinals: Preliminaries passed! Finals: go to the stadium outside the Leaf's wall{0}.
+		PrelimsPassedTraining: Preliminaries passed! Get stronger before the finals (beat Skeletron, or reach {0} max life).
+		FinalsPosted: Notices are up on the Leaf's streets: the Chunin Exam finals are about to begin.
+		TowerReached: Heaven and Earth, opened together: the second test is passed. The proctor in the hall is waiting for you.
+		FinalsAnnounce: Proctor: "Chunin Exam finals, first match: {0} versus Gaara of the Sand!"
+		PrelimsAnnounce: Gekko Hayate: "(Cough.) ...Preliminaries: {0} versus Dosu of the Sound. Begin."
+	}
+
+	Handbook: {
+		Title: Ninja Handbook
+
+		Tab: {
+			Mission: Mission
+			Bosses: Bosses
+			Jutsu: Jutsu
+			Chakra: Chakra
+			Rewards: Rewards
+			Paths: Paths
+			Lore: Records
+		}
+
+		Path: {
+			Sharingan: {
+				Name: Sharingan
+				Ultimate: Rinnegan · Perfect Susanoo
+				Teaser: Eyes that see through everything.
+			}
+
+			EightGates: {
+				Name: Eight Gates
+				Ultimate: Gate of Death · Night Guy
+				Teaser: Youth that burns life itself.
+			}
+
+			Byakugan: {
+				Name: Byakugan · Gentle Fist
+				Ultimate: Tenseigan
+				Teaser: Eyes that see the chakra network.
+			}
+
+			Sage: {
+				Name: Sage Arts · Nine-Tails
+				Ultimate: Tailed Beast Mode
+				Teaser: In tune with nature and the tailed beast.
+			}
+
+			Line: - {0}: {1} Its peak: {2}
+			Intro: Paths: training that crosses every class. One core at a time, each with three tiers. They light up here once you have the first tier.
+			Outro: Every first tier is found between the Chunin Exams and the Destruction of the Leaf.
+		}
+
+		Progress: Progress
+		AskKakashi: Not sure what to do next? Ask Kakashi.
+
+		Wave: {
+			Insignia: - Mist Insignia: {0}/3 (one from each Demon Brother, one from Tazuna when he comes clean; the Brothers still turn up in the sea mist when it rains)
+			Duo: - Zabuza and Haku: {0}
+			Bridge: - The seaside bridge: {0}
+			Exams: - Chunin Exams: {0}
+		}
+
+		Status: {
+			Defeated: defeated
+			NotDefeated: not yet defeated
+			NoBridge: not in this world yet (ask Kakashi for the blueprint)
+			BridgeDone: finished
+			BridgeBuilding: unfinished; Tazuna the bridge builder is at the bridgehead
+			ExamsOpen: open
+			ExamsLocked: open once Zabuza and Haku are beaten
+		}
+
+		Exam: {
+			Title: Chunin Exams
+			Passed: passed
+			Ongoing: under way
+			NotStarted: not started
+			ForestFetch: under way (collect your scroll at the gate)
+			ForestHunt: under way (holding the {0}; {1} squads beaten)
+			Heaven: Heaven Scroll
+			Earth: Earth Scroll
+			Recommend: - Recommendation: {0}
+			Recommended: given by Kakashi
+			NotRecommended: not yet
+			Written: - First test, the written test: {0}
+			Forest: - Second test, the Forest of Death: {0}
+			Prelims: - Preliminaries: {0}
+			Finals: - Finals: {0}
+			FinalsOver: over
+			FinalsOpen: open
+			Vow: - Your vow: {0} (once you have a style core, see the Third Hokage in the Hokage's office)
+		}
+
+		Bosses: {
+			Defeated: "[Defeated] "
+			NotDefeated: "[Not defeated] "
+			Intro: Bosses (each can be fought again with its summoning item; the story only brings the first fight)
+			Brothers: The Demon Brothers — carry a Mist Insignia into the sea mist around the bridge and they are sure to ambush you the first time; after that they may turn up when it rains. Drop Mist Insignia.
+			WaveDuo: Zabuza and Haku — after the Eye of Cthulhu. Craft the Zabuza Challenge Scroll from 3 Mist Insignia and wood, and use it around the bridge. Drop class weapons, masks and a Chakra Crystal.
+			Orochimaru: Orochimaru (encounter) — after the Eater of Worlds or Brain of Cthulhu (or at 300 max life). Met on the jungle surface during the second exam; afterwards, summon him on the jungle surface with a Shed Snake Skin (vines, jungle spores and stingers, at an anvil). He leaves at half life. Drops the Sharingan in a Vial (about 1 in 4).
+			Dosu: Dosu Kinuta of the Sound — the preliminaries, in the central tower's hall. Afterwards, summon him in the hall with a Sound Ninja Token (iron or lead bars and Shadow Scales or Tissue Samples, at an anvil).
+			Gaara: Gaara — after Skeletron (or at 400 max life). The finals, in the stadium; afterwards, summon him there with a Sand Gourd (sand and bones, at an anvil). Each character's first win always gives the Scroll of the Eight Gates and Lee's Leg Weights.
+			Neji: Neji Hyuga — once the finals have begun, use the challenge Kakashi passes on to you in the stadium. Drops the Byakugan (about 1 in 4).
+		}
+
+		Jutsu: {
+			Title: Substitution Jutsu (a basic jutsu, for every class)
+			Logs: - You carry a few substitution logs (the log icons under the chakra bar; {0} to start)
+			Auto: - When an enemy hits you hard (at least {0}% of your max life), a log is spent by itself: you swap to one side, a log drops where you stood, and the hit does nothing. No key needed. Scratches land as normal and cost no log
+			Regen: - A log comes back every {0} seconds; the harder the hit it took, the longer that log takes; every hit you land brings it a little sooner
+			Key: - Press [{0}] to substitute on purpose: {1} logs and {2} chakra blink you the way you are moving and hide you for {3} seconds: your next hit is a sure critical, and stronger
+			Binds: - Binds like the Sand Coffin and the killing intent are always warned; dodge them and nothing happens. If one catches you, a log gets you out; without one, you are caught
+			Sealed: - With three chakra points sealed, the logs are sealed too
+			Drill: - To practise the timing of the key, ask Kakashi for "Substitution drill"
+			Current: Now: logs {0}/{1}
+		}
+
+		Rewards: {
+			Title: Land of Waves · Zabuza and Haku: {0}/{1} collected
+			Weapon: - Every win gives one class weapon (one each for melee, ranged, magic and summoning), sometimes two
+			Masks: - Each of the two masks drops about 1 time in 7
+			FirstWin: - Each character's first win also gives a Chakra Crystal and the Wave Country Medal
+			Expert: - In Expert Mode, each player gets a treasure bag instead
+		}
+
+		Lore: {
+			Empty:
+				'''
+				Records
+
+				(Blank.) Beat the story's bosses and their stories will be written here.
+				'''
+			Wave:
+				'''
+				Records · The Land of Waves
+
+				[Zabuza Momochi, the Demon of the Mist] A rogue ninja of the Hidden Mist, one of the Seven Ninja Swordsmen, who carries the Executioner's Blade. They say that at the graduation exam of the Village of the Bloody Mist he killed every classmate alone, and was called the Demon ever after. When his coup failed he fled the Mist, raising money as an assassin, and Gato hired him to kill Tazuna the bridge builder.
+
+				[Haku] A boy born with the Ice Release kekkei genkai. In the war-torn Land of Water those with kekkei genkai were hunted; Haku lost his parents, and Zabuza found him in the snow. From that day he lived only for Zabuza, content to be his "tool." On the bridge he trapped the Leaf ninja in his ice mirrors, and in the end took the killing blow meant for Zabuza.
+
+				[Gato] A rich man who held the Land of Waves' shipping in his fist. Hearing that Zabuza had failed, he came to the bridge with hired thugs to be rid of Zabuza too, never thinking that the Demon, with Haku gone, still had one breath left in him.
+
+				[The Bridge] Tazuna finished the bridge with the strength of the whole town. They named it the Great Naruto Bridge, after the ninja who changed their country.
+
+				...They say the Leaf's Chunin Exams are about to begin. And that there are snakes in the Forest of Death.
+				'''
+		}
+
+		Chakra: {
+			Header: Chakra {0}/{1}    Chakra Crystals {2}/{3}
+			Recovery: Recovery
+			Natural: - Natural: {0} a second; for {1} seconds after a jutsu, {2} a second
+			OnHit: - On hit: any class's attack (minions too) that hits an enemy restores {0}, at most {1} a second
+			Pill: - Soldier Pill: restores {0} at once, then none for {1} seconds; a Mushroom and a Daybloom at a workbench make 2
+			Raise: Raising the maximum
+			Crystal: - Chakra Crystal: blue-glowing crystals in the caverns underground; mine one with a pickaxe and use it for +{0}, up to {1} before Hardmode
+		}
+	}
+
+	Kakashi: {
+		Greeting1: Yo.
+		Greeting2: ...(He shuts the little orange book.) Yo.
+		Greeting3: Sorry I'm late. I got lost on the road of life.
+		HeardOrochimaru:
+			'''
+			...Hey, hey. What's with that face?
+
+			(He hears you out, and puts the little book away.) Long hair, eyes like a snake, a neck that stretches that far... That was Orochimaru. A rogue from the Leaf. One of the Sannin, once.
+
+			...Honestly, you're pretty lucky to be standing here. I'll report it to Lord Hokage. The exam goes on as planned. But if you see those eyes again, don't play the hero. Turn around and run.
+			'''
+		Handbook: Yo. Where's your Ninja Handbook? ...Here. Try not to lose it this time. Missions, jutsu, chakra, it's all in there.
+		Blueprint: Yo. Tazuna the bridge builder asked me to give you this: his blueprint. There's no bridge of his on this coast yet. Use it once on the beach facing the sea to see the outline; if it looks right, use it again on the spot and up goes the bridge.
+		LostRecommendation: Lost your recommendation? ...Here's another. Don't lose this one.
+		NejiChallenge: That Hyuga kid, Neji, asked me to pass something on: once the finals start, he wants a match with you in the stadium. Up to you.
+		NoVillage: Good work. ...We'd head back to the Leaf now, except there's no Leaf in this land. The Chunin Exams only happen in a world that has one.
+		Recommendation: Yo, good work. ...Right, back to the village. Oh, and I put your name down for the Chunin Exams. Well... if you're scared, there's still time to back out.
+		Says: Kakashi: {0}
+		ButtonTips: Advice
+		ButtonDrill: Substitution drill
+		ButtonHome: Back to the village
+		ButtonAcademy: To the Academy
+		RideHome: Kakashi: ...Body Flicker. Here we are. Welcome back.
+		RideAcademy: Kakashi: There, the Academy. The proctor's waiting for you in the classroom.
+		Tip1: Substitution: you carry a few logs. When a hit really hurts, a log takes it and you're already off to one side. Scratches, you'll just have to take yourself. A log you use takes a good while to come back, and the harder the hit, the longer, so go easy on them. Press [{0}] to substitute on purpose: two logs, a flash the way you're running, you vanish, and your next strike goes for the vitals. Want to practise the timing? Pick "Substitution drill".
+		Tip2: Chakra comes back on its own, slowly, and slower for a few seconds after a jutsu. Hitting enemies brings a little back too, blade, bow, magic or summons, doesn't matter.
+		Tip3: A mushroom and a daybloom at a workbench make soldier pills. One gives back 40 chakra. They're for emergencies, not snacks.
+		Tip4: There are blue-glowing chakra crystals in the caves underground. Like life crystals, they raise your chakra. Keep an eye out when you're mining.
+		Tip5: The Mist ninja work far from the village, mostly by the sea. Get hold of their insignia and you can track down Zabuza.
+		Tip6: Nobody breaks a Water Prison from the inside. If I ever get stuck in one, hit it from outside.
+		Tip7: Everything I've told you is in the Ninja Handbook. Read it whenever.
+		DrillStart: Watch closely—
+		VowCall: Kakashi: ...Oh? So you got your hands on that. Lord Third wants to see you at the Hokage's Residence. Don't keep the old man waiting.
+	}
+
+	M0: {
+		Usage: /m0, /m0 items, /m0 seals, /m0 tools, /m0 time <day|noon|night|midnight|hh:mm>, /m0 bridge, /m0 preview, /m0 sighting, /m0 senbon, /m0 mist, /m0 brothers, /m0 forest, /m0 squad, /m0 orochimaru, /m0 lake, /m0 story <1-5>, /m0 exam [stage|gate|tower|stadium|academy|hokage|tree|rain|rebuild], /m0 epilogue zabuza|haku [distance], /m0 cheer [boss name], /m0 dmg [on|off], /m0 logs off|on or /m0 god [on|off]
+		Description: Get the M0 test items, every item in the mod (developer wings included), or switch a temporary single-player god mode
+		ItemsGiven: Gave all {0} items of the mod (developer wings included).
+		ToolsGiven: Gave a shuriken and 99 paper bombs. Hold a ninja tool for about 12 seconds (quicker with ninja-tool gear); with the meter full, the next throw is a stealth throw.
+		SealsGiven: Gave the three jutsu scrolls. Open your inventory and put them in the 2/4/6-seal slots right of the ammo slots; press [{0}], [{1}] and [{2}] to cast.
+		NoBridge: This world has no bridge yet.
+		PreviewReplayed: Replaying the mist preview here (world progress unchanged).
+		LakeSingle: The lake ambush test is single player only.
+		NoLake: No suitable lake on this world's surface.
+		LakeStarted: Teleported to a lake ({0} tiles wide) and started the lake ambush (mission stage not checked; finishing it records LakeDone).
+		StorySingle: Setting the mission stage is single player only.
+		CheerQueued: Noted "beat {0}". Walk into the Leaf and the villagers will celebrate. (Teleport: /m0 exam hokage)
+		OrochimaruSingle: Summoning Orochimaru's disguise is single player only.
+		OrochimaruComing: The insects in the forest have suddenly gone quiet... (to count for the exam, be at the scroll hunt of the second test)
+		SquadSingle: Summoning a candidate squad is single player only.
+		SquadComing: A candidate squad is coming from off screen (to count, be at the scroll hunt of the second test).
+		ForestSingle: Summoning the herb-gathering youth is single player only.
+		ForestComing: In the woods ahead, a youth is gathering herbs.
+		BrothersSingle: Summoning the Demon Brothers is single player only.
+		BrothersComing: The Demon Brothers close in from both sides (Gōzu on the left, Meizu on the right).
+		SightingPlayed: Playing a mist sighting here (no progress change). Near the broken end they appear in their real places; otherwise about 15 tiles ahead of you.
+		SenbonPlayed: Playing a senbon warning here (no progress change). Near the broken end it comes from its real place; otherwise from about 15 tiles ahead.
+		DmgOn: Damage report on: every hit you take shows its source, the table's number, the damage before and after defence, and whether a log took it. /m0 dmg again to turn it off.
+		DmgOff: Damage report off.
+		LogsSingle: Switching logs off is single player only.
+		LogsOff: Logs off: no log takes an enemy's hit (clones still work). /m0 logs on to restore.
+		LogsOn: Logs back on.
+		GodSingle: Test god mode is single player only.
+		GodOn: Test god mode on: all damage is ignored. /m0 god off to turn it off.
+		GodOff: Test god mode off: damage is back to normal.
+		EpilogueSingle: The epilogue test is single player only.
+		RebuildSingle: Rebuilding the exam grounds is single player only.
+		RebuildFailed: This world has no Leaf or no jungle surface; nothing to rebuild.
+		Teleported: Teleported to {0}.
+		NoSite: This world doesn't have that place (it needs a new world).
+		NoStage: No such stage. Type /m0 exam to see the stages.
+		ExamSingle: Setting the exam stage is single player only.
+		TimeSingle: Changing the time is single player only.
+		TimeUsage: Usage: /m0 time day (4:30) | noon (12:00) | night (19:30) | midnight (0:00) | hh:mm (24-hour)
+		TimeSet: Time set to {0} ({1}).
+		MistNoBridge: Sea mist check: this world has no bridge.
+		Day: day
+		Night: night
+		BridgeTeleported: Teleported to the bridgehead. This world's bridge: {0}; the code: v{1}
+		BridgeVersionUnknown: not recorded (very old)
+		BridgeCurrent: .
+		BridgeOutdated: ; a new world is needed to see the latest bridge and hut.
+		StorySet: Mission stage set to {0} (1 find Tazuna, 2 scout, 3 back to Tazuna, 4 get stronger/lake, 5 broken bridge).
+		EpilogueZabuza: Epilogue started: Zabuza speaks, then walks to Haku {0} tiles away. Kakashi appears afterwards (exam progress reset to awaiting the recommendation).
+		EpilogueHaku: Epilogue started: Haku speaks, then walks to Zabuza {0} tiles away. Kakashi appears afterwards (exam progress reset to awaiting the recommendation).
+		ExamStatus:
+			'''
+			Chunin Exams: stage {0}; grounds {1}; version v{2}/v{3}.
+			Stages: {4}
+			'''
+		ExamNoSites: none (an old world, or no Leaf)
+		Rebuilt: Rebuilt the Training Ground 44 gate, the central tower and the landmarks on the way to the new design (v{0}). The old grounds were cleared; nearby NPCs return to their posts in a few seconds.
+		ExamSet: Exam stage set to {0}; it now reads as {1}.
+		MistReport: Sea mist check: {0} tiles from the bridge (no mist beyond {1}); the mist is {2}; {3}; strength setting {4}; current density {5}.
+		MistOn: active
+		MistOff: inactive (the bridge is finished or the Land of Waves is done)
+		Raining: ", raining"
+	}
+
+	Orochimaru: {
+		Interesting: ...Kukuku. Your body is even more interesting than I thought. Don't go and die before we meet again.
+		InterestingChat: Orochimaru: "...Kukuku. Your body is even more interesting than I thought. Don't go and die before we meet again."
+		Struggle: ...How sweet you look, struggling so. The time isn't right yet. Take good care of that life until I come for it.
+		StruggleChat: Orochimaru: "...How sweet you look, struggling so. The time isn't right yet. Take good care of that life until I come for it."
+		Hurry: Orochimaru: "...Such haste."
+		FrozenByFear: Killing intent... your body won't move!
+		Left: Orochimaru breaks into a mass of snakes and burrows into the earth. Only a shed skin is left behind; use it in the jungle and he may be drawn out again.
+		SkinWrongPlace: The skin still carries his scent... he can only be drawn out on the jungle surface.
+	}
+
+	Gaara: {
+		Guard: Shield of Sand
+		Caught: The sand has you!
+		FirstWin: First win over Gaara: you get the Scroll of the Eight Gates (a style core) and Lee's Leg Weights.
+		Down: Gaara falls... but the chakra pouring out of him is no longer human. Over the stadium, a genjutsu drifts down like feathers: the Destruction of the Leaf has begun. (Coming in a later update.)
+		WrongPlace: Gaara is in the stadium outside the Leaf's wall. Use this on the field.
+		TooEarly: It isn't your turn in the finals yet.
+	}
+
+	Neji: {
+		Begin: ...Come. I'll show you what fate is.
+		Rotation: Eight Trigrams Palm Rotation!
+		InRange: You are within the field of my divination.
+		SixtyFour: Eight Trigrams Sixty-Four Palms!
+		Down: Neji: ...Isn't fate decided from the start? You've shown me... something different. (The challenge can be used again; he'll face you any time.)
+		TooEarly: Neji: ...Once the finals begin, we'll meet in the stadium.
+		WrongPlace: Neji is waiting in the stadium. Use this in the middle of the field.
+	}
+
+	Dosu: {
+		Down: Gekko Hayate: "(Cough.) ...The winner: the Leaf candidate. Through the preliminaries." The finals will be held in a month, in the Leaf's stadium.
+		WrongPlace: The preliminaries are held in the hall of the central tower in the Forest of Death. Use this in the hall.
+		TooEarly: You haven't reached the preliminaries yet. Pass the second test first.
+	}
+
+	Wave: {
+		Complete: Zabuza and Haku have been beaten. The Land of Waves story is complete, and the Chunin Exams are now open.
+		BridgeFinished: The bridge is finished. The mist over the sea has lifted.
+		AlreadyFighting: Haku or Zabuza is already here; they can't be summoned again.
+		NoBridge: This world has no bridge yet. Get Tazuna's blueprint from Kakashi and build it first.
+		ScrollWrongPlace: The mist has blurred the writing on the scroll... Zabuza is waiting at the broken bridge. Open it again near the bridge by the sea.
+		FirstWin: First win over Zabuza and Haku: you get a Chakra Crystal and the Wave Country Medal.
+	}
+
+	Forest: {
+		Silence: The insects in the forest have suddenly gone quiet...
+		RainComing: A fine rain begins among the trees... and on the branches overhead, three umbrellas open.
+		SomeoneInTrees: ...Someone is in the trees.
+		RainAmbush: Rain candidate: "We'll be taking your scroll."
+	}
+
+	Genin: {
+		SquadGrass: a Grass candidate squad
+		SquadWaterfall: a Waterfall candidate squad
+		SquadLeaf: a Leaf candidate squad
+	}
+
+	Lake: {
+		FindOne: Find a lake on the surface (not the sea).
+		Here: There's a lake right near you.
+		Nearest: The nearest lake is to the {0}.
+	}
+
+	Dir: {
+		West: west
+		East: east
+		Up: up
+		Down: down
+		NearbyParen: " (close by)"
+		SideParen: " (to the {0})"
+	}
+
+	WorldGen: {
+		Bridge: Building the Land of Waves bridge
+		Konoha: Building the Hidden Leaf Village
+		ChakraCrystals: Condensing chakra crystals
+		ExamSites: Preparing the Chunin Exam grounds
+	}
+
+	Keys: {
+		Unbound: unbound
+		UnboundSet: unbound (set it in the controls)
+	}
+
+	Chakra: {
+		CrystalUsed: Max chakra +{0}
+		NotEnough: Not enough chakra
+		NotEnoughStop: Not enough chakra.
+	}
+
+	Seal: {
+		CloneCast: Clone!
+		SlotHover: "{0}-seal slot: holds a {0}-seal jutsu scroll; press [{1}] to cast"
+		EmptySlot: No scroll in the {0}-seal slot
+		Cooldown: "{0} cooling down: {1}s"
+		Interrupted: Hand seals interrupted
+
+		Sign: {
+			Rat: Rat
+			Ox: Ox
+			Tiger: Tiger
+			Hare: Hare
+			Dragon: Dragon
+			Snake: Snake
+			Horse: Horse
+			Ram: Ram
+			Monkey: Monkey
+			Bird: Bird
+			Dog: Dog
+			Boar: Boar
+		}
+	}
+
+	Substitution: {
+		NoLogs: Not enough logs (needs {0})
+		Cast: Substitution!
+		Hint: Tip: a log took that hit for you ({0} left; they come back slowly, sooner as you land hits). Press [{1}] to substitute on purpose: {2} logs blink you the way you're moving and hide you for {3} seconds, and your next hit is a sure critical.
+	}
+
+	Status: {
+		SealedNoJutsu: Chakra points sealed: no hand seals
+		SandCoffin: Sand Coffin!
+		KillingIntent: Killing intent... can't move!
+		PointsSealed: Chakra points sealed!
+		PointSealed: Chakra point struck ×{0}
+		FiveSeal: Five Elements Seal: your chakra has stopped!
+	}
+
+	Style: {
+		GatesClosed: Your body hit its limit: the gates close
+		NoCore: No style core equipped.
+		Cooldown: Style technique is cooling down.
+		Foresight: Seen through!
+		GateOpen: Eight Gates: {0}, open!
+		Gate0: ""
+		Gate1: Gate of Opening
+		Gate2: Gate of Healing
+		Gate3: Gate of Life
+	}
+
+	Drill: {
+		Start: Kakashi: I'll throw {0} kunai at you, and I'll take a different time to aim each one. Stand {1}–{2} tiles from me, watch the kunai, and press the substitution key just before it reaches you. In the drill no log takes it by itself; it's all your timing. No logs or chakra are used.
+		TooFarStop: Kakashi: If you're going to run that far, let's call it a day.
+		BackOff: Back off a bit ({0}+ tiles)
+		ComeCloser: Come a bit closer
+		Success: Substituted!
+		Early: Too early!
+		Late: Too late!
+		Dodged: Dodged it. Try the substitution this time
+		Count: "{0} ({1}/{2})"
+		Result: Kakashi: {1} substitutions out of {0}. {2}
+		VerdictGreat: You've got it down. Stay that calm in a real fight.
+		VerdictOkay: Not bad. A few more goes and your body will remember the timing on its own.
+		VerdictPoor: Watch the kunai, not me. Again.
+	}
+
+	Hud: {
+		Chakra: Chakra {0}/{1}
+		GodMode: M0 test god mode
+		SubstitutionSealed: Substitution sealed
+		Substitution: Substitute [{0}]
+		StealthThrow: Stealth throw
+		Stealth: Stealth
+		Tracker: Mission: {0}
+		TrackerAcross: "  -> {1} tiles {0}"
+		TrackerDepth: ", {1} tiles {0}"
+	}
+
+	Debug: {
+		OtherSource: other
+		Contact: "{0} (contact)"
+		Hit: hit
+		HitBelowLog: hit (below the log threshold)
+		TakenByLog: taken by a log
+		Report: "[Damage] {0}: table {1}, before defence {2}, after {3}, {4} (life {5}/{6})"
+	}
+
+	TazunaBridge: {
+		Line1: I'm Tazuna, the bridge builder. Finish this bridge and the Land of Waves gets to live.
+		Line2: That Gato has shut the sea lanes. No ships get in, and people can barely eat.
+		Line3: Mist ninja show up when the fog rolls in, right here on the shore by the bridge.
+		Line4: The bridge has stood broken off out there for ages... the workers are too scared to come.
+		Line5: Every stone of this bridge was carried up there by the townsfolk, one at a time.
+		Line6: There's still a stone hanging from the crane. The day the workers saw figures in the mist, they dropped everything and ran.
+		Line7: My grandson Inari says there's no such thing as heroes. ...I'd like him to be wrong.
+		Line8: (He takes a swig.) Ha... I may not look it, but I'm the best bridge builder in this country.
+		Line9: There's a torii gate on the islet over there. The fishermen used to pray at it before they put out to sea.
+		FirstMeeting: Oh? You're the ninja Kakashi brought along? I'm Tazuna, the finest bridge builder in this country. Finish this bridge and the Land of Waves gets to live... Watch yourself, though. This stretch of coast isn't safe.
+		Confession:
+			'''
+			...The Demon Brothers? Even Mist chunin, now... I can't hide it any longer.
+			I lied when I hired you. This was never a C-rank mission. Gato, the shipping magnate, wants me dead, and he's hired ninja to do it.
+			Once the bridge is done, his grip on the Land of Waves is broken. But a country this poor... can't pay for an A-rank mission. Please, ninja.
+			...Oh, and I found this by the hut door a few nights ago. It bears the mark of the Mist. You keep it.
+			'''
+		RankRaised: The mission is now A-rank. Tazuna gives you a Mist Insignia.
+		Night: It's dark, and the mist is thicker. Better not go onto the bridge alone at night.
+		Rain: The Mist ninja love a rainy day... be careful.
+		GetStronger: Kakashi says Gato hired the Demon of the Mist... Don't push your luck. Get stronger first.
+		Lake: The road to town runs past the lake... once the mist comes up there, you can't see a thing.
+		Bridge: You're saying someone carried Zabuza off? ...(He goes pale.) If that man's still alive, this bridge will never be finished.
+		SawPreview: You saw them too, didn't you? Those two in the mist... Gato's ninja. As long as the bridge isn't finished, they'll be waiting there.
+		Insignia: Are those Mist insignia you're carrying? ...So you mean it. Please, ninja.
+	}
+
+	Tazuna: {
+		Line1: The bridge is finished! All thanks to you. Want to buy something?
+		Line2: Ships can come into port again, and the market's busy.
+		Line3: That bridge? Everyone calls it the Great Naruto Bridge.
+		Line4: Zabuza and that boy... in the end, this world drove them to it too, I suppose.
+		Line5: Inari runs up onto the bridge every day now. Says he'll be a hero when he grows up.
+		Line6: With Gato gone, his thugs all ran off. This country can finally breathe.
+		Line7: Need wood? I've got plenty left over from the bridge.
+		Line8: I hear the Leaf's holding the Chunin Exams? You're going too, aren't you? Give it your all.
+		Line9: Thank that old man of the Leaf for me (the Third). I only ever paid for a C-rank mission, you know.
+	}
+
+	ToolShopkeeper: {
+		Line1: Welcome! Kunai, shuriken, paper bombs: nobody in the Leaf stocks more than I do.
+		Line2: Hold a tool long enough to know it, and you can hide your intent when you throw. That's what a stealth throw is.
+		Line3: Don't run around with paper bombs in your shirt. Stick one in the wrong place and it's no joke.
+		Line4: My girl Tenten keeps going on about becoming a ninja like Lady Tsunade.
+		Line5: Shuriken bounce off walls. Get the angle right and you can hit someone behind one.
+		AfterWave: I hear you brought Mist senbon back from the Land of Waves? I've got a batch in, not much worse than the ones that Haku used.
+		AfterExams: Well done at the Chunin Exams! Tenten says she saw you in the stadium. I'll have her help out in the shop.
+	}
+
+	HakuForest: {
+		Line1: Good morning. Are you... from around here? I'm gathering herbs. The plants in this forest are good for healing wounds.
+		Line2: There is someone very precious to me. For him, I would do anything.
+		Line3: Do you have someone precious? ...A person only becomes truly strong when they have someone they want to protect.
+		Line4: You will become strong. Perhaps... we will meet again.
+		Parting: Oh, and— I'm a boy.
+		Continue: Continue
+		Farewell: Say goodbye
+	}
+
+	Ibiki: {
+		GaveUp: You gave up once. Don't come back today. Think it over and come at dawn.
+		NoRecommendation: Where's your recommendation? Nobody enters this room without a jonin's say-so. Go and find your squad leader.
+		Welcome:
+			'''
+			I am the proctor of the first test, Morino Ibiki.
+
+			There is one rule: get caught cheating more than once and you're out on the spot. ...Sit down when you're ready.
+			'''
+		NotYet: ...This is a Chunin Exam room. It isn't your turn yet.
+		Passed: You've passed the first test. The Forest of Death is far more dangerous than this classroom. Don't die.
+		ButtonStart: Begin the test
+		Begin: —Begin!
+	}
+
+	Place: {
+		AUnGate: A-Un Gate
+		WestWall: West Wall
+		EastWall: East Wall
+		Academy: Ninja Academy
+		HokageTower: Hokage's Residence
+		Hospital: Leaf Hospital
+		Ichiraku: Ichiraku Ramen
+		TrainingGround3: Training Ground 3
+		ForestGate: Training Ground 44 Gate
+		ProctorHut: Proctors' Hut
+		CentralTower: Central Tower
+		HollowTree: Hollow Tree
+		Stadium: Exam Stadium
+	}
+
+	Sign: {
+		KonohaGate:
+			'''
+			Village Hidden in the Leaves
+			— Land of Fire · The A-Un Gate
+			'''
+		A: A
+		Un: Un
+		Academy: Ninja Academy
+		HokageOffice: Hokage's Office
+		HokageTower:
+			'''
+			Hokage's Residence
+			— Fire
+			'''
+		Hospital: Leaf Hospital
+		Ichiraku: Ichiraku Ramen
+		TrainingGround3: Training Ground 3
+		ForestGate:
+			'''
+			Training Ground 44
+			— The Forest of Death
+			'''
+		ForestClosed:
+			'''
+			DANGER · KEEP OUT
+			Second test of the Chunin Exams in progress
+			'''
+		ForestRules:
+			'''
+			Second Test: Survival
+			1. Take a Heaven or an Earth Scroll, and seize the other
+			2. Bring both scrolls into the central tower
+			3. No time limit. Enter at your own risk
+			'''
+		TowerPoem:
+			'''
+			If you lack Heaven, seek wisdom and be prepared;
+			if you lack Earth, run the fields and seek strength.
+			Open Heaven and Earth, and the perilous path becomes the righteous one.
+			'''
+		Tower:
+			'''
+			Central Tower
+			— Enter with both the Heaven and Earth Scrolls
+			'''
+		TreeDanger:
+			'''
+			DANGER
+			Keep out — Training Ground 44
+			'''
+		Stadium: Chunin Exams · Finals Stadium
+		LandOfWaves: The Land of Waves
+		NarutoBridge:
+			'''
+			The Great Naruto Bridge
+			— and every ninja who guarded it
+			'''
+	}
+
+	Story: {
+		Cheer1: Welcome back!
+		Cheer2: Amazing!
+		Cheer3: The pride of the Leaf!
+		Cheer4: Good work out there!
+		Cheer5: Ichiraku ramen's on me today!
+		Cheer6: You're back!
+		Cheer7: That's a Leaf ninja for you!
+		WaveDuoName: Zabuza Momochi, the Demon of the Mist, and Haku
+		NameSeparator: ", "
+		WelcomeWave: The whole Leaf has heard: in the Land of Waves, you beat the Demon of the Mist.
+		WelcomeBosses: The whole Leaf has heard: you beat {0}!
+		CheerWave: No way... THE Zabuza Momochi?
+		CheerBoss: You beat {0}?!
+		InsigniaReady: Three Mist Insignia collected. Craft the Zabuza Challenge Scroll at a workbench and face Zabuza and Haku at the broken bridge.
+
+		Objective: {
+			NoBridge: " (This world has no bridge yet: ask Kakashi for Tazuna's blueprint first.)"
+			FindTazuna: C-rank mission: escort Tazuna the bridge builder home to the Land of Waves. He went ahead to the bridgehead: where the mist rolls in by the sea stands an unfinished bridge. Find him in the hut at its end.{0}
+			Scout: C-rank mission: Tazuna says Mist ninja haunt the sea mist around the bridge. Take a walk along the misty shore; they will come to you.
+			ReportToTazuna: The ambushers were Mist chunin, and they were after Tazuna. Go back to the hut at the bridgehead and get the truth.
+			GetStronger: A-rank mission: Gato has hired the Demon of the Mist, Zabuza Momochi. You are not strong enough yet; get stronger first (beat the Eye of Cthulhu, or reach {0} max life).
+			Lake: A-rank mission: on the road, Zabuza will strike by a lake on the surface. {0}
+			Bridge: A hunter-nin took Zabuza away... but a hunter-nin who uses senbon was never there to kill him. The Mist ninja are sure to go to the broken bridge. Go back and look.
+			Showdown: Zabuza is alive, in the mist at the broken bridge. Gather the Mist Insignia ({0}/3: one from each Demon Brother, one from Tazuna), craft the Zabuza Challenge Scroll at a workbench (it is not used up), use it around the bridge, and beat Zabuza and Haku.
+			NoVillage: The Land of Waves arc is done. The Chunin Exams are held in the Hidden Leaf, and this world has no Leaf: the exam arc needs a new world. Everything else is yours to explore.
+			Recommend: The Land of Waves arc is done. Head back to the Leaf; Kakashi has something to tell you.
+			LostRecommendation: " (You don't have your recommendation: ask Kakashi for another.)"
+			Written: Chunin Exams, first test, the written test: take your recommendation to the Leaf's Ninja Academy (west of the A-Un Gate) and find the proctor, Morino Ibiki, in the classroom.{0}
+			WrittenRetry: First test: you gave up on the tenth question. Wait for the next dawn and sit it again at the Ninja Academy.{0}
+			ForestGate: Chunin Exams, second test, the Forest of Death: collect your scroll at the gate of Training Ground 44, at the edge of the jungle{0}.
+			ForestBoth: Second test: you have both the Heaven and Earth Scrolls. Go into the central tower in the middle of the jungle{0}.
+			ForestHunt: Second test: take the {0} from other candidates. Walk the jungle surface and squads of three will find you ({1} beaten). Bring both scrolls to the central tower{2}.
+			Prelims: Second test passed. Preliminaries: walk into the central tower's hall and face Dosu of the Sound one on one. His Resonating Echo Drill rings your ears: left and right swap for a moment.
+			Training: Preliminaries passed. The finals are a month away; get stronger first (beat Skeletron, or reach {0} max life).
+			Finals: Chunin Exam finals: walk into the stadium outside the Leaf's wall{0}. Your opponent is Gaara of the Sand; his sand blocks attacks from the front.
+			Done: The Chunin Exam arc is done: the moment Gaara fell, the Destruction of the Leaf began. (Coming in a later update.)
+		}
+
+		Tracker: {
+			Kakashi: Find Kakashi
+			Written: First test: the Ninja Academy
+			ForestGate: Second test: the training ground gate
+			Tower: Second test: into the central tower
+			Hunt: Second test: take the other scroll (jungle surface)
+			Prelims: Preliminaries: the central tower's hall
+			Training: Get ready: beat Skeletron or reach {0} max life
+			Finals: Finals: the stadium
+			NoVillage: The Chunin Exams need a new world
+			Destruction: Destruction of the Leaf (in development)
+			FindTazuna: Find Tazuna at the bridgehead
+			Scout: Patrol the sea mist around the bridge
+			ReportToTazuna: Ask Tazuna at the bridgehead
+			GetStronger: Get stronger: beat the Eye of Cthulhu or reach {0} max life
+			Lake: Go to a lake on the surface
+			Bridge: Go to the broken bridge
+		}
+	}
+
+	WrittenExam: {
+		Q1: {
+			Text: Which country is the Hidden Leaf Village in?
+			A0: The Land of Fire
+			A1: The Land of Wind
+			A2: The Land of Water
+			A3: The Land of Earth
+		}
+
+		Q2: {
+			Text: Who is the Fourth Hokage?
+			A0: Minato Namikaze
+			A1: Hashirama Senju
+			A2: Hiruzen Sarutobi
+			A3: Tobirama Senju
+		}
+
+		Q3: {
+			Text: What is the Third Hokage's name?
+			A0: Hiruzen Sarutobi
+			A1: Danzo Shimura
+			A2: Jiraiya
+			A3: Minato Namikaze
+		}
+
+		Q4: {
+			Text: Who was Kakashi Hatake's teacher?
+			A0: Minato Namikaze
+			A1: Jiraiya
+			A2: Might Guy
+			A3: Iruka Umino
+		}
+
+		Q5: {
+			Text: How does the Substitution Jutsu work?
+			A0: You swap yourself for an object nearby (a log, say)
+			A1: You make a clone with a real body
+			A2: You take someone else's form
+			A3: You trap your opponent in an illusion
+		}
+
+		Q6: {
+			Text: Which is NOT one of the Academy's three basic jutsu?
+			A0: Rasengan
+			A1: Transformation Jutsu
+			A2: Clone Jutsu
+			A3: Substitution Jutsu
+		}
+
+		Q7: {
+			Text: Chakra is a blend of which two energies?
+			A0: Physical and spiritual energy
+			A1: Natural energy and sage arts
+			A2: Fire and wind
+			A3: Blood and breath
+		}
+
+		Q8: {
+			Text: Who is the Hidden Mist's "Demon"?
+			A0: Zabuza Momochi
+			A1: Kisame Hoshigaki
+			A2: Haku
+			A3: Mangetsu Hozuki
+		}
+
+		Q9: {
+			Text: What is Haku's kekkei genkai?
+			A0: Ice Release
+			A1: Wood Release
+			A2: Lava Release
+			A3: Boil Release
+		}
+
+		Q10: {
+			Text: What was the Land of Waves' bridge named in the end?
+			A0: The Great Naruto Bridge
+			A1: The Great Tazuna Bridge
+			A2: The Great Kakashi Bridge
+			A3: The Great Inari Bridge
+		}
+
+		Q11: {
+			Text: Where is the second test of the Chunin Exams held?
+			A0: Training Ground 44 (the Forest of Death)
+			A1: Training Ground 3
+			A2: The Valley of the End
+			A3: On the Hokage Rock
+		}
+
+		Q12: {
+			Text: Which two scrolls must you gather in the second test?
+			A0: Heaven and Earth
+			A1: Wind and Fire
+			A2: Yin and Yang
+			A3: Gold and Silver
+		}
+
+		Q13: {
+			Text: What is the Hyuga clan's dojutsu?
+			A0: The Byakugan
+			A1: The Sharingan
+			A2: The Rinnegan
+			A3: Boil Release
+		}
+
+		Q14: {
+			Text: What is Might Guy best at?
+			A0: Taijutsu
+			A1: Genjutsu
+			A2: Medical ninjutsu
+			A3: Sealing jutsu
+		}
+
+		Q15: {
+			Text: Which country is the Hidden Sand Village in?
+			A0: The Land of Wind
+			A1: The Land of Fire
+			A2: The Land of Lightning
+			A3: The Land of Earth
+		}
+
+		Q16: {
+			Text: What is the name of Ichiraku Ramen's owner?
+			A0: Teuchi
+			A1: Iruka
+			A2: The Third
+			A3: Danzo
+		}
+
+		Q17: {
+			Text: Who was Naruto's homeroom teacher at the Academy?
+			A0: Iruka Umino
+			A1: Kakashi Hatake
+			A2: Kurenai Yuhi
+			A3: Asuma Sarutobi
+		}
+
+		Q18: {
+			Text: Who is NOT on Team 7?
+			A0: Neji Hyuga
+			A1: Naruto Uzumaki
+			A2: Sasuke Uchiha
+			A3: Sakura Haruno
+		}
+
+		Q19: {
+			Text: Why is Kakashi called the "Copy Ninja"?
+			A0: He has copied over a thousand jutsu with his Sharingan
+			A1: He can make shadow clones
+			A2: He looks like someone else
+			A3: He can copy other people's chakra
+		}
+
+		Q20: {
+			Text: What is the book Kakashi is always reading?
+			A0: Make-Out Paradise
+			A1: The Ninja Handbook
+			A2: The Will of Fire
+			A3: The Leaf Daily
+		}
+
+		Q21: {
+			Text: What do you use to summon the Eye of Cthulhu?
+			A0: Suspicious Looking Eye
+			A1: Worm Food
+			A2: Bloody Spine
+			A3: Slime Crown
+		}
+
+		Q22: {
+			Text: Which boss must you beat before you can enter the Dungeon?
+			A0: Skeletron
+			A1: The Eye of Cthulhu
+			A2: The Eater of Worlds
+			A3: The Queen Bee
+		}
+
+		Q23: {
+			Text: Whom must you beat to enter Hardmode?
+			A0: The Wall of Flesh
+			A1: Skeletron
+			A2: The Eater of Worlds
+			A3: The Moon Lord
+		}
+
+		Q24: {
+			Text: How much max life does one Life Crystal add?
+			A0: "20"
+			A1: "5"
+			A2: "10"
+			A3: "50"
+		}
+
+		Q25: {
+			Text: Where do you throw the Guide Voodoo Doll to summon the Wall of Flesh?
+			A0: Into the Underworld's lava
+			A1: Into the sea
+			A2: Into jungle water
+			A3: Into a sky lake
+		}
+
+		Q26: {
+			Text: What opens the Dungeon's locked gold chests?
+			A0: A Golden Key
+			A1: A Shadow Key
+			A2: A Temple Key
+			A3: Nothing at all
+		}
+
+		Q27: {
+			Text: What opens the Jungle Temple's door?
+			A0: A Temple Key
+			A1: A Golden Key
+			A2: A Shadow Key
+			A3: A Jungle Key
+		}
+
+		Q28: {
+			Text: Which town NPC sells dynamite?
+			A0: The Demolitionist
+			A1: The Arms Dealer
+			A2: The Merchant
+			A3: The Nurse
+		}
+
+		Q29: {
+			Text: In which kind of world does the Eater of Worlds appear?
+			A0: A world with the Corruption
+			A1: A world with the Crimson
+			A2: A world with the Hallow
+			A3: A world with a Glowing Mushroom biome
+		}
+
+		Q30: {
+			Text: Which four pillars must fall before the Moon Lord?
+			A0: Solar, Vortex, Nebula, Stardust
+			A1: Fire, Water, Wind, Earth
+			A2: Gold, Silver, Copper, Iron
+			A3: Spring, Summer, Autumn, Winter
+		}
+
+		Q31: {
+			Text: What can you use to summon the Queen Bee?
+			A0: Abeemination
+			A1: Suspicious Looking Eye
+			A2: Mechanical Skull
+			A3: Worm Food
+		}
+
+		TenthIntro:
+			'''
+			Morino Ibiki: "Before the tenth question, the rules.
+
+			You may choose not to take it. Give up, and your exam ends here.
+			Take it, and get it wrong... and you will never sit the Chunin Exams again as long as you live."
+			'''
+		TenthAccepted:
+			'''
+			Morino Ibiki: "...Good. You pass.
+
+			The tenth question was whether you would take it at all. As a chunin you will lead a squad into missions whose outcome no one knows.
+			Those who cannot step forward then have no right to be chunin."
+			'''
+		TenthGaveUp:
+			'''
+			Morino Ibiki: "Knowing when to pull back is a judgement too. ...But today, you are done.
+
+			Come back at dawn, once you've thought it over."
+			'''
+		LeftRoom: You left the exam room. You can start the written test again any time.
+		Header: Chunin Exams · First Test    Question {0} / 10
+		HeaderTenth: Chunin Exams · First Test    Question 10
+		HeaderEnd: Chunin Exams · First Test
+		Accept: Take the tenth question
+		GiveUp: Give up
+		GaveUpNote: You gave up on the tenth question. You can sit the test again after the next dawn.
+		Leave: Leave the room
+	}
+}

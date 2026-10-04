@@ -20,7 +20,7 @@ public abstract class ForestExamCandidate : ModNPC
     public const int KindGate = 1;      // the squad lying in wait past the gate
     public const int KindRain = 2;      // the Rain genin before the tower
 
-    public static readonly string[] SquadNames = { "草隐的考生小队", "泷隐的考生小队", "木叶的考生小队" };
+    public static readonly string[] SquadNames = { "Genin.SquadGrass", "Genin.SquadWaterfall", "Genin.SquadLeaf" };   // text keys
 
     private const int PoseTicks = 20;
     private const int ThrowFrame = 1;
@@ -35,7 +35,7 @@ public abstract class ForestExamCandidate : ModNPC
 
     protected int Squad => (int)NPC.ai[3];
     protected int Kind => (int)NPC.ai[0] / 10;
-    protected string SquadName => SquadNames[System.Math.Clamp((int)NPC.ai[0] % 10, 0, SquadNames.Length - 1)];
+    protected string SquadName => Loc.Get(SquadNames[System.Math.Clamp((int)NPC.ai[0] % 10, 0, SquadNames.Length - 1)]);
 
     // ai[1] counts up to the next attack, ai[2] counts down the attack pose.
     protected ref float AttackTimer => ref NPC.ai[1];

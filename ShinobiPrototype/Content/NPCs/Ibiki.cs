@@ -65,12 +65,12 @@ public sealed class Ibiki : ModNPC
         ChuninExamPlayer exam = Main.LocalPlayer.GetModPlayer<ChuninExamPlayer>();
         return exam.Stage switch
         {
-            ExamStage.Written when !exam.CanSitWritten => "放弃过一次的人，今天别再来了。明天天亮，想清楚了再说。",
+            ExamStage.Written when !exam.CanSitWritten => Loc.Get("Ibiki.GaveUp"),
             ExamStage.Written when !Main.LocalPlayer.HasItem(ModContent.ItemType<ExamAdmissionScroll>()) =>
-                "推荐书呢？没有上忍的推荐，谁也进不了这间考场。去找你的带队上忍。",
-            ExamStage.Written => "我是第一试的主考官，森乃伊比喜。\n\n规矩只有一条：作弊被发现两次以上，当场出局。……准备好了就坐下。",
-            ExamStage.Recommend or ExamStage.Locked or ExamStage.NoVillage => "……这里是中忍考试的考场。还没轮到你。",
-            _ => "第一试已经过了吧。死亡森林可比这间教室危险得多——别死了。",
+                Loc.Get("Ibiki.NoRecommendation"),
+            ExamStage.Written => Loc.Get("Ibiki.Welcome"),
+            ExamStage.Recommend or ExamStage.Locked or ExamStage.NoVillage => Loc.Get("Ibiki.NotYet"),
+            _ => Loc.Get("Ibiki.Passed"),
         };
     }
 
@@ -79,7 +79,7 @@ public sealed class Ibiki : ModNPC
         ChuninExamPlayer exam = Main.LocalPlayer.GetModPlayer<ChuninExamPlayer>();
         if (exam.Stage == ExamStage.Written && exam.CanSitWritten &&
             Main.LocalPlayer.HasItem(ModContent.ItemType<ExamAdmissionScroll>()))
-            button = "开始笔试";
+            button = Loc.Get("Ibiki.ButtonStart");
     }
 
     public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -87,7 +87,7 @@ public sealed class Ibiki : ModNPC
         if (!firstButton)
             return;
         NpcChatCloser.CloseNextTick();
-        CombatText.NewText(NPC.getRect(), new Color(220, 220, 220), "——开始！", true);
+        CombatText.NewText(NPC.getRect(), new Color(220, 220, 220), Loc.Get("Ibiki.Begin"), true);
         WrittenExamSystem.Open();
     }
 }

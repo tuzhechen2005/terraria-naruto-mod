@@ -343,11 +343,10 @@ public sealed class WaterPrison : ModNPC
 
     private static void Broadcast(string key, Color color)
     {
-        string text = Language.GetTextValue($"Mods.ShinobiPrototype.Dialogue.{key}");
-        if (Main.netMode == NetmodeID.Server)
-            ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            Main.NewText(Language.GetTextValue($"Mods.ShinobiPrototype.Dialogue.{key}"), color);
         else
-            Main.NewText(text, color);
+            Loc.Broadcast(color, $"Mods.ShinobiPrototype.Dialogue.{key}");
     }
 
     private static void Splash(Vector2 at, int count)

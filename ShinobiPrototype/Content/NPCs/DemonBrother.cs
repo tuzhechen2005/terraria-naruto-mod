@@ -278,7 +278,7 @@ public abstract class DemonBrother : ModNPC
         string text = Language.GetTextValue("Mods.ShinobiPrototype.Dialogue.DemonBrothersDown");
         if (Main.netMode == NetmodeID.Server)
         {
-            ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), new Color(255, 190, 90));
+            Loc.Broadcast(new Color(255, 190, 90), "Mods.ShinobiPrototype.Dialogue.DemonBrothersDown");
             NetMessage.SendData(MessageID.WorldData);
         }
         else

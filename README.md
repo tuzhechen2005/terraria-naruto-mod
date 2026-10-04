@@ -110,7 +110,7 @@ The Ninja Handbook gives you clues about missions and bosses. During the Forest 
 
 ## Playing and building
 
-The mod runs on tModLoader for Terraria 1.4.4. **Start a new world** when playing for the first time: the village, coastal bridge, and exam sites are placed during world generation and are not added to existing worlds. Playtesting has focused on single player; multiplayer has not been verified. The Ninja Handbook and Kakashi's dialogue provide clues about where to go next.
+The mod runs on tModLoader for Terraria 1.4.4. **Start a new world** when playing for the first time: the village, coastal bridge, and exam sites are placed during world generation and are not added to existing worlds. Playtesting has focused on single player; multiplayer has not been verified. The Ninja Handbook and Kakashi's dialogue provide clues about where to go next. All in-game text is available in English and Simplified Chinese, following the game's language setting.
 
 The Chinese [Wiki](wiki/README.md) covers items, bosses, mechanics, and story progression. From the repository root, run `python3 -m http.server 8765 --bind 127.0.0.1 --directory wiki/site` and open `http://127.0.0.1:8765/`. The site has not yet been publicly hosted.
 

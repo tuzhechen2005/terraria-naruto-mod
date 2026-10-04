@@ -34,13 +34,13 @@ public sealed class ShinobiKeybinds : ModSystem
     public static string SealKeyName(int seals)
     {
         var keys = SealKey(seals)?.GetAssignedKeys();
-        return keys is { Count: > 0 } ? keys[0] : "未绑定";
+        return keys is { Count: > 0 } ? keys[0] : Loc.Get("Keys.Unbound");
     }
 
     // Name of the key currently bound to the jutsu, for hints and the handbook.
     public static string SubstitutionKeyName()
     {
         var keys = Substitution?.GetAssignedKeys();
-        return keys is { Count: > 0 } ? keys[0] : "未绑定（请在按键设置中设置）";
+        return keys is { Count: > 0 } ? keys[0] : Loc.Get("Keys.UnboundSet");
     }
 }

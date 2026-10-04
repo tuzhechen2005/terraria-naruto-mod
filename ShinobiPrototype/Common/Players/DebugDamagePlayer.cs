@@ -17,7 +17,7 @@ public sealed class DebugDamagePlayer : ModPlayer
     {
         if (!Enabled || player.whoAmI != Main.myPlayer)
             return;
-        string source = "其他";
+        string source = Loc.Get("Debug.OtherSource");
         string table = "—";
         int projectile = info.DamageSource.SourceProjectileLocalIndex;
         int npc = info.DamageSource.SourceNPCIndex;
@@ -32,11 +32,11 @@ public sealed class DebugDamagePlayer : ModPlayer
         else if (npc >= 0 && npc < Main.maxNPCs && Main.npc[npc].active)
         {
             NPC n = Main.npc[npc];
-            source = n.TypeName + "（接触）";
+            source = Loc.Get("Debug.Contact", n.TypeName);
             table = n.damage.ToString();
         }
-        string tail = outcome ?? (ChakraRules.WorthALog(info.Damage, player.statLifeMax2) ? "命中" : "命中（低于木头门槛）");
-        Main.NewText($"[伤害] {source}：表 {table}，防御前 {info.SourceDamage}，防御后 {info.Damage}，{tail}" +
-                     $"（生命 {player.statLife}/{player.statLifeMax2}）", new Color(255, 170, 120));
+        string tail = outcome ?? Loc.Get(ChakraRules.WorthALog(info.Damage, player.statLifeMax2) ? "Debug.Hit" : "Debug.HitBelowLog");
+        Main.NewText(Loc.Get("Debug.Report", source, table, info.SourceDamage, info.Damage, tail, player.statLife, player.statLifeMax2),
+            new Color(255, 170, 120));
     }
 }

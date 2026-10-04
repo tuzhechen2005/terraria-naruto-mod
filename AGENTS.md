@@ -22,6 +22,7 @@
 - 在同一工作树切换 Claude/Codex 时，文件和未提交改动直接共享；聊天记忆不会共享。一个时刻只让一个助手修改同一文件或同一功能区域。
 - 修改前检查相关代码和规格。完成后运行与改动相关的测试；需要完整模组验证时运行 `./scripts/verify-mac.sh`。记录实际执行结果，未运行的检查明确写“未运行”。
 - 不要把 `bin/`、`obj/`、`.tmod` 或本地 `.art-bridge/` 状态当作需提交的源码。Git 提交只包含本次任务相关文件；交接前尽量形成可构建的提交，未完成的改动则保持原样并写明范围。
+- 玩家能看到的文字（对白、提示、手册、按钮、告示牌）一律写进 `ShinobiPrototype/Localization/` 的中英两个文件（`Text` 下用 `Loc.Get("区域.名字", 参数)` 读取），不要在代码里写死中文或英文；两份文件的键和 `{0}` 占位符必须一致。`./scripts/verify-mac.sh` 会运行 `scripts/check_text.py` 检查。英文字体没有汉字，也缺少 → 和 • 等符号。
 - 美术请求和交付流程见 `art/AGENT_HANDOFF.md`。需要位图素材时，由当前开发助手写 `art/requests/<请求ID>.md` 并运行 `python3 scripts/art_bridge.py submit <请求ID>`；后台 Codex 只写对应的 `art/deliveries/<请求ID>/`，当前开发助手负责接入、构建和游戏内检查。无需用户转发。
 
 ## 交接给另一位助手

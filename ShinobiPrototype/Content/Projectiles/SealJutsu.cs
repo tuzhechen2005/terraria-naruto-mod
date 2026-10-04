@@ -61,7 +61,7 @@ public sealed class ShadowClone : ModProjectile
                 p.Kill();
                 player.SetImmuneTimeForAllTypes(40);
                 SoundEngine.PlaySound(SoundID.Item8 with { Pitch = 0.4f }, p.Center);
-                CombatText.NewText(player.getRect(), new Color(170, 200, 255), "分身！");
+                CombatText.NewText(player.getRect(), new Color(170, 200, 255), Loc.Get("Seal.CloneCast"));
                 return true;
             }
         return false;
