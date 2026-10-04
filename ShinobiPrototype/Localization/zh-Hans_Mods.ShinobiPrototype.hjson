@@ -1,7 +1,11 @@
 Items: {
 	TrainingKunai: {
 		DisplayName: 训练苦无
-		Tooltip: 木叶下忍的基础忍具，投掷后不消耗
+		Tooltip:
+			'''
+			木叶下忍的基础忍具，投掷后不消耗
+			拿在手里时积攒潜伏值，攒满后一次扔出三把
+			'''
 	}
 
 	TrainingRasengan: {
@@ -279,6 +283,25 @@ Items: {
 			'''
 	}
 
+	Shuriken: {
+		DisplayName: 手里剑
+		Tooltip:
+			'''
+			忍具：投掷后不消耗，碰墙会反弹两次
+			拿在手里时积攒潜伏值，攒满后下一投变成影手里剑：
+			大手里剑穿透多个敌人，影子里还藏着第二枚
+			'''
+	}
+
+	PaperBomb: {
+		DisplayName: 起爆符
+		Tooltip:
+			'''
+			忍具：贴在碰到的第一个敌人或墙上，1 秒后爆炸
+			拿在手里时积攒潜伏值，攒满后一次扔出三张
+			'''
+	}
+
 	Kubikiribocho: {
 		DisplayName: 斩首大刀
 		Tooltip:
@@ -452,6 +475,10 @@ NPCs: {
 }
 
 Projectiles: {
+	ShurikenThrown.DisplayName: 手里剑
+	ShadowShuriken.DisplayName: 影手里剑
+	PaperBombThrown.DisplayName: 起爆符
+	PaperBombBlast.DisplayName: 起爆符爆炸
 	ShadowClone.DisplayName: 分身
 	GreatFireball.DisplayName: 豪火球
 	FireBurst.DisplayName: 火球爆炸

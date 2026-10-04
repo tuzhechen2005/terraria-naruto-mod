@@ -88,3 +88,8 @@ Check(SealRules.LightningTrailTicks == 180 && SealRules.LightningTrailHitTicks =
 Check(SealRules.FireballBurstsOn(true, 50, 40) && SealRules.FireballBurstsOn(false, 200, 40) && !SealRules.FireballBurstsOn(false, 199, 40),
     "The great fireball bursts on a boss or a big enemy, and only scorches small fry as it rolls through them");
 Check(SealRules.ChidoriWallTiles == 3, "Chidori goes through walls up to three tiles thick");
+float meter = 0f;
+for (int i = 0; i < ToolStealthFillTicks; i++)
+    meter = TickToolStealth(meter, true);
+Check(meter >= 0.999f && TickToolStealth(1f, true) == 1f, "A ninja tool in hand fills its stealth in about four seconds, never past full");
+Check(TickToolStealth(0.5f, false) == 0.5f, "Put away, the meter waits");

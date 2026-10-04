@@ -39,6 +39,8 @@ public sealed class ChakraHud : ModSystem
             new Rectangle(x + 3, y + 25, (int)(160f * player.Chakra / player.MaxChakra), 12), new Color(45, 170, 235));
         DrawLogs(x + 2, y + 43);
         int line = y + 81;
+        if (DrawToolStealth(x + 2, line))
+            line += 16;
         if (DrawSeals(x + 2, line))
             line += 44;
         if (Main.LocalPlayer.GetModPlayer<DebugGodPlayer>().Enabled)
@@ -83,6 +85,44 @@ public sealed class ChakraHud : ModSystem
         Utils.DrawBorderString(Main.spriteBatch, sealedPoints ? "替身术被封" : $"替身 [{ShinobiKeybinds.SubstitutionKeyName()}]",
             new Vector2(x + logs.MaxLogs * (w + 4) + 4, y + h / 2f - 8f), sealedPoints ? new Color(150, 170, 230) : new Color(200, 170, 110), 0.75f);
     }
+
+    // The ninja tools' stealth while one is in hand (ninja-tools-v1 bar; plain bars without it): filling, and lit when
+    // full or when hidden after a blink, meaning the next throw is a stealth throw.
+    private static bool DrawToolStealth(int x, int y)
+    {
+        ToolStealthPlayer tool = Main.LocalPlayer.GetModPlayer<ToolStealthPlayer>();
+        if (!tool.HoldingTool)
+            return false;
+        float meter = Main.LocalPlayer.GetModPlayer<StealthPlayer>().Hidden ? 1f : tool.Meter;
+        bool ready = tool.Ready;
+        const string ui = "ShinobiPrototype/Assets/UI/";
+        if (ModContent.HasAsset(ui + "StealthBarFrame") && ModContent.HasAsset(ui + "StealthBarFill"))
+        {
+            Texture2D frame = ModContent.Request<Texture2D>(ui + "StealthBarFrame").Value;
+            Texture2D fill = ModContent.Request<Texture2D>(ui + "StealthBarFill").Value;
+            Main.spriteBatch.Draw(frame, new Vector2(x, y), null, Color.White, 0f, Vector2.Zero, 1.5f, SpriteEffects.None, 0f);
+            int shown = (int)(fill.Width * meter);
+            Vector2 inner = new Vector2(x, y) + StealthFillOffset * 1.5f;
+            if (shown > 0)
+                Main.spriteBatch.Draw(fill, inner, new Rectangle(0, 0, shown, fill.Height), ready ? Color.White : Color.White * 0.8f, 0f,
+                    Vector2.Zero, 1.5f, SpriteEffects.None, 0f);
+            if (ready)
+                Main.spriteBatch.Draw(fill, inner, null, new Color(255, 255, 255, 0) * (0.3f + 0.2f * (float)System.Math.Sin(Main.GameUpdateCount * 0.2f)),
+                    0f, Vector2.Zero, 1.5f, SpriteEffects.None, 0f);
+        }
+        else
+        {
+            Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(x, y + 2, 90, 8), Color.Black * 0.7f);
+            Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(x + 1, y + 3, (int)(88 * meter), 6),
+                ready ? new Color(230, 180, 255) : new Color(150, 90, 200));
+        }
+        Utils.DrawBorderString(Main.spriteBatch, ready ? "潜伏投掷" : "潜伏", new Vector2(x + 100, y - 1),
+            ready ? new Color(230, 190, 255) : new Color(160, 130, 190), 0.7f);
+        return true;
+    }
+
+    // Where the fill sits inside the stealth bar frame art (ninja-tools-v1; adjusted to the delivery).
+    private static readonly Vector2 StealthFillOffset = new(4f, 3f);
 
     // The three seal slots, always in sight in a fight (user, 2026-10-03): each scroll with its key, darkened from the
     // top while it cools down with the seconds left, and a flash the moment it is ready again. Empty slots are skipped;

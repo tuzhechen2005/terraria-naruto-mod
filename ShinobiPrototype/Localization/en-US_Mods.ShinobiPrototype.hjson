@@ -1,7 +1,11 @@
 Items: {
 	TrainingKunai: {
 		DisplayName: Training Kunai
-		Tooltip: Basic gear of a Leaf genin; thrown, never used up
+		Tooltip:
+			'''
+			Basic gear of a Leaf genin; thrown, never used up
+			Held, it builds stealth; full, three are thrown at once
+			'''
 	}
 
 	TrainingRasengan: {
@@ -284,6 +288,25 @@ Items: {
 			'''
 	}
 
+	Shuriken: {
+		DisplayName: Shuriken
+		Tooltip:
+			'''
+			Ninja tool: never used up, glances off walls twice
+			Held, it builds stealth; full, the next throw is a Shadow Shuriken:
+			a great shuriken through several enemies, a second hidden in its shadow
+			'''
+	}
+
+	PaperBomb: {
+		DisplayName: Paper Bomb
+		Tooltip:
+			'''
+			Ninja tool: sticks to the first enemy or surface it touches and goes off a second later
+			Held, it builds stealth; full, three are thrown at once
+			'''
+	}
+
 	Kubikiribocho: {
 		DisplayName: Executioner's Blade
 		Tooltip:
@@ -457,6 +480,10 @@ NPCs: {
 }
 
 Projectiles: {
+	ShurikenThrown.DisplayName: Shuriken
+	ShadowShuriken.DisplayName: Shadow Shuriken
+	PaperBombThrown.DisplayName: Paper Bomb
+	PaperBombBlast.DisplayName: Paper Bomb Blast
 	ShadowClone.DisplayName: Shadow Clone
 	GreatFireball.DisplayName: Great Fireball
 	FireBurst.DisplayName: Fireball Burst
