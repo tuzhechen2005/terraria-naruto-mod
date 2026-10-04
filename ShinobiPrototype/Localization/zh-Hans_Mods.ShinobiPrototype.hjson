@@ -153,17 +153,17 @@ Items: {
 
 	ScrollClone: {
 		DisplayName: 分身术
-		Tooltip: 结印卷轴·2 印，放进装备栏的 2 印位\n按住结印键结满 2 个印后松手施展，消耗 15 查克拉\n身边出现两个分身，持续 8 秒，各替你挡一次攻击（先于替身木头）
+		Tooltip: 结印卷轴·2 印，放进背包旁的 2 印位\n按对应的结印键（默认 Z）自动结 2 个印并施展，消耗 15 查克拉\n身边出现两个分身，持续 8 秒，各替你挡一次攻击（先于替身木头）
 	}
 
 	ScrollFireball: {
 		DisplayName: 火遁·豪火球之术
-		Tooltip: 结印卷轴·4 印，放进装备栏的 4 印位\n按住结印键结满 4 个印后松手施展，消耗 30 查克拉\n朝鼠标方向喷出大火球，穿过敌人，最后爆炸并点燃
+		Tooltip: 结印卷轴·4 印，放进背包旁的 4 印位\n按对应的结印键（默认 X）自动结 4 个印并施展，消耗 30 查克拉\n朝鼠标方向喷出大火球，穿过敌人，最后爆炸并点燃
 	}
 
 	ScrollChidori: {
 		DisplayName: 千鸟
-		Tooltip: 结印卷轴·6 印，放进装备栏的 6 印位\n按住结印键结满 6 个印后松手施展，消耗 50 查克拉\n手中雷光迸发，朝鼠标方向冲刺，途中无敌，击穿沿路所有敌人
+		Tooltip: 结印卷轴·6 印，放进背包旁的 6 印位\n按对应的结印键（默认 C）自动结 6 个印并施展，消耗 50 查克拉\n手中雷光迸发，朝鼠标方向冲刺，途中无敌，击穿沿路所有敌人
 	}
 
 	Kubikiribocho: {
@@ -433,7 +433,9 @@ Tiles.ChakraCrystalTile.MapEntry: 查克拉结晶
 
 Keybinds: {
 	Substitution.DisplayName: 替身术
-	Seal.DisplayName: 结印
+	Seal2.DisplayName: 结印·2 印位
+	Seal4.DisplayName: 结印·4 印位
+	Seal6.DisplayName: 结印·6 印位
 	StyleTechnique.DisplayName: 流派奥义
 }
 

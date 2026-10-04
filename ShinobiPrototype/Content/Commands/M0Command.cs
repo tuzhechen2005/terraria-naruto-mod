@@ -33,7 +33,7 @@ public sealed class M0Command : ModCommand
             foreach (int type in new[] { ModContent.ItemType<Items.Jutsu.ScrollClone>(), ModContent.ItemType<Items.Jutsu.ScrollFireball>(),
                          ModContent.ItemType<Items.Jutsu.ScrollChidori>() })
                 player.QuickSpawnItem(player.GetSource_GiftOrReward(), type);
-            caller.Reply($"已发放三张结印卷轴。放进装备栏的 2/4/6 印位，按住【{Common.Systems.ShinobiKeybinds.SealKeyName()}】结印、松手施术。", Color.LightGreen);
+            caller.Reply($"已发放三张结印卷轴。打开背包，放进弹药栏右边的 2/4/6 印位，分别按【{Common.Systems.ShinobiKeybinds.SealKeyName(2)}】【{Common.Systems.ShinobiKeybinds.SealKeyName(4)}】【{Common.Systems.ShinobiKeybinds.SealKeyName(6)}】施展。", Color.LightGreen);
             return;
         }
 

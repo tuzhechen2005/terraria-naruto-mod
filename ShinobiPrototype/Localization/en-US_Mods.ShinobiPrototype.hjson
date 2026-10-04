@@ -153,17 +153,17 @@ Items: {
 
 	ScrollClone: {
 		DisplayName: Clone Jutsu
-		Tooltip: Seal scroll, 2 seals: wear it in the 2-seal slot\nHold the seal key to 2 seals and let go: 15 chakra\nTwo clones stand beside you for 8 s, each taking one hit for you (before any log)
+		Tooltip: Seal scroll, 2 seals: wear it in the 2-seal slot\nTap the 2-seal key (Z by default) to form the seals and cast: 15 chakra\nTwo clones stand beside you for 8 s, each taking one hit for you (before any log)
 	}
 
 	ScrollFireball: {
-		DisplayName: "Fire Style: Fireball Jutsu"
-		Tooltip: Seal scroll, 4 seals: wear it in the 4-seal slot\nHold the seal key to 4 seals and let go: 30 chakra\nA great fireball towards the cursor that burns through enemies and bursts at the end
+		DisplayName: Fire Style: Fireball Jutsu
+		Tooltip: Seal scroll, 4 seals: wear it in the 4-seal slot\nTap the 4-seal key (X by default) to form the seals and cast: 30 chakra\nA great fireball towards the cursor that burns through enemies and bursts at the end
 	}
 
 	ScrollChidori: {
 		DisplayName: Chidori
-		Tooltip: Seal scroll, 6 seals: wear it in the 6-seal slot\nHold the seal key to 6 seals and let go: 50 chakra\nLightning in the hand and a charge towards the cursor, untouchable on the way, through every enemy in it
+		Tooltip: Seal scroll, 6 seals: wear it in the 6-seal slot\nTap the 6-seal key (C by default) to form the seals and cast: 50 chakra\nLightning in the hand and a charge towards the cursor, untouchable on the way, through every enemy in it
 	}
 
 	Kubikiribocho: {
@@ -433,7 +433,9 @@ Tiles.ChakraCrystalTile.MapEntry: Chakra Crystal
 
 Keybinds: {
 	Substitution.DisplayName: Substitution Jutsu
-	Seal.DisplayName: Hand Seals
+	Seal2.DisplayName: Hand Seals: 2-seal slot
+	Seal4.DisplayName: Hand Seals: 4-seal slot
+	Seal6.DisplayName: Hand Seals: 6-seal slot
 	StyleTechnique.DisplayName: Style technique
 }
 

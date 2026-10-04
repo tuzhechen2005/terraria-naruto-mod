@@ -9,8 +9,8 @@ using ShinobiPrototype.Content.Items.Jutsu;
 
 namespace ShinobiPrototype.Common.Systems;
 
-// While the local player forms hand seals: the seals formed so far over their head (the zodiac signs of the scroll
-// being worked towards, the ones still to come dim), and under them the jutsu that would go off if the key were let go.
+// While the local player forms hand seals: the zodiac signs of the scroll over their head, lit as each seal forms, and
+// its name under them.
 public sealed class SealOverlay : ModSystem
 {
     private const string Fallback = "子丑寅卯辰巳";
@@ -30,8 +30,8 @@ public sealed class SealOverlay : ModSystem
         if (!seals.Weaving)
             return true;
         int formed = seals.Seals;
-        SealScroll toward = seals.ScrollFor(SealRules.Toward(formed));
-        string signs = toward?.Signs ?? Fallback.Substring(0, SealRules.Toward(formed));
+        SealScroll forming = seals.Forming;
+        string signs = forming?.Signs ?? Fallback;
         Vector2 top = player.Top - Main.screenPosition - new Vector2(0f, 40f);
         const float step = 22f;
         float x = top.X - (signs.Length - 1) * step / 2f;
@@ -41,11 +41,8 @@ public sealed class SealOverlay : ModSystem
             Utils.DrawBorderString(Main.spriteBatch, signs[i].ToString(), new Vector2(x + i * step, top.Y),
                 done ? new Color(140, 210, 255) : new Color(90, 100, 120) * 0.7f, done ? 1f : 0.85f, 0.5f, 0.5f);
         }
-        SealScroll ready = seals.Ready;
-        string under = ready != null ? $"→ {ready.Item.Name}" : formed < 2 ? "" : "（这个印位没有卷轴）";
-        if (under.Length > 0)
-            Utils.DrawBorderString(Main.spriteBatch, under, top + new Vector2(0f, 22f),
-                ready != null ? new Color(255, 225, 150) : Color.Gray, 0.75f, 0.5f, 0.5f);
+        if (forming != null)
+            Utils.DrawBorderString(Main.spriteBatch, forming.Item.Name, top + new Vector2(0f, 22f), new Color(255, 225, 150), 0.75f, 0.5f, 0.5f);
         return true;
     }
 }

@@ -126,7 +126,8 @@ public sealed class SubstitutionPlayer : ModPlayer
         Logs -= ChakraRules.SubstitutionLogs;
         Cooldown = ChakraRules.SubstitutionCooldownTicks;
         Mastered = true;
-        // A blink the way the player is heading (or facing), into stealth.
+        // A blink the way the player is heading (or facing), into stealth; any seals being formed are dropped.
+        Player.GetModPlayer<SealPlayer>().Cancel(null);
         int heading = Player.controlLeft ? -1 : Player.controlRight ? 1 : Player.direction;
         Substitute(heading, ChakraRules.BlinkImmuneTicks);
         Player.GetModPlayer<StealthPlayer>().Grant(ChakraRules.StealthTicks);

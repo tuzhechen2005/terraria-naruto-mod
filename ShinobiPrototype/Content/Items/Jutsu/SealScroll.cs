@@ -7,8 +7,8 @@ using ShinobiPrototype.Content.Projectiles;
 
 namespace ShinobiPrototype.Content.Items.Jutsu;
 
-// A jutsu scroll (specs/装备与忍术系统.spec.md): worn in the seal slot of its number of seals (SealSlot), cast by
-// holding the seal key to that count and letting go (SealPlayer). Its damage is general damage: all-damage bonuses and
+// A jutsu scroll (specs/装备与忍术系统.spec.md): kept in the seal slot of its number of seals beside the inventory
+// (SealSlotsUI), cast with that slot's key (SealPlayer). Its damage is general damage: all-damage bonuses and
 // the ninjutsu power from Naruto gear apply, no single class. Art: seal-jutsu-v1 (until it is in, the mission scroll).
 public abstract class SealScroll : ModItem
 {
@@ -27,15 +27,11 @@ public abstract class SealScroll : ModItem
     {
         Item.width = 28;
         Item.height = 28;
-        Item.accessory = true;
         Item.damage = BaseDamage;
         Item.DamageType = DamageClass.Generic;
         Item.rare = ItemRarityID.Blue;
         Item.value = Item.sellPrice(silver: 50);
     }
-
-    // Only the seal slots take scrolls.
-    public override bool CanEquipAccessory(Player player, int slot, bool modded) => modded;
 
     // The damage as cast now.
     public int Damage(Player player) =>
