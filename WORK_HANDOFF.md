@@ -13,8 +13,8 @@
 - 浏览器验证：13 个重点 Wiki 页面分别检查 1440px 与 390px 布局，两版 README 同样检查两种宽度；均无页面横向溢出或本地图片缺失。道具筛选“千鸟”仅保留对应卷轴，全文搜索命中新卷轴与结印机制，点击可正确跳转。截图 `wiki/previews/seal-scrolls-updated.jpg`。本地 Wiki 预览服务为 `http://127.0.0.1:8765/`；仍未公开托管。
 - 本次模组规则测试、完整构建和游戏内验收：**未运行**，文档网页检查不代表实机验收通过。未提交新的美术请求；没有本次启动的后台美术任务。
 - 发现规格滞后：`specs/装备与忍术系统.spec.md` 仍包含未实现、长按 C 与旧木头参数等描述。本次文档以现有代码和最新用户已决定的实现为准；未擅自重写该规格，后续玩法开发前应先同步。
-- Git：工作在 `main`，README/Wiki 与导出素材保存为本地文档提交，**未推送**。接手前已有的 `art/deliveries/kakashi-npc-v3/`、`orochimaru-base-v8/`、`orochimaru-style-v1/` 及 `art/requests/orochimaru-base-v8.md`、`orochimaru-set-v10a.md`、`orochimaru-set-v10b.md` 保持未跟踪、未修改，不属于本次提交。
-- 下一步最小动作：用户检查 README 与 Wiki；玩法改变后先运行 Wiki 检查、核对人工说明、再重建。公开托管和推送需按用户后续指示处理。
+- Git：工作在 `main`，README/Wiki 与导出素材提交为 `780d8b1`。用户反馈 GitHub README 未更新后，重新获取远程状态，确认 GitHub `main` 已包含此提交；GitHub API 返回的 README 文件哈希与本地一致，实际中文页面已显示木头、潜伏、Z/X/C 结印和三种卷轴。此前“未推送”是上轮完成时的快照，已由本次核查更新。接手前已有的 `art/deliveries/kakashi-npc-v3/`、`orochimaru-base-v8/`、`orochimaru-style-v1/` 及 `art/requests/orochimaru-base-v8.md`、`orochimaru-set-v10a.md`、`orochimaru-set-v10b.md` 保持未跟踪、未修改，不属于本次提交。
+- 下一步最小动作：用户检查 README 与 Wiki；玩法改变后先运行 Wiki 检查、核对人工说明、再重建。公开托管按用户后续指示处理。
 
 ## 项目与规格入口
 
