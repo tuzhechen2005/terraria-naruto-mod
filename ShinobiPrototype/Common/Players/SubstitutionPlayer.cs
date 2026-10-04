@@ -38,11 +38,13 @@ public sealed class SubstitutionPlayer : ModPlayer
     // Extra logs from equipment, reset every tick (accessories and armour add to it in UpdateEquip).
     public int ExtraLogs { get; set; }
     public int MaxLogs => ChakraRules.StartingLogs + ExtraLogs;
+    // Faster log recovery from equipment (1.15 = 15% faster), reset every tick.
+    public float LogRegenSpeed { get; set; } = 1f;
     // How far the next log has come back, 0 to 1 (the HUD).
     public float NextLog => Logs >= MaxLogs ? 1f : logProgress / (float)NextLogTicks;
 
-    private int NextLogTicks => ChakraRules.LogRegenTicksFor(Player.GetModPlayer<StyleCorePlayer>().LogRegenTicks,
-        refills.Count > 0 ? refills[0] : 1f);
+    private int NextLogTicks => (int)(ChakraRules.LogRegenTicksFor(Player.GetModPlayer<StyleCorePlayer>().LogRegenTicks,
+        refills.Count > 0 ? refills[0] : 1f) / System.Math.Max(0.1f, LogRegenSpeed));
 
     public override void Initialize()
     {
@@ -57,7 +59,11 @@ public sealed class SubstitutionPlayer : ModPlayer
         ticksSinceActivation = ChakraRules.PracticeEarlyWindowTicks + 1;
     }
 
-    public override void ResetEffects() => ExtraLogs = 0;
+    public override void ResetEffects()
+    {
+        ExtraLogs = 0;
+        LogRegenSpeed = 1f;
+    }
 
     public override void OnRespawn()
     {

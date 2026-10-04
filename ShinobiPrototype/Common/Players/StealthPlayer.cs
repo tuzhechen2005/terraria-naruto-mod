@@ -16,6 +16,11 @@ public sealed class StealthPlayer : ModPlayer
 
     public bool Hidden => Player.HasBuff(BuffType);
 
+    // Extra damage on the stealth strike from equipment (the Genin combat gear), reset every tick.
+    public float ExtraDamageBonus { get; set; }
+
+    public override void ResetEffects() => ExtraDamageBonus = 0f;
+
     public void Grant(int ticks) => Player.AddBuff(BuffType, ticks);
 
     public override void PostUpdate()
@@ -41,7 +46,7 @@ public sealed class StealthPlayer : ModPlayer
         if (!Hidden)
             return;
         modifiers.SetCrit();
-        modifiers.FinalDamage *= 1f + ChakraRules.StealthDamageBonus;
+        modifiers.FinalDamage *= 1f + ChakraRules.StealthDamageBonus + ExtraDamageBonus;
     }
 
     public override void OnHitNPCWithItem(Item item, NPC target, NPC.HitInfo hit, int damageDone) => Spend(target);

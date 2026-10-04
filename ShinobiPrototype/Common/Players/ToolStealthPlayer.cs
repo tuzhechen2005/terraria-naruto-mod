@@ -15,7 +15,20 @@ public sealed class ToolStealthPlayer : ModPlayer
     // How fast the meter fills, from ninja-tool gear; reset every tick.
     public float FillSpeed { get; set; } = 1f;
 
-    public override void ResetEffects() => FillSpeed = 1f;
+    // Extra critical chance for ninja tools (the tool pouch), reset every tick.
+    public float ToolCrit { get; set; }
+
+    public override void ResetEffects()
+    {
+        FillSpeed = 1f;
+        ToolCrit = 0f;
+    }
+
+    public override void ModifyWeaponCrit(Item item, ref float crit)
+    {
+        if (item.ModItem is NinjaTool)
+            crit += ToolCrit;
+    }
     public bool HoldingTool => Player.HeldItem?.ModItem is NinjaTool;
     public bool Ready => Meter >= 1f || Player.GetModPlayer<StealthPlayer>().Hidden;
 

@@ -1,4 +1,56 @@
 Items: {
+	TrainingNinjato: {
+		DisplayName: "修行忍刀"
+		Tooltip: "三段连斩，第三刀放出一道刀光\n潜伏中，第三刀的刀光威力加倍、更大"
+	}
+	DemonChainGauntlet: {
+		DisplayName: "鬼之兄弟的锁链手甲"
+		Tooltip: "甩出带链的爪头，钩住敌人拉近并使其中毒\n钩住墙面时，把你拉过去"
+	}
+	PhoenixFlowerJutsu: {
+		DisplayName: "火遁·凤仙火之术"
+		Tooltip: "喷出一串散射的小火球\n有几率点燃敌人"
+	}
+	NinkenScroll: {
+		DisplayName: "通灵·忍犬"
+		Tooltip: "召唤帕克为你作战\n被帕克咬过的敌人留下嗅迹：召唤物对它的伤害 +3"
+	}
+	RoughCloth: {
+		DisplayName: "粗布"
+		Tooltip: "卡多的打手身上的粗麻布"
+	}
+	RogueHeadband: {
+		DisplayName: "叛忍护额"
+		Tooltip: "额片上一道划痕：离开了村子的忍者"
+	}
+	ToolBlueprint: {
+		DisplayName: "忍具图纸"
+		Tooltip: "在忍具台制作忍具时消耗"
+	}
+	MissionToken: {
+		DisplayName: "任务令牌"
+		Tooltip: "完成任务的凭证，可以在伊鲁卡那里兑换"
+	}
+	KonohaHeadband: {
+		DisplayName: "木叶护额"
+		Tooltip: "全伤害 +4%\n查克拉上限 +20"
+	}
+	ToolPouch: {
+		DisplayName: "忍具包"
+		Tooltip: "忍具的潜伏值攒得快 25%\n忍具暴击率 +4%"
+	}
+	PillPouch: {
+		DisplayName: "兵粮丸袋"
+		Tooltip: "自然恢复查克拉 +30%\n兵粮丸的间隔缩短到 6 秒"
+	}
+	TrainingPost: {
+		DisplayName: "修行木桩"
+		Tooltip: "替身木头 +1"
+	}
+	ToolWorkbench: {
+		DisplayName: "忍具台"
+		Tooltip: "用来制作忍具、忍者装备"
+	}
 	TrainingKunai: {
 		DisplayName: 训练苦无
 		Tooltip:
@@ -508,6 +560,10 @@ NPCs: {
 }
 
 Projectiles: {
+	NinjatoSlashArc.DisplayName: "刀光"
+	GauntletClaw.DisplayName: "锁链爪"
+	PhoenixFlowerFire.DisplayName: "凤仙火"
+	PakkunMinion.DisplayName: "帕克"
 	ShurikenThrown.DisplayName: 手里剑
 	ShadowShuriken.DisplayName: 影手里剑
 	PaperBombThrown.DisplayName: 起爆符
@@ -597,6 +653,14 @@ Dialogue: {
 }
 
 Buffs: {
+	PakkunBuff: {
+		DisplayName: "帕克"
+		Description: "帕克和你一起战斗"
+	}
+	PakkunScent: {
+		DisplayName: "嗅迹"
+		Description: "帕克记住了这股气味"
+	}
 	IceMirrorBuff: {
 		DisplayName: 魔镜冰晶
 		Description: 冰镜会为你作战
@@ -1367,6 +1431,7 @@ Text: {
 	}
 
 	Place: {
+		ToolWorkbench: "忍具台"
 		AUnGate: 阿吽大门
 		WestWall: 西墙
 		EastWall: 东墙

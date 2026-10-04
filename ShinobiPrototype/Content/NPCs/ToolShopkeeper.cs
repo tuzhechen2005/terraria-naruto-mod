@@ -87,6 +87,9 @@ public sealed class ToolShopkeeper : ModNPC
             .Add<Shuriken>()
             .Add<PaperBomb>()
             .Add<ChakraPill>()
+            .Add<Items.Tier1.ToolBlueprint>()
+            .Add<Items.Tier1.ToolWorkbench>()
+            .Add<Items.Tier1.ToolPouch>()
             .Add<Senbon>(afterWave)
             .Register();
     }

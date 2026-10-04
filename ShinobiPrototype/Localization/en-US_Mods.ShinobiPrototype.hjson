@@ -1,4 +1,56 @@
 Items: {
+	TrainingNinjato: {
+		DisplayName: "Training Ninjato"
+		Tooltip: "A three-swing string; the third swing sends a slash arc\nIn stealth, the arc is twice as strong and larger"
+	}
+	DemonChainGauntlet: {
+		DisplayName: "Demon Brothers' Chain Gauntlet"
+		Tooltip: "Flings a clawed head on a chain that hooks an enemy, drags it closer and poisons it\nHook a wall to pull yourself to it"
+	}
+	PhoenixFlowerJutsu: {
+		DisplayName: "Fire Style: Phoenix Sage Fire"
+		Tooltip: "Spits a spread of small fireballs\nMay set enemies on fire"
+	}
+	NinkenScroll: {
+		DisplayName: "Summoning: Ninken"
+		Tooltip: "Summons Pakkun to fight for you\nAn enemy he bites carries his scent: minions deal 3 more damage to it"
+	}
+	RoughCloth: {
+		DisplayName: "Rough Cloth"
+		Tooltip: "Coarse hemp off Gato's thugs"
+	}
+	RogueHeadband: {
+		DisplayName: "Rogue Headband"
+		Tooltip: "A scratch across the plate: a ninja who left their village"
+	}
+	ToolBlueprint: {
+		DisplayName: "Ninja Tool Blueprint"
+		Tooltip: "Used up when making gear at the tool workbench"
+	}
+	MissionToken: {
+		DisplayName: "Mission Token"
+		Tooltip: "Proof of a mission done; trade them with Iruka"
+	}
+	KonohaHeadband: {
+		DisplayName: "Leaf Headband"
+		Tooltip: "4% increased damage\n+20 max chakra"
+	}
+	ToolPouch: {
+		DisplayName: "Ninja Tool Pouch"
+		Tooltip: "Ninja tools build stealth 25% faster\n4% increased ninja tool critical strike chance"
+	}
+	PillPouch: {
+		DisplayName: "Soldier Pill Pouch"
+		Tooltip: "30% faster natural chakra recovery\nSoldier pills can be taken every 6 seconds"
+	}
+	TrainingPost: {
+		DisplayName: "Training Post"
+		Tooltip: "+1 substitution log"
+	}
+	ToolWorkbench: {
+		DisplayName: "Tool Workbench"
+		Tooltip: "Used to make ninja tools and gear"
+	}
 	TrainingKunai: {
 		DisplayName: Training Kunai
 		Tooltip:
@@ -513,6 +565,10 @@ NPCs: {
 }
 
 Projectiles: {
+	NinjatoSlashArc.DisplayName: "Slash Arc"
+	GauntletClaw.DisplayName: "Chain Claw"
+	PhoenixFlowerFire.DisplayName: "Phoenix Sage Fire"
+	PakkunMinion.DisplayName: "Pakkun"
 	ShurikenThrown.DisplayName: Shuriken
 	ShadowShuriken.DisplayName: Shadow Shuriken
 	PaperBombThrown.DisplayName: Paper Bomb
@@ -602,6 +658,14 @@ Dialogue: {
 }
 
 Buffs: {
+	PakkunBuff: {
+		DisplayName: "Pakkun"
+		Description: "Pakkun fights beside you"
+	}
+	PakkunScent: {
+		DisplayName: "Pakkun's Scent"
+		Description: "Pakkun has this scent"
+	}
 	IceMirrorBuff: {
 		DisplayName: Demonic Ice Mirrors
 		Description: The ice mirror fights for you
@@ -1373,6 +1437,7 @@ Text: {
 	}
 
 	Place: {
+		ToolWorkbench: "Tool Workbench"
 		AUnGate: A-Un Gate
 		WestWall: West Wall
 		EastWall: East Wall
