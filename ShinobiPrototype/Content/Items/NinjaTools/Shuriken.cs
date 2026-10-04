@@ -84,3 +84,39 @@ public sealed class PaperBomb : NinjaTool
             Projectile.NewProjectile(source, position, velocity.RotatedBy(i * 0.22f), type, damage, knockback, player.whoAmI);
     }
 }
+
+// 苦无 (tier one, sold at the ninja tool shop): the proper kunai, a little stronger than the training one; never used up.
+// Its stealth throw is three at once in a fan. Art: the training kunai's until its own.
+public sealed class Kunai : NinjaTool
+{
+    public override string Texture => ModContent.HasAsset("ShinobiPrototype/Content/Items/NinjaTools/Kunai")
+        ? "ShinobiPrototype/Content/Items/NinjaTools/Kunai"
+        : "ShinobiPrototype/Content/Items/TrainingKunai";
+
+    public override void SetDefaults()
+    {
+        Item.damage = 13;
+        Item.DamageType = DamageClass.Ranged;
+        Item.width = 18;
+        Item.height = 18;
+        Item.useTime = 16;
+        Item.useAnimation = 16;
+        Item.useStyle = ItemUseStyleID.Swing;
+        Item.noMelee = true;
+        Item.noUseGraphic = true;
+        Item.knockBack = 2.5f;
+        Item.UseSound = SoundID.Item1;
+        Item.autoReuse = true;
+        Item.shoot = ModContent.ProjectileType<KunaiThrown>();
+        Item.shootSpeed = 12f;
+        Item.rare = ItemRarityID.Blue;
+        Item.value = Item.sellPrice(silver: 30);
+    }
+
+    protected override void StealthThrow(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity,
+        int type, int damage, float knockback)
+    {
+        for (int i = -1; i <= 1; i++)
+            Projectile.NewProjectile(source, position, velocity.RotatedBy(i * 0.14f) * 1.1f, type, (int)(damage * 1.25f), knockback, player.whoAmI);
+    }
+}

@@ -288,6 +288,15 @@ Items: {
 			'''
 	}
 
+	Kunai: {
+		DisplayName: Kunai
+		Tooltip:
+			'''
+			Ninja tool: thrown, never used up; handier than the training kunai
+			Held, it builds stealth; full, three are thrown at once
+			'''
+	}
+
 	Shuriken: {
 		DisplayName: Shuriken
 		Tooltip:
@@ -405,6 +414,30 @@ NPCs: {
 
 	DemonBrotherGozu.DisplayName: Demon Brother: Gōzu
 	DemonBrotherMeizu.DisplayName: Demon Brother: Meizu
+
+	ToolShopkeeper: {
+		DisplayName: Ninja Tool Merchant
+		GivenName: Tenten's Father
+
+		TownNPCMood: {
+			Content: Business is good and the shop is tidy. Care to see the new shuriken?
+			NoHome: No shopfront, nowhere to lay out the tools. Give me a room.
+			FarFromHome: Too far from the shop. I should be minding it.
+			LoveSpace: Room enough to hang the kunai in rows.
+			DislikeCrowded: Too crowded; the customers can't turn round.
+			HateCrowded: This crowded, what if a paper bomb goes off!
+			LikeBiome: "{BiomeName} is nice; the air is fresh."
+			LoveBiome: "{BiomeName} is home. Best place for a shop."
+			DislikeBiome: "{BiomeName}? The tools will rust."
+			HateBiome: I can't stand {BiomeName}.
+			LikeNPC: "{NPCName} is a regular, never haggles."
+			LoveNPC: With {NPCName} about, the shop is lively.
+			DislikeNPC: "{NPCName} and those iron pipes. Give me a good kunai any day."
+			HateNPC: Keep {NPCName} away from my shelves!
+			LikeNPC_Princess: "{NPCName} is a lovely child."
+			Princess_LovesNPC: I really like {NPCName}!
+		}
+	}
 
 	Tazuna: {
 		DisplayName: Bridge Builder
@@ -677,6 +710,7 @@ BossChecklist: {
 }
 
 Conditions.WaveScroll: After seeing Zabuza in the mist at the broken bridge
+Conditions.WaveComplete: After the Land of Waves mission
 
 Biomes: {
 	KonohaBiome: {

@@ -283,6 +283,15 @@ Items: {
 			'''
 	}
 
+	Kunai: {
+		DisplayName: 苦无
+		Tooltip:
+			'''
+			忍具：投掷后不消耗，比训练苦无更趁手
+			拿在手里时积攒潜伏值，攒满后一次扔出三把
+			'''
+	}
+
 	Shuriken: {
 		DisplayName: 手里剑
 		Tooltip:
@@ -400,6 +409,30 @@ NPCs: {
 
 	DemonBrotherGozu.DisplayName: 鬼之兄弟·伽乌斯
 	DemonBrotherMeizu.DisplayName: 鬼之兄弟·美伊兹
+
+	ToolShopkeeper: {
+		DisplayName: 忍具店老板
+		GivenName: 天天的父亲
+
+		TownNPCMood: {
+			Content: 生意不错，店也收拾得干净。要看看新到的手里剑吗？
+			NoHome: 没有铺面，忍具往哪儿摆？给我间屋子吧。
+			FarFromHome: 离店太远了，我得回去看着。
+			LoveSpace: 地方够宽，正好把苦无一排排挂起来。
+			DislikeCrowded: 太挤了，客人都转不开身。
+			HateCrowded: 挤成这样，起爆符走火了可怎么办！
+			LikeBiome: "{BiomeName}挺好，空气新鲜。"
+			LoveBiome: 还是{BiomeName}好，在这儿开店最安心。
+			DislikeBiome: "{BiomeName}？忍具都要生锈了。"
+			HateBiome: 我受不了{BiomeName}。
+			LikeNPC: "{NPCName}是老主顾了，买东西从不讲价。"
+			LoveNPC: 有{NPCName}在，店里就热闹。
+			DislikeNPC: "{NPCName}那些铁管子，哪比得上一支好苦无。"
+			HateNPC: 别让{NPCName}靠近我的货架！
+			LikeNPC_Princess: "{NPCName}这孩子真讨人喜欢。"
+			Princess_LovesNPC: 我很喜欢{NPCName}！
+		}
+	}
 
 	Tazuna: {
 		DisplayName: 造桥工
@@ -671,6 +704,7 @@ BossChecklist: {
 }
 
 Conditions.WaveScroll: 在断桥的雾中见过再不斩之后
+Conditions.WaveComplete: 波之国任务完成之后
 
 Biomes: {
 	KonohaBiome: {
