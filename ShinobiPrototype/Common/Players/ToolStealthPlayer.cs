@@ -12,13 +12,17 @@ namespace ShinobiPrototype.Common.Players;
 public sealed class ToolStealthPlayer : ModPlayer
 {
     public float Meter { get; private set; }
+    // How fast the meter fills, from ninja-tool gear; reset every tick.
+    public float FillSpeed { get; set; } = 1f;
+
+    public override void ResetEffects() => FillSpeed = 1f;
     public bool HoldingTool => Player.HeldItem?.ModItem is NinjaTool;
     public bool Ready => Meter >= 1f || Player.GetModPlayer<StealthPlayer>().Hidden;
 
     public override void PostUpdate()
     {
         bool wasFull = Meter >= 1f;
-        Meter = ChakraRules.TickToolStealth(Meter, HoldingTool);
+        Meter = ChakraRules.TickToolStealth(Meter, HoldingTool, FillSpeed);
         if (!wasFull && Meter >= 1f && Player.whoAmI == Main.myPlayer)
         {
             SoundEngine.PlaySound(SoundID.MaxMana with { Pitch = -0.3f }, Player.Center);

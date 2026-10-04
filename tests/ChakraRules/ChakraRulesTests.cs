@@ -91,5 +91,9 @@ Check(SealRules.ChidoriWallTiles == 3, "Chidori goes through walls up to three t
 float meter = 0f;
 for (int i = 0; i < ToolStealthFillTicks; i++)
     meter = TickToolStealth(meter, true);
-Check(meter >= 0.999f && TickToolStealth(1f, true) == 1f, "A ninja tool in hand fills its stealth in about four seconds, never past full");
+Check(meter >= 0.999f && ToolStealthFillTicks == 720 && TickToolStealth(1f, true) == 1f, "A ninja tool in hand fills its stealth in twelve seconds bare, never past full");
+float geared = 0f;
+for (int i = 0; i < 480; i++)
+    geared = TickToolStealth(geared, true, 1.5f);
+Check(geared >= 0.999f, "Ninja-tool gear speeds it up (1.5x: eight seconds)");
 Check(TickToolStealth(0.5f, false) == 0.5f, "Put away, the meter waits");

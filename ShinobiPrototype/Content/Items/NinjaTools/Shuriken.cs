@@ -7,6 +7,9 @@ using ShinobiPrototype.Content.Projectiles;
 
 namespace ShinobiPrototype.Content.Items.NinjaTools;
 
+// Tier one ninja tools (user, 2026-10-03: they hit far too hard, never used up as they are): about 27 a second thrown
+// steadily, below vanilla's consumable throwing weapons; their stealth throws about three plain throws' worth.
+
 // 手里剑 (tier one, sold at the ninja tool shop): never used up, glances off walls twice. Its stealth throw is the
 // Shadow Shuriken: a great windmill shuriken through several enemies, with a second hidden in its shadow a moment
 // behind. Art: ninja-tools-v1; until it is in, vanilla's shuriken.
@@ -18,12 +21,12 @@ public sealed class Shuriken : NinjaTool
 
     public override void SetDefaults()
     {
-        Item.damage = 12;
+        Item.damage = 8;
         Item.DamageType = DamageClass.Ranged;
         Item.width = 22;
         Item.height = 22;
-        Item.useTime = 16;
-        Item.useAnimation = 16;
+        Item.useTime = 18;
+        Item.useAnimation = 18;
         Item.useStyle = ItemUseStyleID.Swing;
         Item.noMelee = true;
         Item.noUseGraphic = true;
@@ -40,9 +43,9 @@ public sealed class Shuriken : NinjaTool
         int type, int damage, float knockback)
     {
         int shadow = ModContent.ProjectileType<ShadowShuriken>();
-        Projectile.NewProjectile(source, position, velocity * 1.15f, shadow, (int)(damage * 2.5f), knockback * 1.5f, player.whoAmI);
+        Projectile.NewProjectile(source, position, velocity * 1.15f, shadow, (int)(damage * 1.6f), knockback * 1.5f, player.whoAmI);
         // The one hidden in its shadow, a moment behind.
-        Projectile.NewProjectile(source, position, velocity * 1.15f, shadow, (int)(damage * 2.5f), knockback * 1.5f, player.whoAmI,
+        Projectile.NewProjectile(source, position, velocity * 1.15f, shadow, (int)(damage * 1.6f), knockback * 1.5f, player.whoAmI,
             ShadowShuriken.HiddenTicks);
     }
 }
@@ -58,7 +61,7 @@ public sealed class PaperBomb : NinjaTool
 
     public override void SetDefaults()
     {
-        Item.damage = 45;
+        Item.damage = 30;
         Item.DamageType = DamageClass.Ranged;
         Item.width = 16;
         Item.height = 24;
@@ -95,12 +98,12 @@ public sealed class Kunai : NinjaTool
 
     public override void SetDefaults()
     {
-        Item.damage = 13;
+        Item.damage = 9;
         Item.DamageType = DamageClass.Ranged;
         Item.width = 18;
         Item.height = 18;
-        Item.useTime = 16;
-        Item.useAnimation = 16;
+        Item.useTime = 20;
+        Item.useAnimation = 20;
         Item.useStyle = ItemUseStyleID.Swing;
         Item.noMelee = true;
         Item.noUseGraphic = true;
@@ -117,6 +120,6 @@ public sealed class Kunai : NinjaTool
         int type, int damage, float knockback)
     {
         for (int i = -1; i <= 1; i++)
-            Projectile.NewProjectile(source, position, velocity.RotatedBy(i * 0.14f) * 1.1f, type, (int)(damage * 1.25f), knockback, player.whoAmI);
+            Projectile.NewProjectile(source, position, velocity.RotatedBy(i * 0.14f) * 1.1f, type, damage, knockback, player.whoAmI);
     }
 }

@@ -32,7 +32,7 @@ public sealed class M0Command : ModCommand
         {
             player.QuickSpawnItem(player.GetSource_GiftOrReward(), ModContent.ItemType<Items.NinjaTools.Shuriken>());
             player.QuickSpawnItem(player.GetSource_GiftOrReward(), ModContent.ItemType<Items.NinjaTools.PaperBomb>(), 99);
-            caller.Reply("已发放手里剑和 99 张起爆符。拿着忍具约 4 秒，潜伏值满后下一投是潜伏投掷。", Color.LightGreen);
+            caller.Reply("已发放手里剑和 99 张起爆符。拿着忍具约 12 秒（忍具系装备会加快），潜伏值满后下一投是潜伏投掷。", Color.LightGreen);
             return;
         }
 

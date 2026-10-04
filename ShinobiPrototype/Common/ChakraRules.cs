@@ -39,12 +39,13 @@ public static class ChakraRules
     public const int StealthTicks = 300;
     public const float StealthDamageBonus = 0.3f;
 
-    // Ninja tools build their own stealth (specs/装备与忍术系统.spec.md): held, the meter fills in about four seconds,
+    // Ninja tools build their own stealth (specs/装备与忍术系统.spec.md): held, the meter fills in twelve seconds bare
+    // (user, 2026-10-03: four was far too quick), sooner with ninja-tool gear (`speed`, e.g. 1.5 for eight seconds),
     // attacking or not; a hit that gets through empties it. Full, the next throw is the tool's stealth throw.
-    public const int ToolStealthFillTicks = 240;
+    public const int ToolStealthFillTicks = 720;
 
-    public static float TickToolStealth(float meter, bool holdingTool) =>
-        holdingTool ? Math.Min(1f, meter + 1f / ToolStealthFillTicks) : meter;
+    public static float TickToolStealth(float meter, bool holdingTool, float speed = 1f) =>
+        holdingTool ? Math.Min(1f, meter + Math.Max(0f, speed) / ToolStealthFillTicks) : meter;
     public const int SubstitutionMaxHints = 3;
     public const int SubstitutionHintSpacingTicks = 1800;
     // Kakashi's drill still trains a press just before the hit: this long a standby after the press.

@@ -78,7 +78,7 @@ public sealed class ShadowShuriken : ModProjectile
         Projectile.height = 40;
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.Ranged;
-        Projectile.penetrate = 5;
+        Projectile.penetrate = 3;
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
         Projectile.timeLeft = 120;
