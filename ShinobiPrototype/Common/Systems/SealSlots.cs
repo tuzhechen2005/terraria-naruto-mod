@@ -16,10 +16,29 @@ public abstract class SealSlot : ModAccessorySlot
 
     public override Vector2? CustomLocation => new Vector2(586f, 104f + SealRules.SlotIndex(Seals) * 50f);
 
-    // The number of seals written beside the slot.
+    private const string Ui = "ShinobiPrototype/Assets/UI/";
+
+    private static bool HasArt(string name) => ModContent.HasAsset(Ui + name);
+
+    // Their own look (seal-slots-ui-v1): an indigo slot with a vermilion frame, a faint hand seal and number when
+    // empty, and a scroll behind the three of them. Until the art is in, the vanilla slot with the number beside it.
+    public override string FunctionalBackgroundTexture => HasArt("SealSlotBack") ? Ui + "SealSlotBack" : base.FunctionalBackgroundTexture;
+
+    public override string FunctionalTexture => HasArt($"SealSlotEmpty_{Seals}") ? Ui + $"SealSlotEmpty_{Seals}" : base.FunctionalTexture;
+
     public override bool PreDraw(AccessorySlotType context, Item item, Vector2 position, bool isHovered)
     {
-        if (context == AccessorySlotType.FunctionalSlot)
+        if (context != AccessorySlotType.FunctionalSlot)
+            return true;
+        // The scroll behind the column, drawn under the first slot (the other two are drawn after it).
+        if (Seals == 2 && HasArt("SealSlotPanel"))
+        {
+            var panel = ModContent.Request<Microsoft.Xna.Framework.Graphics.Texture2D>(Ui + "SealSlotPanel").Value;
+            float scale = Main.inventoryScale;
+            Main.spriteBatch.Draw(panel, position + new Vector2((52f - panel.Width) / 2f, -12f) * scale, null, Color.White, 0f,
+                Vector2.Zero, scale, Microsoft.Xna.Framework.Graphics.SpriteEffects.None, 0f);
+        }
+        if (!HasArt($"SealSlotEmpty_{Seals}"))
             Utils.DrawBorderString(Main.spriteBatch, $"{Seals}印", position + new Vector2(48f, 12f), new Color(140, 210, 255), 0.8f);
         return true;
     }
