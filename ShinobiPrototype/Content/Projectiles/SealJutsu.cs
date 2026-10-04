@@ -107,6 +107,7 @@ public sealed class GreatFireball : ModProjectile
 
     private int Age => SealRules.FireballLifeTicks - Projectile.timeLeft;
     private float lastFireX = float.NaN;
+    private Vector2? burstAt;
 
     public override void SetDefaults()
     {
@@ -175,16 +176,26 @@ public sealed class GreatFireball : ModProjectile
         }
     }
 
-    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffID.OnFire3, 240);
+    // Against a boss or a big enemy it bursts there and then; small fry it only scorches.
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+    {
+        target.AddBuff(BuffID.OnFire3, 240);
+        if (burstAt == null && SealRules.FireballBurstsOn(target.boss, target.lifeMax, Projectile.damage))
+        {
+            burstAt = target.Center;
+            Projectile.Kill();
+        }
+    }
 
     public override void OnKill(int timeLeft)
     {
-        SoundEngine.PlaySound(SoundID.Item62 with { Volume = 1.2f }, Projectile.Center);
+        Vector2 at = burstAt ?? Projectile.Center;
+        SoundEngine.PlaySound(SoundID.Item62 with { Volume = 1.2f }, at);
         if (!Main.dedServ)
-            Main.instance.CameraModifiers.Add(new Terraria.Graphics.CameraModifiers.PunchCameraModifier(Projectile.Center,
+            Main.instance.CameraModifiers.Add(new Terraria.Graphics.CameraModifiers.PunchCameraModifier(at,
                 Main.rand.NextVector2Unit(), 14f, 10f, 30, 1200f, "GreatFireball"));
         if (Projectile.owner == Main.myPlayer)
-            Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireBurst>(),
+            Projectile.NewProjectile(Projectile.GetSource_Death(), at, Vector2.Zero, ModContent.ProjectileType<FireBurst>(),
                 (int)(Projectile.damage * SealRules.FireballBurstDamageShare), 8f, Projectile.owner);
     }
 
@@ -401,14 +412,19 @@ public sealed class ChidoriCharge : ModProjectile
         owner.fallStart = (int)(owner.position.Y / 16f);
         Vector2 direction = Direction;
         owner.direction = direction.X >= 0f ? 1 : -1;
-        // A wall ahead ends it.
-        Vector2 step = direction * SealRules.ChidoriSpeed;
-        if (Collision.SolidCollision(owner.position + step, owner.width, owner.height))
+        // The player is carried along directly (not by velocity, which the tiles would stop): through open air, and
+        // through a wall up to three tiles thick to the first open spot beyond it; a thicker wall ends it.
+        if (Projectile.owner == Main.myPlayer)
         {
-            Projectile.Kill();
-            return;
+            Vector2 next = owner.position + direction * SealRules.ChidoriSpeed;
+            if (Collision.SolidCollision(next, owner.width, owner.height) && !ThroughWall(owner, direction, out next))
+            {
+                Projectile.Kill();
+                return;
+            }
+            owner.position = next;
+            owner.velocity = Vector2.Zero;
         }
-        owner.velocity = step;
         Projectile.Center = owner.Center + direction * 24f;
         Lighting.AddLight(Projectile.Center, 0.8f, 1.2f, 2f);
         // Lightning chakra left along the way, a piece every half its length.
@@ -422,6 +438,23 @@ public sealed class ChidoriCharge : ModProjectile
             for (int i = 0; i < 4; i++)
                 Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(14f, 14f), DustID.Electric,
                     Main.rand.NextVector2Circular(3f, 3f), 0, default, 1.1f).noGravity = true;
+    }
+
+    // The first open spot past a wall ahead, within the thickness it can go through.
+    private static bool ThroughWall(Player owner, Vector2 direction, out Vector2 beyond)
+    {
+        float reach = SealRules.ChidoriSpeed + SealRules.ChidoriWallTiles * 16f + Math.Max(owner.width, owner.height);
+        for (float d = SealRules.ChidoriSpeed + 4f; d <= reach; d += 4f)
+        {
+            Vector2 spot = owner.position + direction * d;
+            if (!Collision.SolidCollision(spot, owner.width, owner.height))
+            {
+                beyond = spot;
+                return true;
+            }
+        }
+        beyond = owner.position;
+        return false;
     }
 
     // Gathered: off it goes, with the user's Chidori sound. Enemies the crackle struck can be struck again by the charge.
@@ -464,8 +497,9 @@ public sealed class ChidoriCharge : ModProjectile
     public override void OnKill(int timeLeft)
     {
         Player owner = Main.player[Projectile.owner];
-        if (!Gathering)
-            owner.velocity *= 0.2f;
+        // A little of the charge carries on.
+        if (!Gathering && Projectile.owner == Main.myPlayer)
+            owner.velocity = Direction * 4f;
         owner.immuneNoBlink = false;
         if (!Main.dedServ)
             for (int i = 0; i < 30; i++)

@@ -85,3 +85,6 @@ Check(SealRules.FireballCooldownTicks == 360 && SealRules.ChidoriCooldownTicks =
     "The great techniques: 6 s and 40 chakra, 10 s and 60 chakra");
 Check(SealRules.LightningTrailTicks == 180 && SealRules.LightningTrailHitTicks == 15 && SealRules.LightningTrailDamageShare == 0.1f,
     "Lightning chakra lingers 3 s, striking every quarter second for a tenth of the blow");
+Check(SealRules.FireballBurstsOn(true, 50, 40) && SealRules.FireballBurstsOn(false, 200, 40) && !SealRules.FireballBurstsOn(false, 199, 40),
+    "The great fireball bursts on a boss or a big enemy, and only scorches small fry as it rolls through them");
+Check(SealRules.ChidoriWallTiles == 3, "Chidori goes through walls up to three tiles thick");

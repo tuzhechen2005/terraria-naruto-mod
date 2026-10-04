@@ -38,6 +38,12 @@ public static class SealRules
     public const float GroundFireDamageShare = 0.25f;
     public const float FireballBurstDamageShare = 1.5f;
 
+    // It bursts on the spot against a worthy target (user, 2026-10-03: not wasted on whatever small fry is in the way,
+    // which it only scorches as it rolls on): a boss, or an enemy with at least five times the fireball's damage in life.
+    public const int FireballWorthyLifeMultiple = 5;
+
+    public static bool FireballBurstsOn(bool boss, int lifeMax, int damage) => boss || lifeMax >= FireballWorthyLifeMultiple * damage;
+
     // The fireball's width after `age` ticks: it swells, then holds.
     public static float FireballSize(int age) =>
         FireballStartPx + (FireballFullPx - FireballStartPx) * Math.Clamp(age / (float)FireballGrowTicks, 0f, 1f);
@@ -55,6 +61,8 @@ public static class SealRules
     public const float ChidoriReachPx = 640f;
     public const float ChidoriSpeed = 26f;
     public const float ChidoriBossMultiplier = 2.5f;
+    // It goes through a wall up to three tiles thick (user, 2026-10-03); a thicker one stops it.
+    public const int ChidoriWallTiles = 3;
     public const int LightningTrailTicks = 180;
     public const int LightningTrailHitTicks = 15;
     public const float LightningTrailDamageShare = 0.1f;

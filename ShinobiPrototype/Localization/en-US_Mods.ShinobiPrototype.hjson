@@ -261,8 +261,9 @@ Items: {
 			Tap the 4-seal key (X by default) to form the seals and cast: 40 chakra,
 			6 s cooldown
 			The fireball swells to over a dozen tiles across and rolls slowly through walls,
-			burning all it touches
-			The ground it passes catches fire; it ends in a great burst
+			scorching small enemies and setting the ground alight
+			Into a boss or a big enemy it bursts at once;
+			otherwise it bursts at the end
 			'''
 	}
 
@@ -276,7 +277,7 @@ Items: {
 			Lightning gathers in the hand for 1.5 s: you can creep on,
 			and enemies close by are struck all the while
 			Then a charge of some 40 tiles towards the cursor,
-			untouchable, stopped by walls
+			untouchable, through walls up to 3 tiles thick
 			Through every enemy in the way;
 			into a boss it stops for a 2.5x blow
 			Lightning chakra lingers on the path for 3 s
