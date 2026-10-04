@@ -116,7 +116,7 @@ public sealed class Gaara : ExamBoss
                     float far = Math.Abs(target.Center.X - NPC.Center.X);
                     Vector2 aim = NPC.DirectionTo(target.Center - new Vector2(0f, far * 0.12f));
                     Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(NPC.direction * 14f, -24f), aim * 8f,
-                        ModContent.ProjectileType<SandPellet>(), ExamBossRules.SandPelletDamage, 1f, Main.myPlayer);
+                        ModContent.ProjectileType<SandPellet>(), EnemyDamage.Projectile(EnemyDamageRules.Gaara.Pellet), 1f, Main.myPlayer);
                 }
                 if (Deciding && Timer > 60f / Tempo)
                     Choose(target);
@@ -163,7 +163,7 @@ public sealed class Gaara : ExamBoss
                         {
                             float x = target.Center.X + (i - spots / 2) * ExamBossRules.QuicksandGapPx + (i == spots / 2 ? 0f : Main.rand.NextFloat(-14f, 14f));
                             Projectile.NewProjectile(NPC.GetSource_FromAI(), new Vector2(x, target.Bottom.Y - 8f), Vector2.Zero,
-                                ModContent.ProjectileType<Quicksand>(), ExamBossRules.QuicksandDamage, 4f, Main.myPlayer,
+                                ModContent.ProjectileType<Quicksand>(), EnemyDamage.Projectile(EnemyDamageRules.Gaara.Quicksand), 4f, Main.myPlayer,
                                 ExamBossRules.QuicksandWarnTicks + Math.Abs(i - spots / 2) * 6);
                         }
                     }
@@ -174,7 +174,7 @@ public sealed class Gaara : ExamBoss
             case ShurikenWindup:
                 NPC.velocity.X *= 0.8f;
                 Telegraph(DustID.Sand, 24f);
-                if (Timer >= 30f / Tempo)
+                if (Timer >= EnemyDamageRules.BigWindup(EnemyDamageRules.Gaara.ShurikenWindupTicks, Tempo))
                 {
                     SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
                     if (Deciding)
@@ -183,7 +183,7 @@ public sealed class Gaara : ExamBoss
                         int fan = ExamBossRules.ShurikenFan(Phase);
                         for (int i = 0; i < fan; i++)
                             JutsuHitbox.Spawn(NPC, JutsuKind.SandShuriken, NPC.Center,
-                                aim.RotatedBy((i - fan / 2) * 0.16f) * 9f, 18, 18, ExamBossRules.ShurikenDamage);
+                                aim.RotatedBy((i - fan / 2) * 0.16f) * 9f, 18, 18, EnemyDamage.Projectile(EnemyDamageRules.Gaara.Shuriken));
                     }
                     Enter(Recovery);
                 }
@@ -196,7 +196,7 @@ public sealed class Gaara : ExamBoss
                     for (int i = 0; i < 3; i++)
                         Dust.NewDustPerfect(CoffinAt + new Vector2(Main.rand.NextFloat(-1f, 1f) * ExamBossRules.CoffinRadiusPx, -4f),
                             DustID.Sand, new Vector2(0f, -1.5f), 60, default, 1.4f).noGravity = true;
-                if (Timer >= ExamBossRules.CoffinWarnTicks / Tempo)
+                if (Timer >= EnemyDamageRules.BigWindup(ExamBossRules.CoffinWarnTicks, Tempo))
                 {
                     Player local = Main.LocalPlayer;
                     // Still on the quicksand when it closes: a log takes it, or the sand does (user, 2026-10-03).
@@ -218,7 +218,7 @@ public sealed class Gaara : ExamBoss
                     SoundEngine.PlaySound(SoundID.Item62, CoffinAt);
                     if (Deciding)
                         JutsuHitbox.Spawn(NPC, JutsuKind.SandBurial, CoffinAt - new Vector2(0f, 48f), Vector2.Zero, 96, 110,
-                            ExamBossRules.BurialDamage);
+                            EnemyDamage.Projectile(EnemyDamageRules.Gaara.Burial));
                     Enter(Recovery);
                 }
                 break;
@@ -226,12 +226,12 @@ public sealed class Gaara : ExamBoss
             case WaveWindup:
                 NPC.velocity.X *= 0.8f;
                 Telegraph(DustID.Sand, 36f);
-                if (Timer >= 40f / Tempo)
+                if (Timer >= EnemyDamageRules.BigWindup(EnemyDamageRules.Gaara.SandWaveWindupTicks, Tempo))
                 {
                     SoundEngine.PlaySound(SoundID.Item69, NPC.Center);
                     if (Deciding)
                         JutsuHitbox.Spawn(NPC, JutsuKind.SandWave, new Vector2(NPC.Center.X + NPC.direction * 40f, NPC.Bottom.Y - 34f),
-                            new Vector2(NPC.direction * 6.5f, 0f), 52, 68, ExamBossRules.SandWaveDamage, 7f);
+                            new Vector2(NPC.direction * 6.5f, 0f), 52, 68, EnemyDamage.Projectile(EnemyDamageRules.Gaara.SandWave), 7f);
                     Enter(Recovery);
                 }
                 break;
@@ -239,12 +239,12 @@ public sealed class Gaara : ExamBoss
             case ArmWindup:
                 NPC.velocity.X *= 0.8f;
                 Telegraph(DustID.Sand, 50f);
-                if (Timer >= 36f / Tempo)
+                if (Timer >= EnemyDamageRules.BigWindup(EnemyDamageRules.Gaara.SandArmWindupTicks, Tempo))
                 {
                     SoundEngine.PlaySound(SoundID.Item71, NPC.Center);
                     if (Deciding)
                         JutsuHitbox.Spawn(NPC, JutsuKind.SandArm, NPC.Center + new Vector2(NPC.direction * 120f, -10f), Vector2.Zero,
-                            220, 110, ExamBossRules.SandArmDamage, 9f);
+                            220, 110, EnemyDamage.Projectile(EnemyDamageRules.Gaara.SandArm), 9f);
                     Enter(Recovery);
                 }
                 break;
@@ -252,7 +252,7 @@ public sealed class Gaara : ExamBoss
             case BulletWindup:
                 NPC.velocity.X *= 0.8f;
                 Telegraph(DustID.Cloud, 40f);
-                if (Timer >= 34f / Tempo)
+                if (Timer >= EnemyDamageRules.BigWindup(EnemyDamageRules.Gaara.AirBulletWindupTicks, Tempo))
                 {
                     SoundEngine.PlaySound(SoundID.Item45, NPC.Center);
                     if (Deciding)
@@ -260,7 +260,7 @@ public sealed class Gaara : ExamBoss
                         Vector2 aim = NPC.DirectionTo(target.Center);
                         for (int i = -1; i <= 1; i++)
                             JutsuHitbox.Spawn(NPC, JutsuKind.AirBullet, NPC.Center, aim.RotatedBy(i * 0.25f) * 4.5f, 56, 56,
-                                ExamBossRules.AirBulletDamage, 8f);
+                                EnemyDamage.Projectile(EnemyDamageRules.Gaara.AirBullet), 8f);
                     }
                     Enter(Recovery);
                 }

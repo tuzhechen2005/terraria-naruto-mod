@@ -15,7 +15,7 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0、/m0 items、/m0 seals、/m0 tools、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 orochimaru、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名] 或 /m0 god [on|off]";
+    public override string Usage => "/m0、/m0 items、/m0 seals、/m0 tools、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 orochimaru、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名]、/m0 dmg [on|off]、/m0 logs off|on 或 /m0 god [on|off]";
     public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
@@ -213,6 +213,31 @@ public sealed class M0Command : ModCommand
         if (args.Length > 0 && args[0].Equals("time", StringComparison.OrdinalIgnoreCase))
         {
             SetTime(caller, args);
+            return;
+        }
+
+        // Checking the damage table in play (specs/敌方伤害标准.spec.md): print every hit taken; switch the logs off.
+        if (args.Length is 1 or 2 && args[0].Equals("dmg", StringComparison.OrdinalIgnoreCase))
+        {
+            DebugDamagePlayer.Enabled = args.Length == 2 ? !args[1].Equals("off", StringComparison.OrdinalIgnoreCase) : !DebugDamagePlayer.Enabled;
+            caller.Reply(DebugDamagePlayer.Enabled
+                ? "伤害报告已开启：每次挨打在聊天框显示来源、表中数值、防御前后伤害、是否被木头挡下。再输一次 /m0 dmg 关闭。"
+                : "伤害报告已关闭。", Color.LightGreen);
+            return;
+        }
+
+        if (args.Length == 2 && args[0].Equals("logs", StringComparison.OrdinalIgnoreCase) &&
+            (args[1].Equals("off", StringComparison.OrdinalIgnoreCase) || args[1].Equals("on", StringComparison.OrdinalIgnoreCase)))
+        {
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                caller.Reply("关闭木头只在单人模式可用。", Color.OrangeRed);
+                return;
+            }
+            SubstitutionPlayer.DebugLogsOff = args[1].Equals("off", StringComparison.OrdinalIgnoreCase);
+            caller.Reply(SubstitutionPlayer.DebugLogsOff
+                ? "木头已关闭：敌人的攻击不再被木头挡下（分身术照常）。/m0 logs on 恢复。"
+                : "木头已恢复。", Color.LightGreen);
             return;
         }
 

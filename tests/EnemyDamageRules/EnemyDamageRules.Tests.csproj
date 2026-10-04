@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="EnemyDamageRulesTests.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/EnemyDamageRules.cs" Link="EnemyDamageRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/EnemyDamageTable.cs" Link="EnemyDamageTable.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ExamBossRules.cs" Link="ExamBossRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ThresholdRetreatRules.cs" Link="ThresholdRetreatRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/DemonBrotherRules.cs" Link="DemonBrotherRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ZabuzaCombatRules.cs" Link="ZabuzaCombatRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/WaveDuoRules.cs" Link="WaveDuoRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/ChakraRules.cs" Link="ChakraRules.cs" />
+  </ItemGroup>
+</Project>

@@ -165,7 +165,7 @@ public sealed class HakuBoss : ModNPC
                         NPC.ai[1] = WaveDuoRules.HakuNeedleWindupTicks - 1;
                         break;
                     }
-                    FireFan(target, 1, 9f, 18);
+                    FireFan(target, 1, 9f, EnemyDamageRules.Haku.Needle);
                     SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                     NPC.localAI[0]++;
                     Enter(NeedleRecovery);
@@ -306,7 +306,7 @@ public sealed class HakuBoss : ModNPC
                 thousandCooldown++;
                 if ((int)NPC.ai[1] % 40 == 20)
                 {
-                    FireFan(target, 1, 10.5f, 21);
+                    FireFan(target, 1, 10.5f, EnemyDamageRules.Haku.ExposedNeedle);
                     SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                 }
                 if (WaveDuoRules.AliveCount(alive) > 0 && (int)NPC.ai[1] % 40 == 39)
@@ -387,7 +387,7 @@ public sealed class HakuBoss : ModNPC
                 if (cycleTick == WaveDuoRules.HopThrowTick(frenzy))
                 {
                     FireFan(target, frenzy ? WaveDuoRules.FrenzyFanNeedles : WaveDuoRules.CageFanNeedles,
-                        frenzy ? 10.5f : 9f, frenzy ? 21 : 18);
+                        frenzy ? 10.5f : 9f, frenzy ? EnemyDamageRules.Haku.FrenzyFan : EnemyDamageRules.Haku.CageFan);
                     SoundEngine.PlaySound(SoundID.Item17, NPC.Center);
                 }
                 break;
@@ -476,7 +476,7 @@ public sealed class HakuBoss : ModNPC
             Vector2 offset = angle.ToRotationVector2() * WaveDuoRules.ThousandNeedleRadius;
             Projectile.NewProjectile(NPC.GetSource_FromAI(), target.Center + offset,
                 -Vector2.Normalize(offset) * 8f, ModContent.ProjectileType<HakuPrismShard>(),
-                WaveDuoRules.SoftenedDamage(21), 0f, Main.myPlayer, 0f, NPC.whoAmI + 1,
+                EnemyDamage.Projectile(EnemyDamageRules.Haku.ThousandNeedles), 0f, Main.myPlayer, 0f, NPC.whoAmI + 1,
                 WaveDuoRules.ThousandNeedleWarnTicks);
         }
     }
@@ -513,7 +513,7 @@ public sealed class HakuBoss : ModNPC
         if (Main.netMode != NetmodeID.MultiplayerClient)
             Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
                 ModContent.ProjectileType<HakuDashHitbox>(),
-                WaveDuoRules.SoftenedDamage(23), 0f,
+                EnemyDamage.Projectile(EnemyDamageRules.Haku.MirrorDash), 0f,
                 Main.myPlayer, NPC.whoAmI, NPC.direction);
         SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
         Enter(MirrorDash);
@@ -532,7 +532,7 @@ public sealed class HakuBoss : ModNPC
             float angle = (i - (count - 1) * 0.5f) * 0.14f;
             Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + direction * 18f,
                 direction.RotatedBy(angle) * speed, ModContent.ProjectileType<HakuNeedle>(),
-                WaveDuoRules.SoftenedDamage(damage), 0f, Main.myPlayer);
+                EnemyDamage.Projectile(damage), 0f, Main.myPlayer);
         }
     }
 

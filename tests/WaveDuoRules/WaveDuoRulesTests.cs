@@ -55,7 +55,7 @@ Check(WaveDuoRules.PushInsideCage(400f, 0f, 320f, out float px, out float py) &&
     px < 320f && px > 250f && py == 0f &&
     !WaveDuoRules.PushInsideCage(100f, 50f, 320f, out _, out _),
     "Crossing the cage edge pushes the player back inside; the interior is free");
-Check(WaveDuoRules.CageBoundaryDamage is >= 8 and <= 12 &&
+Check(EnemyDamageRules.MirrorCage.Boundary is >= 8 and <= 12 &&
     WaveDuoRules.CageBoundaryHurtCooldown >= 20,
     "The edge hurts lightly and not every frame");
 Check(WaveDuoRules.PhaseInHop(0, false) == WaveDuoRules.HopPhase.Warn &&
@@ -107,6 +107,3 @@ for (int cast = 0; cast < 10; cast++)
 // Zabuza frenzy.
 Check(WaveDuoRules.ZabuzaFrenzyDamageTakenMultiplier is >= 1.2f and <= 1.3f,
     "Frenzied Zabuza drops his guard and takes about 25% more damage");
-Check(WaveDuoRules.SoftenedDamage(48) is >= 42 and <= 44 &&
-    WaveDuoRules.SoftenedDamage(20) is >= 17 and <= 19,
-    "Boss damage is reduced gently rather than gutted");

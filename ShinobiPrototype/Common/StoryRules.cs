@@ -65,8 +65,6 @@ public static class StoryRules
     public const int PrisonDefense = 8;
     public const int CloneCount = 3;
     public const int CloneLife = 140;
-    public const int CloneContactDamage = 22;
-    public const int CloneSlashDamage = 26;
     public const int CloneReformTicks = 360;
     public const float AbortRangeTiles = 100f;
     public const int RetryCooldownTicks = 3600;

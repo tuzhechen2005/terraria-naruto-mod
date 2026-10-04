@@ -137,7 +137,7 @@ Items: {
 		Tooltip:
 			'''
 			Style core: Sharingan (tier one, one tomoe)
-			Substitution logs come back sooner (one every 8 s)
+			Substitution logs come back sooner (one every 16 s)
 			Style technique [Foresight]: 30 chakra, 20 s cooldown.
 			The first hit within 4 s is substituted automatically;
 			then +15% damage for 3 s

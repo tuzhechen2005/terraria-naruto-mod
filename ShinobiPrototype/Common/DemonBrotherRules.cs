@@ -9,15 +9,13 @@ namespace ShinobiPrototype.Common;
 public static class DemonBrotherRules
 {
     public const int LifeMax = 220;
-    public const int ContactDamage = 18;
-    public const int ChainDamage = 22;
     public const float SpawnChance = 0.02f;
     public const float FlankGap = 110f;
     public const float RunSpeed = 3.4f;
     public const float BerserkSpeedMultiplier = 1.45f;
 
     public const int SwipeRange = 70;
-    public const int SwipeWindupTicks = 20;
+    public const int SwipeWindupTicks = EnemyDamageRules.BigTelegraphTicks;   // was 20 (specs/敌方伤害标准.spec.md)
     public const int SwipeActiveTicks = 10;
     public const int SwipeRecoveryTicks = 26;
 

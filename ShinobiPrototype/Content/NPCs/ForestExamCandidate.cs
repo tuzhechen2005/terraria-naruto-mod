@@ -51,7 +51,7 @@ public abstract class ForestExamCandidate : ModNPC
         NPC.width = 28;
         // The art stands about 62 pixels tall.
         NPC.height = 56;
-        NPC.damage = 26;
+        NPC.damage = EnemyDamageRules.Genin.CandidateContact;
         NPC.defense = 8;
         NPC.lifeMax = 260;
         NPC.knockBackResist = 0.35f;
@@ -179,14 +179,26 @@ public sealed class ForestCanopyCandidate : ForestExamCandidate
     private const int SlashEvery = 55;
     private const int ThrowEvery = 140;
 
+    // Server side: ticks until the kunai strike lands. The swing (the throw pose) shows first, so a strike that
+    // appears right beside the player can be seen coming (specs/敌方伤害标准.spec.md: at least 15 ticks).
+    private int strikeIn;
+
     protected override bool Attack(Player target, float distance)
     {
+        if (strikeIn > 0)
+        {
+            if (--strikeIn == 0)
+            {
+                JutsuHitbox.Spawn(NPC, JutsuKind.Strike, NPC.Center + new Vector2(NPC.direction * 22f, 0f), Vector2.Zero, 44, 50,
+                    EnemyDamage.Projectile(EnemyDamageRules.Genin.CandidateStrike), 4f);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
+            }
+            return false;
+        }
         if (distance < 4 * 16f && AttackTimer >= SlashEvery)
         {
             AttackTimer = 0f;
-            JutsuHitbox.Spawn(NPC, JutsuKind.Strike, NPC.Center + new Vector2(NPC.direction * 22f, 0f), Vector2.Zero, 44, 50,
-                NPC.damage, 4f);
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
+            strikeIn = EnemyDamageRules.Genin.CandidateStrikeWindupTicks;
             return true;
         }
         if (distance >= 6 * 16f && distance < 26 * 16f && AttackTimer >= ThrowEvery && ClearShot(target))
@@ -194,7 +206,7 @@ public sealed class ForestCanopyCandidate : ForestExamCandidate
             AttackTimer = Main.rand.Next(-30, 20);
             Vector2 aim = new(NPC.direction * 9.5f, 0f);
             Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, aim, ModContent.ProjectileType<ExamShuriken>(),
-                NPC.damage / 3, 0f, Main.myPlayer);
+                EnemyDamage.Projectile(EnemyDamageRules.Genin.CandidateShuriken), 0f, Main.myPlayer);
             return true;
         }
         // The smoke bomb, once in a while when the player keeps close.
@@ -239,7 +251,7 @@ public sealed class RainGenin : ForestExamCandidate
     {
         base.SetDefaults();
         NPC.lifeMax = 420;
-        NPC.damage = 30;
+        NPC.damage = EnemyDamageRules.Genin.RainContact;
         NPC.defense = 10;
     }
 
@@ -256,7 +268,7 @@ public sealed class RainGenin : ForestExamCandidate
                 Vector2 aim = NPC.DirectionTo(target.Center) * 9f;
                 for (int i = -1; i <= 1; i++)
                     Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, aim.RotatedBy(i * 0.14f),
-                        ModContent.ProjectileType<ExamSenbon>(), NPC.damage / 3, 0f, Main.myPlayer);
+                        ModContent.ProjectileType<ExamSenbon>(), EnemyDamage.Projectile(EnemyDamageRules.Genin.RainSenbon), 0f, Main.myPlayer);
                 break;
             }
             case 1:
@@ -266,7 +278,7 @@ public sealed class RainGenin : ForestExamCandidate
                 {
                     Vector2 at = target.Center + new Vector2((i - 2.5f) * 46f + Main.rand.NextFloat(-10f, 10f), -360f);
                     Projectile.NewProjectile(NPC.GetSource_FromAI(), at, Vector2.Zero, ModContent.ProjectileType<ExamSenbon>(),
-                        NPC.damage / 3, 0f, Main.myPlayer, 40 + i * 6);
+                        EnemyDamage.Projectile(EnemyDamageRules.Genin.RainUmbrella), 0f, Main.myPlayer, EnemyDamageRules.Genin.RainUmbrellaHangTicks + i * 6);
                 }
                 break;
             default:

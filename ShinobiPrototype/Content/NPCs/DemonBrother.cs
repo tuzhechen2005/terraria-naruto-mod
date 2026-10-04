@@ -51,7 +51,7 @@ public abstract class DemonBrother : ModNPC
         NPC.width = 26;
         NPC.height = 46;
         NPC.lifeMax = DemonBrotherRules.LifeMax;
-        NPC.damage = DemonBrotherRules.ContactDamage;
+        NPC.damage = EnemyDamageRules.Brothers.Contact;
         NPC.defense = 6;
         NPC.knockBackResist = 0.25f;
         NPC.aiStyle = -1;
@@ -118,8 +118,8 @@ public abstract class DemonBrother : ModNPC
         if (hurtTicks > 0)
             hurtTicks--;
         Timer++;
-        NPC.damage = State == ChainWarn ? 0 :
-            State == Swipe ? (int)(DemonBrotherRules.ContactDamage * 1.5f) : DemonBrotherRules.ContactDamage;
+        NPC.damage = EnemyDamage.Contact(NPC, State == ChainWarn ? 0 :
+            State == Swipe ? EnemyDamageRules.Brothers.Swipe : EnemyDamageRules.Brothers.Contact);
 
         switch ((int)State)
         {
@@ -230,7 +230,7 @@ public abstract class DemonBrother : ModNPC
             !DemonBrotherRules.ChainHurts(true, Vector2.Distance(a, b)) ||
             !Collision.CheckAABBvLineCollision(player.position, player.Size, a, b))
             return;
-        player.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), DemonBrotherRules.ChainDamage,
+        EnemyDamage.Hurt(player, PlayerDeathReason.ByNPC(NPC.whoAmI), EnemyDamageRules.Brothers.Chain,
             player.Center.X >= NPC.Center.X ? 1 : -1);
     }
 

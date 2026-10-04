@@ -16,7 +16,7 @@ public sealed class WaterClone : ModNPC
     private const int Chase = 0;
     private const int Windup = 1;
     private const int Dash = 2;
-    private const int WindupTicks = 30;
+    private const int WindupTicks = EnemyDamageRules.WaterClone.SlashWindupTicks;
     private const int DashTicks = 20;
     private const int DashEvery = 150;
     private const float RunSpeed = 3.2f;
@@ -40,7 +40,7 @@ public sealed class WaterClone : ModNPC
         NPC.height = ZabuzaCombatRules.BodyHeight;
         NPC.aiStyle = -1;
         NPC.lifeMax = StoryRules.CloneLife;
-        NPC.damage = StoryRules.CloneContactDamage;
+        NPC.damage = EnemyDamageRules.WaterClone.Contact;
         NPC.defense = 4;
         NPC.knockBackResist = 0.3f;
         NPC.HitSound = SoundID.Splash;
@@ -69,7 +69,7 @@ public sealed class WaterClone : ModNPC
         switch ((int)State)
         {
             case Chase:
-                NPC.damage = StoryRules.CloneContactDamage;
+                NPC.damage = EnemyDamage.Contact(NPC, EnemyDamageRules.WaterClone.Contact);
                 NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * RunSpeed, 0.1f);
                 if (NPC.collideX && NPC.velocity.Y == 0f)
                     NPC.velocity.Y = -7f;
@@ -85,7 +85,7 @@ public sealed class WaterClone : ModNPC
                 }
                 break;
             case Dash:
-                NPC.damage = StoryRules.CloneSlashDamage;
+                NPC.damage = EnemyDamage.Contact(NPC, EnemyDamageRules.WaterClone.Slash);
                 NPC.direction = Math.Sign(NPC.velocity.X) is 0 ? NPC.direction : Math.Sign(NPC.velocity.X);
                 if (Main.rand.NextBool(2))
                     Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Water, -NPC.velocity.X * 0.2f, 0f);

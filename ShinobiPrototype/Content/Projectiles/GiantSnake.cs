@@ -92,6 +92,13 @@ public sealed class GiantSnake : ModProjectile
         return new Vector2(Projectile.Center.X - Dir * i * Spacing, Ground - height / 2f - ripple);
     }
 
+    // Manda passes through once: one hit per player (specs/敌方伤害标准.spec.md).
+    private PlayerHits hits;
+
+    public override bool CanHitPlayer(Player target) => hits == null || !hits.Has(target);
+
+    public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) => (hits ??= new PlayerHits()).Mark(target);
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         if (!Coming)

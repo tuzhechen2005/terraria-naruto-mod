@@ -67,12 +67,13 @@ public sealed class Neji : ExamBoss
             case Palms:
                 Face(target.Center.X);
                 NPC.velocity.X = NPC.direction * 2.5f;
-                if ((int)Timer % 12 == 6)
+                // Three palms; the first only after the stance has shown (specs/敌方伤害标准.spec.md: 15 ticks, was 6).
+                if ((int)Timer >= EnemyDamageRules.Neji.FirstPalmTick && ((int)Timer - EnemyDamageRules.Neji.FirstPalmTick) % EnemyDamageRules.Neji.PalmSpacingTicks == 0)
                 {
                     SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
                     if (Deciding)
                         JutsuHitbox.Spawn(NPC, JutsuKind.GentleFist, NPC.Center + new Vector2(NPC.direction * 26f, 0f),
-                            new Vector2(NPC.direction * 2.5f, 0f), 34, 40, ExamBossRules.PalmDamage);
+                            new Vector2(NPC.direction * 2.5f, 0f), 34, 40, EnemyDamage.Projectile(EnemyDamageRules.Neji.Palm));
                 }
                 if (Timer >= 40f)
                     Enter(Recovery);
@@ -81,13 +82,13 @@ public sealed class Neji : ExamBoss
             case RotationWindup:
                 NPC.velocity.X *= 0.7f;
                 Telegraph(DustID.IceTorch, 40f);
-                if (Timer >= 20f)
+                if (Timer >= EnemyDamageRules.Neji.RotationWindupTicks)
                 {
                     Say("八卦掌·回天！", new Color(190, 220, 255));
                     SoundEngine.PlaySound(SoundID.Item60, NPC.Center);
                     if (Deciding)
                         JutsuHitbox.Spawn(NPC, JutsuKind.Rotation, NPC.Center, Vector2.Zero,
-                            ExamBossRules.RotationRadiusPx * 2, ExamBossRules.RotationRadiusPx * 2, ExamBossRules.RotationDamage, 10f);
+                            ExamBossRules.RotationRadiusPx * 2, ExamBossRules.RotationRadiusPx * 2, EnemyDamage.Projectile(EnemyDamageRules.Neji.Rotation), 10f);
                     Enter(Rotation);
                 }
                 break;
@@ -114,7 +115,7 @@ public sealed class Neji : ExamBoss
                     lastWasSixtyFour = true;
                     if (Deciding)
                         JutsuHitbox.Spawn(NPC, JutsuKind.SixtyFour, NPC.Center, Vector2.Zero,
-                            ExamBossRules.SixtyFourRadiusPx * 2, ExamBossRules.SixtyFourRadiusPx * 2, ExamBossRules.SixtyFourDamage);
+                            ExamBossRules.SixtyFourRadiusPx * 2, ExamBossRules.SixtyFourRadiusPx * 2, EnemyDamage.Projectile(EnemyDamageRules.Neji.SixtyFour));
                     Enter(Recovery);
                 }
                 break;

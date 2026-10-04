@@ -38,7 +38,6 @@ public sealed class Dosu : ExamBoss
     private const float LeapAir = 12f;
     private const float LeapRecovery = 13f;
 
-    private const int SecondThrustTicks = 22;
 
     private DosuMove last;
 
@@ -81,9 +80,6 @@ public sealed class Dosu : ExamBoss
     protected override void Fight(Player target)
     {
         float distance = System.Math.Abs(target.Center.X - NPC.Center.X);
-        NPC.damage = State is DrillDash or DrillTurn && Timer < 14f ? ExamBossRules.DosuContactDamage
-            : State == LeapAir && NPC.velocity.Y > 0f ? ExamBossRules.DosuLeapDamage
-            : 0;
         switch (State)
         {
             case Approach:
@@ -107,7 +103,7 @@ public sealed class Dosu : ExamBoss
                 NPC.velocity.X *= 0.8f;
                 Face(target.Center.X);
                 Telegraph(DustID.Smoke, 26f);
-                if (Timer >= ExamBossRules.DosuDrillWindupTicks * Scale)
+                if (Timer >= EnemyDamageRules.BigWindup(ExamBossRules.DosuDrillWindupTicks * Scale))
                 {
                     Thrust();
                     Enter(DrillDash);
@@ -116,7 +112,7 @@ public sealed class Dosu : ExamBoss
             case DrillDash:
                 if (Timer > 14f)
                     NPC.velocity.X *= 0.8f;
-                if (Timer >= SecondThrustTicks * Scale)
+                if (Timer >= EnemyDamageRules.Dosu.SecondThrustTicks)
                 {
                     Face(target.Center.X);
                     Thrust();
@@ -140,7 +136,7 @@ public sealed class Dosu : ExamBoss
                 NPC.velocity.X *= 0.8f;
                 Face(target.Center.X);
                 Telegraph(DustID.Cloud, 40f);
-                if (Timer >= ExamBossRules.DosuWaveWindupTicks * Scale)
+                if (Timer >= EnemyDamageRules.BigWindup(ExamBossRules.DosuWaveWindupTicks * Scale))
                 {
                     Wave();
                     Enter(WaveRecovery);
@@ -162,13 +158,13 @@ public sealed class Dosu : ExamBoss
                 NPC.velocity.X *= 0.7f;
                 Face(target.Center.X);
                 Telegraph(DustID.Smoke, 34f);
-                if (Timer >= ExamBossRules.DosuQuakeWindupTicks * Scale)
+                if (Timer >= EnemyDamageRules.BigWindup(ExamBossRules.DosuQuakeWindupTicks * Scale))
                 {
                     SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
                     if (Deciding)
                         foreach (int side in new[] { -1, 1 })
                             JutsuHitbox.Spawn(NPC, JutsuKind.GroundQuake, NPC.Bottom + new Vector2(side * 30f, -22f),
-                                new Vector2(side * 6.5f, 0f), 36, 44, ExamBossRules.DosuQuakeDamage, 5f);
+                                new Vector2(side * 6.5f, 0f), 36, 44, EnemyDamage.Projectile(EnemyDamageRules.Dosu.Quake), 5f);
                     Enter(QuakeRecovery);
                 }
                 break;
@@ -184,16 +180,16 @@ public sealed class Dosu : ExamBoss
                 if (Main.netMode != NetmodeID.Server && Timer % 6f == 0f)
                     for (int i = 0; i < 16; i++)
                         Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2CircularEdge(1f, 1f) *
-                            ExamBossRules.DosuRingRadiusTiles * 16f * (Timer / (ExamBossRules.DosuRingWindupTicks * Scale)),
+                            ExamBossRules.DosuRingRadiusTiles * 16f * (Timer / (float)EnemyDamageRules.BigWindup(ExamBossRules.DosuRingWindupTicks * Scale)),
                             DustID.Smoke, Vector2.Zero, 160, new Color(220, 220, 255), 1f).noGravity = true;
-                if (Timer >= ExamBossRules.DosuRingWindupTicks * Scale)
+                if (Timer >= EnemyDamageRules.BigWindup(ExamBossRules.DosuRingWindupTicks * Scale))
                 {
                     SoundEngine.PlaySound(SoundID.Item74, NPC.Center);
                     if (Deciding)
                     {
                         int size = ExamBossRules.DosuRingRadiusTiles * 32;
                         JutsuHitbox.Spawn(NPC, JutsuKind.ResonanceRing, NPC.Center, Vector2.Zero, size, size,
-                            ExamBossRules.DosuRingDamage, 8f);
+                            EnemyDamage.Projectile(EnemyDamageRules.Dosu.Ring), 8f);
                     }
                     Enter(RingRecovery);
                 }
@@ -209,7 +205,7 @@ public sealed class Dosu : ExamBoss
                 NPC.velocity.X *= 0.7f;
                 Face(target.Center.X);
                 Telegraph(DustID.Smoke, 20f);
-                if (Timer >= ExamBossRules.DosuLeapWindupTicks * Scale)
+                if (Timer >= EnemyDamageRules.BigWindup(ExamBossRules.DosuLeapWindupTicks * Scale))
                 {
                     SoundEngine.PlaySound(SoundID.Item24, NPC.Center);
                     NPC.velocity = new Vector2(MathHelper.Clamp((target.Center.X - NPC.Center.X) / 52f, -9f, 9f), -12f);
@@ -227,10 +223,9 @@ public sealed class Dosu : ExamBoss
                     SoundEngine.PlaySound(SoundID.Item14, NPC.Center);
                     if (Deciding)
                     {
+                        // One hit for the landing (the slam rings the ears too); no drill beside it, no falling body.
                         JutsuHitbox.Spawn(NPC, JutsuKind.ImpactSlam, NPC.Bottom + new Vector2(0f, -20f), Vector2.Zero, 130, 40,
-                            ExamBossRules.DosuLeapDamage, 7f);
-                        JutsuHitbox.Spawn(NPC, JutsuKind.EchoDrill, NPC.Center + new Vector2(NPC.direction * 20f, 10f), Vector2.Zero,
-                            40, 40, ExamBossRules.DosuDrillDamage);
+                            EnemyDamage.Projectile(EnemyDamageRules.Dosu.Leap), 7f);
                     }
                     Enter(LeapRecovery);
                 }
@@ -251,7 +246,7 @@ public sealed class Dosu : ExamBoss
         SoundEngine.PlaySound(SoundID.Item103, NPC.Center);
         if (Deciding)
             JutsuHitbox.Spawn(NPC, JutsuKind.EchoDrill, NPC.Center + new Vector2(NPC.direction * 24f, 0f),
-                new Vector2(NPC.direction * 10f, 0f), 40, 40, ExamBossRules.DosuDrillDamage);
+                new Vector2(NPC.direction * 10f, 0f), 40, 40, EnemyDamage.Projectile(EnemyDamageRules.Dosu.Drill));
     }
 
     private void Wave()
@@ -259,7 +254,7 @@ public sealed class Dosu : ExamBoss
         SoundEngine.PlaySound(SoundID.Item74, NPC.Center);
         if (Deciding)
             JutsuHitbox.Spawn(NPC, JutsuKind.SoundWave, NPC.Center + new Vector2(NPC.direction * 30f, 0f),
-                new Vector2(NPC.direction * 7f, 0f), 60, 90, ExamBossRules.DosuWaveDamage, ExamBossRules.DosuWaveKnockback);
+                new Vector2(NPC.direction * 7f, 0f), 60, 90, EnemyDamage.Projectile(EnemyDamageRules.Dosu.Wave), ExamBossRules.DosuWaveKnockback);
     }
 
     protected override void LocalVictory(Player player) => player.GetModPlayer<ChuninExamPlayer>().PassPrelims();

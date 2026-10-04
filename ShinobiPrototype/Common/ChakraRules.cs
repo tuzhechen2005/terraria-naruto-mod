@@ -92,6 +92,22 @@ public static class ChakraRules
     // Whether a hit is taken by a log: an enemy's hit, a log left, and no sealed chakra points.
     public static bool AutoSubstitutes(int logs, bool sealedPoints, bool fromEnemy) => logs > 0 && !sealedPoints && fromEnemy;
 
+    // Logs are kept for hits that hurt (specs/敌方伤害标准.spec.md, user 2026-10-04): a hit below a tenth of max life,
+    // after defence, lands as normal; a slime's bump no longer spends one. Shadow clones and the Sharingan's foresight
+    // follow the same line; warned binds (the sand coffin, the killing intent) are taken whatever they deal.
+    public const int LogThresholdPercent = 10;
+
+    public static bool WorthALog(int damage, int maxLife) => damage * 100 >= maxLife * LogThresholdPercent;
+
+    // A log comes back more slowly the more it took: base time x (1 + damage / max life), the share capped at 1. A bind
+    // counts as three tenths of max life (a big attack's worth). Each log spent waits its own time, in order.
+    public const float BindLogShare = 0.3f;
+
+    public static float LogRegenMultiplier(int damageTaken, int maxLife) =>
+        1f + Math.Clamp(maxLife > 0 ? damageTaken / (float)maxLife : 0f, 0f, 1f);
+
+    public static int LogRegenTicksFor(int baseTicks, float multiplier) => (int)Math.Round(baseTicks * Math.Max(1f, multiplier));
+
     // One tick of log recovery (plus any ticks earned by hits): progress builds to the next log; at the cap it waits.
     public static (int Logs, int Progress) TickLogs(int logs, int maxLogs, int progress, int regenTicks, int bonusTicks = 0)
     {

@@ -35,8 +35,8 @@ public sealed class MirrorCagePlayer : ModPlayer
             if (hurtCooldown <= 0)
             {
                 hurtCooldown = WaveDuoRules.CageBoundaryHurtCooldown;
-                Player.Hurt(PlayerDeathReason.ByCustomReason(NetworkText.FromKey(
-                    "Mods.ShinobiPrototype.Dialogue.CageTrapped", Player.name)), WaveDuoRules.CageBoundaryDamage, 0);
+                EnemyDamage.Hurt(Player, PlayerDeathReason.ByCustomReason(NetworkText.FromKey(
+                    "Mods.ShinobiPrototype.Dialogue.CageTrapped", Player.name)), EnemyDamageRules.MirrorCage.Boundary, 0);
             }
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 NetMessage.SendData(MessageID.PlayerControls, number: Player.whoAmI);
