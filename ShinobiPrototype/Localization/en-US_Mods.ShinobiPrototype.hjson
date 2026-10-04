@@ -158,12 +158,12 @@ Items: {
 
 	ScrollFireball: {
 		DisplayName: Fire Style: Fireball Jutsu
-		Tooltip: Seal scroll, 4 seals: wear it in the 4-seal slot\nTap the 4-seal key (X by default) to form the seals and cast: 30 chakra\nA great fireball towards the cursor that burns through enemies and bursts at the end
+		Tooltip: Seal scroll, 4 seals: wear it in the 4-seal slot\nTap the 4-seal key (X by default) to form the seals and cast: 40 chakra, 6 s cooldown\nThe fireball swells to over a dozen tiles across and rolls slowly through walls, burning all it touches\nThe ground it passes catches fire; it ends in a great burst
 	}
 
 	ScrollChidori: {
 		DisplayName: Chidori
-		Tooltip: Seal scroll, 6 seals: wear it in the 6-seal slot\nTap the 6-seal key (C by default) to form the seals and cast: 50 chakra\nLightning in the hand and a charge towards the cursor, untouchable on the way, through every enemy in it
+		Tooltip: Seal scroll, 6 seals: wear it in the 6-seal slot\nTap the 6-seal key (C by default) to form the seals and cast: 60 chakra, 10 s cooldown\nLightning gathers in the hand, then a charge of some 40 tiles towards the cursor, untouchable, stopped by walls\nThrough every enemy in the way; into a boss it stops for a 2.5x blow\nLightning chakra lingers on the path for 3 s
 	}
 
 	Kubikiribocho: {

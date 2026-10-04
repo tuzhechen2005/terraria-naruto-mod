@@ -24,6 +24,9 @@ public sealed class SealPlayer : ModPlayer
 
     private int heldTicks;
     private int target;
+    private readonly int[] cooldowns = new int[3];
+
+    public int CooldownOf(int slot) => cooldowns[slot];
 
     public bool Weaving => target > 0;
     public int Seals => SealRules.SealsAfter(heldTicks);
@@ -67,6 +70,11 @@ public sealed class SealPlayer : ModPlayer
             CombatText.NewText(Player.getRect(), Color.LightGray, $"{seals} 印位没有卷轴");
             return;
         }
+        if (cooldowns[SealRules.SlotIndex(seals)] > 0)
+        {
+            CombatText.NewText(Player.getRect(), Color.LightGray, $"{scroll.Item.Name}冷却中 {cooldowns[SealRules.SlotIndex(seals)] / 60f:0.0}s");
+            return;
+        }
         if (Player.GetModPlayer<ChakraPlayer>().Chakra < scroll.ChakraCost)
         {
             CombatText.NewText(Player.getRect(), new Color(120, 180, 255), "查克拉不足");
@@ -78,6 +86,9 @@ public sealed class SealPlayer : ModPlayer
 
     public override void PostUpdate()
     {
+        for (int i = 0; i < cooldowns.Length; i++)
+            if (cooldowns[i] > 0)
+                cooldowns[i]--;
         if (!Weaving)
             return;
         if (Player.dead || Player.CCed || Forming == null)
@@ -120,6 +131,7 @@ public sealed class SealPlayer : ModPlayer
     private void Cast()
     {
         SealScroll scroll = Forming;
+        int slot = SealRules.SlotIndex(target);
         target = 0;
         heldTicks = 0;
         if (scroll == null)
@@ -130,6 +142,8 @@ public sealed class SealPlayer : ModPlayer
             return;
         }
         CombatText.NewText(Player.getRect(), new Color(255, 225, 150), scroll.Item.Name);
+        if (slot >= 0)
+            cooldowns[slot] = scroll.CooldownTicks;
         scroll.Cast(Player);
     }
 

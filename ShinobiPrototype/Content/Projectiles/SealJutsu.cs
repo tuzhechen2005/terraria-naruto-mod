@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ShinobiPrototype.Common;
 
 namespace ShinobiPrototype.Content.Projectiles;
 
@@ -96,70 +97,134 @@ public sealed class ShadowClone : ModProjectile
     }
 }
 
-// 火遁·豪火球之术: a great fireball that burns through enemies and bursts where it ends.
+// 火遁·豪火球之术 (SealRules): out of the mouth it swells in half a second to a ball thirteen tiles across, then rolls
+// slowly on through walls for two seconds, burning whatever it touches every quarter second and setting the ground
+// below alight, and ends in a great burst that shakes the screen. Art: seal-jutsu-v2 (FxHugeFireball, FxHugeExplosion,
+// FxGroundFire), else v1's smaller fireball scaled up.
 public sealed class GreatFireball : ModProjectile
 {
     public override string Texture => $"Terraria/Images/Projectile_{ProjectileID.BallofFire}";
 
+    private int Age => SealRules.FireballLifeTicks - Projectile.timeLeft;
+    private float lastFireX = float.NaN;
+
     public override void SetDefaults()
     {
-        Projectile.width = 56;
-        Projectile.height = 56;
+        Projectile.width = (int)SealRules.FireballStartPx;
+        Projectile.height = (int)SealRules.FireballStartPx;
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.Generic;
         Projectile.penetrate = -1;
         Projectile.usesLocalNPCImmunity = true;
-        Projectile.localNPCHitCooldown = 20;
-        Projectile.timeLeft = 75;
-        Projectile.tileCollide = true;
+        Projectile.localNPCHitCooldown = SealRules.FireballHitCooldownTicks;
+        Projectile.timeLeft = SealRules.FireballLifeTicks;
+        Projectile.tileCollide = false;
         Projectile.aiStyle = -1;
+    }
+
+    // A ball: whatever its corner of the box, only what is inside the circle is burnt.
+    public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+    {
+        Vector2 nearest = Vector2.Clamp(Projectile.Center, targetHitbox.TopLeft(), targetHitbox.BottomRight());
+        return Vector2.Distance(nearest, Projectile.Center) <= Projectile.width / 2f;
     }
 
     public override void AI()
     {
-        Projectile.rotation += 0.12f * Math.Sign(Projectile.velocity.X == 0f ? 1f : Projectile.velocity.X);
-        Lighting.AddLight(Projectile.Center, 1.2f, 0.6f, 0.15f);
+        if (Age == 0)
+            SoundEngine.PlaySound(SoundID.Item74 with { Pitch = -0.3f }, Projectile.Center);
+        float size = SealRules.FireballSize(Age);
+        Vector2 centre = Projectile.Center;
+        Projectile.Resize((int)size, (int)size);
+        Projectile.Center = centre;
+        Projectile.rotation = Projectile.velocity.ToRotation();
+        Lighting.AddLight(Projectile.Center, 2.2f * size / SealRules.FireballFullPx + 0.4f, 1.1f * size / SealRules.FireballFullPx + 0.2f, 0.25f);
         if (!Main.dedServ)
-            for (int i = 0; i < 3; i++)
-                Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(24f, 24f), DustID.Torch,
-                    -Projectile.velocity * 0.2f + Main.rand.NextVector2Circular(1f, 1f), 0, default, 2f).noGravity = true;
+        {
+            // Embers thrown off its back, and heat shimmering round it.
+            for (int i = 0; i < 4; i++)
+                Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2CircularEdge(size / 2f, size / 2f) * Main.rand.NextFloat(0.7f, 1f),
+                    DustID.Torch, -Projectile.velocity * 0.6f + Main.rand.NextVector2Circular(2f, 2f), 0, default, 2.2f).noGravity = true;
+            if (Main.rand.NextBool(2))
+                Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(size / 2f, size / 2f), DustID.Smoke,
+                    -Projectile.velocity * 0.3f + new Vector2(0f, -1f), 120, new Color(80, 50, 40), 2f).noGravity = true;
+        }
+        if (Projectile.owner == Main.myPlayer && Age % 8 == 0)
+            LightGround(size);
     }
 
-    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffID.OnFire3, 180);
+    // The ground under it catches fire, a patch every few tiles.
+    private void LightGround(float size)
+    {
+        int x = (int)(Projectile.Center.X / 16f);
+        int fromY = (int)((Projectile.Center.Y) / 16f);
+        for (int y = fromY; y < fromY + (int)(size / 16f) + 10; y++)
+        {
+            if (!WorldGen.InWorld(x, y, 2))
+                return;
+            if (!WorldGen.SolidTile(x, y) || WorldGen.SolidTile(x, y - 1))
+                continue;
+            float groundX = x * 16f + 8f;
+            if (!float.IsNaN(lastFireX) && Math.Abs(groundX - lastFireX) < 48f)
+                return;
+            lastFireX = groundX;
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), new Vector2(groundX, y * 16f - 20f), Vector2.Zero,
+                ModContent.ProjectileType<GroundFire>(), Math.Max(1, (int)(Projectile.damage * SealRules.GroundFireDamageShare)), 0f,
+                Projectile.owner);
+            return;
+        }
+    }
+
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffID.OnFire3, 240);
 
     public override void OnKill(int timeLeft)
     {
-        SoundEngine.PlaySound(SoundID.Item14, Projectile.Center);
+        SoundEngine.PlaySound(SoundID.Item62 with { Volume = 1.2f }, Projectile.Center);
+        if (!Main.dedServ)
+            Main.instance.CameraModifiers.Add(new Terraria.Graphics.CameraModifiers.PunchCameraModifier(Projectile.Center,
+                Main.rand.NextVector2Unit(), 14f, 10f, 30, 1200f, "GreatFireball"));
         if (Projectile.owner == Main.myPlayer)
             Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireBurst>(),
-                (int)(Projectile.damage * 0.8f), 6f, Projectile.owner);
+                (int)(Projectile.damage * SealRules.FireballBurstDamageShare), 8f, Projectile.owner);
     }
 
     public override bool PreDraw(ref Color lightColor)
     {
-        if (FxArt.Frame("FxGreatFireball", (int)(Main.GameUpdateCount / 5), 4) is { } art)
+        float size = Projectile.width;
+        bool left = Projectile.velocity.X < 0f;
+        float angle = left ? Projectile.rotation - MathHelper.Pi : Projectile.rotation;
+        int facing = left ? -1 : 1;
+        Texture2D art = FxArt.Frame("FxHugeFireball", (int)(Main.GameUpdateCount / 4), 4)
+                        ?? FxArt.Frame("FxGreatFireball", (int)(Main.GameUpdateCount / 4), 4);
+        if (art != null)
         {
-            FxArt.Draw(art, Projectile.Center, Color.White, Projectile.velocity.ToRotation(), 1.5f);
+            float scale = size / art.Width * 1.15f;
+            // The ball sits a little ahead of the art's middle (its tail of flame trails behind): set it on the hitbox.
+            Vector2 at = Projectile.Center - Projectile.velocity.SafeNormalize(Vector2.UnitX) * 11f * scale;
+            // A glow behind, then the ball.
+            FxArt.Draw(art, at, new Color(255, 160, 60, 0) * 0.5f, angle, scale * 1.25f, facing);
+            FxArt.Draw(art, at, Color.White, angle, scale, facing);
             return false;
         }
         Texture2D t = Terraria.GameContent.TextureAssets.Projectile[Type].Value;
         Main.EntitySpriteDraw(t, Projectile.Center - Main.screenPosition, null, new Color(255, 170, 60, 0), Projectile.rotation,
-            t.Size() / 2f, 3.2f, SpriteEffects.None);
+            t.Size() / 2f, size / t.Width * 1.4f, SpriteEffects.None);
         return false;
     }
 }
 
-// Where the great fireball ends: a burst of flame all round.
+// Where the great fireball ends: a great burst of flame, wider than the ball.
 public sealed class FireBurst : ModProjectile
 {
-    private const int Life = 14;
+    private const int Life = 24;
+    private const int Size = 300;
 
     public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";
 
     public override void SetDefaults()
     {
-        Projectile.width = 160;
-        Projectile.height = 160;
+        Projectile.width = Size;
+        Projectile.height = Size;
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.Generic;
         Projectile.penetrate = -1;
@@ -170,49 +235,103 @@ public sealed class FireBurst : ModProjectile
         Projectile.aiStyle = -1;
     }
 
-    public override void AI()
+    public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
-        if (Projectile.localAI[0]++ == 0f && !Main.dedServ && !FxArt.Has("FxFireBurst_0"))
-            for (int i = 0; i < 40; i++)
-                Dust.NewDustPerfect(Projectile.Center, DustID.Torch, Main.rand.NextVector2Circular(8f, 8f), 0, default, 2.4f).noGravity = true;
-        Lighting.AddLight(Projectile.Center, 1.6f, 0.8f, 0.2f);
+        Vector2 nearest = Vector2.Clamp(Projectile.Center, targetHitbox.TopLeft(), targetHitbox.BottomRight());
+        return Projectile.timeLeft > Life - 8 && Vector2.Distance(nearest, Projectile.Center) <= Size / 2f;
     }
 
-    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffID.OnFire3, 240);
+    public override void AI()
+    {
+        if (Projectile.localAI[0]++ == 0f && !Main.dedServ)
+            for (int i = 0; i < 80; i++)
+                Dust.NewDustPerfect(Projectile.Center, i % 3 == 0 ? DustID.Smoke : DustID.Torch, Main.rand.NextVector2Circular(12f, 12f),
+                    i % 3 == 0 ? 120 : 0, default, 2.8f).noGravity = true;
+        Lighting.AddLight(Projectile.Center, 3f, 1.6f, 0.4f);
+    }
+
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffID.OnFire3, 300);
 
     public override bool PreDraw(ref Color lightColor)
     {
         int age = Life - Projectile.timeLeft;
-        if (FxArt.Frame("FxFireBurst", Math.Min(3, age * 4 / Life), 4) is { } art)
-            FxArt.Draw(art, Projectile.Center, Color.White, 0f, 1.5f);
+        if (FxArt.Frame("FxHugeExplosion", Math.Min(5, age * 6 / Life), 6) is { } huge)
+            FxArt.Draw(huge, Projectile.Center, Color.White, 0f, Size / (float)huge.Width * 1.2f);
+        else if (FxArt.Frame("FxFireBurst", Math.Min(3, age * 4 / Life), 4) is { } art)
+            FxArt.Draw(art, Projectile.Center, Color.White, 0f, Size / (float)art.Width * 1.2f);
         return false;
     }
 }
 
-// 千鸟: lightning in the hand and a straight charge (ai velocity = the direction), the player carried along and safe
-// for its length, every enemy in the way struck once.
-public sealed class ChidoriCharge : ModProjectile
+// Flames left burning on the ground where the great fireball passed.
+public sealed class GroundFire : ModProjectile
 {
-    private const int ChargeTicks = 16;
-    private const float ChargeSpeed = 19f;
-
     public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";
 
     public override void SetDefaults()
     {
-        Projectile.width = 44;
-        Projectile.height = 44;
+        Projectile.width = 56;
+        Projectile.height = 40;
+        Projectile.friendly = true;
+        Projectile.DamageType = DamageClass.Generic;
+        Projectile.penetrate = -1;
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = 30;
+        Projectile.timeLeft = SealRules.GroundFireTicks;
+        Projectile.tileCollide = false;
+        Projectile.aiStyle = -1;
+    }
+
+    public override void AI()
+    {
+        Lighting.AddLight(Projectile.Center, 0.9f, 0.45f, 0.1f);
+        if (!Main.dedServ && !FxArt.Has("FxGroundFire_0") && Main.rand.NextBool(2))
+            Dust.NewDustPerfect(new Vector2(Main.rand.NextFloat(Projectile.Left.X, Projectile.Right.X), Projectile.Bottom.Y - 4f), DustID.Torch,
+                new Vector2(0f, -2.5f), 0, default, 1.8f).noGravity = true;
+    }
+
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffID.OnFire, 180);
+
+    public override bool PreDraw(ref Color lightColor)
+    {
+        if (FxArt.Frame("FxGroundFire", (int)(Main.GameUpdateCount / 5 + Projectile.whoAmI), 4) is { } art)
+        {
+            float fade = Math.Min(1f, Projectile.timeLeft / 30f);
+            FxArt.Draw(art, Projectile.Bottom - new Vector2(0f, art.Height / 2f), Color.White * fade, 0f, 1f);
+        }
+        return false;
+    }
+}
+
+// 千鸟 (SealRules): a third of a second of lightning gathering in the hand, the player held still; then a forty-tile
+// charge towards the cursor, untouchable, stopped by a wall, through every small enemy and into the first boss (a far
+// heavier blow and a burst of lightning). Lightning chakra is left on the path for three seconds. ai[0..1] hold the
+// direction. Art: seal-jutsu-v2 (FxChidoriCharge, FxChidoriImpact, FxLightningTrail) and v1 (FxChidori, FxChidoriTrail).
+public sealed class ChidoriCharge : ModProjectile
+{
+    public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";
+
+    private int Age => (int)Projectile.localAI[0];
+    private bool Gathering => Age < SealRules.ChidoriWindupTicks;
+    private Vector2 Direction => Projectile.velocity.SafeNormalize(Vector2.UnitX);
+    private Vector2 lastTrail;
+    private bool hitBoss;
+
+    public override void SetDefaults()
+    {
+        Projectile.width = 48;
+        Projectile.height = 48;
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.Generic;
         Projectile.penetrate = -1;
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
-        Projectile.timeLeft = ChargeTicks;
+        Projectile.timeLeft = SealRules.ChidoriWindupTicks + SealRules.ChidoriChargeTicks;
         Projectile.tileCollide = false;
         Projectile.aiStyle = -1;
     }
 
-    private Vector2 Direction => Projectile.velocity.SafeNormalize(Vector2.UnitX);
+    public override bool? CanDamage() => Gathering ? false : null;
 
     public override void AI()
     {
@@ -222,47 +341,183 @@ public sealed class ChidoriCharge : ModProjectile
             Projectile.Kill();
             return;
         }
-        if (Projectile.localAI[0]++ == 0f)
-            SoundEngine.PlaySound(SoundID.Item94, owner.Center);
         Vector2 dir = Direction;
-        owner.velocity = dir * ChargeSpeed;
         owner.direction = dir.X >= 0f ? 1 : -1;
         owner.immune = true;
         owner.immuneNoBlink = true;
         owner.immuneTime = Math.Max(owner.immuneTime, 6);
         owner.fallStart = (int)(owner.position.Y / 16f);
-        Projectile.Center = owner.Center + dir * 22f;
-        Lighting.AddLight(Projectile.Center, 0.5f, 0.8f, 1.4f);
+        Projectile.localAI[0]++;
+
+        if (Gathering)
+        {
+            // Held still while it gathers, chirping.
+            owner.velocity = Vector2.Zero;
+            if (Age % 6 == 1)
+                SoundEngine.PlaySound(SoundID.Item93 with { Pitch = 0.5f + Age * 0.02f, Volume = 0.7f }, owner.Center);
+            Projectile.Center = owner.Center + dir * 18f;
+            Lighting.AddLight(Projectile.Center, 0.8f, 1.2f, 2f);
+            if (Age == SealRules.ChidoriWindupTicks - 1)
+            {
+                SoundEngine.PlaySound(SoundID.Item94, owner.Center);
+                lastTrail = owner.Center;
+            }
+            return;
+        }
+
+        // A wall ahead ends it.
+        Vector2 step = dir * SealRules.ChidoriSpeed;
+        if (Collision.SolidCollision(owner.position + step, owner.width, owner.height))
+        {
+            Projectile.Kill();
+            return;
+        }
+        owner.velocity = step;
+        Projectile.Center = owner.Center + dir * 24f;
+        Lighting.AddLight(Projectile.Center, 0.8f, 1.2f, 2f);
+        // Lightning chakra left along the way, a piece every half its length.
+        if (Projectile.owner == Main.myPlayer && Vector2.Distance(lastTrail, owner.Center) >= 32f)
+        {
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), (lastTrail + owner.Center) / 2f, dir, ModContent.ProjectileType<LightningTrail>(),
+                Math.Max(1, (int)(Projectile.damage * SealRules.LightningTrailDamageShare)), 0f, Projectile.owner);
+            lastTrail = owner.Center;
+        }
         if (!Main.dedServ && !FxArt.Has("FxChidori_0"))
             for (int i = 0; i < 4; i++)
                 Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(14f, 14f), DustID.Electric,
                     Main.rand.NextVector2Circular(3f, 3f), 0, default, 1.1f).noGravity = true;
     }
 
-    public override void OnKill(int timeLeft)
+    // Into a boss: a far heavier blow, and the charge stops there.
+    public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
-        Player owner = Main.player[Projectile.owner];
-        owner.velocity *= 0.25f;
-        owner.immuneNoBlink = false;
-        if (!Main.dedServ)
-            for (int i = 0; i < 24; i++)
-                Dust.NewDustPerfect(Projectile.Center, DustID.Electric, Main.rand.NextVector2Circular(5f, 5f), 0, default, 1.3f).noGravity = true;
+        if (target.boss)
+            modifiers.SourceDamage *= SealRules.ChidoriBossMultiplier;
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
-        SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.6f }, target.Center);
-        target.AddBuff(BuffID.Electrified, 120);
+        target.AddBuff(BuffID.Electrified, 180);
+        SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.7f }, target.Center);
+        if (target.boss && !hitBoss)
+        {
+            hitBoss = true;
+            if (!Main.dedServ)
+                Main.instance.CameraModifiers.Add(new Terraria.Graphics.CameraModifiers.PunchCameraModifier(target.Center,
+                    Direction, 12f, 12f, 20, 1000f, "Chidori"));
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<ChidoriImpact>(),
+                0, 0f, Projectile.owner);
+            Projectile.Kill();
+        }
+    }
+
+    public override void OnKill(int timeLeft)
+    {
+        Player owner = Main.player[Projectile.owner];
+        owner.velocity *= 0.2f;
+        owner.immuneNoBlink = false;
+        if (!Main.dedServ)
+            for (int i = 0; i < 30; i++)
+                Dust.NewDustPerfect(Projectile.Center, DustID.Electric, Main.rand.NextVector2Circular(6f, 6f), 0, default, 1.4f).noGravity = true;
     }
 
     public override bool PreDraw(ref Color lightColor)
     {
         Vector2 dir = Direction;
-        int age = (int)Projectile.localAI[0];
-        if (FxArt.Frame("FxChidoriTrail", age / 3, 3) is { } trail)
-            FxArt.Draw(trail, Projectile.Center - dir * 52f, Color.White, dir.ToRotation(), 1.5f);
-        if (FxArt.Frame("FxChidori", (int)(Main.GameUpdateCount / 3), 4) is { } hand)
-            FxArt.Draw(hand, Projectile.Center, Color.White, 0f, 1.5f);
+        if (Gathering)
+        {
+            Texture2D gather = FxArt.Frame("FxChidoriCharge", (int)(Main.GameUpdateCount / 2), 4) ?? FxArt.Frame("FxChidori", (int)(Main.GameUpdateCount / 2), 4);
+            if (gather != null)
+            {
+                float grow = 0.6f + 0.6f * Age / SealRules.ChidoriWindupTicks;
+                FxArt.Draw(gather, Projectile.Center, new Color(150, 200, 255, 0) * 0.6f, Main.rand.NextFloat(-0.2f, 0.2f), grow * 1.3f);
+                FxArt.Draw(gather, Projectile.Center, Color.White, 0f, grow);
+            }
+            return false;
+        }
+        if (FxArt.Frame("FxChidoriTrail", Age / 3, 3) is { } trail)
+            FxArt.Draw(trail, Projectile.Center - dir * 60f, Color.White, dir.ToRotation(), 2f);
+        Texture2D hand = FxArt.Frame("FxChidoriCharge", (int)(Main.GameUpdateCount / 2), 4) ?? FxArt.Frame("FxChidori", (int)(Main.GameUpdateCount / 3), 4);
+        if (hand != null)
+            FxArt.Draw(hand, Projectile.Center, Color.White, 0f, 1f);
+        return false;
+    }
+}
+
+// Lightning chakra left on Chidori's path: a short crackling stretch (ai along the path) that strikes whatever stands in
+// it every quarter second for three seconds.
+public sealed class LightningTrail : ModProjectile
+{
+    public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";
+
+    public override void SetDefaults()
+    {
+        Projectile.width = 40;
+        Projectile.height = 40;
+        Projectile.friendly = true;
+        Projectile.DamageType = DamageClass.Generic;
+        Projectile.penetrate = -1;
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = SealRules.LightningTrailHitTicks;
+        Projectile.timeLeft = SealRules.LightningTrailTicks;
+        Projectile.tileCollide = false;
+        Projectile.aiStyle = -1;
+    }
+
+    public override void AI()
+    {
+        Projectile.rotation = Projectile.velocity.ToRotation();
+        Projectile.position -= Projectile.velocity;   // stays where it was left
+        Lighting.AddLight(Projectile.Center, 0.3f, 0.5f, 1f);
+        if (!Main.dedServ && !FxArt.Has("FxLightningTrail_0") && Main.rand.NextBool(3))
+            Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(16f, 8f), DustID.Electric, Vector2.Zero, 0, default, 0.9f)
+                .noGravity = true;
+    }
+
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffID.Electrified, 60);
+
+    public override bool PreDraw(ref Color lightColor)
+    {
+        if (FxArt.Frame("FxLightningTrail", (int)(Main.GameUpdateCount / 3 + Projectile.whoAmI), 4) is { } art)
+        {
+            float fade = Math.Min(1f, Projectile.timeLeft / 40f);
+            FxArt.Draw(art, Projectile.Center, Color.White * fade, Projectile.rotation, 1f);
+        }
+        return false;
+    }
+}
+
+// The burst of lightning where Chidori drives into a boss.
+public sealed class ChidoriImpact : ModProjectile
+{
+    private const int Life = 20;
+
+    public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";
+
+    public override void SetDefaults()
+    {
+        Projectile.width = 16;
+        Projectile.height = 16;
+        Projectile.friendly = false;
+        Projectile.penetrate = -1;
+        Projectile.timeLeft = Life;
+        Projectile.tileCollide = false;
+        Projectile.aiStyle = -1;
+    }
+
+    public override void AI()
+    {
+        Lighting.AddLight(Projectile.Center, 1.5f, 2f, 3f);
+        if (Projectile.localAI[0]++ == 0f && !Main.dedServ)
+            for (int i = 0; i < 50; i++)
+                Dust.NewDustPerfect(Projectile.Center, DustID.Electric, Main.rand.NextVector2Circular(10f, 10f), 0, default, 1.6f).noGravity = true;
+    }
+
+    public override bool PreDraw(ref Color lightColor)
+    {
+        int age = Life - Projectile.timeLeft;
+        if (FxArt.Frame("FxChidoriImpact", Math.Min(4, age * 5 / Life), 5) is { } art)
+            FxArt.Draw(art, Projectile.Center, Color.White, 0f, 1.2f);
         return false;
     }
 }

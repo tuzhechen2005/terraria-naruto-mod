@@ -59,6 +59,15 @@ public sealed class SealSlotsUI : ModSystem
             else if (Art($"SealSlotEmpty_{count}") is { } empty)
                 sb.Draw(empty, centre, null, Color.White * 0.8f, 0f, empty.Size() / 2f, Scale, SpriteEffects.None, 0f);
 
+            // Cooling down: the slot darkened from the top by the time left, and the seconds.
+            int cooldown = seals.CooldownOf(i);
+            if (cooldown > 0 && seals.ScrollFor(count) is { } cooling && cooling.CooldownTicks > 0)
+            {
+                float left = cooldown / (float)cooling.CooldownTicks;
+                sb.Draw(TextureAssets.MagicPixel.Value, new Rectangle(box.X, box.Y, box.Width, (int)(box.Height * left)), Color.Black * 0.6f);
+                Utils.DrawBorderString(sb, $"{cooldown / 60f:0.0}", centre, Color.White, 0.8f, 0.5f, 0.5f);
+            }
+
             // The key that casts it, in the corner.
             Utils.DrawBorderString(sb, ShinobiKeybinds.SealKeyName(count), at + new Vector2(5f, 3f), new Color(255, 225, 150), 0.7f);
 

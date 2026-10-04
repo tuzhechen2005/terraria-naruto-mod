@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
+using ShinobiPrototype.Common;
 using ShinobiPrototype.Common.Players;
 using ShinobiPrototype.Content.Projectiles;
 
@@ -16,6 +17,8 @@ public abstract class SealScroll : ModItem
     // The hand seals shown overhead as they form (zodiac seals).
     public abstract string Signs { get; }
     public abstract int ChakraCost { get; }
+    // Time before it can be cast again (the great techniques).
+    public virtual int CooldownTicks => 0;
     protected abstract int BaseDamage { get; }
     protected abstract string ArtName { get; }
 
@@ -62,13 +65,15 @@ public sealed class ScrollClone : SealScroll
     }
 }
 
-// 火遁·豪火球之术 (four seals): a great fireball towards the cursor that burns through enemies and bursts at the end.
+// 火遁·豪火球之术 (four seals): a great fireball towards the cursor that swells to thirteen tiles, rolls through walls
+// burning what it touches and the ground below, and bursts at the end (SealRules).
 public sealed class ScrollFireball : SealScroll
 {
     public override int Seals => 4;
     public override string Signs => "巳未申亥";
-    public override int ChakraCost => 30;
-    protected override int BaseDamage => 45;
+    public override int ChakraCost => SealRules.FireballCost;
+    public override int CooldownTicks => SealRules.FireballCooldownTicks;
+    protected override int BaseDamage => 32;
     protected override string ArtName => "ScrollFireball";
 
     public override void Cast(Player player)
@@ -76,17 +81,19 @@ public sealed class ScrollFireball : SealScroll
         if (player.whoAmI != Main.myPlayer)
             return;
         Vector2 aim = player.DirectionTo(Main.MouseWorld);
-        Projectile.NewProjectile(player.GetSource_Misc("SealJutsu"), player.Center + aim * 20f, aim * 8.5f,
+        Projectile.NewProjectile(player.GetSource_Misc("SealJutsu"), player.Center + aim * 24f, aim * SealRules.FireballSpeed,
             ModContent.ProjectileType<GreatFireball>(), Damage(player), 5f, player.whoAmI);
     }
 }
 
-// 千鸟 (six seals): lightning in the hand and a straight charge towards the cursor, through everything in the way.
+// 千鸟 (six seals): lightning gathers in the hand, then a forty-tile charge towards the cursor, through small enemies and
+// into the first boss, leaving lightning chakra on the way (SealRules).
 public sealed class ScrollChidori : SealScroll
 {
     public override int Seals => 6;
     public override string Signs => "丑卯申卯申卯";
-    public override int ChakraCost => 50;
+    public override int ChakraCost => SealRules.ChidoriCost;
+    public override int CooldownTicks => SealRules.ChidoriCooldownTicks;
     protected override int BaseDamage => 120;
     protected override string ArtName => "ScrollChidori";
 
