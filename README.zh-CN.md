@@ -40,14 +40,20 @@ Terruto 是一个基于 tModLoader 的《火影忍者》同人模组，将第一
 
 ### 中忍考试
 
-考试从伊比喜主持的笔试开始。通过笔试后，玩家进入死亡森林收集天地卷轴，再到中央塔参加预选赛。正式赛设在木叶城墙外，对手是我爱罗。进入正式赛阶段后，也可以找卡卡西开启与宁次的切磋。
+考试从伊比喜主持的笔试开始。通过后找红豆领取一卷，在死亡森林击败入口小队，经历大蛇丸遭遇，再从塔前的雨隐三人组取得缺少的另一卷。带齐天地卷进入中央塔，找月光疾风开始多斯预选赛。正式赛设在木叶城墙外，对手是我爱罗；预选合格后，击败骷髅王或将生命上限提升到 400 即可进入。正式赛阶段也可以找卡卡西开启与宁次的切磋。
+
+大蛇丸先以草隐考生身份出现，揭面后使用蛇群、毒液、蛇雨、草薙剑和通灵巨蛇。杀气有红色扇形预警，可以移出范围或用地形遮挡视线。把他打到半血、撑过规定时间，或在首次遭遇中倒下，都能完成这段剧情并取得一勾玉写轮眼。
+
+<p align="center">
+  <img src="docs/images/readme/orochimaru.gif" alt="大蛇丸当前游戏贴图的待机动画" width="216" height="272">
+</p>
 
 | 音忍多斯 | 我爱罗 | 日向宁次 |
 | :---: | :---: | :---: |
 | <img src="docs/images/readme/dosu.gif" alt="多斯的待机动画" width="216" height="208"> | <img src="docs/images/readme/gaara.gif" alt="我爱罗的待机动画" width="216" height="208"> | <img src="docs/images/readme/neji.gif" alt="宁次的待机动画" width="216" height="208"> |
 | 中央塔预选赛的对手。响鸣穿、音波、地面震波和跃起下砸，需要用不同的方式躲避。 | 正式赛的对手。随着生命值降低，沙之铠会破裂，随后进入局部尾兽化。 | 可选的切磋对手。柔拳、回天和八卦六十四掌会封住查克拉穴位，甚至让替身术无法使用。 |
 
-我爱罗的三个阶段使用了不同的贴图。最后一个阶段会伸出巨大的砂之手臂，并使用风弹，攻击范围也随之改变。
+我爱罗会用砂手里剑、流沙沙柱和移动砂弹压迫玩家。前两阶段定时升起砂墙，正面攻击被大幅减伤，背后仍可正常输出；守护结束有两秒喘息。铠甲破裂后攻击更密集，最后的局部尾兽化改用巨大的砂之手臂与风弹。
 
 <p align="center">
   <img src="docs/images/readme/gaara-phases.png" alt="从左到右：我爱罗的沙之铠、铠甲破裂和局部尾兽化形态" width="528" height="104">
@@ -59,17 +65,32 @@ Terruto 是一个基于 tModLoader 的《火影忍者》同人模组，将第一
 
 | 旗木卡卡西 | 达兹纳 | 森乃伊比喜 | 猿飞日斩 |
 | :---: | :---: | :---: | :---: |
-| <img src="docs/images/readme/kakashi.png" alt="卡卡西的游戏内贴图" width="168" height="168"> | <img src="docs/images/readme/tazuna.png" alt="达兹纳的游戏内贴图" width="168" height="168"> | <img src="docs/images/readme/ibiki.png" alt="伊比喜的游戏内贴图" width="168" height="168"> | <img src="docs/images/readme/hiruzen.png" alt="三代火影的游戏内贴图" width="168" height="168"> |
+| <img src="docs/images/readme/kakashi.png" alt="卡卡西的游戏内贴图" width="168" height="192"> | <img src="docs/images/readme/tazuna.png" alt="达兹纳的游戏内贴图" width="168" height="192"> | <img src="docs/images/readme/ibiki.png" alt="伊比喜的游戏内贴图" width="168" height="192"> | <img src="docs/images/readme/hiruzen.png" alt="三代火影的游戏内贴图" width="168" height="192"> |
 | 引导任务、练习替身术，并在波之国任务后给出考试推荐书。 | 大桥的建造者，波之国的护送任务由他开始。 | 在忍者学校主持笔试。 | 介绍流派核心，让玩家选择自己的忍道。 |
 
-### 查克拉与流派
+### 查克拉、替身与潜伏
 
-模组加入了独立的查克拉资源。替身术默认使用 **F 键**，需要在即将受到攻击时发动。流派核心会为角色增加相应的能力和招式，可以搭配泰拉瑞亚原版职业的装备使用。
+查克拉与原版魔力分开使用。角色初始有两根木头，受到敌人攻击时会自动消耗一根，让这一击落空并换到旁边；不需要在受击前按键。木头每 20 秒恢复一根，命中敌人会让恢复稍快一些。
+
+默认 **F 键**消耗两根木头和 15 查克拉，朝移动方向瞬身，并进入 **5 秒潜伏**。潜伏中的下一次有效武器命中必定暴击，额外提高 30% 最终伤害；仆从和哨兵不使用这一加成。沙缚柩与杀气落下时也可由木头或分身代挡，保护耗尽后应靠走位躲预警，F 不再直接解控。卡卡西的按键替身练习仍是单独的练习模式。
+
+流派核心默认用 **V 键**发动奥义，可以搭配原版各职业装备。
 
 | 写轮眼 | 八门遁甲 | 白眼 |
 | :---: | :---: | :---: |
 | <img src="docs/images/readme/sharingan.png" alt="一勾玉写轮眼核心" width="96" height="96"> | <img src="docs/images/readme/eight-gates.png" alt="八门遁甲核心" width="96" height="96"> | <img src="docs/images/readme/byakugan.png" alt="白眼核心" width="96" height="96"> |
-| 放宽替身术的发动时机，并通过「看破」躲开下一次攻击。 | 提高体术攻击速度，主动招式可以依次开启前三门。 | 隔墙看见敌人，通过近战点穴，也能使用回天。 |
+| 木头恢复间隔缩短至 16 秒，「看破」可替身躲开下一击而不消耗木头。 | 提高体术攻击速度，可以依次开启前三门。 | 隔墙看见敌人，通过近战点穴，也能使用回天。 |
+
+### 结印忍术
+
+打开背包，把忍术卷轴放进弹药栏旁的 **2、4、6 印槽**。默认 **Z / X / C** 各发动一个槽，按一下后人物自动结印，完成便施术；结印时移动减慢，不能使用武器，实际受伤会打断，木头或分身代挡则不会打断。忍术消耗查克拉，使用通用伤害加成，HUD 显示各槽剩余冷却。
+
+| 分身术 · 2 印 / Z | 豪火球 · 4 印 / X | 千鸟 · 6 印 / C |
+| :---: | :---: | :---: |
+| <img src="docs/images/readme/clone-scroll.png" alt="分身术卷轴图标" width="112" height="112"> | <img src="docs/images/readme/fireball-scroll.png" alt="豪火球卷轴图标" width="112" height="112"> | <img src="docs/images/readme/chidori-scroll.png" alt="千鸟卷轴图标" width="112" height="112"> |
+| 15 查克拉，召出两个分身，每个优先代挡一次攻击，最多持续 8 秒。开局自带在 2 印槽。 | 40 查克拉、6 秒冷却。巨大火球穿过方块和小敌人，留下地火；命中 Boss 或大型敌人立即爆炸。 | 60 查克拉、10 秒冷却。结印后再蓄雷 1.5 秒，显示充能条，随后最多突进约 40 格，穿薄墙并留下雷电路径；命中首个 Boss 后停止。 |
+
+豪火球与千鸟目前可用 `/m0 seals` 开发试用，正常探索、掉落与卡卡西教学等获取流程还未接入。后续忍具商店、盔甲和武器重做仍属于设计计划。
 
 ### 武器与任务道具
 
@@ -91,6 +112,8 @@ Terruto 是一个基于 tModLoader 的《火影忍者》同人模组，将第一
 
 模组运行于 Terraria 1.4.4 对应的 tModLoader。首次游玩需要**新建世界**，木叶村、海边的大桥和考试场地都会在世界生成时建造，旧世界不会自动补上这些内容。目前的试玩与验证以单人模式为主，联机体验尚未验证。游戏中的忍者手册和卡卡西的对话会提供后续任务的线索。
 
+中文 [Wiki](wiki/README.md) 收录道具、首领、机制与流程攻略，随当前源码更新。在仓库根目录运行 `python3 -m http.server 8765 --bind 127.0.0.1 --directory wiki/site`，再打开 `http://127.0.0.1:8765/` 查看；目前尚未公开托管。
+
 从源码构建时，将仓库中的 `ShinobiPrototype/` 放入或链接到 tModLoader 的 `ModSources/` 目录，再进入游戏的「Workshop → Develop Mods」，选择 Build + Reload。
 
 项目在 Mac 上开发，环境配置见 [DEVELOPMENT_MAC.md](DEVELOPMENT_MAC.md)。也可以在仓库根目录运行 `./scripts/verify-mac.sh`，依次执行规则测试并构建模组包。使用脚本打包前需要退出游戏；游戏运行时会占用模组文件，此时可在游戏内使用 Build + Reload。
@@ -108,6 +131,8 @@ Terruto 是一个基于 tModLoader 的《火影忍者》同人模组，将第一
 | `/m0 exam ForestGate` | 将进度设为通过笔试 |
 | `/m0 exam gate` / `/m0 exam tower` / `/m0 exam stadium` | 传送到死亡森林入口、中央塔或正式赛会场 |
 | `/m0 exam rebuild` | 重建当前世界的死亡森林场地 |
+| `/m0 orochimaru` | 叫出大蛇丸的伪装考生 |
+| `/m0 seals` | 取得三种已实现的结印卷轴用于开发试玩 |
 
 </details>
 

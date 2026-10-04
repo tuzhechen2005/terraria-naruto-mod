@@ -2,8 +2,8 @@
 """Export README previews from the current game textures; requires Pillow.
 
 Run from any directory with: python3 scripts/export_readme_assets.py
-Only documentation assets are written. Sprite sheets use the game's 56px frame
-height, and every enlargement uses nearest-neighbour sampling.
+Only documentation assets are written. NPC sheets use their runtime frame
+dimensions, and every enlargement uses nearest-neighbour sampling.
 """
 
 from pathlib import Path
@@ -62,15 +62,20 @@ def save_gif(frames, path):
 
 def main():
     OUTPUT.mkdir(parents=True, exist_ok=True)
-    for name in ("Zabuza", "Haku", "Dosu", "Gaara", "Neji"):
-        frames = [load(NPCS / f"{name}_Idle_{i}.png") for i in range(4)]
+    for name in ("Zabuza", "Haku", "Dosu", "Gaara", "Neji", "Orochimaru"):
+        frames = []
+        while (NPCS / f"{name}_Idle_{len(frames)}.png").exists():
+            frames.append(load(NPCS / f"{name}_Idle_{len(frames)}.png"))
         bounds = union_bounds(frames)
-        previews = [on_canvas(frame, bounds, (108, 104), 2) for frame in frames]
+        size = (108, 136) if name == "Orochimaru" else (108, 104)
+        previews = [on_canvas(frame, bounds, size, 2) for frame in frames]
         save_gif(previews, OUTPUT / f"{name.lower()}.gif")
 
     for name in ("Kakashi", "Tazuna", "Ibiki", "Hiruzen"):
-        frame = load(NPCS / f"{name}.png").crop((0, 0, 56, 56))
-        on_canvas(frame, union_bounds([frame]), (56, 56), 3).save(OUTPUT / f"{name.lower()}.png")
+        sheet = load(NPCS / f"{name}.png")
+        height = 64 if name == "Ibiki" else 56
+        frame = sheet.crop((0, 0, sheet.width, height))
+        on_canvas(frame, union_bounds([frame]), (56, 64), 3).save(OUTPUT / f"{name.lower()}.png")
 
     for source, target in (
         ("NinjaHandbook", "ninja-handbook"), ("HeavenScroll", "heaven-scroll"),
@@ -80,6 +85,9 @@ def main():
         ("StyleCores/SharinganCore1", "sharingan"),
         ("StyleCores/EightGatesCore", "eight-gates"),
         ("StyleCores/ByakuganCore", "byakugan"),
+        ("Jutsu/ScrollClone", "clone-scroll"),
+        ("Jutsu/ScrollFireball", "fireball-scroll"),
+        ("Jutsu/ScrollChidori", "chidori-scroll"),
     ):
         frame = load(ITEMS / f"{source}.png")
         if source.startswith("StyleCores/"):
@@ -98,7 +106,7 @@ def main():
         preview = on_canvas(frame, union_bounds([frame]), (176, 104))
         phases.alpha_composite(preview, (i * 176, 0))
     phases.save(OUTPUT / "gaara-phases.png")
-    print(f"Exported 20 README previews to {OUTPUT.relative_to(ROOT)}")
+    print(f"Exported 24 README previews to {OUTPUT.relative_to(ROOT)}")
 
 
 if __name__ == "__main__":
