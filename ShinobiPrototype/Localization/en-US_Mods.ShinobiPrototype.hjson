@@ -273,8 +273,9 @@ Items: {
 			Seal scroll, 6 seals: wear it in the 6-seal slot
 			Tap the 6-seal key (C by default) to form the seals and cast: 60 chakra,
 			10 s cooldown
-			Lightning gathers in the hand,
-			then a charge of some 40 tiles towards the cursor,
+			Lightning gathers in the hand for 1.5 s: you can creep on,
+			and enemies close by are struck all the while
+			Then a charge of some 40 tiles towards the cursor,
 			untouchable, stopped by walls
 			Through every enemy in the way;
 			into a boss it stops for a 2.5x blow

@@ -77,8 +77,10 @@ Check(SealRules.FireballSize(0) == SealRules.FireballStartPx && SealRules.Fireba
       SealRules.FireballSize(999) == SealRules.FireballFullPx && SealRules.FireballFullPx >= 13 * 16,
     "The great fireball swells from a mouthful to thirteen tiles across in half a second, then holds");
 Check(SealRules.FireballSpeed * SealRules.FireballLifeTicks >= 30 * 16, "It rolls on for some thirty tiles");
-Check(SealRules.ChidoriReachPx == 40 * 16 && SealRules.ChidoriWindupTicks == 18 && SealRules.ChidoriChargeTicks * SealRules.ChidoriSpeed >= SealRules.ChidoriReachPx,
-    "Chidori gathers for 0.3 s, then charges forty tiles");
+Check(SealRules.ChidoriReachPx == 40 * 16 && SealRules.ChidoriWindupTicks == 90 && SealRules.ChidoriChargeTicks * SealRules.ChidoriSpeed >= SealRules.ChidoriReachPx,
+    "Chidori gathers for 1.5 s, then charges forty tiles");
+Check(SealRules.ChidoriGatherRadiusPx == 80f && SealRules.ChidoriGatherHitTicks == 15 && SealRules.ChidoriGatherDamageShare == 0.2f && SealRules.ChidoriGatherSpeed < 1f,
+    "While it gathers the player creeps on and the crackle strikes all round, five tiles, every quarter second, for a fifth of the blow");
 Check(SealRules.FireballCooldownTicks == 360 && SealRules.ChidoriCooldownTicks == 600 && SealRules.FireballCost == 40 && SealRules.ChidoriCost == 60,
     "The great techniques: 6 s and 40 chakra, 10 s and 60 chakra");
 Check(SealRules.LightningTrailTicks == 180 && SealRules.LightningTrailHitTicks == 15 && SealRules.LightningTrailDamageShare == 0.1f,

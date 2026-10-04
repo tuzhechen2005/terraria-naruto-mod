@@ -37,6 +37,8 @@ public sealed class SealPlayer : ModPlayer
     public int Seals => SealRules.SealsAfter(heldTicks);
     // The scroll being formed.
     public SealScroll Forming => target > 0 ? ScrollFor(target) : null;
+    // Set each tick by a technique that holds the player to a creep and keeps their hands busy (Chidori gathering).
+    public int ChargingTicks { get; set; }
     // Ninjutsu power: a multiplier on seal jutsu damage from Naruto gear, reset every tick.
     public float NinjutsuPower { get; set; } = 1f;
 
@@ -91,6 +93,8 @@ public sealed class SealPlayer : ModPlayer
 
     public override void PostUpdate()
     {
+        if (ChargingTicks > 0)
+            ChargingTicks--;
         for (int i = 0; i < cooldowns.Length; i++)
         {
             if (readyFlash[i] > 0)
@@ -121,14 +125,15 @@ public sealed class SealPlayer : ModPlayer
     // Slow while forming seals.
     public override void PostUpdateRunSpeeds()
     {
-        if (!Weaving)
+        if (!Weaving && ChargingTicks <= 0)
             return;
-        Player.maxRunSpeed *= SealRules.WeaveSpeed;
-        Player.accRunSpeed *= SealRules.WeaveSpeed;
-        Player.runAcceleration *= SealRules.WeaveSpeed;
+        float speed = Weaving ? SealRules.WeaveSpeed : SealRules.ChidoriGatherSpeed;
+        Player.maxRunSpeed *= speed;
+        Player.accRunSpeed *= speed;
+        Player.runAcceleration *= speed;
     }
 
-    public override bool CanUseItem(Item item) => !Weaving;
+    public override bool CanUseItem(Item item) => !Weaving && ChargingTicks <= 0;
 
     // A hit that reached the player breaks the seals (a log or a clone taking it never gets here).
     public override void OnHurt(Player.HurtInfo info)

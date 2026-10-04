@@ -27,6 +27,16 @@ public sealed class SealOverlay : ModSystem
         if (Main.gameMenu || player is not { active: true } || player.dead)
             return true;
         SealPlayer seals = player.GetModPlayer<SealPlayer>();
+        // Chidori gathering: a bar over the head, filling.
+        if (Content.Projectiles.ChidoriCharge.GatherProgress(player) is float gathered)
+        {
+            Vector2 at = player.Top - Main.screenPosition - new Vector2(30f, 26f);
+            var pixel = TextureAssets.MagicPixel.Value;
+            Main.spriteBatch.Draw(pixel, new Rectangle((int)at.X - 2, (int)at.Y - 2, 64, 10), Color.Black * 0.75f);
+            Main.spriteBatch.Draw(pixel, new Rectangle((int)at.X, (int)at.Y, (int)(60 * gathered), 6),
+                Color.Lerp(new Color(90, 150, 255), new Color(220, 245, 255), gathered));
+            return true;
+        }
         if (!seals.Weaving)
             return true;
         int formed = seals.Seals;

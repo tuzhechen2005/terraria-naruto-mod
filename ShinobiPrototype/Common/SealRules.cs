@@ -42,11 +42,16 @@ public static class SealRules
     public static float FireballSize(int age) =>
         FireballStartPx + (FireballFullPx - FireballStartPx) * Math.Clamp(age / (float)FireballGrowTicks, 0f, 1f);
 
-    // Chidori — a third of a second of lightning gathering in the hand, then a charge of forty tiles that stops at a wall,
-    // through everything small and into the first boss, leaving lightning chakra along the way.
+    // Chidori — a second and a half of lightning gathering in the hand, a charge bar overhead, the player creeping on and
+    // the crackle striking all round (user, 2026-10-03: as in the story); then a charge of forty tiles that stops at a
+    // wall, through everything small and into the first boss, leaving lightning chakra along the way.
     public const int ChidoriCost = 60;
     public const int ChidoriCooldownTicks = 600;
-    public const int ChidoriWindupTicks = 18;
+    public const int ChidoriWindupTicks = 90;
+    public const float ChidoriGatherSpeed = 0.4f;      // of the normal running speed
+    public const float ChidoriGatherRadiusPx = 80f;
+    public const int ChidoriGatherHitTicks = 15;
+    public const float ChidoriGatherDamageShare = 0.2f;
     public const float ChidoriReachPx = 640f;
     public const float ChidoriSpeed = 26f;
     public const float ChidoriBossMultiplier = 2.5f;

@@ -303,12 +303,17 @@ public sealed class GroundFire : ModProjectile
     }
 }
 
-// 千鸟 (SealRules): a third of a second of lightning gathering in the hand, the player held still; then a forty-tile
-// charge towards the cursor, untouchable, stopped by a wall, through every small enemy and into the first boss (a far
-// heavier blow and a burst of lightning). Lightning chakra is left on the path for three seconds. ai[0..1] hold the
-// direction. Art: seal-jutsu-v2 (FxChidoriCharge, FxChidoriImpact, FxLightningTrail) and v1 (FxChidori, FxChidoriTrail).
+// 千鸟 (SealRules): a second and a half of lightning gathering in the hand, a charge bar over the player's head, the
+// player creeping on and the crackle striking all round (user, 2026-10-03: as in the story; open to hits, which logs
+// take); then a forty-tile charge towards the cursor, untouchable, stopped by a wall, through every small enemy and into
+// the first boss (a far heavier blow and a burst of lightning), lightning chakra left on the path for three seconds.
+// The velocity holds the direction (kept on the cursor while it gathers). The charge sounds the user's Chidori clip,
+// which stays on their machine (Assets/LocalSounds, never committed); without it a vanilla sound stands in.
+// Art: seal-jutsu-v2 (FxChidoriCharge, FxChidoriImpact, FxLightningTrail) and v1 (FxChidori, FxChidoriTrail).
 public sealed class ChidoriCharge : ModProjectile
 {
+    private const string DashSound = "ShinobiPrototype/Assets/LocalSounds/ChidoriDash";
+
     public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";
 
     private int Age => (int)Projectile.localAI[0];
@@ -316,6 +321,16 @@ public sealed class ChidoriCharge : ModProjectile
     private Vector2 Direction => Projectile.velocity.SafeNormalize(Vector2.UnitX);
     private Vector2 lastTrail;
     private bool hitBoss;
+
+    // How far the local player's Chidori has gathered (0 to 1), or null if none is gathering: the bar overhead.
+    public static float? GatherProgress(Player player)
+    {
+        int type = ModContent.ProjectileType<ChidoriCharge>();
+        foreach (Projectile p in Main.ActiveProjectiles)
+            if (p.owner == player.whoAmI && p.type == type && p.ModProjectile is ChidoriCharge c && c.Gathering)
+                return c.Age / (float)SealRules.ChidoriWindupTicks;
+        return null;
+    }
 
     public override void SetDefaults()
     {
@@ -325,13 +340,21 @@ public sealed class ChidoriCharge : ModProjectile
         Projectile.DamageType = DamageClass.Generic;
         Projectile.penetrate = -1;
         Projectile.usesLocalNPCImmunity = true;
-        Projectile.localNPCHitCooldown = -1;
+        Projectile.localNPCHitCooldown = SealRules.ChidoriGatherHitTicks;
         Projectile.timeLeft = SealRules.ChidoriWindupTicks + SealRules.ChidoriChargeTicks;
         Projectile.tileCollide = false;
         Projectile.aiStyle = -1;
     }
 
-    public override bool? CanDamage() => Gathering ? false : null;
+    // While it gathers, the crackle reaches all round the player; in the charge, the hitbox at the hand.
+    public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+    {
+        if (!Gathering)
+            return null;
+        Player owner = Main.player[Projectile.owner];
+        Vector2 nearest = Vector2.Clamp(owner.Center, targetHitbox.TopLeft(), targetHitbox.BottomRight());
+        return Vector2.Distance(nearest, owner.Center) <= SealRules.ChidoriGatherRadiusPx;
+    }
 
     public override void AI()
     {
@@ -341,44 +364,57 @@ public sealed class ChidoriCharge : ModProjectile
             Projectile.Kill();
             return;
         }
-        Vector2 dir = Direction;
-        owner.direction = dir.X >= 0f ? 1 : -1;
-        owner.immune = true;
-        owner.immuneNoBlink = true;
-        owner.immuneTime = Math.Max(owner.immuneTime, 6);
-        owner.fallStart = (int)(owner.position.Y / 16f);
         Projectile.localAI[0]++;
 
         if (Gathering)
         {
-            // Held still while it gathers, chirping.
-            owner.velocity = Vector2.Zero;
-            if (Age % 6 == 1)
-                SoundEngine.PlaySound(SoundID.Item93 with { Pitch = 0.5f + Age * 0.02f, Volume = 0.7f }, owner.Center);
-            Projectile.Center = owner.Center + dir * 18f;
-            Lighting.AddLight(Projectile.Center, 0.8f, 1.2f, 2f);
-            if (Age == SealRules.ChidoriWindupTicks - 1)
+            // Creeping on, hands full, the lightning following the cursor.
+            owner.GetModPlayer<Common.Players.SealPlayer>().ChargingTicks = 2;
+            if (Projectile.owner == Main.myPlayer)
             {
-                SoundEngine.PlaySound(SoundID.Item94, owner.Center);
-                lastTrail = owner.Center;
+                Vector2 aim = (Main.MouseWorld - owner.Center).SafeNormalize(Vector2.UnitX);
+                if (Vector2.Dot(aim, Direction) < 0.999f)
+                {
+                    Projectile.velocity = aim;
+                    if (Age % 6 == 0)
+                        Projectile.netUpdate = true;
+                }
             }
+            Vector2 dir = Direction;
+            owner.direction = dir.X >= 0f ? 1 : -1;
+            Projectile.Center = owner.Center + dir * 18f;
+            Lighting.AddLight(owner.Center, 0.6f + Age * 0.01f, 0.9f + Age * 0.01f, 1.6f + Age * 0.01f);
+            // The chirping, rising as it gathers.
+            if (Age % 6 == 1)
+                SoundEngine.PlaySound(SoundID.Item93 with { Pitch = Math.Min(1f, -0.2f + Age * 0.012f), Volume = 0.65f }, owner.Center);
+            if (!Main.dedServ && Main.rand.NextBool(2))
+                Dust.NewDustPerfect(owner.Center + Main.rand.NextVector2CircularEdge(SealRules.ChidoriGatherRadiusPx, SealRules.ChidoriGatherRadiusPx)
+                    * Main.rand.NextFloat(0.3f, 1f), DustID.Electric, Vector2.Zero, 0, default, 0.8f).noGravity = true;
+            if (Age == SealRules.ChidoriWindupTicks - 1)
+                StartCharge(owner);
             return;
         }
 
+        owner.immune = true;
+        owner.immuneNoBlink = true;
+        owner.immuneTime = Math.Max(owner.immuneTime, 6);
+        owner.fallStart = (int)(owner.position.Y / 16f);
+        Vector2 direction = Direction;
+        owner.direction = direction.X >= 0f ? 1 : -1;
         // A wall ahead ends it.
-        Vector2 step = dir * SealRules.ChidoriSpeed;
+        Vector2 step = direction * SealRules.ChidoriSpeed;
         if (Collision.SolidCollision(owner.position + step, owner.width, owner.height))
         {
             Projectile.Kill();
             return;
         }
         owner.velocity = step;
-        Projectile.Center = owner.Center + dir * 24f;
+        Projectile.Center = owner.Center + direction * 24f;
         Lighting.AddLight(Projectile.Center, 0.8f, 1.2f, 2f);
         // Lightning chakra left along the way, a piece every half its length.
         if (Projectile.owner == Main.myPlayer && Vector2.Distance(lastTrail, owner.Center) >= 32f)
         {
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), (lastTrail + owner.Center) / 2f, dir, ModContent.ProjectileType<LightningTrail>(),
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), (lastTrail + owner.Center) / 2f, direction, ModContent.ProjectileType<LightningTrail>(),
                 Math.Max(1, (int)(Projectile.damage * SealRules.LightningTrailDamageShare)), 0f, Projectile.owner);
             lastTrail = owner.Center;
         }
@@ -388,16 +424,30 @@ public sealed class ChidoriCharge : ModProjectile
                     Main.rand.NextVector2Circular(3f, 3f), 0, default, 1.1f).noGravity = true;
     }
 
-    // Into a boss: a far heavier blow, and the charge stops there.
+    // Gathered: off it goes, with the user's Chidori sound. Enemies the crackle struck can be struck again by the charge.
+    private void StartCharge(Player owner)
+    {
+        SoundEngine.PlaySound(ModContent.HasAsset(DashSound) ? new SoundStyle(DashSound) { Volume = 0.9f } : SoundID.Item94, owner.Center);
+        lastTrail = owner.Center;
+        for (int i = 0; i < Projectile.localNPCImmunity.Length; i++)
+            Projectile.localNPCImmunity[i] = 0;
+        Projectile.localNPCHitCooldown = -1;
+    }
+
+    // The crackle while it gathers is a fraction of the blow; into a boss the charge is far heavier, and stops there.
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
-        if (target.boss)
+        if (Gathering)
+            modifiers.SourceDamage *= SealRules.ChidoriGatherDamageShare;
+        else if (target.boss)
             modifiers.SourceDamage *= SealRules.ChidoriBossMultiplier;
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
-        target.AddBuff(BuffID.Electrified, 180);
+        target.AddBuff(BuffID.Electrified, Gathering ? 60 : 180);
+        if (Gathering)
+            return;
         SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.7f }, target.Center);
         if (target.boss && !hitBoss)
         {
@@ -414,7 +464,8 @@ public sealed class ChidoriCharge : ModProjectile
     public override void OnKill(int timeLeft)
     {
         Player owner = Main.player[Projectile.owner];
-        owner.velocity *= 0.2f;
+        if (!Gathering)
+            owner.velocity *= 0.2f;
         owner.immuneNoBlink = false;
         if (!Main.dedServ)
             for (int i = 0; i < 30; i++)
@@ -429,8 +480,8 @@ public sealed class ChidoriCharge : ModProjectile
             Texture2D gather = FxArt.Frame("FxChidoriCharge", (int)(Main.GameUpdateCount / 2), 4) ?? FxArt.Frame("FxChidori", (int)(Main.GameUpdateCount / 2), 4);
             if (gather != null)
             {
-                float grow = 0.6f + 0.6f * Age / SealRules.ChidoriWindupTicks;
-                FxArt.Draw(gather, Projectile.Center, new Color(150, 200, 255, 0) * 0.6f, Main.rand.NextFloat(-0.2f, 0.2f), grow * 1.3f);
+                float grow = 0.5f + 0.9f * Age / SealRules.ChidoriWindupTicks;
+                FxArt.Draw(gather, Projectile.Center, new Color(150, 200, 255, 0) * 0.6f, Main.rand.NextFloat(-0.3f, 0.3f), grow * 1.4f);
                 FxArt.Draw(gather, Projectile.Center, Color.White, 0f, grow);
             }
             return false;
@@ -439,7 +490,7 @@ public sealed class ChidoriCharge : ModProjectile
             FxArt.Draw(trail, Projectile.Center - dir * 60f, Color.White, dir.ToRotation(), 2f);
         Texture2D hand = FxArt.Frame("FxChidoriCharge", (int)(Main.GameUpdateCount / 2), 4) ?? FxArt.Frame("FxChidori", (int)(Main.GameUpdateCount / 3), 4);
         if (hand != null)
-            FxArt.Draw(hand, Projectile.Center, Color.White, 0f, 1f);
+            FxArt.Draw(hand, Projectile.Center, Color.White, 0f, 1.2f);
         return false;
     }
 }

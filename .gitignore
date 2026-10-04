@@ -12,4 +12,6 @@ tools/XnbExtract/obj/
 # Naruto OST tracks for local play only: copyrighted, never commit or publish them (see specs/M10, 2026-09-29).
 Sound_Track/
 ShinobiPrototype/Assets/Music/
+# Anime sound effects the user supplied for local play (2026-10-03): copyrighted, never commit or publish them.
+ShinobiPrototype/Assets/LocalSounds/
 .DS_Store
