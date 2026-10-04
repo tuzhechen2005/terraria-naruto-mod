@@ -151,6 +151,21 @@ Items: {
 		Tooltip: "{$CommonItemTooltip.RightClickToOpen}"
 	}
 
+	ScrollClone: {
+		DisplayName: Clone Jutsu
+		Tooltip: Seal scroll, 2 seals: wear it in the 2-seal slot\nHold the seal key to 2 seals and let go: 15 chakra\nTwo clones stand beside you for 8 s, each taking one hit for you (before any log)
+	}
+
+	ScrollFireball: {
+		DisplayName: "Fire Style: Fireball Jutsu"
+		Tooltip: Seal scroll, 4 seals: wear it in the 4-seal slot\nHold the seal key to 4 seals and let go: 30 chakra\nA great fireball towards the cursor that burns through enemies and bursts at the end
+	}
+
+	ScrollChidori: {
+		DisplayName: Chidori
+		Tooltip: Seal scroll, 6 seals: wear it in the 6-seal slot\nHold the seal key to 6 seals and let go: 50 chakra\nLightning in the hand and a charge towards the cursor, untouchable on the way, through every enemy in it
+	}
+
 	Kubikiribocho: {
 		DisplayName: Executioner's Blade
 		Tooltip: Zabuza's great sword: slow and heavy, but it hits hard\nHits sometimes drain a little life
@@ -316,6 +331,10 @@ NPCs: {
 }
 
 Projectiles: {
+	ShadowClone.DisplayName: Shadow Clone
+	GreatFireball.DisplayName: Great Fireball
+	FireBurst.DisplayName: Fireball Burst
+	ChidoriCharge.DisplayName: Chidori
 	WaveCorpse.DisplayName: Fallen
 	KunaiThrown.DisplayName: Kunai
 	SenbonThrown.DisplayName: Senbon
@@ -414,6 +433,7 @@ Tiles.ChakraCrystalTile.MapEntry: Chakra Crystal
 
 Keybinds: {
 	Substitution.DisplayName: Substitution Jutsu
+	Seal.DisplayName: Hand Seals
 	StyleTechnique.DisplayName: Style technique
 }
 

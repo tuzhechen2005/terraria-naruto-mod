@@ -65,3 +65,11 @@ Check(JudgePracticeHit(false, 30) == PracticeOutcome.TooEarly, "Pressed recently
 Check(JudgePracticeHit(false, PracticeEarlyWindowTicks + 1) == PracticeOutcome.TooLate, "No recent press: too late");
 Check(PracticeVerdict(8, 8) != PracticeVerdict(4, 8) && PracticeVerdict(4, 8) != PracticeVerdict(1, 8),
     "Drill summary depends on the score");
+
+Check(SealRules.SealsAfter(14) == 0 && SealRules.SealsAfter(15) == 1 && SealRules.SealsAfter(90) == 6 && SealRules.SealsAfter(999) == 6,
+    "A seal every quarter second, six after a second and a half, never more");
+Check(SealRules.Tier(6, true, true, true) == 6 && SealRules.Tier(5, true, true, true) == 4 && SealRules.Tier(3, true, true, true) == 2 &&
+      SealRules.Tier(1, true, true, true) == 0, "Letting go fires the highest slot reached");
+Check(SealRules.Tier(6, true, true, false) == 4 && SealRules.Tier(4, false, false, true) == 0,
+    "An empty slot falls back to the next one down, never up");
+Check(SealRules.Toward(1) == 2 && SealRules.Toward(3) == 4 && SealRules.Toward(6) == 6, "The seals shown are those of the slot being worked towards");

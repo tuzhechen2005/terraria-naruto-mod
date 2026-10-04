@@ -15,7 +15,7 @@ public sealed class M0Command : ModCommand
 {
     public override CommandType Type => CommandType.Chat;
     public override string Command => "m0";
-    public override string Usage => "/m0、/m0 items、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 orochimaru、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名] 或 /m0 god [on|off]";
+    public override string Usage => "/m0、/m0 items、/m0 seals、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 orochimaru、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名] 或 /m0 god [on|off]";
     public override string Description => "领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌";
 
     public override void Action(CommandCaller caller, string input, string[] args)
@@ -25,6 +25,15 @@ public sealed class M0Command : ModCommand
         {
             int given = GiveAllItems(player);
             caller.Reply($"已发放本模组全部 {given} 种物品（含开发者之翼）。", Color.LightGreen);
+            return;
+        }
+
+        if (args.Length == 1 && args[0].Equals("seals", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach (int type in new[] { ModContent.ItemType<Items.Jutsu.ScrollClone>(), ModContent.ItemType<Items.Jutsu.ScrollFireball>(),
+                         ModContent.ItemType<Items.Jutsu.ScrollChidori>() })
+                player.QuickSpawnItem(player.GetSource_GiftOrReward(), type);
+            caller.Reply($"已发放三张结印卷轴。放进装备栏的 2/4/6 印位，按住【{Common.Systems.ShinobiKeybinds.SealKeyName()}】结印、松手施术。", Color.LightGreen);
             return;
         }
 

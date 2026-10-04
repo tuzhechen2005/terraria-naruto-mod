@@ -146,6 +146,9 @@ public sealed class SubstitutionPlayer : ModPlayer
             return true;
         }
         bool fromEnemy = info.DamageSource.SourceNPCIndex >= 0 || info.DamageSource.SourceProjectileType > 0;
+        // A shadow clone (Clone Jutsu) takes it before any log.
+        if (fromEnemy && ShadowClone.TakeHit(Player))
+            return true;
         if (!ChakraRules.AutoSubstitutes(Logs, Player.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed, fromEnemy))
             return false;
         Logs--;
@@ -158,6 +161,8 @@ public sealed class SubstitutionPlayer : ModPlayer
     // False if there is none, and the bind holds.
     public bool TakeBind(int awayDirection)
     {
+        if (ShadowClone.TakeHit(Player))
+            return true;
         if (!ChakraRules.AutoSubstitutes(Logs, Player.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed, true))
             return false;
         Logs--;
