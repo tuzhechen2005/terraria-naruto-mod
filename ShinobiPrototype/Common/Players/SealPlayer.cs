@@ -26,7 +26,12 @@ public sealed class SealPlayer : ModPlayer
     private int target;
     private readonly int[] cooldowns = new int[3];
 
+    private readonly int[] readyFlash = new int[3];
+
     public int CooldownOf(int slot) => cooldowns[slot];
+
+    // Ticks left of the flash on the HUD when a slot comes off cooldown.
+    public int ReadyFlash(int slot) => readyFlash[slot];
 
     public bool Weaving => target > 0;
     public int Seals => SealRules.SealsAfter(heldTicks);
@@ -87,8 +92,12 @@ public sealed class SealPlayer : ModPlayer
     public override void PostUpdate()
     {
         for (int i = 0; i < cooldowns.Length; i++)
-            if (cooldowns[i] > 0)
-                cooldowns[i]--;
+        {
+            if (readyFlash[i] > 0)
+                readyFlash[i]--;
+            if (cooldowns[i] > 0 && --cooldowns[i] == 0)
+                readyFlash[i] = 20;
+        }
         if (!Weaving)
             return;
         if (Player.dead || Player.CCed || Forming == null)

@@ -39,6 +39,8 @@ public sealed class ChakraHud : ModSystem
             new Rectangle(x + 3, y + 25, (int)(160f * player.Chakra / player.MaxChakra), 12), new Color(45, 170, 235));
         DrawLogs(x + 2, y + 43);
         int line = y + 81;
+        if (DrawSeals(x + 2, line))
+            line += 44;
         if (Main.LocalPlayer.GetModPlayer<DebugGodPlayer>().Enabled)
         {
             Utils.DrawBorderString(Main.spriteBatch, "M0 测试无敌", new Vector2(x + 2, line), Color.Gold, 0.75f);
@@ -80,6 +82,44 @@ public sealed class ChakraHud : ModSystem
         }
         Utils.DrawBorderString(Main.spriteBatch, sealedPoints ? "替身术被封" : $"替身 [{ShinobiKeybinds.SubstitutionKeyName()}]",
             new Vector2(x + logs.MaxLogs * (w + 4) + 4, y + h / 2f - 8f), sealedPoints ? new Color(150, 170, 230) : new Color(200, 170, 110), 0.75f);
+    }
+
+    // The three seal slots, always in sight in a fight (user, 2026-10-03): each scroll with its key, darkened from the
+    // top while it cools down with the seconds left, and a flash the moment it is ready again. Empty slots are skipped;
+    // nothing is drawn without any scroll.
+    private static bool DrawSeals(int x, int y)
+    {
+        SealPlayer seals = Main.LocalPlayer.GetModPlayer<SealPlayer>();
+        bool any = false;
+        const int size = 38;
+        for (int i = 0; i < 3; i++)
+        {
+            int count = 2 + 2 * i;
+            if (seals.ScrollFor(count) is not { } scroll)
+                continue;
+            any = true;
+            Rectangle box = new(x + i * (size + 6), y, size, size);
+            Texture2D back = ModContent.HasAsset("ShinobiPrototype/Assets/UI/SealSlotBack")
+                ? ModContent.Request<Texture2D>("ShinobiPrototype/Assets/UI/SealSlotBack").Value
+                : TextureAssets.InventoryBack.Value;
+            Main.spriteBatch.Draw(back, box, Color.White);
+            Terraria.UI.ItemSlot.DrawItemIcon(scroll.Item, Terraria.UI.ItemSlot.Context.InventoryItem, Main.spriteBatch,
+                box.Center.ToVector2(), 0.8f, 28f, Color.White);
+            int cooldown = seals.CooldownOf(i);
+            if (cooldown > 0 && scroll.CooldownTicks > 0)
+            {
+                float left = cooldown / (float)scroll.CooldownTicks;
+                Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(box.X, box.Y, box.Width, (int)(box.Height * left)),
+                    Color.Black * 0.65f);
+                Utils.DrawBorderString(Main.spriteBatch, cooldown >= 60 ? $"{(cooldown + 59) / 60}" : $"{cooldown / 60f:0.0}",
+                    box.Center.ToVector2(), Color.White, 0.85f, 0.5f, 0.45f);
+            }
+            else if (cooldown == 0 && seals.ReadyFlash(i) > 0)
+                Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, box, new Color(255, 230, 150) * (seals.ReadyFlash(i) / 20f * 0.6f));
+            Utils.DrawBorderString(Main.spriteBatch, ShinobiKeybinds.SealKeyName(count), new Vector2(box.X + 3, box.Y + 1),
+                new Color(255, 225, 150), 0.65f);
+        }
+        return any;
     }
 
     private static void DrawTracker(int x, int y)

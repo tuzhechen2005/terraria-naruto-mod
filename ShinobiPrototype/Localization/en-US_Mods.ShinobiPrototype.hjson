@@ -11,7 +11,11 @@ Items: {
 
 	MissionScroll: {
 		DisplayName: Old Mission Scroll
-		Tooltip: Replaced by the Ninja Handbook; turns into one in your inventory
+		Tooltip:
+			'''
+			Replaced by the Ninja Handbook;
+			turns into one in your inventory
+			'''
 	}
 
 	MistInsignia: {
@@ -21,12 +25,22 @@ Items: {
 
 	HakuChallengeScroll: {
 		DisplayName: Legacy Haku Challenge Scroll
-		Tooltip: Merged into the Wave Country duo battle; converts to a Zabuza scroll in your inventory
+		Tooltip:
+			'''
+			Merged into the Wave Country duo battle;
+			converts to a Zabuza scroll in your inventory
+			'''
 	}
 
 	ZabuzaChallengeScroll: {
 		DisplayName: Zabuza Challenge Scroll
-		Tooltip: Only works around the seaside bridge; starts the Wave Country duo battle\nHaku joins when Zabuza is at half health\nNot consumed
+		Tooltip:
+			'''
+			Only works around the seaside bridge;
+			starts the Wave Country duo battle
+			Haku joins when Zabuza is at half health
+			Not consumed
+			'''
 	}
 
 	M0ZabuzaChallengeScroll: {
@@ -41,67 +55,144 @@ Items: {
 
 	ExamAdmissionScroll: {
 		DisplayName: Chunin Exam Recommendation
-		Tooltip: Kakashi's recommendation for the Chunin Exams\nBring it to Morino Ibiki in the Konoha Academy to sit the first test (the written exam)\nIf lost, ask Kakashi for another
+		Tooltip:
+			'''
+			Kakashi's recommendation for the Chunin Exams
+			Bring it to Morino Ibiki in the Konoha Academy to sit the first test (the written exam)
+			If lost, ask Kakashi for another
+			'''
 	}
 
 	HeavenScroll: {
 		DisplayName: Heaven Scroll
-		Tooltip: One of the second test's two scrolls\nBring it with the Earth Scroll into the tower in the Forest of Death
+		Tooltip:
+			'''
+			One of the second test's two scrolls
+			Bring it with the Earth Scroll into the tower in the Forest of Death
+			'''
 	}
 
 	EarthScroll: {
 		DisplayName: Earth Scroll
-		Tooltip: One of the second test's two scrolls\nBring it with the Heaven Scroll into the tower in the Forest of Death
+		Tooltip:
+			'''
+			One of the second test's two scrolls
+			Bring it with the Heaven Scroll into the tower in the Forest of Death
+			'''
 	}
 
 	ChuninHeadband: {
 		DisplayName: Chunin Headband
-		Tooltip: Proof of passing the Chunin Exams\n+3 defense and +4% melee and magic damage when equipped
+		Tooltip:
+			'''
+			Proof of passing the Chunin Exams
+			+3 defense and +4% melee and magic damage when equipped
+			'''
 	}
 
 	SnakeSkin: {
 		DisplayName: Shed Snake Skin
-		Tooltip: Left behind by Orochimaru\nUse it on the jungle surface to draw him out again\nNot consumed
+		Tooltip:
+			'''
+			Left behind by Orochimaru
+			Use it on the jungle surface to draw him out again
+			Not consumed
+			'''
 	}
 
 	NejiChallengeScroll: {
 		DisplayName: Neji's Challenge
-		Tooltip: Once the finals have begun, use it on the stadium field to spar with Neji Hyuga\nNot consumed
+		Tooltip:
+			'''
+			Once the finals have begun,
+			use it on the stadium field to spar with Neji Hyuga
+			Not consumed
+			'''
 	}
 
 	SoundNinjaToken: {
 		DisplayName: Sound Ninja Token
-		Tooltip: Use it in the central tower hall of the Forest of Death to fight Dosu again\nNot consumed
+		Tooltip:
+			'''
+			Use it in the central tower hall of the Forest of Death to fight Dosu again
+			Not consumed
+			'''
 	}
 
 	SandGourd: {
 		DisplayName: Sand Gourd
-		Tooltip: Use it on the stadium field outside the Leaf's wall to fight Gaara again\nNot consumed
+		Tooltip:
+			'''
+			Use it on the stadium field outside the Leaf's wall to fight Gaara again
+			Not consumed
+			'''
 	}
 
 	SharinganCore1: {
 		DisplayName: Sharingan in a Vial (One Tomoe)
-		Tooltip: Style core: Sharingan (tier one, one tomoe)\nSubstitution logs come back sooner (one every 8 s)\nStyle technique [Foresight]: 30 chakra, 20 s cooldown. The first hit within 4 s is substituted automatically; then +15% damage for 3 s\nKunai and senbon always crit the enemy seen through\nOnly one style core can be worn
+		Tooltip:
+			'''
+			Style core: Sharingan (tier one, one tomoe)
+			Substitution logs come back sooner (one every 8 s)
+			Style technique [Foresight]: 30 chakra, 20 s cooldown.
+			The first hit within 4 s is substituted automatically;
+			then +15% damage for 3 s
+			Kunai and senbon always crit the enemy seen through
+			Only one style core can be worn
+			'''
 	}
 
 	EightGatesCore: {
 		DisplayName: Scroll of the Eight Gates
-		Tooltip: Style core: Eight Gates (tier one)\nTaijutsu weapons attack 10% faster\nStyle technique [Gate of Opening]: each press opens one more gate (up to three): +10% damage and speed per gate, losing 2/4/6 life a second\nPress again at three to close; below 20% life they close themselves, then 10 s of fatigue\n20 chakra per gate\nOnly one style core can be worn
+		Tooltip:
+			'''
+			Style core: Eight Gates (tier one)
+			Taijutsu weapons attack 10% faster
+			Style technique [Gate of Opening]: each press opens one more gate (up to three): +10% damage and speed per gate,
+			losing 2/4/6 life a second
+			Press again at three to close;
+			below 20% life they close themselves, then 10 s of fatigue
+			20 chakra per gate
+			Only one style core can be worn
+			'''
 	}
 
 	ByakuganCore: {
 		DisplayName: Byakugan
-		Tooltip: Style core: Byakugan (tier one)\nSee nearby enemies\nMelee hits seal chakra points: -4 defense, up to 3 stacks; bosses take 5% more damage per stack\nStyle technique [Rotation]: 40 chakra, 15 s cooldown. Spin for 1 s, cancelling enemy projectiles and throwing back nearby enemies\nOnly one style core can be worn
+		Tooltip:
+			'''
+			Style core: Byakugan (tier one)
+			See nearby enemies
+			Melee hits seal chakra points: -4 defense, up to 3 stacks;
+			bosses take 5% more damage per stack
+			Style technique [Rotation]: 40 chakra, 15 s cooldown.
+			Spin for 1 s, cancelling enemy projectiles and throwing back nearby enemies
+			Only one style core can be worn
+			'''
 	}
 
 	TrainingWraps: {
 		DisplayName: Training Wraps
-		Tooltip: Taijutsu weapon: every punch throws a wave of air pressure, harder up close\nRight click [Leaf Whirlwind]: a dash kick, briefly invulnerable\nThe open Eight Gates make the pressure bigger and carry it further
+		Tooltip:
+			'''
+			Taijutsu weapon: every punch throws a wave of air pressure,
+			harder up close
+			Right click [Leaf Whirlwind]: a dash kick,
+			briefly invulnerable
+			The open Eight Gates make the pressure bigger and carry it further
+			'''
 	}
 
 	LeeLegWeights: {
 		DisplayName: Lee's Leg Weights
-		Tooltip: Taijutsu weapon: every punch throws a wave of air pressure, harder up close\nRight click [Leaf Whirlwind]: a dash kick, briefly invulnerable\nThe open Eight Gates make the pressure bigger and carry it further
+		Tooltip:
+			'''
+			Taijutsu weapon: every punch throws a wave of air pressure,
+			harder up close
+			Right click [Leaf Whirlwind]: a dash kick,
+			briefly invulnerable
+			The open Eight Gates make the pressure bigger and carry it further
+			'''
 	}
 
 	ChakraPill: {
@@ -153,27 +244,60 @@ Items: {
 
 	ScrollClone: {
 		DisplayName: Clone Jutsu
-		Tooltip: Seal scroll, 2 seals: wear it in the 2-seal slot\nTap the 2-seal key (Z by default) to form the seals and cast: 15 chakra\nTwo clones stand beside you for 8 s, each taking one hit for you (before any log)
+		Tooltip:
+			'''
+			Seal scroll, 2 seals: wear it in the 2-seal slot
+			Tap the 2-seal key (Z by default) to form the seals and cast: 15 chakra
+			Two clones stand beside you for 8 s,
+			each taking one hit for you (before any log)
+			'''
 	}
 
 	ScrollFireball: {
 		DisplayName: Fire Style: Fireball Jutsu
-		Tooltip: Seal scroll, 4 seals: wear it in the 4-seal slot\nTap the 4-seal key (X by default) to form the seals and cast: 40 chakra, 6 s cooldown\nThe fireball swells to over a dozen tiles across and rolls slowly through walls, burning all it touches\nThe ground it passes catches fire; it ends in a great burst
+		Tooltip:
+			'''
+			Seal scroll, 4 seals: wear it in the 4-seal slot
+			Tap the 4-seal key (X by default) to form the seals and cast: 40 chakra,
+			6 s cooldown
+			The fireball swells to over a dozen tiles across and rolls slowly through walls,
+			burning all it touches
+			The ground it passes catches fire; it ends in a great burst
+			'''
 	}
 
 	ScrollChidori: {
 		DisplayName: Chidori
-		Tooltip: Seal scroll, 6 seals: wear it in the 6-seal slot\nTap the 6-seal key (C by default) to form the seals and cast: 60 chakra, 10 s cooldown\nLightning gathers in the hand, then a charge of some 40 tiles towards the cursor, untouchable, stopped by walls\nThrough every enemy in the way; into a boss it stops for a 2.5x blow\nLightning chakra lingers on the path for 3 s
+		Tooltip:
+			'''
+			Seal scroll, 6 seals: wear it in the 6-seal slot
+			Tap the 6-seal key (C by default) to form the seals and cast: 60 chakra,
+			10 s cooldown
+			Lightning gathers in the hand,
+			then a charge of some 40 tiles towards the cursor,
+			untouchable, stopped by walls
+			Through every enemy in the way;
+			into a boss it stops for a 2.5x blow
+			Lightning chakra lingers on the path for 3 s
+			'''
 	}
 
 	Kubikiribocho: {
 		DisplayName: Executioner's Blade
-		Tooltip: Zabuza's great sword: slow and heavy, but it hits hard\nHits sometimes drain a little life
+		Tooltip:
+			'''
+			Zabuza's great sword: slow and heavy, but it hits hard
+			Hits sometimes drain a little life
+			'''
 	}
 
 	Senbon: {
 		DisplayName: Senbon
-		Tooltip: Throws a fan of three needles; never used up\nHits sometimes strike a pressure point, slowing the enemy
+		Tooltip:
+			'''
+			Throws a fan of three needles; never used up
+			Hits sometimes strike a pressure point, slowing the enemy
+			'''
 	}
 
 	WaterDragonJutsu: {
@@ -366,6 +490,9 @@ Projectiles: {
 	VenomPool.DisplayName: Venom Pool
 	Quicksand.DisplayName: Quicksand
 	SandPellet.DisplayName: Sand Pellet
+	ChidoriImpact.DisplayName: Chidori Impact
+	GroundFire.DisplayName: Ground Fire
+	LightningTrail.DisplayName: Lightning Trail
 }
 
 Dialogue: {
@@ -455,22 +582,40 @@ Configs: {
 
 		SeaFogStrength: {
 			Label: Sea mist strength (%)
-			Tooltip: Thickness of the sea mist around the Wave Country bridge; 0 turns it off, 200 doubles it
+			Tooltip:
+				'''
+				Thickness of the sea mist around the Wave Country bridge;
+				0 turns it off, 200 doubles it
+				'''
 		}
 
 		RegionBackgrounds: {
 			Label: Naruto region backgrounds
-			Tooltip: Use Naruto-styled surface backgrounds in the Leaf, Wave Country, the Sand and other regions; off keeps vanilla backgrounds
+			Tooltip:
+				'''
+				Use Naruto-styled surface backgrounds in the Leaf,
+				Wave Country, the Sand and other regions;
+				off keeps vanilla backgrounds
+				'''
 		}
 
 		QuestTracker: {
 			Label: Quest tracker
-			Tooltip: Show the current objective under the chakra bar, with the direction and distance to it (off by default: hints are as quiet as vanilla's)
+			Tooltip:
+				'''
+				Show the current objective under the chakra bar,
+				with the direction and distance to it (off by default: hints are as quiet as vanilla's)
+				'''
 		}
 
 		ShowSubstitutionHints: {
 			Label: Show Substitution Jutsu hints
-			Tooltip: When a substitution log takes a hit for you, explain the substitution key (up to 3 times, none once you have used it)
+			Tooltip:
+				'''
+				When a substitution log takes a hit for you,
+				explain the substitution key (up to 3 times,
+				none once you have used it)
+				'''
 		}
 	}
 }
