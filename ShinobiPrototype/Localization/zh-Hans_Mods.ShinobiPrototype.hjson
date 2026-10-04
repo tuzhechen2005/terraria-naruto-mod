@@ -703,8 +703,10 @@ BossChecklist: {
 	}
 }
 
-Conditions.WaveScroll: 在断桥的雾中见过再不斩之后
-Conditions.WaveComplete: 波之国任务完成之后
+Conditions: {
+	WaveScroll: 在断桥的雾中见过再不斩之后
+	WaveComplete: 波之国任务完成之后
+}
 
 Biomes: {
 	KonohaBiome: {

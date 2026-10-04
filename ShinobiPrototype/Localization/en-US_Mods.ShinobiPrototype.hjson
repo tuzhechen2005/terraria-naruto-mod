@@ -709,8 +709,10 @@ BossChecklist: {
 	}
 }
 
-Conditions.WaveScroll: After seeing Zabuza in the mist at the broken bridge
-Conditions.WaveComplete: After the Land of Waves mission
+Conditions: {
+	WaveScroll: After seeing Zabuza in the mist at the broken bridge
+	WaveComplete: After the Land of Waves mission
+}
 
 Biomes: {
 	KonohaBiome: {

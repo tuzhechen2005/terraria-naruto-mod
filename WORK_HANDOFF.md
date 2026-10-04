@@ -1,6 +1,30 @@
 # 当前工作交接
 
-本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。最新工作见下方 **2026-10-03 README 与 Wiki 同步**；后面保留此前开发快照。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
+本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。最新工作见下方 **2026-10-03 Claude Code：装备与忍术系统（第一步完成）**；后面保留此前开发快照。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
+
+## 2026-10-03 Claude Code：装备与忍术系统（第一步完成）
+
+**规格**：`specs/装备与忍术系统.spec.md`（与用户多轮 grill 定稿，本次已同步到实际实现）。它取代总纲里关于武器、替身术、忍术物品的旧描述。核心：保留原版四种伤害类型，但火影装备不分职业；三套人人共用的系统（木头替身、潜伏、结印）；每档 Boss 给整套战利品；强度对齐同期原版；分 7 档，第 1、2 档物品表已定，第 3～7 档只有框架。开发顺序：①系统 → ②第 1 档内容 → ③第 2 档内容（含再不斩四件武器等旧物品重做）。
+
+**已完成（全部在 `main`，最后推送到 `780d8b1`，之后又有本地提交未推送）**
+- **木头替身**（`SubstitutionPlayer`、`StealthPlayer`、`StealthBuff`、`ChakraHud`）：敌人的攻击自动消耗一根木头（开局 2 根，20 秒回一根，命中快 0.1 秒，写轮眼更快）；F 花两根木头 + 15 查克拉瞬移并潜伏 5 秒（下一击必暴 +30%，增益图标有专门的美术）。控制招先预警、能躲，躲不开有木头就自动脱身：大蛇丸杀气改成 1 秒红色扇形预警（`Orochimaru.UpdateStare/DrawStare`，规则 `ExamBossRules.InStare`），沙缚柩同理。卡卡西的替身修行仍练按键时机。
+- **结印**（`SealPlayer`、`SealRules`、`SealSlotsUI`、`SealOverlay`、`Content/Items/Jutsu/SealScroll.cs`、`Content/Projectiles/SealJutsu.cs`）：Z/X/C 点按自动结 2/4/6 印并施展；自画的三格印位栏（背包右侧，卷轴随角色保存，开局有分身术）；HUD 常驻冷却。卷轴：分身术、豪火球（巨大、穿墙、撞大目标即爆）、千鸟（1.5 秒蓄雷 + 蓄力条 + 范围雷击，冲刺 40 格穿 3 格薄墙，撞首领 2.5 倍，留雷查克拉）。豪火球、千鸟暂用 `/m0 seals` 拿。
+- **忍具**（`Content/Items/NinjaTools/`、`ToolStealthPlayer`、`NinjaToolProjectiles.cs`）：拿着忍具攒潜伏值（空手 12 秒，`FillSpeed` 留给忍具系装备），满了下一投是潜伏投掷。训练苦无 7、苦无 9、手里剑 8（反弹；潜伏投掷为影手里剑）、起爆符 30（贴附 1 秒后爆炸）；`/m0 tools`。强度按用户要求压到第 1 档（约每秒 27）。
+- **忍具店**：`ToolShopkeeper`（天天的父亲，开局住进木叶），卖苦无、手里剑、起爆符、兵粮丸，波之国任务后加千本。
+- **其他**：物品说明真正换行（hjson 无引号写法里的 `\n` 不是换行，49 条改成三引号多行并断长行）；千鸟音效来自用户的 `Sound_Track/千鸟音效.m4a`，转成 `ShinobiPrototype/Assets/LocalSounds/ChidoriDash.wav`（已加入 `.gitignore`，绝不提交；缺文件时用原版音效）。
+- **大蛇丸**：改为 1:1 高精度（224×136 画布、游戏里 1.15 倍、约 120 像素高），底稿是用户选的 v6 源图 A 经 v9/v11（脸由 Claude 手改 4 个像素）；全套 `orochimaru-set-v11a/b` + `moves-v11c/d`（4 帧冲刺、蛇从袖口出、连续 S 形脖子、招式体型统一）。去掉了移动倾斜和出招压扁（细节图会闪）。
+- **美术流程教训**（已写入 `art/AGENT_HANDOFF.md` 和记忆）：Boss 不要把源图缩到很小再"修"，大蛇丸起按 1:1；不要给五官定死尺寸；验收要和其他角色按游戏尺寸并排看整体，美观由用户定；招式帧要量身体比例（面积、胸宽），不只看脸。
+- **加载事故**：两个 NPC 共用一个头像文件会让模组加载失败（已修，`8601421`）。编译检查查不出这类问题；新增 NPC、贴图后可用 `./scripts/konoha-worldgen-check.sh <目录> <种子> 1` 在后台服务器加载一遍（服务器不加载贴图，最终以游戏内为准）。
+
+**下一步**
+1. 用户在试玩系统手感（木头、潜伏投掷、结印三招、忍具店），等反馈再调数值。
+2. 第 1 档内容（规格表）：修行忍刀、鬼之兄弟锁链手甲、火遁·凤仙火之术、忍犬通灵、豪火球卷轴的正式来源、四件饰品、两套盔甲（下忍战斗服让潜伏值 1.5 倍）、忍具图纸与配方。动手前按规格逐项确认，美术按“物品 2×2、特效大而发光、对齐灾厄精度”。
+3. 穿插：宁次、再不斩、白的补帧请求（`art/requests/*-tween-v1.md` 已写未提交，提交前改成“从统一底稿出全套”）；第 2 档开始时天天加入忍具店。
+4. Codex 的 Wiki 需按新代码重建（`wiki/check.py` → 核对 → `wiki/build.py`）。
+
+**工作树**：`main`。未跟踪的历史残留不要接入：`art/deliveries/kakashi-npc-v3/`、`orochimaru-style-v1/`、`orochimaru-base-v8/`（中途停掉）及 `art/requests/orochimaru-base-v8.md`、`orochimaru-set-v10a/b.md`（v10 底稿作废后未发出）。`wiki/` 由 Codex 管理。没有在跑的后台美术任务。
+
+**验证**：每次提交前 `./scripts/verify-mac.sh`，最后一次 738 项规则测试全过、C# 0 错误（游戏开着时打包报 TML003 属正常）；本地化文件用 `hjson` 解析校验；后台服务器加载与世界生成通过。游戏内：用户已确认木头、杀气预警、结印、豪火球、千鸟、印位栏可用并给过反馈；忍具数值调整（`2e8037e`）和忍具店老板的新形象尚待用户实机确认。
 
 ## 2026-10-03 Codex：README 与 Wiki 同步
 
@@ -170,15 +194,11 @@
 
 ## 工作树与后台
 
-- 分支 `main`。Terruto 修改基于 `40303c2`，本次提交包含两版 README、模组显示名称与简介、三张接入图标、v5 请求与交付、交接记录。用户已明确选定名称并授权字标替换，沿用本次仓库整理的推送授权。
-- 本次未接入的美术：`art/deliveries/kakashi-npc-v3/`（作废残留）、`art/deliveries/orochimaru-style-v1/`（暂缓）；整理期间另出现 `art/requests/orochimaru-style-v2.md` 与对应交付目录，由发起会话管理。上述文件不随本次图标提交接入。
-- 本次任务的 `mod-icon-v5` 已完成收尾并接入，无运行进程，不重复提交。其他会话的请求应按实际状态查询。`.art-bridge/bg-konoha-v1.json` 是早已被 v2 取代的陈旧状态，忽略。`.art-bridge/`、`art/reference/` 为本地忽略目录。
+- 以最前面“2026-10-03 Claude Code：装备与忍术系统”一节的“工作树”为准。`.art-bridge/`、`art/reference/`、`Sound_Track/`、`ShinobiPrototype/Assets/Music/`、`ShinobiPrototype/Assets/LocalSounds/` 是本地忽略目录，原作音频与参考图绝不提交；推送前检查 `git diff --name-only origin/main..HEAD`。
 
 ## 验证
 
-- 任务链与湖边初遇：`./scripts/verify-mac.sh` 规则测试全部通过（含新 StoryRules 18 项），C# 编译 0 错误；游戏开着导致打包 TML003，需游戏内 Build + Reload 后实机测 T17–T28。
-- 更早的代码改动（尾声、白台词）只跑过 `./scripts/verify-mac.sh` 的规则测试与编译；游戏开着时命令行打包会 TML003，需游戏内 Build + Reload。
-- 图标只复制了文件；用户随后成功上传，说明游戏内构建已包含它。
+- 以最前面一节的“验证”为准。通用流程：`./scripts/verify-mac.sh`（规则测试 + 编译；游戏开着时打包 TML003 正常，需游戏内 Build + Reload）；改了本地化就用 `hjson` 解析一遍；新增 NPC 或贴图后用 `./scripts/konoha-worldgen-check.sh` 在后台服务器加载一遍。
 
 ## 下次交接填写项
 
