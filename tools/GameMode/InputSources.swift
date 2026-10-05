@@ -11,6 +11,10 @@ struct InputSourceService {
         try InputSwitch(originalID: currentID(), englishID: englishID())
     }
 
+    func ensureEnglish(_ id: String) throws {
+        if try currentID() != id { try select(id) }
+    }
+
     func restore(_ change: InputSwitch) throws {
         // Respect a source the user chose manually after entering game mode.
         if try currentID() == change.englishID && change.originalID != change.englishID {

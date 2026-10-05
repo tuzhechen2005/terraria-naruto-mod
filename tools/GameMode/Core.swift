@@ -181,6 +181,34 @@ func englishSourceID(_ sources: [KeyboardSource]) -> String? {
     return usable.first?.id
 }
 
+struct GameFocusEntry {
+    let pid: Int32
+    let generation: Int
+    let entered: Date
+}
+
+struct GameInputFocus {
+    private(set) var pid: Int32?
+    private(set) var generation = 0
+    // Recheck only during focus settling, never throughout gameplay/chat.
+    static let checkDelays: [TimeInterval] = [0.25, 0.8, 1.5]
+
+    mutating func observe(frontmost: Int32?, games: Set<Int32>, enabled: Bool, now: Date) -> GameFocusEntry? {
+        let next = enabled && frontmost.map({ games.contains($0) }) == true ? frontmost : nil
+        guard next != pid else { return nil }
+        generation += 1
+        pid = next
+        return next.map { GameFocusEntry(pid: $0, generation: generation, entered: now) }
+    }
+
+    func accepts(_ entry: GameFocusEntry, frontmost: Int32?, enabled: Bool, now: Date) -> Bool {
+        enabled && entry.generation == generation && pid == entry.pid && frontmost == entry.pid
+            && now.timeIntervalSince(entry.entered) <= 2.5
+    }
+
+    mutating func cancel() { generation += 1; pid = nil }
+}
+
 struct SessionStore {
     let directory: URL
     var file: URL { directory.appendingPathComponent("session.json") }

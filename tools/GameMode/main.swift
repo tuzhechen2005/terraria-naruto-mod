@@ -20,6 +20,13 @@ if CommandLine.arguments.contains("--diagnose") {
     }
     do { print("tModLoader 客户端：\(try scanGame().sorted())") }
     catch { fputs("\(error.localizedDescription)\n", stderr); exit(1) }
+    if let front = NSWorkspace.shared.frontmostApplication {
+        print("前台应用：\(front.localizedName ?? "未知"), pid=\(front.processIdentifier), bundle=\(front.bundleIdentifier ?? "无")")
+    }
+    for pid in (try? scanGame()) ?? [] {
+        let app = NSRunningApplication(processIdentifier: pid)
+        print("游戏应用状态：\(app?.localizedName ?? "未知"), pid=\(pid), active=\(app?.isActive.description ?? "不可识别"), bundle=\(app?.bundleIdentifier ?? "无")")
+    }
     do {
         print("当前输入法：\(try InputSourceService.system.currentID())")
         print("英文键盘：\(try InputSourceService.system.englishID())")
@@ -46,7 +53,8 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var watchdog: Process?
     var operation = 0
     var gameIDs = Set<Int32>()
-    var gameWasFrontmost = false
+    var inputFocus = GameInputFocus()
+    var focusTimer: Timer?
     var inputWarning: String?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -87,8 +95,11 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] _ in self?.tick() }
         NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(workspaceActivated(_:)),
             name: NSWorkspace.didActivateApplicationNotification, object: nil)
+        // A cheap focus poll covers SDL activation without an application notification.
+        focusTimer = Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { [weak self] _ in self?.frontmostChanged() }
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
+        tick()
     }
 
     func text(_ value: String, size: CGFloat = 13, bold: Bool = false) -> NSTextField {
@@ -99,7 +110,7 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func buildWindow() {
-        window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 540, height: 550),
+        window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 540, height: 580),
                           styleMask: [.titled, .closable, .miniaturizable], backing: .buffered, defer: false)
         window.title = "泰拉瑞亚游戏模式"
         window.isReleasedWhenClosed = false
@@ -138,6 +149,9 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         englishCheck = NSButton(checkboxWithTitle: "进入游戏时自动切换英文输入法", target: self, action: #selector(selectionChanged))
         englishCheck.state = (UserDefaults.standard.object(forKey: "automaticEnglish") as? Bool ?? true) ? .on : .off
         stack.addArrangedSubview(englishCheck)
+        let inputHint = text("自动英文独立生效：保持工具开启即可，无需暂停后台。", size: 12)
+        inputHint.textColor = .secondaryLabelColor
+        stack.addArrangedSubview(inputHint)
         let warning = text("暂停期间应用无法操作，下载和联网任务可能超时。请先等 AI 任务完成。暂停减少 CPU 活动，但不会立即释放已占内存。", size: 12)
         warning.textColor = .secondaryLabelColor
         stack.addArrangedSubview(warning)
@@ -173,6 +187,8 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
             UserDefaults.standard.set(check.state == .on, forKey: appChoices[index].bundleID)
         }
         UserDefaults.standard.set(englishCheck.state == .on, forKey: "automaticEnglish")
+        inputFocus.cancel()
+        frontmostChanged()
     }
 
     func setStatus(_ title: String, _ message: String) {
@@ -191,7 +207,7 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
         startButton.isEnabled = idle
         pauseOnlyButton.isEnabled = idle
-        englishCheck.isEnabled = idle
+        englishCheck.isEnabled = phase != "preparing" && phase != "restoring"
         restoreButton.isEnabled = session != nil && phase != "restoring" && phase != "preparing"
     }
 
@@ -244,7 +260,7 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         catch { session = nil; showError("无法保存恢复记录", error.localizedDescription); return }
         operation += 1
         inputWarning = nil
-        gameWasFrontmost = false
+        inputFocus.cancel()
         gameIDs = existingGames
         phase = "preparing"
         updateControls()
@@ -308,7 +324,7 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func tick() {
         updateControls()
-        guard (phase == "starting" || phase == "playing" || phase == "waiting"), !scanBusy else { return }
+        guard !scanBusy else { return }
         scanBusy = true
         let token = operation
         DispatchQueue.global(qos: .utility).async { [weak self] in
@@ -316,8 +332,9 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 self.scanBusy = false
-                guard token == self.operation, self.phase == "starting" || self.phase == "playing" || self.phase == "waiting" else { return }
+                guard token == self.operation else { return }
                 if let result = result { self.gameIDs = result; self.frontmostChanged() }
+                guard self.phase == "starting" || self.phase == "playing" || self.phase == "waiting" else { return }
                 let action = self.watch?.observe(result, now: Date()) ?? .wait
                 switch action {
                 case .playing:
@@ -333,25 +350,42 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     @objc func workspaceActivated(_ notification: Notification) {
-        // Let macOS finish restoring the focused app's remembered input source first.
-        let token = operation
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
-            guard let self = self, token == self.operation else { return }
-            self.frontmostChanged()
-        }
+        frontmostChanged()
+        // SDL's newly launched PID may not yet be in the last process snapshot.
+        tick()
+    }
+
+    var automaticEnglishEnabled: Bool {
+        englishCheck?.state == .on && phase != "preparing" && phase != "restoring" && phase != "recovery"
     }
 
     func frontmostChanged() {
-        guard phase == "playing" || phase == "starting" || phase == "waiting" else { return }
-        let inGame = NSWorkspace.shared.frontmostApplication.map { gameIDs.contains($0.processIdentifier) } ?? false
-        defer { gameWasFrontmost = inGame }
-        guard inGame, !gameWasFrontmost, let change = session?.inputSwitch else { return }
-        // Apply on entering the game, allowing Chinese chat input during the same visit.
-        do { try InputSourceService.system.select(change.englishID); inputWarning = nil }
-        catch {
-            inputWarning = error.localizedDescription
-            setStatus("后台已暂停 · 请手动切换英文", error.localizedDescription)
+        let frontmost = NSWorkspace.shared.frontmostApplication?.processIdentifier
+        guard let entry = inputFocus.observe(frontmost: frontmost, games: gameIDs,
+                                             enabled: automaticEnglishEnabled, now: Date()) else { return }
+        let englishID: String
+        do { englishID = try session?.inputSwitch?.englishID ?? InputSourceService.system.englishID() }
+        catch { reportInputError(error); return }
+        for delay in GameInputFocus.checkDelays {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                guard let self = self,
+                      self.inputFocus.accepts(entry, frontmost: NSWorkspace.shared.frontmostApplication?.processIdentifier,
+                                              enabled: self.automaticEnglishEnabled, now: Date()) else { return }
+                // A previous successful selection must not suppress later settling checks.
+                do {
+                    try InputSourceService.system.ensureEnglish(englishID)
+                    self.inputWarning = nil
+                    if self.phase == "idle" {
+                        self.setStatus("游戏已切换英文输入法", "自动英文正在生效。需要暂停后台时，再选择下面的入口。")
+                    }
+                } catch { self.reportInputError(error) }
+            }
         }
+    }
+
+    func reportInputError(_ error: Error) {
+        inputWarning = error.localizedDescription
+        setStatus("自动英文切换未完成", error.localizedDescription)
     }
 
     @objc func restoreClicked() {
@@ -372,7 +406,7 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         phase = "restoring"
         watch = nil
         gameIDs = []
-        gameWasFrontmost = false
+        inputFocus.cancel()
         setStatus("正在恢复运行", reason)
         updateControls()
         DispatchQueue.global(qos: .utility).async { [weak self] in

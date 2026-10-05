@@ -91,6 +91,49 @@ check(!resumeSession(inputSession, store: store, input: fakeInput).isEmpty, "inp
 check(try store.load()?.inputSwitch == change, "failed input restoration remains recoverable")
 failSelection = false
 check(resumeSession(try store.load()!, store: store, input: fakeInput).isEmpty, "input restoration retry succeeds")
+// Regression: English outside, Chinese restored by macOS after game activation.
+var focus = GameInputFocus()
+source = abc.id
+let writesBeforeFocus = selectedSources.count
+let entry = focus.observe(frontmost: 42, games: [42], enabled: true, now: now)!
+check(entry.pid == 42, "auto English works without a pause session")
+check(focus.observe(frontmost: 42, games: [42], enabled: true, now: now.addingTimeInterval(0.1)) == nil,
+      "polling before delayed switch does not schedule another entry")
+check(focus.accepts(entry, frontmost: 42, enabled: true, now: now.addingTimeInterval(0.25)),
+      "early polling does not swallow delayed focus check")
+try fakeInput.ensureEnglish(abc.id)
+check(selectedSources.count == writesBeforeFocus, "already English source avoids unnecessary selection")
+source = "Chinese" // macOS/game changes it after the first successful check.
+check(focus.accepts(entry, frontmost: 42, enabled: true, now: now.addingTimeInterval(0.8)),
+      "successful first check does not suppress second settling check")
+try fakeInput.ensureEnglish(abc.id)
+check(source == abc.id && selectedSources.count == writesBeforeFocus + 1,
+      "English outside to Chinese inside is corrected")
+source = "Chinese" // Another delayed focus restoration.
+check(focus.accepts(entry, frontmost: 42, enabled: true, now: now.addingTimeInterval(1.5)),
+      "final settling check remains valid")
+try fakeInput.ensureEnglish(abc.id)
+check(source == abc.id, "late focus restoration is corrected")
+source = "Chinese" // Manual Chinese chat after settling must remain usable.
+check(!focus.accepts(entry, frontmost: 42, enabled: true, now: now.addingTimeInterval(3)),
+      "stalled callbacks cannot overwrite later Chinese chat")
+check(focus.observe(frontmost: 42, games: [42], enabled: true, now: now.addingTimeInterval(5)) == nil && source == "Chinese",
+      "steady gameplay does not enforce English continuously")
+check(!focus.accepts(entry, frontmost: 7, enabled: true, now: now.addingTimeInterval(1)),
+      "callback cannot change another application's input source")
+_ = focus.observe(frontmost: 7, games: [42], enabled: true, now: now.addingTimeInterval(0.4))
+let reentry = focus.observe(frontmost: 42, games: [42], enabled: true, now: now.addingTimeInterval(0.5))!
+check(!focus.accepts(entry, frontmost: 42, enabled: true, now: now.addingTimeInterval(0.8)),
+      "rapid reentry cancels previous callbacks")
+check(focus.accepts(reentry, frontmost: 42, enabled: true, now: now.addingTimeInterval(0.8)),
+      "rapid reentry applies its own switch")
+check(!focus.accepts(reentry, frontmost: 42, enabled: false, now: now.addingTimeInterval(0.8)),
+      "disabling automatic English cancels input changes")
+focus.cancel()
+check(!focus.accepts(reentry, frontmost: 42, enabled: true, now: now.addingTimeInterval(0.8)),
+      "session teardown cancels pending focus checks")
+check(focus.observe(frontmost: 99, games: [42], enabled: true, now: now) == nil,
+      "non-game focus never schedules a switch")
 let legacy = "{\"records\":[],\"created\":0}"
 try Data(legacy.utf8).write(to: store.file)
 check(try store.load()?.inputSwitch == nil, "legacy journal without input source is compatible")
