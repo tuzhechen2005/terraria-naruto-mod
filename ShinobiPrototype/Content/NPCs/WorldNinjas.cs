@@ -103,7 +103,7 @@ public abstract class WorldNinja : ModNPC
 
     protected void Run(Player target, float dx, float keepAway = 0f)
     {
-        NPC.direction = NPC.spriteDirection = dx >= 0f ? 1 : -1;
+        NPC.direction = dx >= 0f ? 1 : -1;
         float want = System.Math.Abs(dx) > keepAway ? NPC.direction * Speed : 0f;
         NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, want, 0.08f);
         if (Main.netMode != NetmodeID.MultiplayerClient && Cooldown <= 0f &&
@@ -118,9 +118,10 @@ public abstract class WorldNinja : ModNPC
         NPC.netUpdate = true;
     }
 
+    // The art faces right; vanilla flips a sprite when spriteDirection is 1, so it is set against the direction.
     public override void FindFrame(int frameHeight)
     {
-        NPC.spriteDirection = NPC.direction;
+        NPC.spriteDirection = -NPC.direction;
         int frame = State switch
         {
             Windup => FrameWind,
@@ -211,7 +212,7 @@ public sealed class RogueGenin : WorldNinja
                 }
                 return;
             case Flee:
-                NPC.direction = NPC.spriteDirection = dx >= 0f ? -1 : 1;
+                NPC.direction = dx >= 0f ? -1 : 1;
                 NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * Speed * 1.3f, 0.1f);
                 if (Timer >= WorldNinjaRules.FleeTicks)
                     Enter(Chase);
