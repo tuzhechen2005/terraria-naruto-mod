@@ -1,6 +1,6 @@
 # 素材请求：npc-hires-sample-b6
 
-- 状态：requested
+- 状态：通过（删掉 1 个悬空像素后），见 art/deliveries/npc-hires-accepted/
 - 提出者及提交号：Claude Code（夜间 NPC 外貌任务）。**御手洗红豆第四次**：b3、b4、b5 都在脸上失败（头发遮眼 / 眼睛是闭眼线 / 脸颊污块 / 方脸偏男性 / 坏笑看不出）。这次换方法。
 - **方法：用已通过的白的头作底子**——`art/deliveries/npc-hires-accepted/HakuForest_Idle.png`（必须作为图像参考）的**脸型、眼睛、鼻子的像素直接拿来**（它是清秀柔和的女性化脸，眼睛大而清楚），在上面改成红豆：
   1. 头发：白的黑色长直发 → **紫黑色**（用 `art/deliveries/npc-hires-sample-b5/Anko_Idle.png` 的紫黑色调色板），前额两三缕短刘海不遮眼，**脑后一束向上翘的短马尾**（照 b5 的马尾形状），去掉披到背上的长发；
