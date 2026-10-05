@@ -1,6 +1,6 @@
 # 素材请求：npc-hires-sample-b4
 
-- 状态：requested
+- 状态：疾风通过；红豆见 b5
 - 提出者及提交号：Claude Code（夜间 NPC 外貌任务，逐像素验收 `npc-hires-sample-b3`：三代、伊比喜通过）。这一版只做红豆和疾风。
 - **画风基准：已通过的七张** `art/deliveries/npc-hires-accepted/`（必须作为图像参考），规格同前：1 像素 = 1 屏幕像素，80×80，脚底 y=76，身高 60～62，大头比例，四分之三侧身朝右，每人不超过 20 色，`python3 scripts/pixel_noise.py` 孤立像素低于 3%（贴输出）。
 - 从各自 b3 版出发修改（`art/deliveries/npc-hires-sample-b3/Anko_Idle.png`、`Hayate_Idle.png`，必须作为图像参考）：
