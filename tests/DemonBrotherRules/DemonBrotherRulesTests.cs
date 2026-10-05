@@ -12,7 +12,9 @@ Check(SpawnAllowed(true, true, false, false, false, true) && SpawnAllowed(true, 
     "They ambush in rain or in the sea mist");
 Check(!SpawnAllowed(false, true, true, false, false, true), "Not before the player has found a Mist insignia");
 Check(!SpawnAllowed(true, false, false, false, false, true), "Not in clear weather away from the mist");
-Check(!SpawnAllowed(true, true, true, true, false, true), "Not once Wave Country is done");
+Check(!SpawnAllowed(true, true, true, true, false, true) && SpawnAllowed(true, true, false, true, false, true, onBeach: true) &&
+      !SpawnAllowed(true, false, true, true, false, true, onBeach: true),
+    "Once Wave Country is done, only in the rain on the beach");
 Check(!SpawnAllowed(true, true, true, false, true, true), "Only one pair at a time");
 Check(!SpawnAllowed(true, true, true, false, false, false), "Only on the surface");
 

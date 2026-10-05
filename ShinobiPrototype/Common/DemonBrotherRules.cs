@@ -27,9 +27,11 @@ public static class DemonBrotherRules
     public const float ChainMaxLength = 40 * 16f;
     public const float ChainMinLength = 3 * 16f;
 
+    // After Wave Country they still roam the coast in the rain (specs/空档衔接与火影小兵.spec.md): their chain gauntlet
+    // is a tier-one weapon, so they must be met again.
     public static bool SpawnAllowed(bool foundInsignia, bool raining, bool inSeaMist, bool waveComplete,
-        bool brothersAlive, bool onSurface) =>
-        foundInsignia && (raining || inSeaMist) && !waveComplete && !brothersAlive && onSurface;
+        bool brothersAlive, bool onSurface, bool onBeach = false) =>
+        foundInsignia && !brothersAlive && onSurface && (waveComplete ? raining && onBeach : raining || inSeaMist);
 
     // Until they are first beaten the story waits on them, so that first ambush is certain (user, 2026-09-30): with an
     // insignia found, walking into the bridge's sea mist on the surface brings them after a short warning; if the

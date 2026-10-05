@@ -215,6 +215,35 @@ public sealed class M0Command : ModCommand
             return;
         }
 
+        // The world's ninja enemies: /m0 ninja ronin|rogue spawns one a little way off (single player).
+        if (args.Length == 2 && args[0].Equals("ninja", StringComparison.OrdinalIgnoreCase))
+        {
+            int type = args[1].ToLowerInvariant() switch
+            {
+                "ronin" => ModContent.NPCType<Content.NPCs.Ronin>(),
+                "rogue" => ModContent.NPCType<Content.NPCs.RogueGenin>(),
+                _ => 0,
+            };
+            if (type == 0 || Main.netMode != NetmodeID.SinglePlayer)
+            {
+                caller.Reply(Loc.Get("M0.NinjaUsage"), Color.OrangeRed);
+                return;
+            }
+            NPC.NewNPC(player.GetSource_Misc("ShinobiM0"), (int)player.Center.X + player.direction * 20 * 16, (int)player.Bottom.Y, type);
+            caller.Reply(Loc.Get("M0.NinjaSpawned", Lang.GetNPCNameValue(type)), Color.LightGreen);
+            return;
+        }
+
+        // Kakashi's lessons (gap A): /m0 lesson pakkun|fireball|climbing|done.
+        if (args.Length == 2 && args[0].Equals("lesson", StringComparison.OrdinalIgnoreCase) &&
+            Enum.TryParse(args[1], true, out KakashiLesson lesson))
+        {
+            player.GetModPlayer<KakashiLessonPlayer>().SetForTesting(lesson);
+            StoryWorld.TazunaConfessed = true;
+            caller.Reply(Loc.Get("M0.LessonSet", lesson), Color.LightGreen);
+            return;
+        }
+
         // Checking the damage table in play (specs/敌方伤害标准.spec.md): print every hit taken; switch the logs off.
         if (args.Length is 1 or 2 && args[0].Equals("dmg", StringComparison.OrdinalIgnoreCase))
         {

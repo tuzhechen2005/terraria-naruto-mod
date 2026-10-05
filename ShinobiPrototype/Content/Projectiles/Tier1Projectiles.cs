@@ -268,3 +268,26 @@ public sealed class PakkunMinion : ModProjectile
         return false;
     }
 }
+
+// A kunai thrown by a rogue genin: flies straight, a little gravity late in its flight.
+public sealed class HostileKunai : ModProjectile
+{
+    public override string Texture => "ShinobiPrototype/Content/Items/TrainingKunai";
+
+    public override void SetDefaults()
+    {
+        Projectile.width = 12;
+        Projectile.height = 12;
+        Projectile.hostile = true;
+        Projectile.penetrate = 1;
+        Projectile.timeLeft = 120;
+        Projectile.aiStyle = -1;
+    }
+
+    public override void AI()
+    {
+        if (++Projectile.ai[0] > 30f)
+            Projectile.velocity.Y += 0.15f;
+        Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver4;   // the kunai art lies diagonally, like KunaiThrown
+    }
+}

@@ -44,6 +44,24 @@ public static class EnemyDamageRules
         public const int Chain = 22;
     }
 
+    // The world's first ninja enemies (specs/空档衔接与火影小兵.spec.md, tier one): met before the Eye of Cthulhu.
+    public static class Ronin
+    {
+        public const int Baseline = 100;
+        public const int Contact = 14;
+        public const int Slash = 15;
+        public const int SlashWindupTicks = 20;
+    }
+
+    public static class RogueGenin
+    {
+        public const int Baseline = 100;
+        public const int Contact = 10;
+        public const int Kunai = 12;
+        public const int Stab = 15;
+        public const int StabWindupTicks = InstantMeleeTicks;
+    }
+
     public static class WaterClone
     {
         public const int Baseline = 200;

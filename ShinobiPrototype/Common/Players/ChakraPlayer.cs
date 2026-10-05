@@ -63,6 +63,16 @@ public sealed class ChakraPlayer : ModPlayer
         return true;
     }
 
+    // A steady cost (climbing a wall), a little each tick; false once there is not enough.
+    public bool TryDrain(float amount)
+    {
+        if (chakra < amount)
+            return false;
+        chakra -= amount;
+        recoveryDelay = ChakraRules.RegenDelayTicks;
+        return true;
+    }
+
     public void Restore(int amount) => chakra = System.Math.Clamp(chakra + amount, 0f, MaxChakra);
 
     public bool TryUseCrystal()

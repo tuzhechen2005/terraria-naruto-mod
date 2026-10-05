@@ -1,56 +1,97 @@
 Items: {
 	TrainingNinjato: {
-		DisplayName: "修行忍刀"
-		Tooltip: "三段连斩，第三刀放出一道刀光\n潜伏中，第三刀的刀光威力加倍、更大"
+		DisplayName: 修行忍刀
+		Tooltip:
+			'''
+			三段连斩，第三刀放出一道刀光
+			潜伏中，第三刀的刀光威力加倍、更大
+			'''
 	}
+
 	DemonChainGauntlet: {
-		DisplayName: "鬼之兄弟的锁链手甲"
-		Tooltip: "甩出带链的爪头，钩住敌人拉近并使其中毒\n钩住墙面时，把你拉过去"
+		DisplayName: 鬼之兄弟的锁链手甲
+		Tooltip:
+			'''
+			甩出带链的爪头，钩住敌人拉近并使其中毒
+			钩住墙面时，把你拉过去
+			'''
 	}
+
 	PhoenixFlowerJutsu: {
-		DisplayName: "火遁·凤仙火之术"
-		Tooltip: "喷出一串散射的小火球\n有几率点燃敌人"
+		DisplayName: 火遁·凤仙火之术
+		Tooltip:
+			'''
+			喷出一串散射的小火球
+			有几率点燃敌人
+			'''
 	}
+
 	NinkenScroll: {
-		DisplayName: "通灵·忍犬"
-		Tooltip: "召唤帕克为你作战\n被帕克咬过的敌人留下嗅迹：召唤物对它的伤害 +3"
+		DisplayName: 通灵·忍犬
+		Tooltip:
+			'''
+			召唤帕克为你作战
+			被帕克咬过的敌人留下嗅迹：召唤物对它的伤害 +3
+			'''
 	}
+
 	RoughCloth: {
-		DisplayName: "粗布"
-		Tooltip: "卡多的打手身上的粗麻布"
+		DisplayName: 粗布
+		Tooltip: 卡多的打手身上的粗麻布
 	}
+
 	RogueHeadband: {
-		DisplayName: "叛忍护额"
-		Tooltip: "额片上一道划痕：离开了村子的忍者"
+		DisplayName: 叛忍护额
+		Tooltip: 额片上一道划痕：离开了村子的忍者
 	}
+
 	ToolBlueprint: {
-		DisplayName: "忍具图纸"
-		Tooltip: "在忍具台制作忍具时消耗"
+		DisplayName: 忍具图纸
+		Tooltip: 在忍具台制作忍具时消耗
 	}
+
 	MissionToken: {
-		DisplayName: "任务令牌"
-		Tooltip: "完成任务的凭证，可以在伊鲁卡那里兑换"
+		DisplayName: 任务令牌
+		Tooltip: 完成任务的凭证，可以在伊鲁卡那里兑换
 	}
+
 	KonohaHeadband: {
-		DisplayName: "木叶护额"
-		Tooltip: "全伤害 +4%\n查克拉上限 +20"
+		DisplayName: 木叶护额
+		Tooltip:
+			'''
+			全伤害 +4%
+			查克拉上限 +20
+			'''
 	}
+
 	ToolPouch: {
-		DisplayName: "忍具包"
-		Tooltip: "忍具的潜伏值攒得快 25%\n忍具暴击率 +4%"
+		DisplayName: 忍具包
+		Tooltip:
+			'''
+			忍具的潜伏值攒得快 25%
+			忍具暴击率 +4%
+			'''
 	}
+
 	PillPouch: {
-		DisplayName: "兵粮丸袋"
-		Tooltip: "自然恢复查克拉 +30%\n兵粮丸的间隔缩短到 6 秒"
+		DisplayName: 兵粮丸袋
+		Tooltip:
+			'''
+			自然恢复查克拉 +30%
+			兵粮丸的间隔缩短到 6 秒
+			'''
 	}
+
 	TrainingPost: {
-		DisplayName: "修行木桩"
-		Tooltip: "替身木头 +1"
+		DisplayName: 修行木桩
+		Tooltip: 替身木头 +1
 	}
+
 	ToolWorkbench: {
-		DisplayName: "忍具台"
-		Tooltip: "用来制作忍具、忍者装备"
+		DisplayName: 忍具台
+		Tooltip: 用来制作忍具、忍者装备
 	}
+
 	TrainingKunai: {
 		DisplayName: 训练苦无
 		Tooltip:
@@ -413,6 +454,16 @@ Items: {
 }
 
 NPCs: {
+	Ronin: {
+		DisplayName: 卡多的浪人
+		Bestiary: 卡多雇来的打手，不是忍者。夜里在木叶以外的地方游荡，拿一把旧刀砍人。身上的粗布能做忍者装备。
+	}
+
+	RogueGenin: {
+		DisplayName: 叛忍·下忍
+		Bestiary: 离开了村子的年轻忍者，护额上划了一道。会扔苦无，挨了重击会用替身术换成木头——潜伏投掷能破它的替身。打不过就丢烟雾弹逃跑。
+	}
+
 	TazunaBridge: {
 		DisplayName: 造桥工 达兹纳
 
@@ -560,10 +611,12 @@ NPCs: {
 }
 
 Projectiles: {
-	NinjatoSlashArc.DisplayName: "刀光"
-	GauntletClaw.DisplayName: "锁链爪"
-	PhoenixFlowerFire.DisplayName: "凤仙火"
-	PakkunMinion.DisplayName: "帕克"
+	HostileKunai.DisplayName: 苦无
+	LostPakkun.DisplayName: 走失的帕克
+	NinjatoSlashArc.DisplayName: 刀光
+	GauntletClaw.DisplayName: 锁链爪
+	PhoenixFlowerFire.DisplayName: 凤仙火
+	PakkunMinion.DisplayName: 帕克
 	ShurikenThrown.DisplayName: 手里剑
 	ShadowShuriken.DisplayName: 影手里剑
 	PaperBombThrown.DisplayName: 起爆符
@@ -654,13 +707,15 @@ Dialogue: {
 
 Buffs: {
 	PakkunBuff: {
-		DisplayName: "帕克"
-		Description: "帕克和你一起战斗"
+		DisplayName: 帕克
+		Description: 帕克和你一起战斗
 	}
+
 	PakkunScent: {
-		DisplayName: "嗅迹"
-		Description: "帕克记住了这股气味"
+		DisplayName: 嗅迹
+		Description: 帕克记住了这股气味
 	}
+
 	IceMirrorBuff: {
 		DisplayName: 魔镜冰晶
 		Description: 冰镜会为你作战
@@ -1077,6 +1132,7 @@ Text: {
 	}
 
 	Kakashi: {
+		ButtonLesson: 修行：{0}
 		Greeting1: 哟。
 		Greeting2: ……（合上手里的橙色小书）哟。
 		Greeting3: 抱歉来晚了，我在人生的道路上迷路了。
@@ -1113,7 +1169,10 @@ Text: {
 	}
 
 	M0: {
-		Usage: /m0、/m0 items、/m0 seals、/m0 tools、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 orochimaru、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名]、/m0 dmg [on|off]、/m0 logs off|on 或 /m0 god [on|off]
+		NinjaUsage: 用法：/m0 ninja ronin|rogue（只在单人模式可用）
+		NinjaSpawned: 已在前方约 20 格召出：{0}
+		LessonSet: 卡卡西的下一门修行课已设为 {0}（未开始；达兹纳坦白的标记也已打开）。找卡卡西点“修行”。
+		Usage: /m0、/m0 items、/m0 seals、/m0 tools、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 orochimaru、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名]、/m0 ninja ronin|rogue、/m0 lesson pakkun|fireball|climbing|done、/m0 dmg [on|off]、/m0 logs off|on 或 /m0 god [on|off]
 		Description: 领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌
 		ItemsGiven: 已发放本模组全部 {0} 种物品（含开发者之翼）。
 		ToolsGiven: 已发放手里剑和 99 张起爆符。拿着忍具约 12 秒（忍具系装备会加快），潜伏值满后下一投是潜伏投掷。
@@ -1431,7 +1490,7 @@ Text: {
 	}
 
 	Place: {
-		ToolWorkbench: "忍具台"
+		ToolWorkbench: 忍具台
 		AUnGate: 阿吽大门
 		WestWall: 西墙
 		EastWall: 东墙
@@ -1843,5 +1902,34 @@ Text: {
 		GiveUp: 放弃
 		GaveUpNote: 你在第十题放弃了。明天天亮后可以再来重考。
 		Leave: 离开考场
+	}
+
+	Lesson: {
+		AllDone: 我能教的就这些了。剩下的，靠你自己去打。……嘛，有空也可以来练练替身术。
+
+		Pakkun: {
+			Name: 找回帕克
+			Start: 通灵术嘛……先得有一只肯跟你签约的通灵兽。我那只叫帕克，鼻子灵得很，就是脾气倔——刚才闻到什么味道，一溜烟跑没影了。你去把他找回来，他认了你，就肯借你用。
+			Remind: 帕克？还没找到啊。他跑不远的……大概。顺着地表找找。
+			Direction: 卡卡西：帕克的气味往{0}边去了，大概一两百格。
+			Done: 帕克：“哟，是卡卡西让你来的？……行吧，契约我签了。需要鼻子的时候就叫我。”（学会了通灵·忍犬）
+		}
+
+		Fireball: {
+			Name: 豪火球
+			Start: 宇智波一族的成人礼就是这一招——当然，你不是宇智波。找一片湖，站在岸边，按 4 印的键【{0}】对着水面吐。火球要大到盖住水面才算数。
+			Remind: 湖边，【{0}】，对着水面。……别对着我吐。
+			Try1: 噗……只冒了一点烟
+			Try2: 大了点，还不够！
+			Try3: 火遁·豪火球之术！
+			Done: 卡卡西：……哦，还真吐出来了。卷轴给你，放进 4 印的印位里。
+		}
+
+		Climbing: {
+			Name: 爬树
+			Start: 这一课最无聊，也最有用：把查克拉聚在脚底，贴着墙往上跑。找一面高墙——木叶的城墙就行——跳上去贴住，按住上或者朝墙的方向，一口气跑上 15 格。查克拉不够会滑下来，跳一下能蹬墙。
+			Remind: 城墙还在那儿。贴上去，往上跑 15 格。……查克拉控制不好就会滑下来，多试几次。
+			Done: 卡卡西：嗯，及格。以后贴着墙就能往上跑了——可别拿去翻人家的院墙。（学会了查克拉贴墙）
+		}
 	}
 }

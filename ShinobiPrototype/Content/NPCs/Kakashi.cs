@@ -232,7 +232,7 @@ public sealed class Kakashi : ModNPC
     public override void SetChatButtons(ref string button, ref string button2)
     {
         button = Loc.Get("Kakashi.ButtonTips");
-        button2 = RideButton(Main.LocalPlayer) ?? Loc.Get("Kakashi.ButtonDrill");
+        button2 = RideButton(Main.LocalPlayer) ?? LessonButton(Main.LocalPlayer) ?? Loc.Get("Kakashi.ButtonDrill");
     }
 
     // From the recommendation until the written test is passed he takes the player where the test is, in one Body
@@ -246,6 +246,15 @@ public sealed class Kakashi : ModNPC
     }
 
     private static bool OffersRideHome(Player player) => RideButton(player) != null;
+
+    // His three lessons (KakashiLessonPlayer), once Tazuna has come clean; the substitution drill once they are done.
+    private static string LessonButton(Player player)
+    {
+        KakashiLessonPlayer lessons = player.GetModPlayer<KakashiLessonPlayer>();
+        return KakashiLessonPlayer.Open && lessons.Next != KakashiLesson.Done
+            ? Loc.Get("Kakashi.ButtonLesson", Loc.Get($"Lesson.{lessons.Next}.Name"))
+            : null;
+    }
 
     private static bool FarFromVillage(Player player, KonohaSite site) =>
         System.Math.Abs(player.Center.X / 16f - site.CenterX) > KonohaDesign.HalfWidth + 60;
@@ -288,6 +297,8 @@ public sealed class Kakashi : ModNPC
 
         if (OffersRideHome(Main.LocalPlayer))
             RideHome();
+        else if (LessonButton(Main.LocalPlayer) != null)
+            Main.npcChatText = Main.LocalPlayer.GetModPlayer<KakashiLessonPlayer>().Ask();
         else
             StartPractice();
     }

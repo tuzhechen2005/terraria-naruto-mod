@@ -57,6 +57,9 @@ public sealed class SealPlayer : ModPlayer
         foreach (int seals in new[] { 2, 4, 6 })
             if (ShinobiKeybinds.SealKey(seals)?.JustPressed == true)
             {
+                // Kakashi's fireball lesson at a lake takes the 4-seal key.
+                if (seals == 4 && Player.GetModPlayer<KakashiLessonPlayer>().TryFireballPractice())
+                    return;
                 Begin(seals);
                 return;
             }

@@ -33,3 +33,10 @@ Check(new[] { Brothers.Baseline, WaterClone.Baseline, Zabuza.Baseline, Genin.Bas
     "Baselines follow the story gates: 100, 200 for Zabuza, 300 for the forest, 400 for the finals");
 Check(ExamBossRules.OrochimaruDamage(Orochimaru.Kusanagi, false) < Orochimaru.Kusanagi,
     "Orochimaru still eases his damage for a player not yet strong enough");
+
+// The world's ninja enemies (specs/空档衔接与火影小兵.spec.md).
+Check(WorldNinjaRules.Substitutes(9, 90, false) && !WorldNinjaRules.Substitutes(8, 90, false),
+    "A rogue genin substitutes a hit worth a tenth of its life");
+Check(!WorldNinjaRules.Substitutes(30, 90, false) && !WorldNinjaRules.Substitutes(20, 90, true),
+    "A hit of a third or more (a stealth throw) breaks through, and it substitutes only once");
+Check(WorldNinjaRules.RoninNightWeight > WorldNinjaRules.RogueGeninWeight, "Ronin are common at night, rogue genin rare");

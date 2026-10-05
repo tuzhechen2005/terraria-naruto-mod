@@ -1,56 +1,97 @@
 Items: {
 	TrainingNinjato: {
-		DisplayName: "Training Ninjato"
-		Tooltip: "A three-swing string; the third swing sends a slash arc\nIn stealth, the arc is twice as strong and larger"
+		DisplayName: Training Ninjato
+		Tooltip:
+			'''
+			A three-swing string; the third swing sends a slash arc
+			In stealth, the arc is twice as strong and larger
+			'''
 	}
+
 	DemonChainGauntlet: {
-		DisplayName: "Demon Brothers' Chain Gauntlet"
-		Tooltip: "Flings a clawed head on a chain that hooks an enemy, drags it closer and poisons it\nHook a wall to pull yourself to it"
+		DisplayName: Demon Brothers' Chain Gauntlet
+		Tooltip:
+			'''
+			Flings a clawed head on a chain that hooks an enemy, drags it closer and poisons it
+			Hook a wall to pull yourself to it
+			'''
 	}
+
 	PhoenixFlowerJutsu: {
-		DisplayName: "Fire Style: Phoenix Sage Fire"
-		Tooltip: "Spits a spread of small fireballs\nMay set enemies on fire"
+		DisplayName: Fire Style: Phoenix Sage Fire
+		Tooltip:
+			'''
+			Spits a spread of small fireballs
+			May set enemies on fire
+			'''
 	}
+
 	NinkenScroll: {
-		DisplayName: "Summoning: Ninken"
-		Tooltip: "Summons Pakkun to fight for you\nAn enemy he bites carries his scent: minions deal 3 more damage to it"
+		DisplayName: Summoning: Ninken
+		Tooltip:
+			'''
+			Summons Pakkun to fight for you
+			An enemy he bites carries his scent: minions deal 3 more damage to it
+			'''
 	}
+
 	RoughCloth: {
-		DisplayName: "Rough Cloth"
-		Tooltip: "Coarse hemp off Gato's thugs"
+		DisplayName: Rough Cloth
+		Tooltip: Coarse hemp off Gato's thugs
 	}
+
 	RogueHeadband: {
-		DisplayName: "Rogue Headband"
-		Tooltip: "A scratch across the plate: a ninja who left their village"
+		DisplayName: Rogue Headband
+		Tooltip: A scratch across the plate: a ninja who left their village
 	}
+
 	ToolBlueprint: {
-		DisplayName: "Ninja Tool Blueprint"
-		Tooltip: "Used up when making gear at the tool workbench"
+		DisplayName: Ninja Tool Blueprint
+		Tooltip: Used up when making gear at the tool workbench
 	}
+
 	MissionToken: {
-		DisplayName: "Mission Token"
-		Tooltip: "Proof of a mission done; trade them with Iruka"
+		DisplayName: Mission Token
+		Tooltip: Proof of a mission done; trade them with Iruka
 	}
+
 	KonohaHeadband: {
-		DisplayName: "Leaf Headband"
-		Tooltip: "4% increased damage\n+20 max chakra"
+		DisplayName: Leaf Headband
+		Tooltip:
+			'''
+			4% increased damage
+			+20 max chakra
+			'''
 	}
+
 	ToolPouch: {
-		DisplayName: "Ninja Tool Pouch"
-		Tooltip: "Ninja tools build stealth 25% faster\n4% increased ninja tool critical strike chance"
+		DisplayName: Ninja Tool Pouch
+		Tooltip:
+			'''
+			Ninja tools build stealth 25% faster
+			4% increased ninja tool critical strike chance
+			'''
 	}
+
 	PillPouch: {
-		DisplayName: "Soldier Pill Pouch"
-		Tooltip: "30% faster natural chakra recovery\nSoldier pills can be taken every 6 seconds"
+		DisplayName: Soldier Pill Pouch
+		Tooltip:
+			'''
+			30% faster natural chakra recovery
+			Soldier pills can be taken every 6 seconds
+			'''
 	}
+
 	TrainingPost: {
-		DisplayName: "Training Post"
-		Tooltip: "+1 substitution log"
+		DisplayName: Training Post
+		Tooltip: +1 substitution log
 	}
+
 	ToolWorkbench: {
-		DisplayName: "Tool Workbench"
-		Tooltip: "Used to make ninja tools and gear"
+		DisplayName: Tool Workbench
+		Tooltip: Used to make ninja tools and gear
 	}
+
 	TrainingKunai: {
 		DisplayName: Training Kunai
 		Tooltip:
@@ -418,6 +459,16 @@ Items: {
 }
 
 NPCs: {
+	Ronin: {
+		DisplayName: Gato's Ronin
+		Bestiary: Hired muscle of Gato's, no ninja. Roams outside the Leaf at night and cuts with an old sword. Its rough cloth makes ninja gear.
+	}
+
+	RogueGenin: {
+		DisplayName: Rogue Genin
+		Bestiary: A young ninja who left their village, a scratch across the headband. Throws kunai and swaps a solid hit for a log with the Substitution Jutsu; a stealth throw breaks through. Losing, it drops a smoke bomb and runs.
+	}
+
 	TazunaBridge: {
 		DisplayName: Tazuna the Bridge Builder
 
@@ -565,10 +616,12 @@ NPCs: {
 }
 
 Projectiles: {
-	NinjatoSlashArc.DisplayName: "Slash Arc"
-	GauntletClaw.DisplayName: "Chain Claw"
-	PhoenixFlowerFire.DisplayName: "Phoenix Sage Fire"
-	PakkunMinion.DisplayName: "Pakkun"
+	HostileKunai.DisplayName: Kunai
+	LostPakkun.DisplayName: Lost Pakkun
+	NinjatoSlashArc.DisplayName: Slash Arc
+	GauntletClaw.DisplayName: Chain Claw
+	PhoenixFlowerFire.DisplayName: Phoenix Sage Fire
+	PakkunMinion.DisplayName: Pakkun
 	ShurikenThrown.DisplayName: Shuriken
 	ShadowShuriken.DisplayName: Shadow Shuriken
 	PaperBombThrown.DisplayName: Paper Bomb
@@ -659,13 +712,15 @@ Dialogue: {
 
 Buffs: {
 	PakkunBuff: {
-		DisplayName: "Pakkun"
-		Description: "Pakkun fights beside you"
+		DisplayName: Pakkun
+		Description: Pakkun fights beside you
 	}
+
 	PakkunScent: {
-		DisplayName: "Pakkun's Scent"
-		Description: "Pakkun has this scent"
+		DisplayName: Pakkun's Scent
+		Description: Pakkun has this scent
 	}
+
 	IceMirrorBuff: {
 		DisplayName: Demonic Ice Mirrors
 		Description: The ice mirror fights for you
@@ -1083,6 +1138,7 @@ Text: {
 	}
 
 	Kakashi: {
+		ButtonLesson: Lesson: {0}
 		Greeting1: Yo.
 		Greeting2: ...(He shuts the little orange book.) Yo.
 		Greeting3: Sorry I'm late. I got lost on the road of life.
@@ -1119,7 +1175,10 @@ Text: {
 	}
 
 	M0: {
-		Usage: /m0, /m0 items, /m0 seals, /m0 tools, /m0 time <day|noon|night|midnight|hh:mm>, /m0 bridge, /m0 preview, /m0 sighting, /m0 senbon, /m0 mist, /m0 brothers, /m0 forest, /m0 squad, /m0 orochimaru, /m0 lake, /m0 story <1-5>, /m0 exam [stage|gate|tower|stadium|academy|hokage|tree|rain|rebuild], /m0 epilogue zabuza|haku [distance], /m0 cheer [boss name], /m0 dmg [on|off], /m0 logs off|on or /m0 god [on|off]
+		NinjaUsage: Usage: /m0 ninja ronin|rogue (single player only)
+		NinjaSpawned: Spawned about 20 tiles ahead: {0}
+		LessonSet: Kakashi's next lesson set to {0} (not started; Tazuna's confession is marked too). Ask Kakashi for the lesson.
+		Usage: /m0, /m0 items, /m0 seals, /m0 tools, /m0 time <day|noon|night|midnight|hh:mm>, /m0 bridge, /m0 preview, /m0 sighting, /m0 senbon, /m0 mist, /m0 brothers, /m0 forest, /m0 squad, /m0 orochimaru, /m0 lake, /m0 story <1-5>, /m0 exam [stage|gate|tower|stadium|academy|hokage|tree|rain|rebuild], /m0 epilogue zabuza|haku [distance], /m0 cheer [boss name], /m0 ninja ronin|rogue, /m0 lesson pakkun|fireball|climbing|done, /m0 dmg [on|off], /m0 logs off|on or /m0 god [on|off]
 		Description: Get the M0 test items, every item in the mod (developer wings included), or switch a temporary single-player god mode
 		ItemsGiven: Gave all {0} items of the mod (developer wings included).
 		ToolsGiven: Gave a shuriken and 99 paper bombs. Hold a ninja tool for about 12 seconds (quicker with ninja-tool gear); with the meter full, the next throw is a stealth throw.
@@ -1437,7 +1496,7 @@ Text: {
 	}
 
 	Place: {
-		ToolWorkbench: "Tool Workbench"
+		ToolWorkbench: Tool Workbench
 		AUnGate: A-Un Gate
 		WestWall: West Wall
 		EastWall: East Wall
@@ -1849,5 +1908,34 @@ Text: {
 		GiveUp: Give up
 		GaveUpNote: You gave up on the tenth question. You can sit the test again after the next dawn.
 		Leave: Leave the room
+	}
+
+	Lesson: {
+		AllDone: That's all I've got to teach you. The rest you learn by fighting. ...Well, drop by for substitution drills if you're bored.
+
+		Pakkun: {
+			Name: Find Pakkun
+			Start: Summoning, huh... First you need an animal willing to sign a contract with you. Mine's called Pakkun. Great nose, stubborn temper. He caught a scent a minute ago and took off. Bring him back; if he takes to you, he'll lend you a paw.
+			Remind: Pakkun? Still not found him? He can't have gone far... probably. Search the surface.
+			Direction: Kakashi: Pakkun's scent heads {0}, a hundred or two tiles off.
+			Done: Pakkun: "Yo. Kakashi sent you? ...Fine, I'll sign. Call me when you need a nose." (Learned Summoning: Ninken)
+		}
+
+		Fireball: {
+			Name: The Great Fireball
+			Start: This one's the Uchiha clan's coming-of-age test. Not that you're an Uchiha. Find a lake, stand on the shore, and breathe it out over the water with the 4-seal key [{0}]. It only counts once the fireball covers the water.
+			Remind: At a lake, [{0}], over the water. ...Not at me.
+			Try1: Pff... just a puff of smoke
+			Try2: Bigger. Not enough yet!
+			Try3: Fire Style: Great Fireball Jutsu!
+			Done: Kakashi: ...Oh, you actually did it. Here's the scroll; it goes in your 4-seal slot.
+		}
+
+		Climbing: {
+			Name: Tree Climbing
+			Start: This lesson is the dullest and the most useful: gather chakra in your feet and run straight up a wall. Find a tall one (the Leaf's walls will do), jump on, cling, hold up or toward the wall, and run 15 tiles in one go. Run short of chakra and you'll slide down; jump to kick off the wall.
+			Remind: The wall's still there. Cling on and run up 15 tiles. ...Slide down and you just try again.
+			Done: Kakashi: Mm, a pass. From now on you can run up walls. Just don't go climbing into other people's yards. (Learned chakra wall-walking)
+		}
 	}
 }
