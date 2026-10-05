@@ -1,6 +1,6 @@
 # 素材请求：kakashi-trapped-hires-v1
 
-- 状态：requested
+- 状态：未通过（脸上混进马甲绿色、眼睛看不见、手是一团杂色），见 v2
 - 提出者及提交号：Claude Code（夜间 NPC 外貌任务：卡卡西已换成高清规格，湖边水牢里被困的两帧 `ShinobiPrototype/Content/NPCs/Kakashi_Trapped_0/1.png` 还是旧画风，要跟上）
 - **基准：已通过的高清卡卡西** `art/deliveries/kakashi-hires-full-v1/Kakashi_00_Idle.png` 和 `art/deliveries/kakashi-hires-full-v2/Kakashi_07_Jump.png`（必须作为图像参考）：同一个头（银色刺猬头、斜戴护额、半睁的右眼、面罩）、同样的配色（不超过 15 色）和画法，1 像素 = 1 屏幕像素。旧的两帧 `Kakashi_Trapped_0.png`、`Kakashi_Trapped_1.png` 只参考姿势。
 - 内容：被困在水球里、悬在水中挣扎的卡卡西，两帧循环：
