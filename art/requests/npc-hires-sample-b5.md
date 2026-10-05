@@ -1,6 +1,6 @@
 # 素材请求：npc-hires-sample-b5
 
-- 状态：requested
+- 状态：未通过（眼睛太小、方脸、坏笑看不出），见 b6
 - 提出者及提交号：Claude Code（夜间 NPC 外貌任务，逐像素验收 `npc-hires-sample-b4`：疾风通过）。只做**御手洗红豆**。
 - **画风基准：已通过的九张** `art/deliveries/npc-hires-accepted/`（必须作为图像参考），尤其是同为女性/清秀脸型的**白** `HakuForest_Idle.png` 的眼睛和脸型画法。规格同前：80×80，脚底 y=76，身高 60～62，大头比例，四分之三侧身朝右，不超过 20 色，`python3 scripts/pixel_noise.py` 孤立像素低于 3%。
 - 从 b4 出发（`art/deliveries/npc-hires-sample-b4/Anko_Idle.png`，必须作为图像参考），保留：紫黑色翘起的马尾、额头上的护额、浅褐色风衣、网格内衣、橙色短裙、护腿。问题和改法：
