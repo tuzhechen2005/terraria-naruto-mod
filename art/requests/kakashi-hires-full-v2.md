@@ -1,6 +1,6 @@
 # 素材请求：kakashi-hires-full-v2
 
-- 状态：requested
+- 状态：通过（2026-10-05，跳跃帧删掉脚下两条断开的横线后接入）
 - 提出者及提交号：Claude Code（夜间 NPC 外貌任务，逐像素验收 `art/deliveries/kakashi-hires-full-v1/`）
 - 验收结果：头部 12 帧一致（很好），`00_Idle` 通过。其余问题：
   1. **走路 01～06**：两腿交替可以，但**两只手臂完全不动**，走起来僵硬。要像已通过的伊鲁卡走路（`art/deliveries/iruka-hires-full-v1/Iruka_01_Walk.png`～`06`，必须作为图像参考）那样手臂与腿反向摆动；卡卡西拿书的手可以抬着看书只小幅晃动，另一只手要摆。

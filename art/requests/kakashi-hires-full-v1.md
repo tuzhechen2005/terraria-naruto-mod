@@ -1,6 +1,6 @@
 # 素材请求：kakashi-hires-full-v1
 
-- 状态：requested
+- 状态：00 Idle 与头部通过，其余由 v2 取代
 - 提出者及提交号：Claude Code（夜间 NPC 外貌任务；Kakashi 高清站立图已由 Claude 逐像素验收通过）
 - 资产类型：城镇 NPC 全套动作（高清规格）
 - **唯一基准：`art/deliveries/npc-hires-accepted/Kakashi_Idle.png`**（必须作为图像参考）。人物：旗木卡卡西：银色刺猬头向左后方斜、护额斜戴遮左眼、露出半睁慵懒的右眼、深蓝面罩；绿色中忍马甲、深蓝忍装、手套，手里一本橙色小书。每一帧都是同一个人：**头部（发型、护额、眼睛、眉毛、疤/面罩、嘴）在所有帧里像素级保持一致**，只随身体上下移动 0～1 像素；配色就用这张的调色板（不超过 20 色）；身材、轮廓画法不变。画风也参照已通过的达兹纳 `art/deliveries/npc-hires-accepted/Tazuna_Idle.png`。
