@@ -24,10 +24,6 @@ internal static class NpcSheet
 
     public static float ScaleFor(int bodyPixels) => StoryHeight / bodyPixels;
 
-    // The high-resolution sheets (user 2026-10-05: readable faces; scripts/build_hires_npc_sheet.py): one art pixel
-    // per screen pixel, 80x80 frames, about 62 px tall, so they are drawn at 1x.
-    public const float HiresScale = 1f;
-
     // Vanilla town AI states used for animation.
     private const float SittingState = 5f;
     private const float ThrowingState = 10f;

@@ -64,7 +64,7 @@ public sealed class Kakashi : ModNPC
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
         NPC.knockBackResist = 0.5f;
-        NPC.scale = NpcSheet.HiresScale;
+        NPC.scale = NpcSheet.ScaleFor(NpcSheet.KakashiBody);
     }
 
     public override bool CanTownNPCSpawn(int numTownNPCs) => true;

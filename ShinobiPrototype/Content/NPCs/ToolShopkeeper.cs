@@ -14,7 +14,7 @@ namespace ShinobiPrototype.Content.NPCs;
 // The ninja tool shop (specs/装备与忍术系统.spec.md; user, 2026-10-03: Tenten's father): a town NPC who moves into the
 // Leaf from the start. He sells the thrown ninja tools and soldier pills from the first day, senbon once Zabuza has
 // fallen; once the Chūnin Exams are over Tenten comes to help with more ninja tools (with tier two). Art:
-// toolshop-hires-full-v2/v3 (scripts/build_hires_npc_sheet.py, 12-frame NpcSheet at 1x). His head texture is his
+// tool-shop-npc-v1 (scripts/build_npc_sheet.py, 12-frame NpcSheet, same body height as Tazuna). His head texture is his
 // own file: tModLoader refuses to load a head shared between two NPCs.
 [AutoloadHead]
 public sealed class ToolShopkeeper : ModNPC
@@ -49,7 +49,7 @@ public sealed class ToolShopkeeper : ModNPC
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
         NPC.knockBackResist = 0.5f;
-        NPC.scale = NpcSheet.HiresScale;
+        NPC.scale = NpcSheet.ScaleFor(46);
     }
 
     public override void FindFrame(int frameHeight) => NpcSheet.Animate(NPC, frameHeight);

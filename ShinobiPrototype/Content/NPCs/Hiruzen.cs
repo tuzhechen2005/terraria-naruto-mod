@@ -9,7 +9,7 @@ using ShinobiPrototype.Common.Systems;
 namespace ShinobiPrototype.Content.NPCs;
 
 // Sarutobi Hiruzen, the Third Hokage: a story NPC who stands in his office in the Hokage tower (no house, cannot be
-// hurt) and hears the vow (立志, specs/流派系统.spec.md section 6). Art: hiruzen-hires-full-v1 (scripts/build_hires_npc_sheet.py; he only stands, so the walking slots repeat the idle), the
+// hurt) and hears the vow (立志, specs/流派系统.spec.md section 6). Art: hiruzen-npc-v2 (scripts/build_npc_sheet.py), the
 // twelve NpcSheet frames plus two of his own: a puff on the pipe, and a raised hand while someone talks to him.
 public sealed class Hiruzen : ModNPC
 {
@@ -41,7 +41,7 @@ public sealed class Hiruzen : ModNPC
         NPC.knockBackResist = 0f;
         NPC.noGravity = true;
         // A short old man: a touch smaller than the others (user, 2026-10-01).
-        NPC.scale = NpcSheet.HiresScale;
+        NPC.scale = NpcSheet.ScaleFor(46) * 0.92f;
     }
 
     public override bool CanChat() => true;
@@ -67,7 +67,7 @@ public sealed class Hiruzen : ModNPC
             : ++NPC.frameCounter % PuffEvery < PuffTicks ? PuffFrame
             : NpcSheet.IdleFrame;
         if (frame == PuffFrame && NPC.frameCounter % PuffEvery == PuffTicks / 2 && Main.netMode != NetmodeID.Server)
-            Dust.NewDustPerfect(NPC.Top + new Vector2(NPC.direction * 12f, -2f), DustID.Smoke, new Vector2(0f, -0.6f), 120,
+            Dust.NewDustPerfect(NPC.Top + new Vector2(NPC.direction * 14f, 14f), DustID.Smoke, new Vector2(0f, -0.6f), 120,
                 default, 1.1f);
         NPC.frame.Y = frame * frameHeight;
     }

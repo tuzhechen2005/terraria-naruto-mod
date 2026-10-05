@@ -10,7 +10,7 @@ namespace ShinobiPrototype.Content.NPCs;
 
 // The proctors of the second test and the prelims (specs/M2_中忍考试篇.spec.md 3.2–3.3; user, 2026-10-01): story NPCs
 // like Ibiki, standing at their post (no house, cannot be hurt). Art: the twelve NpcSheet frames plus two of their own
-// (anko-hires-full-v1, hayate-hires-full-v1: high-res at 1x, the walking slots repeat the idle); without it they borrow Kakashi's sheet.
+// (anko-npc-v1, hayate-npc-v1, drawn at their final size); without it they borrow Kakashi's sheet.
 public abstract class ExamProctor : ModNPC
 {
     private const int PoseFrame = NpcSheet.FrameCount;
@@ -40,7 +40,7 @@ public abstract class ExamProctor : ModNPC
         NPC.knockBackResist = 0f;
         NPC.noGravity = true;
         // Their own art is drawn at its final size (64-pixel frames, shown at 1x); Kakashi's stand-in sheet is scaled.
-        NPC.scale = 1f;   // their own sheets and the borrowed Kakashi sheet are all drawn at their final size
+        NPC.scale = OwnArt ? 1f : NpcSheet.ScaleFor(NpcSheet.KakashiBody);
     }
 
     public override bool CanChat() => true;

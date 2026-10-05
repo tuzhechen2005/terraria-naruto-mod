@@ -454,14 +454,14 @@ public sealed class WaterPrison : ModNPC
         if (ModContent.HasAsset(trapped))
         {
             Texture2D tex = ModContent.Request<Texture2D>(trapped).Value;
-            spriteBatch.Draw(tex, NPC.Center + bob - screenPos, null, light, 0f, tex.Size() / 2f, NpcSheet.HiresScale, flip, 0f);
+            spriteBatch.Draw(tex, NPC.Center + bob - screenPos, null, light, 0f, tex.Size() / 2f, NpcSheet.ScaleFor(NpcSheet.KakashiBody), flip, 0f);
             return;
         }
         // Without the trapped frames (kakashi-trapped-v2): his jump frame from the town sheet, tilted.
         Texture2D sheet = TextureAssets.Npc[ModContent.NPCType<Kakashi>()].Value;
         int height = sheet.Height / 12;
         Rectangle source = new(0, 7 * height, sheet.Width, height);
-        spriteBatch.Draw(sheet, NPC.Center + bob - screenPos, source, light, 0.25f * -Side, source.Size() / 2f, NpcSheet.HiresScale,
+        spriteBatch.Draw(sheet, NPC.Center + bob - screenPos, source, light, 0.25f * -Side, source.Size() / 2f, NpcSheet.ScaleFor(NpcSheet.KakashiBody),
             flip, 0f);
     }
 
