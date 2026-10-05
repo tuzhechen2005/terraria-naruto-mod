@@ -39,8 +39,8 @@ public abstract class ExamProctor : ModNPC
         NPC.lifeMax = 250;
         NPC.knockBackResist = 0f;
         NPC.noGravity = true;
-        // Their own art is drawn at its final size (64-pixel frames, shown at 1x); Kakashi's stand-in sheet is scaled.
-        NPC.scale = OwnArt ? 1f : NpcSheet.ScaleFor(NpcSheet.KakashiBody);
+        // Their own art is drawn at its final size (64-pixel frames, shown at 1x); so is Kakashi's stand-in sheet.
+        NPC.scale = OwnArt ? 1f : NpcSheet.KakashiScale;
     }
 
     public override bool CanChat() => true;
