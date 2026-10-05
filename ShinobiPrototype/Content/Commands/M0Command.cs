@@ -226,13 +226,14 @@ public sealed class M0Command : ModCommand
             return;
         }
 
-        // The world's ninja enemies: /m0 ninja ronin|rogue spawns one a little way off (single player).
-        if (args.Length == 2 && args[0].Equals("ninja", StringComparison.OrdinalIgnoreCase))
+        // The world's ninja enemies: /m0 ninja [ronin|rogue] spawns one on the ground a little way off (single
+        // player); without a name, a ronin.
+        if (args.Length is 1 or 2 && args[0].Equals("ninja", StringComparison.OrdinalIgnoreCase))
         {
-            int type = args[1].ToLowerInvariant() switch
+            int type = (args.Length == 1 ? "ronin" : args[1].ToLowerInvariant()) switch
             {
-                "ronin" => ModContent.NPCType<Content.NPCs.Ronin>(),
-                "rogue" => ModContent.NPCType<Content.NPCs.RogueGenin>(),
+                "ronin" or "浪人" => ModContent.NPCType<Content.NPCs.Ronin>(),   // text-check: allow
+                "rogue" or "叛忍" => ModContent.NPCType<Content.NPCs.RogueGenin>(),   // text-check: allow
                 _ => 0,
             };
             if (type == 0 || Main.netMode != NetmodeID.SinglePlayer)
@@ -240,7 +241,13 @@ public sealed class M0Command : ModCommand
                 caller.Reply(Loc.Get("M0.NinjaUsage"), Color.OrangeRed);
                 return;
             }
-            NPC.NewNPC(player.GetSource_Misc("ShinobiM0"), (int)player.Center.X + player.direction * 20 * 16, (int)player.Bottom.Y, type);
+            int x = (int)(player.Center.X / 16f) + player.direction * 20;
+            int y = (int)(player.Center.Y / 16f) - 15;
+            while (y < Main.maxTilesY - 10 && !WorldGen.SolidTile(x, y))
+                y++;
+            while (y > 10 && WorldGen.SolidTile(x, y - 1))
+                y--;
+            NPC.NewNPC(player.GetSource_Misc("ShinobiM0"), x * 16 + 8, y * 16, type);
             caller.Reply(Loc.Get("M0.NinjaSpawned", Lang.GetNPCNameValue(type)), Color.LightGreen);
             return;
         }

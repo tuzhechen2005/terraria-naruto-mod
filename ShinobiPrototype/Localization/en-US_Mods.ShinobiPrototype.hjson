@@ -1234,10 +1234,10 @@ Text: {
 	M0: {
 		ArmorGiven: Gave a full set each of Academy training clothes and genin combat gear. Wear all three pieces for the set bonus: Academy, one more log and logs back 15% faster; genin, tool stealth 50% faster and stealth damage 40%. /m0 tools gives ninja tools to try a stealth throw.
 		MissionSet: Mission set to {0} (tora, letter, gather, patrol; done finishes the current one)
-		NinjaUsage: Usage: /m0 ninja ronin|rogue (single player only)
+		NinjaUsage: Usage: /m0 ninja [ronin|rogue] (a ronin if no name is given; single player only)
 		NinjaSpawned: Spawned about 20 tiles ahead: {0}
 		LessonSet: Kakashi's next lesson set to {0} (not started; Tazuna's confession is marked too). Ask Kakashi for the lesson.
-		Usage: /m0, /m0 items, /m0 seals, /m0 tools, /m0 armor, /m0 time <day|noon|night|midnight|hh:mm>, /m0 bridge, /m0 preview, /m0 sighting, /m0 senbon, /m0 mist, /m0 brothers, /m0 forest, /m0 squad, /m0 orochimaru, /m0 lake, /m0 story <1-5>, /m0 exam [stage|gate|tower|stadium|academy|hokage|tree|rain|rebuild], /m0 epilogue zabuza|haku [distance], /m0 cheer [boss name], /m0 ninja ronin|rogue, /m0 lesson pakkun|fireball|climbing|done, /m0 mission tora|letter|gather|patrol|done, /m0 dmg [on|off], /m0 logs off|on or /m0 god [on|off]
+		Usage: /m0, /m0 items, /m0 seals, /m0 tools, /m0 armor, /m0 time <day|noon|night|midnight|hh:mm>, /m0 bridge, /m0 preview, /m0 sighting, /m0 senbon, /m0 mist, /m0 brothers, /m0 forest, /m0 squad, /m0 orochimaru, /m0 lake, /m0 story <1-5>, /m0 exam [stage|gate|tower|stadium|academy|hokage|tree|rain|rebuild], /m0 epilogue zabuza|haku [distance], /m0 cheer [boss name], /m0 ninja [ronin|rogue], /m0 lesson pakkun|fireball|climbing|done, /m0 mission tora|letter|gather|patrol|done, /m0 dmg [on|off], /m0 logs off|on or /m0 god [on|off]
 		Description: Get the M0 test items, every item in the mod (developer wings included), or switch a temporary single-player god mode
 		ItemsGiven: Gave all {0} items of the mod (developer wings included).
 		ToolsGiven: Gave a shuriken and 99 paper bombs. Hold a ninja tool for about 12 seconds (quicker with ninja-tool gear); with the meter full, the next throw is a stealth throw.
