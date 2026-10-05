@@ -48,7 +48,7 @@ public sealed class HakuForest : ModNPC
         NPC.lifeMax = 100;
         NPC.knockBackResist = 0f;
         NPC.npcSlots = 0f;
-        NPC.scale = NpcSheet.ScaleFor(46);
+        NPC.scale = NpcSheet.HiresScale;
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo)
