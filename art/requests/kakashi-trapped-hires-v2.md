@@ -1,6 +1,6 @@
 # 素材请求：kakashi-trapped-hires-v2
 
-- 状态：requested
+- 状态：通过（2026-10-05，已接入）
 - 提出者及提交号：Claude Code（夜间 NPC 外貌任务，逐像素验收 `art/deliveries/kakashi-trapped-hires-v1/`）
 - v1 的姿势很好（蜷身、一手推向前、腿半屈、头发和护额布条上飘），**保留姿势**。问题：
   1. **脸上混进了马甲的绿色色块**，护额和脸糊在一起，**露出的右眼看不见**；
