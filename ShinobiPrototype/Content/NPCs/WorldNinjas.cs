@@ -32,8 +32,10 @@ public abstract class WorldNinja : ModNPC
 
     public override void SetDefaults()
     {
-        NPC.width = 28;
-        NPC.height = 56;
+        // The art is drawn about 60 px tall; three quarters brings it to the player's height (user 2026-10-05).
+        NPC.width = 22;
+        NPC.height = 42;
+        NPC.scale = 0.75f;
         NPC.aiStyle = -1;
         NPC.knockBackResist = 0.4f;
         NPC.HitSound = SoundID.NPCHit1;
@@ -85,7 +87,7 @@ public abstract class WorldNinja : ModNPC
                 NPC.velocity.X *= 0.8f;
                 if (Timer == 1f && Main.netMode != NetmodeID.MultiplayerClient)
                 {
-                    JutsuHitbox.Spawn(NPC, JutsuKind.Strike, NPC.Center + new Vector2(NPC.direction * 24f, 0f), Vector2.Zero, 48, 52,
+                    JutsuHitbox.Spawn(NPC, JutsuKind.Strike, NPC.Center + new Vector2(NPC.direction * 20f, 0f), Vector2.Zero, 40, 42,
                         EnemyDamage.Projectile(StrikeDamage), 4f);
                     SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
                 }
