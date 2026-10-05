@@ -1,0 +1,33 @@
+<!doctype html><meta charset="utf-8"><title>伊鲁卡直接像素试验</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:24px;background:#202630;color:#eee;font:16px system-ui;width:760px}
+h1{font-size:21px;margin:0 0 10px}p{font-size:14px;color:#c4cbd5;margin:8px 0 18px}
+.row{display:flex;gap:16px;padding:12px;align-items:flex-end}.sky{background:#7997b5}.dark{background:#30363f}
+.entry{width:160px;text-align:center}.label{font-size:14px;margin-top:8px}.viewport{width:100px;height:82px;overflow:hidden;position:relative;margin:auto}
+.viewport img{position:absolute;image-rendering:pixelated;max-width:none}
+.zoom{width:140px;height:246px}.zoom .viewport{transform:scale(3);transform-origin:top left;margin-left:-10px}
+.footnote{font-size:12px;color:#bbc3ce}
+</style>
+<h1>伊鲁卡：最终尺寸单帧检查</h1>
+<p>上排是真实尺寸，下两排放大 3 倍。眼睛改为竖向两格（4 屏幕像素），保留眼睛下方的肤色间隔、鼻梁疤和无嘴线设计。人物仍高 62 px。</p>
+<div class="row sky" id="native"></div>
+<p>3 倍检查：两种背景</p>
+<div class="row sky" id="large"></div>
+<div class="row dark" id="dark"></div>
+<p class="footnote">“改前”和“改后”均为实际导出的 PNG，1 倍显示。仅调整眼睛及疤附近的局部区域，尚未接入游戏。</p>
+<script>
+const root="/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组";
+const items=[
+['现有伊鲁卡','/ShinobiPrototype/Content/NPCs/Iruka.png',76.16,913.92,12,-1],
+['眼睛改前','/art/deliveries/iruka-direct-pixel-v1/Iruka_Idle_before_eye_Right.png',64,80,18,-3],
+['改后 · 眼睛两格','/art/deliveries/iruka-direct-pixel-v1/Iruka_Idle_final_Right.png',64,80,18,-3],
+['达兹纳','/ShinobiPrototype/Content/NPCs/Tazuna.png',76.16,913.92,12,-1],
+];
+for(const [id,zoom] of [['native',false],['large',true],['dark',true]]){
+ for(const [name,path,w,h,x,y] of items){
+ const entry=document.createElement('div');entry.className='entry';
+ entry.innerHTML='<div class="'+(zoom?'zoom':'')+'"><div class="viewport"><img src="file://'+root+path+'" style="width:'+w+'px;height:'+h+'px;left:'+x+'px;top:'+y+'px"></div></div><div class="label">'+name+'</div>';
+ document.getElementById(id).append(entry);
+ }
+}
+</script>

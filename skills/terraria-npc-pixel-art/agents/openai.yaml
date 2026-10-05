@@ -1,0 +1,4 @@
+interface:
+  display_name: "泰拉瑞亚 NPC 像素美术"
+  short_description: "复用已认可的伊鲁卡画风，直接生成像素 NPC 并验证游戏尺寸细节"
+  default_prompt: "使用 $terraria-npc-pixel-art 为指定 NPC 制作一张站立样张，按最终游戏尺寸展示并保留角色辨识特征。"
