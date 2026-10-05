@@ -1,6 +1,6 @@
 # 素材请求：toolshop-hires-full-v3
 
-- 状态：requested
+- 状态：通过（2026-10-05，已接入）
 - 提出者及提交号：Claude Code（夜间 NPC 外貌任务，逐像素验收 `art/deliveries/toolshop-hires-full-v2/`）
 - v2 通过的帧（**不要改**）：`00_Idle`、`07_Jump`、`09_Throw`、`11_Throw`。围裙和衣服已经每帧一致，保持。
 - 要重画的帧（以 v2 的同名帧和 `art/deliveries/npc-hires-accepted/ToolShopkeeper_Idle.png` 为基准，必须作为图像参考）：
