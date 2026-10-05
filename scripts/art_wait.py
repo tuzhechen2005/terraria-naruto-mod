@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Wait on Codex art jobs (scripts/art_bridge.py): resubmit a job that failed because the model was at capacity
-(after a pause, one at a time), submit queued ids as running jobs drop below --max, and exit printing the ids as soon
+(after a pause) or the usage limit was hit (every ten minutes), submit queued ids as running jobs drop below --max, and exit printing the ids as soon
 as any job is delivered or fails for another reason.
 
 Usage: python3 scripts/art_wait.py ID [ID ...] [--max 2]
@@ -35,8 +35,12 @@ while True:
     for i, s in states.items():
         if i in started and s == "failed":
             log = (root / ".art-bridge" / f"{i}.log")
-            if log.exists() and "at capacity" in log.read_text(errors="ignore"):
+            text = log.read_text(errors="ignore") if log.exists() else ""
+            if "at capacity" in text:
                 time.sleep(90)
+                submit(i)
+            elif "usage limit" in text:   # Codex credits ran out: try again every ten minutes
+                time.sleep(600)
                 submit(i)
             else:
                 broken.append(f"{i}:failed")
