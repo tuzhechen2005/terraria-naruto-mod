@@ -1,6 +1,6 @@
 # 素材请求：tazuna-hires-full-v2
 
-- 状态：requested
+- 状态：通过（2026-10-05，已接入）
 - 提出者及提交号：Claude Code（夜间 NPC 外貌任务，逐像素验收 `art/deliveries/tazuna-hires-full-v1/`）
 - **唯一基准：`art/deliveries/npc-hires-accepted/Tazuna_Idle.png`**（必须作为图像参考）。动作画法照已通过的伊鲁卡、卡卡西全套（`art/deliveries/iruka-hires-full-v1/`、`art/deliveries/kakashi-hires-full-v2/`，必须作为图像参考）。
 - v1 的问题（必须全部解决）：

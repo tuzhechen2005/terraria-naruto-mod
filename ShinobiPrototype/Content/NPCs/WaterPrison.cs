@@ -461,7 +461,7 @@ public sealed class WaterPrison : ModNPC
         Texture2D sheet = TextureAssets.Npc[ModContent.NPCType<Kakashi>()].Value;
         int height = sheet.Height / 12;
         Rectangle source = new(0, 7 * height, sheet.Width, height);
-        spriteBatch.Draw(sheet, NPC.Center + bob - screenPos, source, light, 0.25f * -Side, source.Size() / 2f, NpcSheet.ScaleFor(NpcSheet.KakashiBody),
+        spriteBatch.Draw(sheet, NPC.Center + bob - screenPos, source, light, 0.25f * -Side, source.Size() / 2f, NpcSheet.HiresScale,
             flip, 0f);
     }
 
