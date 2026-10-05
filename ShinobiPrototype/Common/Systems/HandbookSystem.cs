@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 using ShinobiPrototype.Common;
@@ -104,6 +105,29 @@ internal sealed class HandbookState : UIState
         ("Style_Sage", "Sage"),
     };
 
+    // The bosses page: every boss of the story so far with the vanilla bosses of the same stretch, in order, each with
+    // a recommended loadout per playstyle (specs/推荐配装.spec.md; text under Loadout.<key>).
+    private static readonly (string Key, System.Func<bool> Downed)[] BossOrder =
+    {
+        ("Brothers", () => StoryWorld.DownedDemonBrothers),
+        ("EyeOfCthulhu", () => NPC.downedBoss1),
+        ("Lake", () => StoryWorld.LakeDone),
+        ("WaveDuo", () => StoryWorld.WaveComplete),
+        ("EvilBoss", () => NPC.downedBoss2),
+        ("Orochimaru", () => StoryWorld.OrochimaruMet),
+        ("Dosu", () => StoryWorld.DownedDosu),
+        ("QueenBee", () => NPC.downedQueenBee),
+        ("Skeletron", () => NPC.downedBoss3),
+        ("Neji", () => StoryWorld.DownedNeji),
+        ("Gaara", () => StoryWorld.DownedGaara),
+    };
+    private const int BossesPerRow = 6;
+    private const float BossButtonsTop = 52f;
+    private const float BossBodyTop = BossButtonsTop + 2 * 30f + 6f;
+
+    private readonly List<UITextPanel<string>> bossButtons = new();
+    private int selectedBoss = -1;
+
     private static readonly Color TabIdle = new Color(63, 82, 151) * 0.85f;
     private static readonly Color TabActive = new(200, 150, 60);
 
@@ -160,6 +184,23 @@ internal sealed class HandbookState : UIState
         body.Height.Set(-52f, 1f);
         panel.Append(body);
 
+        for (int i = 0; i < BossOrder.Length; i++)
+        {
+            int index = i;
+            UITextPanel<string> button = new(Loc.Get("Loadout.Short." + BossOrder[i].Key), 0.7f);
+            button.Width.Set(112f, 0f);
+            button.Height.Set(26f, 0f);
+            button.Left.Set(i % BossesPerRow * 116f, 0f);
+            button.Top.Set(BossButtonsTop + i / BossesPerRow * 30f, 0f);
+            button.OnLeftClick += (_, _) =>
+            {
+                selectedBoss = index;
+                SoundEngine.PlaySound(SoundID.MenuTick);
+                Refresh();
+            };
+            bossButtons.Add(button);
+        }
+
         icons = new HandbookIconGrid();
         icons.Top.Set(56f, 0f);
         icons.Width.Set(0f, 1f);
@@ -187,8 +228,19 @@ internal sealed class HandbookState : UIState
             Page.Paths => PathIcons(),
             _ => System.Array.Empty<HandbookIconGrid.Entry>(),
         });
-        body?.Top.Set(icons == null || icons.IsEmpty ? 52f : 186f, 0f);
-        body?.Height.Set(icons == null || icons.IsEmpty ? -52f : -186f, 1f);
+        bool bosses = page == Page.Bosses;
+        for (int i = 0; i < bossButtons.Count; i++)
+        {
+            UITextPanel<string> button = bossButtons[i];
+            if (bosses && button.Parent == null)
+                panel.Append(button);
+            else if (!bosses && button.Parent != null)
+                button.Remove();
+            button.BackgroundColor = i == SelectedBoss ? TabActive : TabIdle;
+        }
+        float bodyTop = bosses ? BossBodyTop : icons == null || icons.IsEmpty ? 52f : 186f;
+        body?.Top.Set(bodyTop, 0f);
+        body?.Height.Set(-bodyTop, 1f);
         body?.Recalculate();
         FitBody(page switch
         {
@@ -197,7 +249,7 @@ internal sealed class HandbookState : UIState
             Page.Lore => LoreText(),
             Page.Rewards => RewardsText(),
             Page.Paths => PathsText(),
-            Page.Bosses => BossesText(),
+            Page.Bosses => BossText(SelectedBoss),
             _ => MissionText(),
         });
     }
@@ -260,19 +312,33 @@ internal sealed class HandbookState : UIState
                Loc.Get("Handbook.AskKakashi");
     }
 
-    // Every Naruto boss: where and how, when, what it drops, and whether it has fallen here (master spec,
-    // "可玩性与引导"; the same information goes to the Boss Checklist mod).
-    private static string BossesText()
+    // The boss picked on the bosses page; at first the earliest one not yet beaten.
+    private int SelectedBoss
     {
-        static string Line(bool downed, string boss) =>
-            Loc.Get(downed ? "Handbook.Bosses.Defeated" : "Handbook.Bosses.NotDefeated") + Loc.Get("Handbook.Bosses." + boss);
-        return Loc.Get("Handbook.Bosses.Intro") + "\n\n" +
-               Line(StoryWorld.DownedDemonBrothers, "Brothers") + "\n" +
-               Line(StoryWorld.WaveComplete, "WaveDuo") + "\n" +
-               Line(StoryWorld.OrochimaruMet, "Orochimaru") + "\n" +
-               Line(StoryWorld.DownedDosu, "Dosu") + "\n" +
-               Line(StoryWorld.DownedGaara, "Gaara") + "\n" +
-               Line(StoryWorld.DownedNeji, "Neji");
+        get
+        {
+            if (selectedBoss < 0)
+            {
+                selectedBoss = System.Array.FindIndex(BossOrder, b => !b.Downed());
+                if (selectedBoss < 0)
+                    selectedBoss = BossOrder.Length - 1;
+            }
+            return selectedBoss;
+        }
+    }
+
+    // Where and how, what it drops and whether it has fallen here, then the recommended loadout per playstyle and how to
+    // fight it (master spec "可玩性与引导"; specs/推荐配装.spec.md).
+    private static string BossText(int index)
+    {
+        (string key, System.Func<bool> downed) = BossOrder[index];
+        string intro = Language.Exists(Loc.Prefix + "Handbook.Bosses." + key) ? Loc.Get("Handbook.Bosses." + key) : Loc.Get("Loadout.Intro." + key);
+        string text = Loc.Get(downed() ? "Handbook.Bosses.Defeated" : "Handbook.Bosses.NotDefeated") + intro + "\n\n" +
+                      Loc.Get("Loadout.Title") + "\n";
+        foreach (string style in new[] { "Melee", "Tools", "Ninjutsu", "Summon", "Common" })
+            text += Loc.Get("Loadout.Line", Loc.Get("Loadout." + style), Loc.Get($"Loadout.{key}.{style}")) + "\n";
+        return text + "\n" + Loc.Get("Loadout.Line", Loc.Get("Loadout.Tactics"), Loc.Get($"Loadout.{key}.Tactics")) + "\n\n" +
+               Loc.Get("Handbook.Bosses.Intro");
     }
 
     private static string JutsuText()
