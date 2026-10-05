@@ -7,7 +7,7 @@
 - 制作顺序第 1 步完成（`specs/空档衔接与火影小兵.spec.md`、`specs/装备与忍术系统.spec.md`、`specs/推荐配装.spec.md`）。本地提交，**未推送**：bb8a5af 第 1 档装备、660fcfc 卡卡西三门修行 + 浪人/叛忍/鬼之兄弟回归、5e990a4 图标 v2、c27ea3e 手册首领页推荐配装、220572b 伊鲁卡任务板、以及本次盔甲提交。
 - 伊鲁卡（`Content/NPCs/Iruka.cs`，iruka-npc-v3）：开局住进木叶。“接任务/任务”按钮接、交、领报酬（`MissionPlayer`、`MissionRules`）；四种 D 级（抓小虎 `LostTora`、送信、采集、夜间巡逻 3 浪人）不连续重复；“兑换”是任务令牌计价商店（`MissionTokenCurrency`）。与原规格不同：没做结晶碎片，直接 15 令牌换一颗结晶（已写进规格，需告诉用户）。
 - 盔甲 `Content/Items/Tier1/Tier1Armor.cs`（armor-academy-v1、armor-genin-v1，套在原版忍者头/铜身/铜腿模板上）：学院训练服 5/5/4，套装多 1 木头、木头恢复快 15%；下忍战斗服 4/4/2，忍具潜伏值快 50%、潜伏加成 30%→40%。忍具台合成。
-- 测试指令：`/m0 lesson …`、`/m0 ninja`、`/m0 mission tora|letter|gather|patrol|done`、`/m0 dmg`。
+- 测试指令：`/m0 armor`（两套盔甲各一套）、`/m0 lesson …`、`/m0 ninja`、`/m0 mission tora|letter|gather|patrol|done`、`/m0 dmg`。
 - 验证：`./scripts/verify-mac.sh` 通过（含任务规则两条新测试），文本检查 0，无头建世界加载无异常。**未实机**：盔甲在玩家身上的走跑跳攻击姿势、头发遮挡，小虎逃跑手感，任务按钮文字，令牌商店价格显示。
 - 下一步：用户实机试玩第 1 档；然后第 2 步（斩首大刀、千本、水龙弹、魔镜冰晶进第 2 档 + 雾隐追杀部队）。工作树里 `art/requests/orochimaru-*`、`art/deliveries/orochimaru-*` 不是本会话的，保持原样。
 

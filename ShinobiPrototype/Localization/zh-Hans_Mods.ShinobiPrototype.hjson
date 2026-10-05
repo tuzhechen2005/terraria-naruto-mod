@@ -1226,11 +1226,12 @@ Text: {
 	}
 
 	M0: {
+		ArmorGiven: 已发放学院训练服和下忍战斗服各一整套。穿齐三件看套装效果：学院多 1 根木头、恢复快 15%；下忍忍具潜伏值快 50%、潜伏伤害 40%。/m0 tools 发忍具试潜伏投掷。
 		MissionSet: 任务设为：{0}（tora 抓猫、letter 送信、gather 采集、patrol 巡逻、done 当前任务直接完成）
 		NinjaUsage: 用法：/m0 ninja ronin|rogue（只在单人模式可用）
 		NinjaSpawned: 已在前方约 20 格召出：{0}
 		LessonSet: 卡卡西的下一门修行课已设为 {0}（未开始；达兹纳坦白的标记也已打开）。找卡卡西点“修行”。
-		Usage: /m0、/m0 items、/m0 seals、/m0 tools、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 orochimaru、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名]、/m0 ninja ronin|rogue、/m0 lesson pakkun|fireball|climbing|done、/m0 dmg [on|off]、/m0 logs off|on 或 /m0 god [on|off]
+		Usage: /m0、/m0 items、/m0 seals、/m0 tools、/m0 armor、/m0 time <day|noon|night|midnight|hh:mm>、/m0 bridge、/m0 preview、/m0 sighting、/m0 senbon、/m0 mist、/m0 brothers、/m0 forest、/m0 squad、/m0 orochimaru、/m0 lake、/m0 story <1-5>、/m0 exam [阶段|gate|tower|stadium|academy|hokage|tree|rain|rebuild]、/m0 epilogue zabuza|haku [距离]、/m0 cheer [首领名]、/m0 ninja ronin|rogue、/m0 lesson pakkun|fireball|climbing|done、/m0 mission tora|letter|gather|patrol|done、/m0 dmg [on|off]、/m0 logs off|on 或 /m0 god [on|off]
 		Description: 领取 M0 测试道具、领取模组全部物品（含开发者之翼），或切换仅限单人的临时测试无敌
 		ItemsGiven: 已发放本模组全部 {0} 种物品（含开发者之翼）。
 		ToolsGiven: 已发放手里剑和 99 张起爆符。拿着忍具约 12 秒（忍具系装备会加快），潜伏值满后下一投是潜伏投掷。

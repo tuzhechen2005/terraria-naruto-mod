@@ -36,6 +36,17 @@ public sealed class M0Command : ModCommand
             return;
         }
 
+        // Tier one's two armours, to try on and compare: /m0 armor.
+        if (args.Length == 1 && args[0].Equals("armor", StringComparison.OrdinalIgnoreCase))
+        {
+            foreach (int type in new[] { ModContent.ItemType<Items.Tier1.AcademyTrainingHead>(), ModContent.ItemType<Items.Tier1.AcademyTrainingBody>(),
+                         ModContent.ItemType<Items.Tier1.AcademyTrainingLegs>(), ModContent.ItemType<Items.Tier1.GeninCombatHead>(),
+                         ModContent.ItemType<Items.Tier1.GeninCombatBody>(), ModContent.ItemType<Items.Tier1.GeninCombatLegs>() })
+                player.QuickSpawnItem(player.GetSource_GiftOrReward(), type);
+            caller.Reply(Loc.Get("M0.ArmorGiven"), Color.LightGreen);
+            return;
+        }
+
         if (args.Length == 1 && args[0].Equals("seals", StringComparison.OrdinalIgnoreCase))
         {
             foreach (int type in new[] { ModContent.ItemType<Items.Jutsu.ScrollClone>(), ModContent.ItemType<Items.Jutsu.ScrollFireball>(),
