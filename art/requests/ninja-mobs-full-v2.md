@@ -14,6 +14,7 @@
   - 浪人：`Ronin_Idle`、`Ronin_Slash_0`（举刀蓄势）、`Ronin_Slash_1`（劈下）、`Ronin_Walk_0`～`_3`（提刀小跑 4 帧）、`Ronin_Jump`；
   - 叛忍：`RogueGenin_Idle`、`RogueGenin_Throw`、`RogueGenin_Slash_0`、`RogueGenin_Slash_1`、`RogueGenin_Walk_0`～`_3`（持苦无压低身体小跑 4 帧）、`RogueGenin_Jump`。
 - 步行要求：头和躯干基本不动，两腿交替，手臂与腿反向摆动；所有帧头部大小、身体宽度一致（逐帧对比 Idle）。
+- **五官规则（必须遵守，用户 2026-10-05 指出所有 NPC 五官糊成一团）**：见 `art/AGENT_HANDOFF.md` 的“五官必须看得清”。要点：头连头发约占身高 1/3；脸部皮肤平涂 2～3 阶；眼睛 = 1 格眼白 + 1 格瞳孔并排，上方隔 1 格画眉毛；鼻子是侧脸轮廓凸出的 1 像素；嘴是 1 格深色短线；头发/护额与皮肤强对比。以原版向导、商人、护士为参照（`art/reference/terraria/NPC_22_x4.png`、`NPC_17_x4.png`、`NPC_208_x4.png`，必须作为图像参考）。预览里要附一张**1 倍游戏尺寸**的脸部放大对比（与原版向导并排），交付说明写明自查结果。
 - 画风：深色外轮廓、左上光源、每种材质 3～4 阶硬色阶，没有零散单点；参考达兹纳 `art/deliveries/tazuna-npc-v1/` 的精细度。
 - 交付：源图 `source/`；DELIVERY.md 列出文件；预览：每种小兵 9 帧排成一行（1 倍和 3 倍），旁边放一个原版玩家（约 42 屏幕像素高）和达兹纳 Idle 对比身高。
 - 交付后接入提交号：待填
