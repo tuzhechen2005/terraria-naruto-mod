@@ -1,14 +1,14 @@
 # 当前工作交接
 
-本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。最新工作见下方 **2026-10-05 夜 Claude Code：NPC 高清重画（进行中）**（之前是英文版、敌方伤害标准、玩家视角评测和“装备与忍术系统（第一步完成）”）；后面保留此前开发快照。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
+本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。最新工作见下方 **2026-10-05 夜 Claude Code：NPC 高清重画（完成，未实机）**（之前是英文版、敌方伤害标准、玩家视角评测和“装备与忍术系统（第一步完成）”）；后面保留此前开发快照。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
 
-## 2026-10-05 夜 Claude Code：NPC 高清重画（用户夜间任务，进行中）
+## 2026-10-05 夜 Claude Code：NPC 高清重画（完成，未实机）
 
-- 用户要求：NPC 外貌要有辨识度，Claude 放大逐像素验收，不满意就一直让 Codex 重画。根因：旧规格的脸只有 5×5 像素。改为高清规格（见 `art/AGENT_HANDOFF.md`“高清城镇 NPC 规格”）。
-- **已接入游戏（1 倍显示，编译通过，未实机）**：伊鲁卡、卡卡西、达兹纳（含桥边达兹纳）全套 12 帧；白（森林）站立/走路/说话（蹲下两帧暂用站立帧，等 `haku-hires-fix-v1`）。
-- **站立图已通过、等全套**：忍具店老板（`toolshop-hires-full-v1`）、三代（`hiruzen-hires-full-v1`，3 帧）、伊比喜（`ibiki-hires-full-v1`，2 帧）。**待重画**：红豆、疾风（`npc-hires-sample-b4`），之后再出各自 3 帧（Idle、Pose、Talk）。水牢被困卡卡西 `kakashi-trapped-hires-v1`（接入后把 `WaterPrison.DrawTrappedKakashi` 的缩放改为 `NpcSheet.HiresScale`）。
-- Codex 03:00 用量用完（提示 5:12 恢复）；队列用 `python3 scripts/art_wait.py toolshop-hires-full-v1 haku-hires-fix-v1 kakashi-trapped-hires-v1 npc-hires-sample-b4 hiruzen-hires-full-v1 ibiki-hires-full-v1 --max 2` 继续。
-- 小兵（浪人、叛忍）按用户要求先不管；当前代码里缩到 0.75、朝向已修。
+- 用户要求：NPC 外貌要有辨识度，Claude 放大逐像素验收，不满意就一直让 Codex 重画。根因：旧规格的脸只有约 5×5 像素。改为高清规格（`art/AGENT_HANDOFF.md`“高清城镇 NPC 规格”）：1 像素 = 1 屏幕像素，80×80 帧，游戏里 `NpcSheet.HiresScale`（1 倍）。
+- **九个友好 NPC 全部换成高清并接入**：达兹纳（含桥边）、伊鲁卡、卡卡西（含水牢被困两帧）、忍具店老板、三代、白（森林）、伊比喜、红豆、疾风。每张都经 8 倍逐像素验收；打回过的问题记录在各 `art/requests/*-hires-*.md`。全员图 `art/deliveries/npc-hires-accepted/all_npcs_3x.png`。
+- 代码：`NpcSheet.HiresScale`；各 NPC 的 `NPC.scale` 改为 1；三代烟雾位置跟新烟斗；考官借用卡卡西贴图时也是 1 倍。拼图 `scripts/build_hires_npc_sheet.py`，等待/重试 `scripts/art_wait.py`，杂点统计 `scripts/pixel_noise.py`。
+- 验证：`./scripts/verify-mac.sh` 通过；无头建世界加载无异常。**未实机**：在游戏里看大小、脚是否贴地、走路与坐下动画、头像图标、对话时的帧。
+- 小兵（浪人、叛忍）按用户要求未动（代码里缩到 0.75、朝向已修，美术仍是旧的）。
 
 ## 2026-10-04 Claude Code：第 1 档一环（已实现，未实机）
 
