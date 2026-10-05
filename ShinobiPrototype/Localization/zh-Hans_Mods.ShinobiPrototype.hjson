@@ -87,6 +87,38 @@ Items: {
 		Tooltip: 替身木头 +1
 	}
 
+	AcademyTrainingHead: {
+		DisplayName: 学院训练服头巾
+		Tooltip: 忍者学校发的旧头巾
+		SetBonus: 多 1 根木头，木头恢复快 15%
+	}
+
+	AcademyTrainingBody: {
+		DisplayName: 学院训练服上衣
+		Tooltip: 洗得发白，袖口打着补丁
+	}
+
+	AcademyTrainingLegs: {
+		DisplayName: 学院训练服裤子
+		Tooltip: 膝盖磨薄了：在木桩前摔过很多次
+	}
+
+	GeninCombatHead: {
+		DisplayName: 下忍战斗服头巾
+		Tooltip: 系紧了，冲刺时不会掉
+		SetBonus: 忍具潜伏值攒得快 50%，潜伏伤害加成从 30% 提到 40%
+	}
+
+	GeninCombatBody: {
+		DisplayName: 下忍战斗服上衣
+		Tooltip: 斜挎的皮带上插着两把苦无
+	}
+
+	GeninCombatLegs: {
+		DisplayName: 下忍战斗服裤子
+		Tooltip: 腿上的忍具包伸手就能摸到
+	}
+
 	ToolWorkbench: {
 		DisplayName: 忍具台
 		Tooltip: 用来制作忍具、忍者装备

@@ -87,6 +87,38 @@ Items: {
 		Tooltip: +1 substitution log
 	}
 
+	AcademyTrainingHead: {
+		DisplayName: Academy Training Headwrap
+		Tooltip: An old headwrap handed out at the Ninja Academy
+		SetBonus: One more log; logs come back 15% faster
+	}
+
+	AcademyTrainingBody: {
+		DisplayName: Academy Training Tunic
+		Tooltip: Washed pale, patched at the cuffs
+	}
+
+	AcademyTrainingLegs: {
+		DisplayName: Academy Training Trousers
+		Tooltip: Worn thin at the knees from falling in front of training posts
+	}
+
+	GeninCombatHead: {
+		DisplayName: Genin Combat Hood
+		Tooltip: Tied tight so it stays on at a sprint
+		SetBonus: Ninja tool stealth builds 50% faster; stealth damage bonus rises from 30% to 40%
+	}
+
+	GeninCombatBody: {
+		DisplayName: Genin Combat Tunic
+		Tooltip: Two kunai tucked into the shoulder strap
+	}
+
+	GeninCombatLegs: {
+		DisplayName: Genin Combat Trousers
+		Tooltip: The thigh pouch sits right under your hand
+	}
+
 	ToolWorkbench: {
 		DisplayName: Tool Workbench
 		Tooltip: Used to make ninja tools and gear
