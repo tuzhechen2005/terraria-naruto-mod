@@ -54,7 +54,12 @@ public sealed class AcademyTrainingHead : Tier1ArmorPiece
     public static LocalizedText SetBonus { get; private set; }
     protected override int Defense => 5;
 
-    public override void SetStaticDefaults() => SetBonus = this.GetLocalization("SetBonus");
+    // A band round the forehead: the player's own hair shows.
+    public override void SetStaticDefaults()
+    {
+        SetBonus = this.GetLocalization("SetBonus");
+        ArmorIDs.Head.Sets.DrawFullHair[EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head)] = true;
+    }
 
     public override bool IsArmorSet(Item head, Item body, Item legs) =>
         body.type == ModContent.ItemType<AcademyTrainingBody>() && legs.type == ModContent.ItemType<AcademyTrainingLegs>();
@@ -90,7 +95,12 @@ public sealed class GeninCombatHead : Tier1ArmorPiece
     public static LocalizedText SetBonus { get; private set; }
     protected override int Defense => 4;
 
-    public override void SetStaticDefaults() => SetBonus = this.GetLocalization("SetBonus");
+    // A band round the forehead: the player's own hair shows.
+    public override void SetStaticDefaults()
+    {
+        SetBonus = this.GetLocalization("SetBonus");
+        ArmorIDs.Head.Sets.DrawFullHair[EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head)] = true;
+    }
 
     public override bool IsArmorSet(Item head, Item body, Item legs) =>
         body.type == ModContent.ItemType<GeninCombatBody>() && legs.type == ModContent.ItemType<GeninCombatLegs>();
