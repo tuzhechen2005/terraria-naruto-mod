@@ -13,7 +13,8 @@ namespace ShinobiPrototype.Content.NPCs;
 
 // Iruka at the mission desk (specs/空档衔接与火影小兵.spec.md; user 2026-10-04): a town NPC who moves into the Leaf from
 // the start. "Mission" takes a D-rank mission, reports one or hands in what was gathered (MissionPlayer); "Exchange"
-// opens a shop priced in mission tokens (MissionTokenCurrency). Art: iruka-npc-v3 (scripts/build_npc_sheet.py).
+// opens a shop priced in mission tokens (MissionTokenCurrency). Art: iruka-direct-pixel-anim-v1
+// (skills/terraria-npc-pixel-art; scripts/build_hires_npc_sheet.py): 80x80 frames, about 62 px tall, drawn at 1x.
 [AutoloadHead]
 public sealed class Iruka : ModNPC
 {
@@ -48,7 +49,7 @@ public sealed class Iruka : ModNPC
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
         NPC.knockBackResist = 0.5f;
-        NPC.scale = NpcSheet.ScaleFor(46);
+        NPC.scale = 1f;
     }
 
     public override void FindFrame(int frameHeight) => NpcSheet.Animate(NPC, frameHeight);
