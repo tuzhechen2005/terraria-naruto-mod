@@ -17,5 +17,6 @@
     <Compile Include="../../ShinobiPrototype/Common/WaveDuoRules.cs" Link="WaveDuoRules.cs" />
     <Compile Include="../../ShinobiPrototype/Common/ChakraRules.cs" Link="ChakraRules.cs" />
     <Compile Include="../../ShinobiPrototype/Common/WorldNinjaRules.cs" Link="WorldNinjaRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/MissionRules.cs" Link="MissionRules.cs" />
   </ItemGroup>
 </Project>

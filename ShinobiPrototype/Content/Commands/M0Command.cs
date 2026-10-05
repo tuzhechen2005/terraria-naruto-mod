@@ -244,6 +244,18 @@ public sealed class M0Command : ModCommand
             return;
         }
 
+        // Iruka's missions: /m0 mission tora|letter|gather|patrol takes that one; /m0 mission done finishes it.
+        if (args.Length == 2 && args[0].Equals("mission", StringComparison.OrdinalIgnoreCase))
+        {
+            MissionPlayer missions = player.GetModPlayer<MissionPlayer>();
+            if (args[1].Equals("done", StringComparison.OrdinalIgnoreCase))
+                missions.FinishForTesting();
+            else if (Enum.TryParse(args[1], true, out MissionKind kind) && kind != MissionKind.None)
+                missions.TakeForTesting(kind);
+            caller.Reply(Loc.Get("M0.MissionSet", args[1]), Color.LightGreen);
+            return;
+        }
+
         // Checking the damage table in play (specs/敌方伤害标准.spec.md): print every hit taken; switch the logs off.
         if (args.Length is 1 or 2 && args[0].Equals("dmg", StringComparison.OrdinalIgnoreCase))
         {

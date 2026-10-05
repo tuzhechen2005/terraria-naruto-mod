@@ -613,11 +613,36 @@ NPCs: {
 	Orochimaru.DisplayName: Orochimaru
 	SummonedSnake.DisplayName: Summoned Snake
 	RainClone.DisplayName: Rain Clone
+
+	Iruka: {
+		DisplayName: Academy Teacher
+		GivenName: Iruka
+
+		TownNPCMood: {
+			Content: The mission desk is busy again today. Here for a mission?
+			NoHome: Without a room, I can't even plan my lessons.
+			FarFromHome: I'm too far from the Hokage's Residence. Someone has to mind the desk.
+			LoveSpace: Plenty of room! Finally somewhere to spread out the homework I'm marking.
+			DislikeCrowded: Too many people. It's as loud as a classroom.
+			HateCrowded: This crowd is harder to manage than Naruto's class was.
+			LikeBiome: "{BiomeName} is nice. Good for a field trip with the students."
+			LoveBiome: Nowhere beats {BiomeName}. This is home.
+			DislikeBiome: "{BiomeName}? I'd never bring students somewhere like this."
+			HateBiome: I can't stand {BiomeName}.
+			LikeNPC: "{NPCName} is dependable. That puts me at ease."
+			LoveNPC: With {NPCName} around, it feels like being back at the Academy.
+			DislikeNPC: "{NPCName}'s prices... students could never afford those."
+			HateNPC: Please keep {NPCName} away from my students!
+			LikeNPC_Princess: "{NPCName} reminds me of the new students on their first day."
+			Princess_LovesNPC: I love {NPCName}!
+		}
+	}
 }
 
 Projectiles: {
 	HostileKunai.DisplayName: Kunai
 	LostPakkun.DisplayName: Lost Pakkun
+	LostTora.DisplayName: Lost Tora
 	NinjatoSlashArc.DisplayName: Slash Arc
 	GauntletClaw.DisplayName: Chain Claw
 	PhoenixFlowerFire.DisplayName: Phoenix Sage Fire
@@ -1175,6 +1200,7 @@ Text: {
 	}
 
 	M0: {
+		MissionSet: Mission set to {0} (tora, letter, gather, patrol; done finishes the current one)
 		NinjaUsage: Usage: /m0 ninja ronin|rogue (single player only)
 		NinjaSpawned: Spawned about 20 tiles ahead: {0}
 		LessonSet: Kakashi's next lesson set to {0} (not started; Tazuna's confession is marked too). Ask Kakashi for the lesson.
@@ -1910,6 +1936,51 @@ Text: {
 		Leave: Leave the room
 	}
 
+	Iruka: {
+		Line1: I'm Iruka. I teach at the Ninja Academy and help out at the mission desk in the Hokage's Residence.
+		Line2: D-rank missions don't look like much, but they're what keep the village running.
+		Line3: Tora's run off again? ...The Fire Daimyo's wife's cat gets lost a few times a year.
+		Line4: Save up your mission tokens and you can trade them with me for blueprints and chakra pills.
+		Line5: Whatever rank you reach, don't forget what you learned at the Academy.
+		AfterWave: That Land of Waves mission was only supposed to be C-rank, wasn't it? I'm glad you all came back safe.
+		TakeMission: Take a mission
+		ReportMission: Mission
+		Exchange: Exchange
+	}
+
+	Mission: {
+		Taken: Mission accepted: {0}
+		Complete: Mission complete: {0}. Report back to Iruka at the Hokage's Residence.
+		ReportBack: Done already? Well done! Tell me how it went.
+		Paid: Good work! Here's your pay: {0} silver and {1} mission tokens. Ready for the next one?
+
+		Tora: {
+			Name: Find Tora the Lost Cat
+			Brief: Tora again... the Daimyo's wife's cat has run off. She has a ribbon on her right ear. She bolts when you get close; chase her down and touch her to catch her.
+			Task: Find Tora and catch her.
+			Direction: Someone saw Tora heading {0}, somewhere on the surface a hundred or two tiles out.
+			Caught: Caught Tora!
+		}
+
+		Letter: {
+			Name: Deliver a Letter
+			Brief: There's a letter to deliver. Put it in the addressee's hands; just talk to them.
+			Task: Deliver the letter to {0}.
+		}
+
+		Gather: {
+			Name: Gathering
+			Brief: The village needs some supplies. Bring them back to me.
+			Task: Bring back {0} {1} (you have {2}).
+		}
+
+		Patrol: {
+			Name: Night Patrol
+			Brief: Gato's ronin have been prowling outside the village at night. Go on patrol and take them down.
+			Task: Defeat {0} of Gato's ronin outside the village at night ({1} so far).
+		}
+	}
+
 	Lesson: {
 		AllDone: That's all I've got to teach you. The rest you learn by fighting. ...Well, drop by for substitution drills if you're bored.
 
@@ -1938,123 +2009,137 @@ Text: {
 			Done: Kakashi: Mm, a pass. From now on you can run up walls. Just don't go climbing into other people's yards. (Learned chakra wall-walking)
 		}
 	}
+
 	Loadout: {
 		Short: {
-			Brothers: "Demon Brothers"
-			EyeOfCthulhu: "Eye of Cthulhu"
-			Lake: "Water Prison"
-			WaveDuo: "Zabuza & Haku"
-			EvilBoss: "EoW / BoC"
-			Orochimaru: "Orochimaru"
-			Dosu: "Dosu"
-			QueenBee: "Queen Bee"
-			Skeletron: "Skeletron"
-			Neji: "Neji"
-			Gaara: "Gaara"
+			Brothers: Demon Brothers
+			EyeOfCthulhu: Eye of Cthulhu
+			Lake: Water Prison
+			WaveDuo: Zabuza & Haku
+			EvilBoss: EoW / BoC
+			Orochimaru: Orochimaru
+			Dosu: Dosu
+			QueenBee: Queen Bee
+			Skeletron: Skeletron
+			Neji: Neji
+			Gaara: Gaara
 		}
-		Title: "Recommended loadout (not the only way; vanilla alternatives in brackets)"
-		Melee: "Taijutsu / Blade"
-		Tools: "Ninja Tools"
-		Ninjutsu: "Ninjutsu"
-		Summon: "Summoning"
-		Common: "For everyone"
-		Tactics: "How to fight"
-		Line: "- {0}: {1}"
+
+		Title: Recommended loadout (not the only way; vanilla alternatives in brackets)
+		Melee: Taijutsu / Blade
+		Tools: Ninja Tools
+		Ninjutsu: Ninjutsu
+		Summon: Summoning
+		Common: For everyone
+		Tactics: How to fight
+		Line: - {0}: {1}
 		Planned: " (planned)"
+
 		Intro: {
-			EyeOfCthulhu: "Eye of Cthulhu (vanilla) — summoned at night with a Suspicious Looking Eye, or comes by itself once you are strong enough."
-			Lake: "The water prison at the lake — after Tazuna comes clean, once the Eye of Cthulhu is down or at 200 max life, at a surface lake."
-			EvilBoss: "Eater of Worlds / Brain of Cthulhu (vanilla) — break three hearts or orbs in the Corruption or Crimson, or use its summoning item."
-			QueenBee: "Queen Bee (vanilla) — break the larva in an underground jungle hive, or use an Abeemination."
-			Skeletron: "Skeletron (vanilla) — talk to the old man at the Dungeon's door at night."
+			EyeOfCthulhu: Eye of Cthulhu (vanilla) — summoned at night with a Suspicious Looking Eye, or comes by itself once you are strong enough.
+			Lake: The water prison at the lake — after Tazuna comes clean, once the Eye of Cthulhu is down or at 200 max life, at a surface lake.
+			EvilBoss: Eater of Worlds / Brain of Cthulhu (vanilla) — break three hearts or orbs in the Corruption or Crimson, or use its summoning item.
+			QueenBee: Queen Bee (vanilla) — break the larva in an underground jungle hive, or use an Abeemination.
+			Skeletron: Skeletron (vanilla) — talk to the old man at the Dungeon's door at night.
 		}
+
 		Brothers: {
-			Melee: "Academy Training Gear (copper, tin armor) · Training Ninjato (Platinum Broadsword, Enchanted Sword) · Training Post"
-			Tools: "Genin Combat Gear · kunai, shuriken + paper bombs · Ninja Tool Pouch"
-			Ninjutsu: "Academy Training Gear · Phoenix Sage Fire (Wand of Sparking) · Soldier Pill Pouch"
-			Summon: "Academy Training Gear · Ninken (Finch Staff)"
-			Common: "Clone Jutsu; Leaf Headband"
-			Tactics: "They pincer you from both sides; when the chain flashes taut, jump it. When one falls the other goes berserk, so keep a log in hand."
+			Melee: Academy Training Gear (copper, tin armor) · Training Ninjato (Platinum Broadsword, Enchanted Sword) · Training Post
+			Tools: Genin Combat Gear · kunai, shuriken + paper bombs · Ninja Tool Pouch
+			Ninjutsu: Academy Training Gear · Phoenix Sage Fire (Wand of Sparking) · Soldier Pill Pouch
+			Summon: Academy Training Gear · Ninken (Finch Staff)
+			Common: Clone Jutsu; Leaf Headband
+			Tactics: They pincer you from both sides; when the chain flashes taut, jump it. When one falls the other goes berserk, so keep a log in hand.
 		}
+
 		EyeOfCthulhu: {
-			Melee: "Academy Training Gear (gold, platinum armor) · Training Ninjato, Chain Gauntlet (Enchanted Sword) · Training Post"
-			Tools: "Genin Combat Gear · shuriken (they bounce; good with platforms) + paper bombs · Ninja Tool Pouch"
-			Ninjutsu: "Academy Training Gear · Phoenix Sage Fire (Wand of Sparking, Amethyst Staff) · Soldier Pill Pouch"
-			Summon: "Academy Training Gear · Ninken (Finch Staff)"
-			Common: "Great Fireball (bursts at once on a large enemy)"
-			Tactics: "The usual: build a platform arena and dodge the dashes."
+			Melee: Academy Training Gear (gold, platinum armor) · Training Ninjato, Chain Gauntlet (Enchanted Sword) · Training Post
+			Tools: Genin Combat Gear · shuriken (they bounce; good with platforms) + paper bombs · Ninja Tool Pouch
+			Ninjutsu: Academy Training Gear · Phoenix Sage Fire (Wand of Sparking, Amethyst Staff) · Soldier Pill Pouch
+			Summon: Academy Training Gear · Ninken (Finch Staff)
+			Common: Great Fireball (bursts at once on a large enemy)
+			Tactics: The usual: build a platform arena and dodge the dashes.
 		}
+
 		Lake: {
-			Melee: "Academy Training Gear · Training Ninjato (the arc cuts several water clones) · Training Post"
-			Tools: "Genin Combat Gear · shuriken · Ninja Tool Pouch"
-			Ninjutsu: "Academy Training Gear · Phoenix Sage Fire (the spread clears clones) · Soldier Pill Pouch"
-			Summon: "Academy Training Gear · Ninken"
-			Common: "Clone Jutsu"
-			Tactics: "The prison breaks only from outside; the water clones reform, so clear them as you hit the prison."
+			Melee: Academy Training Gear · Training Ninjato (the arc cuts several water clones) · Training Post
+			Tools: Genin Combat Gear · shuriken · Ninja Tool Pouch
+			Ninjutsu: Academy Training Gear · Phoenix Sage Fire (the spread clears clones) · Soldier Pill Pouch
+			Summon: Academy Training Gear · Ninken
+			Common: Clone Jutsu
+			Tactics: The prison breaks only from outside; the water clones reform, so clear them as you hit the prison.
 		}
+
 		WaveDuo: {
-			Melee: "Academy Training Gear (an extra log for the dashes; platinum armor) · Training Ninjato, Chain Gauntlet (Enchanted Sword, Blade of Grass) · Training Post"
-			Tools: "Genin Combat Gear (stealth throws of three kunai) · kunai + paper bombs (stick them on Zabuza) · Ninja Tool Pouch"
-			Ninjutsu: "Academy Training Gear · Phoenix Sage Fire + Great Fireball (Zabuza is big, so it bursts at once) · Soldier Pill Pouch"
-			Summon: "Academy Training Gear · Ninken (Finch Staff, Slime Staff)"
-			Common: "Clone Jutsu takes the senbon from the ice mirrors"
-			Tactics: "Break 4 mirrors to end the ice-mirror cage early; the dash in the mist is warned 0.4 s ahead; beating Haku first is easier (frenzied Zabuza takes 25% more damage)."
+			Melee: Academy Training Gear (an extra log for the dashes; platinum armor) · Training Ninjato, Chain Gauntlet (Enchanted Sword, Blade of Grass) · Training Post
+			Tools: Genin Combat Gear (stealth throws of three kunai) · kunai + paper bombs (stick them on Zabuza) · Ninja Tool Pouch
+			Ninjutsu: Academy Training Gear · Phoenix Sage Fire + Great Fireball (Zabuza is big, so it bursts at once) · Soldier Pill Pouch
+			Summon: Academy Training Gear · Ninken (Finch Staff, Slime Staff)
+			Common: Clone Jutsu takes the senbon from the ice mirrors
+			Tactics: Break 4 mirrors to end the ice-mirror cage early; the dash in the mist is warned 0.4 s ahead; beating Haku first is easier (frenzied Zabuza takes 25% more damage).
 		}
+
 		EvilBoss: {
-			Melee: "Academy Training Gear (platinum armor) · Executioner's Blade (Enchanted Sword) · Training Post"
-			Tools: "Mist Hunter Gear (planned) (Genin Combat Gear) · senbon (they pierce, good on worm segments) + paper bombs · Ninja Tool Pouch"
-			Ninjutsu: "Academy Training Gear (meteor armor) · Water Dragon (Vilethorn, Space Gun) · Soldier Pill Pouch"
-			Summon: "Academy Training Gear (Flinx Fur Coat) · Demonic Ice Mirrors + Ninken (Flinx Staff)"
-			Common: "Clone Jutsu, Great Fireball"
-			Tactics: "The usual."
+			Melee: Academy Training Gear (platinum armor) · Executioner's Blade (Enchanted Sword) · Training Post
+			Tools: Mist Hunter Gear (planned) (Genin Combat Gear) · senbon (they pierce, good on worm segments) + paper bombs · Ninja Tool Pouch
+			Ninjutsu: Academy Training Gear (meteor armor) · Water Dragon (Vilethorn, Space Gun) · Soldier Pill Pouch
+			Summon: Academy Training Gear (Flinx Fur Coat) · Demonic Ice Mirrors + Ninken (Flinx Staff)
+			Common: Clone Jutsu, Great Fireball
+			Tactics: The usual.
 		}
+
 		Orochimaru: {
-			Melee: "Academy Training Gear (shadow, crimson armor) · Executioner's Blade (Light's Bane, Blood Butcherer) · Training Post"
-			Tools: "Mist Hunter Gear (planned) (Genin Combat Gear) · senbon + paper bombs · Ninja Tool Pouch"
-			Ninjutsu: "Academy Training Gear (meteor armor) · Water Dragon (Vilethorn, Space Gun) · Soldier Pill Pouch"
-			Summon: "Academy Training Gear (Flinx Fur Coat) · Demonic Ice Mirrors + Ninken"
-			Common: "Clone Jutsu (takes the killing intent and the snake hands)"
-			Tactics: "The killing intent is a red wedge: leave it or get behind a wall within a second; the neck bite and the Kusanagi show where they aim; he leaves at half life or when you hold out, and falling counts too."
+			Melee: Academy Training Gear (shadow, crimson armor) · Executioner's Blade (Light's Bane, Blood Butcherer) · Training Post
+			Tools: Mist Hunter Gear (planned) (Genin Combat Gear) · senbon + paper bombs · Ninja Tool Pouch
+			Ninjutsu: Academy Training Gear (meteor armor) · Water Dragon (Vilethorn, Space Gun) · Soldier Pill Pouch
+			Summon: Academy Training Gear (Flinx Fur Coat) · Demonic Ice Mirrors + Ninken
+			Common: Clone Jutsu (takes the killing intent and the snake hands)
+			Tactics: The killing intent is a red wedge: leave it or get behind a wall within a second; the neck bite and the Kusanagi show where they aim; he leaves at half life or when you hold out, and falling counts too.
 		}
+
 		Dosu: {
-			Melee: "Academy Training Gear (shadow, crimson armor) · Executioner's Blade (Light's Bane, Blood Butcherer) · Training Post"
-			Tools: "Mist Hunter Gear (planned) (Genin Combat Gear) · senbon, shuriken (kite him; stay out of reach) · Ninja Tool Pouch"
-			Ninjutsu: "Academy Training Gear (meteor armor) · Water Dragon · Soldier Pill Pouch"
-			Summon: "Academy Training Gear · Demonic Ice Mirrors + Ninken"
-			Common: "Clone Jutsu"
-			Tactics: "The Echo Drill swaps left and right for about 2 seconds; only the outer edge of the resonance ring hurts, so inside it is safe; past half life he attacks faster."
+			Melee: Academy Training Gear (shadow, crimson armor) · Executioner's Blade (Light's Bane, Blood Butcherer) · Training Post
+			Tools: Mist Hunter Gear (planned) (Genin Combat Gear) · senbon, shuriken (kite him; stay out of reach) · Ninja Tool Pouch
+			Ninjutsu: Academy Training Gear (meteor armor) · Water Dragon · Soldier Pill Pouch
+			Summon: Academy Training Gear · Demonic Ice Mirrors + Ninken
+			Common: Clone Jutsu
+			Tactics: The Echo Drill swaps left and right for about 2 seconds; only the outer edge of the resonance ring hurts, so inside it is safe; past half life he attacks faster.
 		}
+
 		QueenBee: {
-			Melee: "Academy Training Gear (shadow, crimson armor) · Executioner's Blade (Blade of Grass) · Training Post"
-			Tools: "Mist Hunter Gear (planned) · senbon (pierce the little bees) · Ninja Tool Pouch"
-			Ninjutsu: "Chakra Training Gear (planned) (jungle armor) · Water Dragon · Soldier Pill Pouch"
-			Summon: "Academy Training Gear · Demonic Ice Mirrors + Ninken"
-			Common: "Clone Jutsu, Great Fireball"
-			Tactics: "The usual."
+			Melee: Academy Training Gear (shadow, crimson armor) · Executioner's Blade (Blade of Grass) · Training Post
+			Tools: Mist Hunter Gear (planned) · senbon (pierce the little bees) · Ninja Tool Pouch
+			Ninjutsu: Chakra Training Gear (planned) (jungle armor) · Water Dragon · Soldier Pill Pouch
+			Summon: Academy Training Gear · Demonic Ice Mirrors + Ninken
+			Common: Clone Jutsu, Great Fireball
+			Tactics: The usual.
 		}
+
 		Skeletron: {
-			Melee: "Academy Training Gear (shadow, crimson armor) · Executioner's Blade (Light's Bane, Bee Keeper) · Training Post"
-			Tools: "Mist Hunter Gear (planned) · senbon + paper bombs · Ninja Tool Pouch"
-			Ninjutsu: "Chakra Training Gear (planned) (jungle armor) · Water Dragon (Bee Gun) · Soldier Pill Pouch"
-			Summon: "Academy Training Gear (bee armor) · Demonic Ice Mirrors (Hornet Staff)"
-			Common: "Clone Jutsu, Great Fireball"
-			Tactics: "The usual."
+			Melee: Academy Training Gear (shadow, crimson armor) · Executioner's Blade (Light's Bane, Bee Keeper) · Training Post
+			Tools: Mist Hunter Gear (planned) · senbon + paper bombs · Ninja Tool Pouch
+			Ninjutsu: Chakra Training Gear (planned) (jungle armor) · Water Dragon (Bee Gun) · Soldier Pill Pouch
+			Summon: Academy Training Gear (bee armor) · Demonic Ice Mirrors (Hornet Staff)
+			Common: Clone Jutsu, Great Fireball
+			Tactics: The usual.
 		}
+
 		Neji: {
-			Melee: "Academy Training Gear (shadow, crimson armor) · Executioner's Blade (his Gentle Fist seals you up close; melee is risky) · Training Post"
-			Tools: "Mist Hunter Gear (planned) · senbon, shuriken · Ninja Tool Pouch"
-			Ninjutsu: "Chakra Training Gear (planned) (jungle armor) · Water Dragon · Soldier Pill Pouch"
-			Summon: "Academy Training Gear · Demonic Ice Mirrors"
-			Common: "Clone Jutsu"
-			Tactics: "Ranged is easiest: the Gentle Fist works only up close, and three sealed points lock your logs and seals; Rotation knocks projectiles away, so wait it out; step out of the circle the moment Sixty-Four Palms marks it."
+			Melee: Academy Training Gear (shadow, crimson armor) · Executioner's Blade (his Gentle Fist seals you up close; melee is risky) · Training Post
+			Tools: Mist Hunter Gear (planned) · senbon, shuriken · Ninja Tool Pouch
+			Ninjutsu: Chakra Training Gear (planned) (jungle armor) · Water Dragon · Soldier Pill Pouch
+			Summon: Academy Training Gear · Demonic Ice Mirrors
+			Common: Clone Jutsu
+			Tactics: Ranged is easiest: the Gentle Fist works only up close, and three sealed points lock your logs and seals; Rotation knocks projectiles away, so wait it out; step out of the circle the moment Sixty-Four Palms marks it.
 		}
+
 		Gaara: {
-			Melee: "Academy Training Gear (shadow, crimson armor) · Executioner's Blade (Bee Keeper); dash round behind him · Training Post"
-			Tools: "Mist Hunter Gear (planned) · shuriken (bounce them in from the side) + paper bombs · Ninja Tool Pouch"
-			Ninjutsu: "Chakra Training Gear (planned) (jungle armor) · Water Dragon · Soldier Pill Pouch"
-			Summon: "Academy Training Gear (bee armor) · Demonic Ice Mirrors + Ninken (minions go round behind)"
-			Common: "Clone Jutsu or a log takes the Sand Coffin"
-			Tactics: "While his sand wall is up, the front takes a tenth of the damage: get behind him or wait for the 2 seconds he spends catching his breath; quicksand marks blink before the pillars rise, so stand between two; once he transforms there are no more walls, only wide sand arms and air bullets."
+			Melee: Academy Training Gear (shadow, crimson armor) · Executioner's Blade (Bee Keeper); dash round behind him · Training Post
+			Tools: Mist Hunter Gear (planned) · shuriken (bounce them in from the side) + paper bombs · Ninja Tool Pouch
+			Ninjutsu: Chakra Training Gear (planned) (jungle armor) · Water Dragon · Soldier Pill Pouch
+			Summon: Academy Training Gear (bee armor) · Demonic Ice Mirrors + Ninken (minions go round behind)
+			Common: Clone Jutsu or a log takes the Sand Coffin
+			Tactics: While his sand wall is up, the front takes a tenth of the damage: get behind him or wait for the 2 seconds he spends catching his breath; quicksand marks blink before the pillars rise, so stand between two; once he transforms there are no more walls, only wide sand arms and air bullets.
 		}
 	}
 }

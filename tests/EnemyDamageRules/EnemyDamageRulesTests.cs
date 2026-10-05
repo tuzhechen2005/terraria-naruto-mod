@@ -1,3 +1,4 @@
+using System.Linq;
 using ShinobiPrototype.Common;
 using static ShinobiPrototype.Common.EnemyDamageRules;
 
@@ -40,3 +41,9 @@ Check(WorldNinjaRules.Substitutes(9, 90, false) && !WorldNinjaRules.Substitutes(
 Check(!WorldNinjaRules.Substitutes(30, 90, false) && !WorldNinjaRules.Substitutes(20, 90, true),
     "A hit of a third or more (a stealth throw) breaks through, and it substitutes only once");
 Check(WorldNinjaRules.RoninNightWeight > WorldNinjaRules.RogueGeninWeight, "Ronin are common at night, rogue genin rare");
+Check(MissionRules.DRank.All(last => Enumerable.Range(0, 100).All(i => MissionRules.Next(last, i / 100f) != last)) &&
+      MissionRules.DRank.All(kind => Enumerable.Range(0, 100).Any(i => MissionRules.Next(MissionKind.None, i / 100f) == kind)),
+      "Iruka never hands out the same mission twice running, and every D-rank mission comes up");
+Check(MissionRules.DRank.All(kind => MissionRules.Reward(kind, true) is { Silver: >= 30 and <= 60, Tokens: >= 1 and <= 3 } &&
+                                     MissionRules.Reward(kind) is { Silver: >= 30 and <= 60, Tokens: >= 1 and <= 3 }),
+      "A D-rank mission pays 30 to 60 silver and 1 to 3 tokens (missions can be taken one after another)");
