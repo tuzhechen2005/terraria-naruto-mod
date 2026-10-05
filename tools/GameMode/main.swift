@@ -20,6 +20,10 @@ if CommandLine.arguments.contains("--diagnose") {
     }
     do { print("tModLoader 客户端：\(try scanGame().sorted())") }
     catch { fputs("\(error.localizedDescription)\n", stderr); exit(1) }
+    do {
+        print("当前输入法：\(try InputSourceService.system.currentID())")
+        print("英文键盘：\(try InputSourceService.system.englishID())")
+    } catch { print(error.localizedDescription) }
     exit(0)
 }
 
@@ -30,6 +34,8 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var status = NSTextField(labelWithString: "准备好再出发")
     var detail = NSTextField(wrappingLabelWithString: "")
     var startButton: NSButton!
+    var pauseOnlyButton: NSButton!
+    var englishCheck: NSButton!
     var restoreButton: NSButton!
     var session: Session?
     var phase = "idle"
@@ -39,6 +45,9 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
     var scanBusy = false
     var watchdog: Process?
     var operation = 0
+    var gameIDs = Set<Int32>()
+    var gameWasFrontmost = false
+    var inputWarning: String?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         do {
@@ -76,6 +85,8 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
         updateControls()
         timer = Timer.scheduledTimer(withTimeInterval: 3, repeats: true) { [weak self] _ in self?.tick() }
+        NSWorkspace.shared.notificationCenter.addObserver(self, selector: #selector(workspaceActivated(_:)),
+            name: NSWorkspace.didActivateApplicationNotification, object: nil)
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
     }
@@ -88,7 +99,7 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func buildWindow() {
-        window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 540, height: 480),
+        window = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 540, height: 550),
                           styleMask: [.titled, .closable, .miniaturizable], backing: .buffered, defer: false)
         window.title = "泰拉瑞亚游戏模式"
         window.isReleasedWhenClosed = false
@@ -124,6 +135,9 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
             checks.append(check)
             stack.addArrangedSubview(check)
         }
+        englishCheck = NSButton(checkboxWithTitle: "进入游戏时自动切换英文输入法", target: self, action: #selector(selectionChanged))
+        englishCheck.state = (UserDefaults.standard.object(forKey: "automaticEnglish") as? Bool ?? true) ? .on : .off
+        stack.addArrangedSubview(englishCheck)
         let warning = text("暂停期间应用无法操作，下载和联网任务可能超时。请先等 AI 任务完成。暂停减少 CPU 活动，但不会立即释放已占内存。", size: 12)
         warning.textColor = .secondaryLabelColor
         stack.addArrangedSubview(warning)
@@ -141,20 +155,24 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         detail.heightAnchor.constraint(greaterThanOrEqualToConstant: 36).isActive = true
         let buttons = NSStackView()
         buttons.spacing = 12
-        startButton = NSButton(title: "暂停后台并开始游戏", target: self, action: #selector(start))
+        startButton = NSButton(title: "暂停后台并启动游戏", target: self, action: #selector(start))
         startButton.bezelStyle = .rounded
+        pauseOnlyButton = NSButton(title: "仅暂停后台（不启动游戏）", target: self, action: #selector(pauseOnly))
+        pauseOnlyButton.bezelStyle = .rounded
         restoreButton = NSButton(title: "恢复运行", target: self, action: #selector(restoreClicked))
         restoreButton.bezelStyle = .rounded
         buttons.addArrangedSubview(startButton)
-        buttons.addArrangedSubview(restoreButton)
+        buttons.addArrangedSubview(pauseOnlyButton)
         stack.addArrangedSubview(buttons)
-        setStatus("准备好再出发", "Steam 会继续运行。游戏模式可以最小化，退出游戏后自动恢复运行。")
+        stack.addArrangedSubview(restoreButton)
+        setStatus("准备好再出发", "已在游戏里？选择“仅暂停后台”。进入游戏模式后可最小化此窗口。")
     }
 
     @objc func selectionChanged() {
         for (index, check) in checks.enumerated() {
             UserDefaults.standard.set(check.state == .on, forKey: appChoices[index].bundleID)
         }
+        UserDefaults.standard.set(englishCheck.state == .on, forKey: "automaticEnglish")
     }
 
     func setStatus(_ title: String, _ message: String) {
@@ -172,6 +190,8 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
             check.title = choice.name + (paused ? "  ·  暂停中" : running ? "  ·  运行中" : "  ·  未运行")
         }
         startButton.isEnabled = idle
+        pauseOnlyButton.isEnabled = idle
+        englishCheck.isEnabled = idle
         restoreButton.isEnabled = session != nil && phase != "restoring" && phase != "preparing"
     }
 
@@ -185,6 +205,14 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     @objc func start() {
+        begin(mode: .launchGame)
+    }
+
+    @objc func pauseOnly() {
+        begin(mode: .pauseOnly)
+    }
+
+    func begin(mode: SessionMode) {
         guard phase == "idle" else { return }
         guard watchdog?.isRunning == true else {
             showError("恢复保护未运行", "请退出并重新打开游戏模式。")
@@ -192,20 +220,32 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
         let selected = checks.enumerated().filter { $0.element.state == .on }.map { appChoices[$0.offset] }
         let alert = NSAlert()
-        alert.messageText = "暂停后台并开始游戏？"
-        alert.informativeText = (selected.isEmpty ? "未选择后台应用，将直接启动游戏。" : "暂停：\(selected.map(\.name).joined(separator: "、"))。")
+        alert.messageText = mode == .pauseOnly ? "仅暂停后台？" : "暂停后台并启动游戏？"
+        alert.informativeText = (selected.isEmpty ? "未选择后台应用。" : "暂停：\(selected.map(\.name).joined(separator: "、"))。")
+            + (mode == .pauseOnly ? "\n不会启动 Steam 或游戏。已有游戏会自动接管；没有游戏时可手动恢复。" : "\n已有游戏会自动接管；否则通过 Steam 启动 tModLoader。")
             + "\n\n程序和窗口会保留，但暂停期间无法操作，联网任务可能超时。请等 AI 任务完成再开始。暂停不会立即释放已占内存。"
-        alert.addButton(withTitle: "暂停并开始")
+        alert.addButton(withTitle: mode == .pauseOnly ? "仅暂停后台" : "暂停并启动")
         alert.addButton(withTitle: "取消")
         guard alert.runModal() == .alertFirstButtonReturn else { return }
-        guard NSWorkspace.shared.urlForApplication(toOpen: URL(string: "steam://rungameid/1281930")!) != nil else {
-            showError("找不到 Steam", "请先安装并打开 Steam，确认已经安装 tModLoader。")
-            return
+        let existingGames: Set<Int32>
+        let change: InputSwitch?
+        do {
+            existingGames = try scanGame()
+            change = englishCheck.state == .on ? try InputSourceService.system.prepare() : nil
+        } catch { showError("无法准备游戏模式", error.localizedDescription); return }
+        if mode.shouldLaunchGame(existingGames: existingGames) {
+            guard NSWorkspace.shared.urlForApplication(toOpen: URL(string: "steam://rungameid/1281930")!) != nil else {
+                showError("找不到 Steam", "请先安装并打开 Steam，确认已经安装 tModLoader。")
+                return
+            }
         }
-        session = Session(records: [], created: Date())
+        session = Session(records: [], created: Date(), inputSwitch: change)
         do { try store.save(session) }
         catch { session = nil; showError("无法保存恢复记录", error.localizedDescription); return }
         operation += 1
+        inputWarning = nil
+        gameWasFrontmost = false
+        gameIDs = existingGames
         phase = "preparing"
         updateControls()
         setStatus("正在暂停后台", "窗口和标签页将保留，游戏结束后恢复运行。")
@@ -217,6 +257,7 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         // Roots first, then a second snapshot catches children forked during the first pass.
         // Everything already stopped before this session is skipped and never resumed by us.
         do {
+            if let change = change { try InputSourceService.system.select(change.englishID) }
             for _ in 0..<2 {
                 let snapshot = try liveProcesses()
                 let games = try scanGame()
@@ -234,22 +275,29 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
                     }
                 }
             }
-            launchGame(token: token)
+            activateSession(token: token, mode: mode)
         } catch { restore(reason: "暂停未完成，已恢复已处理的进程：\(error.localizedDescription)") }
     }
 
-    func launchGame(token: Int) {
+    func activateSession(token: Int, mode: SessionMode) {
         guard token == operation else { return }
-        phase = "starting"
-        watch = GameWatch(started: Date())
+        phase = mode == .pauseOnly ? "waiting" : "starting"
+        watch = GameWatch(started: Date(), startupTimeout: mode == .pauseOnly ? nil : 180)
         updateControls()
-        setStatus("正在启动 tModLoader", "首次启动或 Steam 更新可能需要稍等。超过 3 分钟未检测到游戏，会恢复运行。")
-        if let pids = try? scanGame(), !pids.isEmpty {
+        setStatus(mode == .pauseOnly ? "后台已暂停 · 未启动游戏" : "正在启动 tModLoader",
+                  mode == .pauseOnly ? "点击“恢复运行”即可结束。之后检测到游戏时会自动接管，退出游戏后恢复后台。" : "首次启动或 Steam 更新可能需要稍等。超过 3 分钟未检测到游戏，会恢复运行。")
+        // A failed second scan must not accidentally request a second game launch.
+        let pids: Set<Int32>
+        do { pids = try scanGame() }
+        catch { restore(reason: "无法读取游戏状态：\(error.localizedDescription)"); return }
+        gameIDs = pids
+        if !pids.isEmpty {
             _ = watch?.observe(pids, now: Date())
             phase = "playing"
             setStatus("游戏模式运行中", "已接管当前运行的游戏。完全退出 tModLoader 后自动恢复后台。")
             return
         }
+        guard mode.shouldLaunchGame(existingGames: pids) else { tick(); return }
         // Never run the game as a child of Codex. Steam owns the game process.
         guard NSWorkspace.shared.open(URL(string: "steam://rungameid/1281930")!) else {
             restore(reason: "Steam 未接受启动请求。")
@@ -260,7 +308,7 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func tick() {
         updateControls()
-        guard (phase == "starting" || phase == "playing"), !scanBusy else { return }
+        guard (phase == "starting" || phase == "playing" || phase == "waiting"), !scanBusy else { return }
         scanBusy = true
         let token = operation
         DispatchQueue.global(qos: .utility).async { [weak self] in
@@ -268,18 +316,41 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
             DispatchQueue.main.async {
                 guard let self = self else { return }
                 self.scanBusy = false
-                guard token == self.operation, self.phase == "starting" || self.phase == "playing" else { return }
+                guard token == self.operation, self.phase == "starting" || self.phase == "playing" || self.phase == "waiting" else { return }
+                if let result = result { self.gameIDs = result; self.frontmostChanged() }
                 let action = self.watch?.observe(result, now: Date()) ?? .wait
                 switch action {
                 case .playing:
                     self.phase = "playing"
-                    self.setStatus("游戏模式运行中", "可以最小化此窗口。完全退出 tModLoader 后，约 12–15 秒自动恢复运行。")
+                    self.setStatus("游戏模式运行中", self.inputWarning ?? "可以最小化此窗口。完全退出 tModLoader 后，约 12–15 秒自动恢复运行。")
                 case .restore: self.restore(reason: "游戏已退出。")
                 case .startupTimeout: self.restore(reason: "3 分钟内未检测到 tModLoader。Steam 若仍在更新，请稍后重试。")
                 case .wait:
                     if result == nil { self.setStatus("暂时无法读取游戏状态", "保持游戏模式；你仍可点击“恢复运行”。") }
                 }
             }
+        }
+    }
+
+    @objc func workspaceActivated(_ notification: Notification) {
+        // Let macOS finish restoring the focused app's remembered input source first.
+        let token = operation
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+            guard let self = self, token == self.operation else { return }
+            self.frontmostChanged()
+        }
+    }
+
+    func frontmostChanged() {
+        guard phase == "playing" || phase == "starting" || phase == "waiting" else { return }
+        let inGame = NSWorkspace.shared.frontmostApplication.map { gameIDs.contains($0.processIdentifier) } ?? false
+        defer { gameWasFrontmost = inGame }
+        guard inGame, !gameWasFrontmost, let change = session?.inputSwitch else { return }
+        // Apply on entering the game, allowing Chinese chat input during the same visit.
+        do { try InputSourceService.system.select(change.englishID); inputWarning = nil }
+        catch {
+            inputWarning = error.localizedDescription
+            setStatus("后台已暂停 · 请手动切换英文", error.localizedDescription)
         }
     }
 
@@ -300,6 +371,8 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
         operation += 1
         phase = "restoring"
         watch = nil
+        gameIDs = []
+        gameWasFrontmost = false
         setStatus("正在恢复运行", reason)
         updateControls()
         DispatchQueue.global(qos: .utility).async { [weak self] in
@@ -309,7 +382,7 @@ final class GameModeApp: NSObject, NSApplicationDelegate, NSWindowDelegate {
                 do {
                     self.session = try self.store.load()
                     self.phase = self.session == nil ? "idle" : "recovery"
-                    self.setStatus(self.session == nil ? "后台应用已继续运行" : "部分进程尚待恢复",
+                    self.setStatus(self.session == nil ? "后台应用已继续运行" : "部分状态尚待恢复",
                                    errors.isEmpty ? reason + " 可以再次开始游戏模式。" : errors.joined(separator: "\n"))
                     self.updateControls()
                     if self.session == nil { onSuccess?() }

@@ -5,8 +5,8 @@
   <key>CFBundleIdentifier</key><string>local.terruto.gamemode</string>
   <key>CFBundleName</key><string>泰拉瑞亚游戏模式</string>
   <key>CFBundleDisplayName</key><string>泰拉瑞亚游戏模式</string>
-  <key>CFBundleVersion</key><string>1</string>
-  <key>CFBundleShortVersionString</key><string>1.0</string>
+  <key>CFBundleVersion</key><string>2</string>
+  <key>CFBundleShortVersionString</key><string>1.1</string>
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>LSMinimumSystemVersion</key><string>13.0</string>
   <key>NSHighResolutionCapable</key><true/>

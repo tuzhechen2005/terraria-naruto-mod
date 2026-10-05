@@ -24,7 +24,8 @@ struct ProcessRow {
         if name == "dotnet" && arguments.range(
             of: #"(?:^|\s)(?:"[^"\n]*/|[^\s]*/)?tModLoader\.dll"?(?:\s|$)"#,
             options: [.regularExpression, .caseInsensitive]) == nil { return false }
-        // Build and dedicated-server processes must never hold a gaming session open.
+        // Steam's auxiliary client can outlive the game window.
+        if arguments.range(of: #"(?:^|\s)-terrariasteamclient"#, options: [.regularExpression, .caseInsensitive]) != nil { return false }
         return arguments.range(of: #"(?:^|\s)-(?:server|build|buildmod)(?:\s|$|=)"#,
                                options: [.regularExpression, .caseInsensitive]) == nil
     }
@@ -52,11 +53,18 @@ func gamePIDs(executables: String, arguments: String, uid: UInt32) -> Set<Int32>
 
 enum WatchAction: Equatable { case wait, playing, restore, startupTimeout }
 
+enum SessionMode {
+    case launchGame, pauseOnly
+    func shouldLaunchGame(existingGames: Set<Int32>) -> Bool {
+        self == .launchGame && existingGames.isEmpty
+    }
+}
+
 struct GameWatch {
     var sawGame = false
     var absentSince: Date?
     let started: Date
-    let startupTimeout: TimeInterval = 180
+    var startupTimeout: TimeInterval? = 180
     let exitGrace: TimeInterval = 12
 
     mutating func observe(_ pids: Set<Int32>?, now: Date) -> WatchAction {
@@ -67,7 +75,9 @@ struct GameWatch {
             absentSince = nil
             return .playing
         }
-        if !sawGame { return now.timeIntervalSince(started) >= startupTimeout ? .startupTimeout : .wait }
+        if !sawGame {
+            return startupTimeout.map { now.timeIntervalSince(started) >= $0 } == true ? .startupTimeout : .wait
+        }
         if absentSince == nil { absentSince = now }
         return now.timeIntervalSince(absentSince!) >= exitGrace ? .restore : .wait
     }
@@ -148,6 +158,27 @@ struct PauseRecord: Codable, Equatable {
 struct Session: Codable {
     var records: [PauseRecord]
     let created: Date
+    var inputSwitch: InputSwitch? = nil
+}
+
+struct InputSwitch: Codable, Equatable {
+    let originalID: String
+    let englishID: String
+}
+
+struct KeyboardSource {
+    let id: String
+    let languages: [String]
+    let isKeyboardLayout: Bool
+    let selectable: Bool
+}
+
+func englishSourceID(_ sources: [KeyboardSource]) -> String? {
+    let usable = sources.filter { $0.isKeyboardLayout && $0.selectable && $0.languages.contains("en") }
+    for id in ["com.apple.keylayout.ABC", "com.apple.keylayout.US"] {
+        if usable.contains(where: { $0.id == id }) { return id }
+    }
+    return usable.first?.id
 }
 
 struct SessionStore {

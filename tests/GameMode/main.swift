@@ -35,9 +35,26 @@ check(watch.observe([], now: now.addingTimeInterval(40)) == .wait, "grace reset"
 check(watch.observe([], now: now.addingTimeInterval(52)) == .restore, "restore after exit")
 var timeout = GameWatch(started: now)
 check(timeout.observe([], now: now.addingTimeInterval(181)) == .startupTimeout, "failed launch timeout")
+var manualWatch = GameWatch(started: now, startupTimeout: nil)
+check(manualWatch.observe([], now: now.addingTimeInterval(3600)) == .wait, "pause-only never times out or launches a game")
+check(manualWatch.observe([42], now: now.addingTimeInterval(3601)) == .playing, "pause-only attaches to a later game")
+_ = manualWatch.observe([], now: now.addingTimeInterval(3602))
+check(manualWatch.observe([], now: now.addingTimeInterval(3614)) == .restore, "attached game exit restores pause-only session")
+check(!SessionMode.pauseOnly.shouldLaunchGame(existingGames: []), "pause-only does not launch without game")
+check(!SessionMode.pauseOnly.shouldLaunchGame(existingGames: [42]), "pause-only does not launch with game")
+check(!SessionMode.launchGame.shouldLaunchGame(existingGames: [42]), "launch entry attaches without a second launch")
+check(SessionMode.launchGame.shouldLaunchGame(existingGames: []), "launch entry starts an absent game")
+let abc = KeyboardSource(id: "com.apple.keylayout.ABC", languages: ["en"], isKeyboardLayout: true, selectable: true)
+let us = KeyboardSource(id: "com.apple.keylayout.US", languages: ["en"], isKeyboardLayout: true, selectable: true)
+let chinese = KeyboardSource(id: "Chinese", languages: ["zh-Hans"], isKeyboardLayout: false, selectable: true)
+let vietnamese = KeyboardSource(id: "Vietnamese", languages: ["vi"], isKeyboardLayout: true, selectable: true)
+check(englishSourceID([chinese, us, abc]) == abc.id, "prefer enabled ABC")
+check(englishSourceID([us, chinese]) == us.id, "US fallback")
+check(englishSourceID([chinese, vietnamese]) == nil, "non-English Latin layouts are not English")
+check(englishSourceID([KeyboardSource(id: abc.id, languages: ["en"], isKeyboardLayout: true, selectable: false)]) == nil, "nonselectable source excluded")
 let row = ProcessRow(uid: 501, pid: 5, executable: "/Steam App/dotnet/dotnet", arguments: "/Steam App/dotnet/dotnet tModLoader.dll -steam")
 check(row.isGameClient, "actual Steam dotnet command")
-for arg in ["tModLoader.dll -server", "tModLoader.dll -build Foo", "tModLoader.dll -buildmod=Foo", "another.dll"] {
+for arg in ["tModLoader.dll -server", "tModLoader.dll -build Foo", "tModLoader.dll -buildmod=Foo", "another.dll", "tModLoader.dll -terrariasteamclient316"] {
     check(!ProcessRow(uid: 501, pid: 5, executable: "/dotnet", arguments: arg).isGameClient, "exclude server/build/unrelated")
 }
 check(!ProcessRow(uid: 501, pid: 5, executable: "/usr/bin/python3", arguments: "tModLoader.dll").isGameClient, "exclude scanners")
@@ -52,6 +69,32 @@ let directory = FileManager.default.temporaryDirectory.appendingPathComponent("t
 try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
 defer { try? FileManager.default.removeItem(at: directory) }
 let store = SessionStore(directory: directory)
+// Input tests use a fake source service; the real keyboard remains untouched.
+var source = "Chinese"
+var selectedSources: [String] = []
+var failSelection = false
+let fakeInput = InputSourceService(currentID: { source }, englishID: { abc.id }, select: { id in
+    if failSelection { throw NSError(domain: "test", code: 1) }
+    source = id; selectedSources.append(id)
+})
+let change = try fakeInput.prepare()
+check(change == InputSwitch(originalID: "Chinese", englishID: abc.id) && selectedSources.isEmpty, "prepare records original without changing keyboard")
+try fakeInput.select(change.englishID)
+let inputSession = Session(records: [], created: now, inputSwitch: change)
+try store.save(inputSession)
+check(try store.load()?.inputSwitch == change, "input source recovery journal roundtrip")
+check(resumeSession(inputSession, store: store, input: fakeInput).isEmpty && source == "Chinese", "restore original input after English selection")
+source = "Japanese"
+check(resumeSession(inputSession, store: store, input: fakeInput).isEmpty && source == "Japanese", "preserve a manually chosen input source")
+source = abc.id; failSelection = true
+check(!resumeSession(inputSession, store: store, input: fakeInput).isEmpty, "input restoration error reported")
+check(try store.load()?.inputSwitch == change, "failed input restoration remains recoverable")
+failSelection = false
+check(resumeSession(try store.load()!, store: store, input: fakeInput).isEmpty, "input restoration retry succeeds")
+let legacy = "{\"records\":[],\"created\":0}"
+try Data(legacy.utf8).write(to: store.file)
+check(try store.load()?.inputSwitch == nil, "legacy journal without input source is compatible")
+try store.save(nil)
 let beat = directory.appendingPathComponent("heartbeat")
 let child = Process()
 child.executableURL = URL(fileURLWithPath: CommandLine.arguments[0])
@@ -82,6 +125,16 @@ check(count() == stoppedCount, "paused dummy heartbeat remains unchanged")
 check(resumeSession(session, store: store).isEmpty, "resume succeeds")
 awaitCondition("CONT resumes same process") { count() > stoppedCount }
 check(!FileManager.default.fileExists(atPath: store.file.path), "journal cleared after resume")
+source = abc.id; failSelection = true
+let mixedSession = Session(records: session.records, created: now, inputSwitch: change)
+try store.save(mixedSession)
+try signalVerified(identity, signal: SIGSTOP)
+awaitCondition("dummy stopped for mixed recovery") { (try? liveProcesses()[identity.pid]?.isStopped) == true }
+check(!resumeSession(mixedSession, store: store, input: fakeInput).isEmpty, "mixed recovery reports failed input restoration")
+check((try liveProcesses()[identity.pid]?.isStopped) == false, "input failure does not block resuming apps")
+check(try store.load()?.records.isEmpty == true && store.load()?.inputSwitch == change, "retry journal retains only failed input state")
+failSelection = false
+check(resumeSession(try store.load()!, store: store, input: fakeInput).isEmpty, "mixed recovery retry clears journal")
 let wrong = ProcessIdentity(uid: identity.uid, pid: identity.pid, executable: identity.executable, started: "different start time")
 try signalVerified(wrong, signal: SIGSTOP)
 check((try liveProcesses()[identity.pid]?.isStopped) == false, "PID identity mismatch never signals")

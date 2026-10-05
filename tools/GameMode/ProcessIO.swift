@@ -37,14 +37,22 @@ func signalVerified(_ identity: ProcessIdentity, signal: Int32) throws {
     if kill(identity.pid, signal) != 0 && errno != ESRCH { throw POSIXError(POSIXErrorCode(rawValue: errno) ?? .EIO) }
 }
 
-func resumeSession(_ session: Session, store: SessionStore) -> [String] {
+func resumeSession(_ session: Session, store: SessionStore, input: InputSourceService = .system) -> [String] {
     var remaining: [PauseRecord] = []
     var errors: [String] = []
     for record in session.records.reversed() {
         do { try signalVerified(record.identity, signal: SIGCONT) }
         catch { remaining.append(record); errors.append("PID \(record.identity.pid)：\(error.localizedDescription)") }
     }
-    do { try store.save(remaining.isEmpty ? nil : Session(records: remaining.reversed(), created: session.created)) }
+    var inputRemaining = session.inputSwitch
+    if let change = inputRemaining {
+        do { try input.restore(change); inputRemaining = nil }
+        catch { errors.append("恢复输入法：\(error.localizedDescription)") }
+    }
+    do {
+        try store.save(remaining.isEmpty && inputRemaining == nil ? nil :
+            Session(records: remaining.reversed(), created: session.created, inputSwitch: inputRemaining))
+    }
     catch { errors.append(error.localizedDescription) }
     return errors
 }
