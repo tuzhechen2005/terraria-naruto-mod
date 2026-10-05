@@ -7,6 +7,7 @@
 - 用户：再不斩/白的优化正在和 Codex 讨论，之后给 Claude 设计文档；先做伊鲁卡动作帧并接入、用 skill 画下一个 NPC、残留文件先提交。残留已提交（`d5e3b2a` 作废旧稿，`01f0f7d` skill/伊鲁卡单帧/复盘/调研）。
 - **伊鲁卡已接入**：`iruka-direct-pixel-anim-v1`（Codex 后台桥接）交 12 帧 80×80，站立帧就是已认可帧原样，其余帧都贴了已认可头部像素（脸一致、无嘴线）；脚底 y=75，身体中线 x=40。`scripts/build_hires_npc_sheet.py` 改为整体下移让站立帧脚落在倒数第 3 行（原版画法：帧底在判定框下 4 像素、脚陷地 2 像素），新增 `--head X,Y`（伊鲁卡用 `--head 28,18`，否则头像被马尾占满）。`Iruka.png` 80×960、`Iruka_Head.png` 30×26，`Iruka.cs` 的 `NPC.scale = 1f`。
 - **卡卡西样张**（`kakashi-direct-pixel-v1`）：用户“很不错 真不错 就是身高要统一一下”。Claude 用同一源图按 62 高、相位 0.8/0.5 重导出 `Kakashi_Idle_h62_*`（默认相位漏眼睛），对比图 `compare_h62.png`，待用户看；统一总高后他的头比伊鲁卡小。未接入，未出动作帧。
+- 用户看后反馈几帧头和身体分离：Codex 只贴了下巴以上的头部，脖子取自生成图。已用 `art/deliveries/iruka-direct-pixel-anim-v1/fix_necks.py` 补脖子、清掉残留的生成下巴并重拼（原交付在 `frames_before_neck_fix/`）。
 - 验证：`./scripts/verify-mac.sh` 通过（0 错误，旧的两条 KonohaDump 警告）。**未实机**：伊鲁卡在游戏里的大小、脚贴地、走路是否左右抖、坐椅子对位、投苦无出手位置、头像图标。无头服务器加载未运行（只换贴图与缩放）。
 - 下一步：用户进游戏看伊鲁卡；用户确认卡卡西 62 高后，按同一方式请求卡卡西全套动作（含水牢被困两帧 `Kakashi_Trapped_*`，考官借用卡卡西贴图的缩放也要改）。再不斩/白等 Codex 设计文档。
 

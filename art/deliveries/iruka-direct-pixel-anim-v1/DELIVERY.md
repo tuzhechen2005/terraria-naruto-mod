@@ -38,3 +38,9 @@ All eleven generated pose cells use the same 0.1 nearest-neighbor sample ratio. 
 ## Remaining game-side checks
 
 Claude should assemble the 12-frame vertical NPC sheet and head texture, set `NPC.scale = 1`, then check in Terraria that walking has no visible horizontal jitter, feet meet the ground, the seated pose aligns with chairs, and the throw release lines up with the kunai projectile. Game integration and live gameplay were not performed by this art worker.
+
+## Claude 修正：头和身体分离（用户 2026-10-05）
+
+- 用户：“伊鲁卡的动作帧有几帧头和身体分离了”。原因：`export_frames.py` 只贴已认可帧 y=14..39 的头部，下巴下面两行（下颌阴影和脖子，站立帧 y=40..41）取自各生成姿势：走路帧缺脖子，跳和投掷帧还留着生成图自己的下巴，伸在脸下面。
+- `fix_necks.py`：从 `frames_before_neck_fix/`（Codex 原交付）读入，清掉头下 6 行、x=36..55 里生成的肤色及其红褐描边（避开左侧手臂和投掷帧伸出的手），再把站立帧的脖子两行贴到头下；写回 `frames/`。站立帧不变。
+- 检查：12 帧 alpha 0/255，地面帧脚底 y=75、跳 y=69 不变；6 倍目视每帧下巴都接在脖子和领口上，投掷第 10 帧的手保留。已重新拼 `Iruka.png`。`strip_1x_3x.png`、`walk.gif`、`heads_6x.png` 仍是修正前的预览。
