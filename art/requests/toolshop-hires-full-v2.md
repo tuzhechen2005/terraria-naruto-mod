@@ -1,6 +1,6 @@
 # 素材请求：toolshop-hires-full-v2
 
-- 状态：requested
+- 状态：部分通过（00、07、09、11 通过），其余见 v3
 - 提出者及提交号：Claude Code（夜间 NPC 外貌任务，逐像素验收 `art/deliveries/toolshop-hires-full-v1/`）
 - **唯一基准：`art/deliveries/npc-hires-accepted/ToolShopkeeper_Idle.png`**（必须作为图像参考）。动作画法照已通过的伊鲁卡、达兹纳全套（`art/deliveries/iruka-hires-full-v1/`、`art/deliveries/tazuna-hires-full-v2/`，必须作为图像参考）。
 - v1 的问题（必须全部解决）：
