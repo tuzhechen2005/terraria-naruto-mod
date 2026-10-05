@@ -1,6 +1,6 @@
 # 素材请求：ibiki-hires-full-v1
 
-- 状态：requested
+- 状态：通过（2026-10-05，已接入）
 - 提出者及提交号：Claude Code（夜间 NPC 外貌任务；伊比喜高清站立图已通过逐像素验收）
 - **唯一基准：`art/deliveries/npc-hires-accepted/Ibiki_Idle.png`**（必须作为图像参考）。伊比喜站在考场里不走动，只需要 2 帧：
   - `Ibiki_00_Folded.png`：双臂交叉抱在胸前（黑手套），挺直站立，严厉地盯着前方——这是他平时的样子；
