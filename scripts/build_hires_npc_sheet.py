@@ -2,17 +2,15 @@
 """Build a high-resolution town-NPC sheet (one screen pixel per art pixel, shown at 1x) from per-frame PNGs.
 
 Each frame is an 80x80 PNG facing right with the feet on row 76 (art/requests/npc-hires-sample-*.md). This flips
-the frames to face left like vanilla town NPCs, stacks them vertically in NpcSheet order (Idle, Walk x6, Jump, Sit,
-Throw x3) and cuts a 30x26 head icon from the idle frame.
+the frames to face left like vanilla town NPCs, stacks them vertically in the order given (NpcSheet order for town NPCs:
+Idle, Walk x6, Jump, Sit, Throw x3; a frame may be repeated to fill a slot) and cuts a 30x26 head icon from the idle frame.
 
-Usage: python3 scripts/build_hires_npc_sheet.py OUT_SHEET OUT_HEAD FRAME0.png ... FRAME11.png
+Usage: python3 scripts/build_hires_npc_sheet.py OUT_SHEET OUT_HEAD FRAME0.png [FRAME1.png ...]
 """
 import sys
 from PIL import Image
 
 out_sheet, out_head, *frames = sys.argv[1:]
-if len(frames) != 12:
-    sys.exit(f"need 12 frames, got {len(frames)}")
 cells = [Image.open(f).convert("RGBA") for f in frames]
 size = cells[0].size
 sheet = Image.new("RGBA", (size[0], size[1] * len(cells)))
