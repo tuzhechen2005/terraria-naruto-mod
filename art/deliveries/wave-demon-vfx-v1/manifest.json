@@ -1,0 +1,44 @@
+{
+  "request_id": "wave-demon-vfx-v1",
+  "source": "source/DemonVfxSheet.png",
+  "coordinate_units": "output PNG pixels at 1x game scale",
+  "assets": [
+    {
+      "file": "sprites/DemonGhost.png",
+      "dimensions": [256, 320],
+      "anchor": [128, 300],
+      "facing": "front, symmetric enough to flip",
+      "suggested_duration_ms": 350,
+      "damage": false,
+      "role": "decorative berserk aura; start pose"
+    },
+    {
+      "file": "sprites/DemonPress.png",
+      "dimensions": [256, 320],
+      "anchor": [128, 300],
+      "facing": "presses toward image right; flip for leftward strike",
+      "suggested_duration_ms": 160,
+      "damage": false,
+      "role": "decorative heavy-slash ghost extension"
+    },
+    {
+      "file": "sprites/SwordSpinArc.png",
+      "dimensions": [192, 192],
+      "anchor": [96, 96],
+      "facing": "bright leading tip at lower right in source orientation; rotate and flip to match actual sword travel",
+      "suggested_duration_ms": 120,
+      "damage": false,
+      "role": "decorative thrown-sword trail; sword's existing hitbox remains authoritative"
+    },
+    {
+      "file": "sprites/ChakraImpact.png",
+      "dimensions": [192, 192],
+      "anchor": [96, 96],
+      "facing": "radial",
+      "suggested_duration_ms": 220,
+      "damage": false,
+      "role": "decorative catch and berserk-start impact"
+    }
+  ],
+  "animation_suggestion": "Ghost holds briefly, changes to Press on heavy slash, then fades; interpolate pose by scale/opacity over roughly 0.5 s. Rotate Arc with existing sword travel. Expand and fade Impact once. Preview GIF is illustrative, not engine timing."
+}

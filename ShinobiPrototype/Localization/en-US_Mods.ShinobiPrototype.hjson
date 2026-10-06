@@ -837,6 +837,21 @@ Configs: {
 				'''
 		}
 
+		WaveVfxStrength: {
+			Label: Wave battle decorative effects (%)
+			Tooltip: Adjust splashes, frost, apparitions and trails; attack bodies and warnings remain visible
+		}
+
+		WaveScreenShake: {
+			Label: Brief Wave battle impact shake
+			Tooltip: Small, short shakes on selected heavy impacts without locking the camera
+		}
+
+		WaveBackgroundDim: {
+			Label: Brief Wave battle background dimming
+			Tooltip: Briefly dim the background on selected strong attacks while keeping players and UI visible
+		}
+
 		QuestTracker: {
 			Label: Quest tracker
 			Tooltip:

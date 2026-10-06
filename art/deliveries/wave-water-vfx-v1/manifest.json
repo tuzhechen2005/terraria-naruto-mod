@@ -1,0 +1,195 @@
+{
+  "source": "source.png",
+  "source_dimensions": [
+    1536,
+    1024
+  ],
+  "sprites": [
+    {
+      "file": "sprites/WaterDragonHead.png",
+      "canvas": [
+        192,
+        128
+      ],
+      "source_cell": [
+        0,
+        0,
+        520,
+        530
+      ],
+      "crop_in_cell": [
+        10,
+        65,
+        512,
+        490
+      ],
+      "source_crop": [
+        10,
+        65,
+        512,
+        490
+      ],
+      "anchor": [
+        21,
+        64
+      ],
+      "direction": "right",
+      "purpose": "danger core"
+    },
+    {
+      "file": "sprites/WaterDragonBody.png",
+      "canvas": [
+        256,
+        96
+      ],
+      "source_cell": [
+        520,
+        0,
+        1080,
+        530
+      ],
+      "crop_in_cell": [
+        5,
+        141,
+        543,
+        433
+      ],
+      "source_crop": [
+        525,
+        141,
+        1063,
+        433
+      ],
+      "anchor": [
+        128,
+        48
+      ],
+      "direction": "right; joins at both ends",
+      "purpose": "danger core with decorative outer foam"
+    },
+    {
+      "file": "sprites/WaterGather.png",
+      "canvas": [
+        192,
+        192
+      ],
+      "source_cell": [
+        1080,
+        0,
+        1536,
+        530
+      ],
+      "crop_in_cell": [
+        6,
+        41,
+        440,
+        521
+      ],
+      "source_crop": [
+        1086,
+        41,
+        1520,
+        521
+      ],
+      "anchor": [
+        96,
+        96
+      ],
+      "direction": "clockwise gather",
+      "purpose": "telegraph; no damage"
+    },
+    {
+      "file": "sprites/WaterSlash.png",
+      "canvas": [
+        256,
+        192
+      ],
+      "source_cell": [
+        0,
+        530,
+        520,
+        1024
+      ],
+      "crop_in_cell": [
+        14,
+        27,
+        520,
+        448
+      ],
+      "source_crop": [
+        14,
+        557,
+        520,
+        978
+      ],
+      "anchor": [
+        127,
+        99
+      ],
+      "direction": "opens right",
+      "purpose": "decorative slash; character attack owns damage"
+    },
+    {
+      "file": "sprites/WaterSplash.png",
+      "canvas": [
+        256,
+        128
+      ],
+      "source_cell": [
+        520,
+        530,
+        1080,
+        1024
+      ],
+      "crop_in_cell": [
+        0,
+        79,
+        560,
+        401
+      ],
+      "source_crop": [
+        520,
+        609,
+        1080,
+        931
+      ],
+      "anchor": [
+        128,
+        112
+      ],
+      "direction": "spreads left and right",
+      "purpose": "aftermath; no damage"
+    },
+    {
+      "file": "sprites/MistPuff.png",
+      "canvas": [
+        128,
+        128
+      ],
+      "source_cell": [
+        1080,
+        530,
+        1536,
+        1024
+      ],
+      "crop_in_cell": [
+        0,
+        25,
+        441,
+        453
+      ],
+      "source_crop": [
+        1080,
+        555,
+        1521,
+        983
+      ],
+      "anchor": [
+        64,
+        64
+      ],
+      "direction": "drifts right",
+      "purpose": "teleport warning; no damage"
+    }
+  ]
+}

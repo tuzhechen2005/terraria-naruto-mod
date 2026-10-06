@@ -1,5 +1,16 @@
 # 当前工作交接
 
+## 2026-10-05 Codex：两个PR与M11特效（当前）
+
+- 用户要求卡卡西回到上一版；游戏和预览已恢复v5修眼后的v3/v4步态。v6只存档，不能重新接入。首份PR： https://github.com/tuzhechen2005/terraria-naruto-mod/pull/1 ，分支codex/npc-art-and-wave-boss-design，提交f7c0159，包含NPC交付/skill/M11定稿及此前本地未推送的72个提交；未合并。
+- 当前分支codex/wave-boss-vfx，从f7c0159分出。只制作M11已有特效：三桥接请求wave-water-vfx-v1、wave-ice-vfx-v1、wave-demon-vfx-v1均delivered，无后台任务。
+- 当前交付入口 `art/deliveries/wave-vfx-review-v1/DELIVERY.md`。16张RGBA已装入 `ShinobiPrototype/Assets/Vfx/Wave/`；源图/提示词/短循环在三份交付，原生明暗图/组合GIF/APNG/参数/hash在review目录。
+- 渲染接口 `WaveVfx.cs`，缓存预加载扩展；客户端余波 `WaveVfxBursts.cs`上限64/24帧清理，短震8帧3px/压暗18帧20%；音效 `WaveVfxAudio.cs`仅原版SoundID。客户端装饰/镜头设置中英齐全。
+- 现有刀光、千本亮尖/冰痕/消散、移动残像、镜框/亮镜剪影/裂纹/碎裂/暴走寒光、鬼影/压下、旋转刀迹/接刀环、水遁聚势/水花已接入；水龙释放/破阵/暴走有镜头节点。没有修改伤害、生命、判定、Boss体型、追击、奖励或地形。
+- 完整水龙头身、锁线、瞬身落点、阵列及合击接口/素材已备，需M11同步战斗逻辑用实际路径/阶段调用。当前旧78×32水龙判定未硬套巨大龙身。不能把本轮特效当完整M11重设计实现。
+- `install_wave_vfx.py`与`build_wave_vfx_preview.py`可复现检查/安装/预览；16张机械检查、三份导出重跑与游戏资源字节一致、引用/24帧动画检查通过。最终verify-mac通过：文本0、14组规则通过、构建0错误；两条旧KonohaDump和基线未知图片类型提示仍在，见review/verify-mac.log。游戏/联机/性能实测未运行，组合图不是实机截图。
+- 第二PR待本轮创建并补录，基底应为第一PR分支，让审查只包含特效增量；先合并PR1，再处理PR2。工作范围不要混入Boss逻辑重设计。
+
 本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。NPC 最新进展见下方 **卡卡西走路与眼部修复、新NPC第一批样张**；Boss 重设计已整理为 **M11 定稿文档，待实施**。后面保留此前开发快照。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
 
 ## 2026-10-05 Codex：卡卡西走路连续性再次修复（已接入，未实机）

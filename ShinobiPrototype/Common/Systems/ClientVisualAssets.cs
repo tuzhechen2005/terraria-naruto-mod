@@ -30,7 +30,7 @@ public sealed class ClientVisualAssets : ModSystem
                                              file.EndsWith(".png", StringComparison.OrdinalIgnoreCase)))
                 continue;
             string folder = file[..slash];
-            if (folder != Projectiles && folder != Npcs && folder != "Assets/UI")
+            if (folder != Projectiles && folder != Npcs && folder != "Assets/UI" && folder != WaveVfx.Folder)
                 continue;
             string name = file[(slash + 1)..dot];
             textures[(folder, name)] = Mod.Assets.Request<Texture2D>(file[..dot], AssetRequestMode.AsyncLoad);

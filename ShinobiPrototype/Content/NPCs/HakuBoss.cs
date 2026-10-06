@@ -228,6 +228,7 @@ public sealed class HakuBoss : ModNPC
                 if (WaveDuoRules.CageBrokenEarly(broken))
                 {
                     SoundEngine.PlaySound(SoundID.Shatter, NPC.Center);
+                    WaveVfxBursts.Pulse(WaveVfxBursts.Impact.CageBroken, NPC.Center);
                     Enter(CageStagger);
                     break;
                 }
@@ -263,6 +264,7 @@ public sealed class HakuBoss : ModNPC
                 {
                     SoundEngine.PlaySound(SoundID.Item27, NPC.Center);
                     BossLines.Say(NPC, "HakuFrenzy", new Color(175, 240, 255));
+                    WaveVfxBursts.Pulse(WaveVfxBursts.Impact.FrenzyStart, NPC.Center);
                     if (Main.netMode != NetmodeID.Server)
                         WaveOverlaySystem.Flash();
                 }
@@ -564,6 +566,15 @@ public sealed class HakuBoss : ModNPC
         color *= NPC.Opacity;
 
         (string action, int count, int frame) = FrameFor();
+        // Reuse the same current sprite for a restrained cold afterimage. Do
+        // not draw a teleport trail between unrelated mirror positions.
+        float decoration = Math.Clamp(ShinobiClientConfig.Instance.WaveVfxStrength, 0, 100) / 100f;
+        if (NPC.velocity.LengthSquared() > 16f && decoration > 0f)
+            for (int i = 2; i >= 1; i--)
+                BossSprites.TryDraw(spriteBatch, "Haku", action, frame, count,
+                    emergeArt ? BossSprites.HakuEmerge : BossSprites.Haku,
+                    NPC.Bottom - NPC.velocity * (i * 1.5f), NPC.spriteDirection,
+                    new Color(170, 230, 255) * (0.12f * decoration / i), screenPos);
         if (BossSprites.TryDraw(spriteBatch, "Haku", action, frame, count,
             emergeArt ? BossSprites.HakuEmerge : BossSprites.Haku,
             NPC.Bottom, NPC.spriteDirection, color, screenPos))

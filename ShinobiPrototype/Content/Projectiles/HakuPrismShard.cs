@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common;
+using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.NPCs;
 
 namespace ShinobiPrototype.Content.Projectiles;
@@ -63,6 +64,9 @@ public sealed class HakuPrismShard : ModProjectile
         float pulse = Projectile.ai[0] < WarningTicks
             ? 0.75f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * 13f) * 0.18f : 1f;
         Vector2 origin = new Vector2(source.Width, source.Height) * 0.5f;
+        WaveVfx.Needle(Main.spriteBatch, Projectile.Center + Projectile.rotation.ToRotationVector2() *
+            Projectile.width * 0.5f, Projectile.rotation,
+            Projectile.ai[0] < WarningTicks ? Projectile.ai[0] / WarningTicks : 0f);
         Main.spriteBatch.Draw(texture, center + new Vector2(2f, 2f), source,
             new Color(20, 85, 165, 190), Projectile.rotation, origin,
             1f, SpriteEffects.None, 0f);
@@ -71,4 +75,7 @@ public sealed class HakuPrismShard : ModProjectile
             1f, SpriteEffects.None, 0f);
         return false;
     }
+
+    public override void OnKill(int timeLeft) => WaveVfxBursts.Spawn(WaveVfxBursts.Kind.Frost,
+        Projectile.Center, 40f);
 }

@@ -249,6 +249,7 @@ public sealed class ZabuzaBoss : ModNPC
                 {
                     SoundEngine.PlaySound(SoundID.Roar, NPC.Center);
                     BossLines.Say(NPC, "ZabuzaFrenzy", new Color(215, 125, 255));
+                    WaveVfxBursts.Pulse(WaveVfxBursts.Impact.FrenzyStart, NPC.Center);
                 }
                 ShowDemonAura();
                 if (NPC.ai[1] >= ZabuzaCombatRules.FrenzyAwakenTicks)
@@ -279,6 +280,8 @@ public sealed class ZabuzaBoss : ModNPC
             case ZabuzaCombatRules.DragonWindup:
                 NPC.direction = NPC.spriteDirection = NPC.ai[2] >= 0f ? 1 : -1;
                 NPC.velocity.X *= 0.7f;
+                if (NPC.ai[1] == 1f)
+                    WaveVfxAudio.Play(WaveVfxAudio.Cue.WaterGather, NPC.Center);
                 ShowDragonWindup(target);
                 if (NPC.ai[1] >= ZabuzaCombatRules.DragonWindupTicks)
                 {
@@ -294,6 +297,8 @@ public sealed class ZabuzaBoss : ModNPC
                     SoundEngine.PlaySound(SoundID.Item21, NPC.Center);
                     NPC.localAI[0]++;
                     Enter(ZabuzaCombatRules.DragonRecovery);
+                    WaveVfxAudio.Play(WaveVfxAudio.Cue.DragonRelease, NPC.Center);
+                    WaveVfxBursts.Pulse(WaveVfxBursts.Impact.DragonRelease, NPC.Center);
                 }
                 break;
 
@@ -1074,6 +1079,10 @@ public sealed class ZabuzaBoss : ModNPC
                     DrawBody(spriteBatch, screenPos, pose, new Color(95, 175, 210) * 0.2f,
                         NPC.Bottom + NPC.oldPos[i] - NPC.position);
         DrawDemonAura(spriteBatch, screenPos);
+        if (state is ZabuzaCombatRules.WaterWindup or ZabuzaCombatRules.DragonWindup)
+            WaveVfx.Gather(spriteBatch, NPC.Center + new Vector2(NPC.direction * 18f, -8f),
+                NPC.ai[1] / (state == ZabuzaCombatRules.DragonWindup
+                    ? ZabuzaCombatRules.DragonWindupTicks : ZabuzaCombatRules.WaterWindupTicks));
         DrawBody(spriteBatch, screenPos, pose, readable, NPC.Bottom);
         return false;
     }
@@ -1093,6 +1102,13 @@ public sealed class ZabuzaBoss : ModNPC
         };
         if (state == ZabuzaCombatRules.MistTransition && t < burstStart)
             return;
+        if (WaveVfx.Ready("DemonGhost"))
+        {
+            bool pressing = state == ZabuzaCombatRules.SlashRecovery && t <= ZabuzaCombatRules.SlashActiveTicks;
+            WaveVfx.Ghost(spriteBatch, NPC.Bottom, pressing ? t / ZabuzaCombatRules.SlashActiveTicks
+                : 0.5f + (float)Math.Sin(t * 0.08f) * 0.25f, pressing, NPC.spriteDirection);
+            return;
+        }
         Color color = Color.White * (NPC.Opacity * (LastStand ? 0.95f : 0.82f));
         if (burstStart >= 0f && t - burstStart < 18f &&
             BossSprites.TryDraw(spriteBatch, "Zabuza", "AuraBurst",

@@ -831,6 +831,21 @@ Configs: {
 				'''
 		}
 
+		WaveVfxStrength: {
+			Label: 波之国战斗装饰特效（%）
+			Tooltip: 调整水花、寒气、鬼影和刀迹；降低后仍保留攻击主体和预警
+		}
+
+		WaveScreenShake: {
+			Label: 波之国强招轻微震屏
+			Tooltip: 在选定重击节点短促震动，不锁定镜头
+		}
+
+		WaveBackgroundDim: {
+			Label: 波之国强招短暂压暗背景
+			Tooltip: 在选定强招节点短暂压暗背景，保留玩家与界面
+		}
+
 		QuestTracker: {
 			Label: 任务追踪
 			Tooltip:

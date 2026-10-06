@@ -1,0 +1,217 @@
+{
+  "request_id": "wave-ice-vfx-v1",
+  "source": "source/wave-ice-vfx-sheet.png",
+  "preview_loop": {
+    "file": "preview/mirror-loop.apng",
+    "frames": 9,
+    "frame_duration_ms": 100,
+    "purpose": "illustrative layer timing only; game-side timing remains to be set"
+  },
+  "danger_note": "These images are visual layers, not new hitboxes or abilities. NeedleGlow decorates the existing damaging needle; MirrorShards and FrostCloud are non-damaging.",
+  "assets": [
+    {
+      "file": "sprites/IceMirror.png",
+      "source_window": [
+        70,
+        0,
+        450,
+        535
+      ],
+      "isolated_alpha_bbox": [
+        134,
+        18,
+        388,
+        531
+      ],
+      "canvas": [
+        128,
+        192
+      ],
+      "art_size": [
+        89,
+        180
+      ],
+      "art_origin": [
+        19,
+        6
+      ],
+      "anchor": [
+        64,
+        96
+      ],
+      "facing": "axial",
+      "role": "mirror visual/telegraph; gameplay hitbox determined by game code",
+      "suggested_visibility": "during mirror form and active state"
+    },
+    {
+      "file": "sprites/MirrorCracks.png",
+      "source_window": [
+        575,
+        0,
+        955,
+        510
+      ],
+      "isolated_alpha_bbox": [
+        649,
+        44,
+        882,
+        495
+      ],
+      "canvas": [
+        128,
+        192
+      ],
+      "art_size": [
+        80,
+        155
+      ],
+      "art_origin": [
+        24,
+        18
+      ],
+      "anchor": [
+        64,
+        96
+      ],
+      "facing": "axial",
+      "role": "mirror visual/telegraph; gameplay hitbox determined by game code",
+      "suggested_visibility": "during mirror damage"
+    },
+    {
+      "file": "sprites/MirrorShards.png",
+      "source_window": [
+        1040,
+        0,
+        1500,
+        510
+      ],
+      "isolated_alpha_bbox": [
+        1069,
+        40,
+        1471,
+        495
+      ],
+      "canvas": [
+        128,
+        128
+      ],
+      "art_size": [
+        99,
+        112
+      ],
+      "art_origin": [
+        14,
+        8
+      ],
+      "anchor": [
+        64,
+        64
+      ],
+      "facing": "axial",
+      "role": "decorative aftermath; no damage",
+      "suggested_visibility": "brief fade after mirror break"
+    },
+    {
+      "file": "sprites/NeedleGlow.png",
+      "source_window": [
+        10,
+        680,
+        510,
+        850
+      ],
+      "isolated_alpha_bbox": [
+        25,
+        720,
+        507,
+        826
+      ],
+      "canvas": [
+        96,
+        32
+      ],
+      "art_size": [
+        90,
+        20
+      ],
+      "art_origin": [
+        3,
+        6
+      ],
+      "anchor": [
+        48,
+        16
+      ],
+      "facing": "right",
+      "role": "existing needle visual emphasis; align tip with projectile hitbox",
+      "suggested_visibility": "during existing projectile flight"
+    },
+    {
+      "file": "sprites/FrostCloud.png",
+      "source_window": [
+        550,
+        525,
+        1010,
+        1010
+      ],
+      "isolated_alpha_bbox": [
+        567,
+        527,
+        990,
+        992
+      ],
+      "canvas": [
+        128,
+        128
+      ],
+      "art_size": [
+        106,
+        116
+      ],
+      "art_origin": [
+        11,
+        6
+      ],
+      "anchor": [
+        64,
+        64
+      ],
+      "facing": "axial",
+      "role": "decorative aftermath; no damage",
+      "suggested_visibility": "brief low-opacity ambient use"
+    },
+    {
+      "file": "sprites/MirrorHalo.png",
+      "source_window": [
+        1080,
+        520,
+        1480,
+        1010
+      ],
+      "isolated_alpha_bbox": [
+        1130,
+        527,
+        1432,
+        988
+      ],
+      "canvas": [
+        128,
+        192
+      ],
+      "art_size": [
+        108,
+        165
+      ],
+      "art_origin": [
+        10,
+        13
+      ],
+      "anchor": [
+        64,
+        96
+      ],
+      "facing": "axial",
+      "role": "mirror visual/telegraph; gameplay hitbox determined by game code",
+      "suggested_visibility": "only active mirror; allow normal mirrors to stay dim"
+    }
+  ]
+}

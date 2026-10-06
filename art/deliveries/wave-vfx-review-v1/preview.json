@@ -1,0 +1,30 @@
+{
+  "assets": [
+    "WaterDragonHead",
+    "WaterDragonBody",
+    "WaterGather",
+    "WaterSlash",
+    "WaterSplash",
+    "MistPuff",
+    "IceMirror",
+    "MirrorCracks",
+    "MirrorShards",
+    "NeedleGlow",
+    "FrostCloud",
+    "MirrorHalo",
+    "DemonGhost",
+    "DemonPress",
+    "SwordSpinArc",
+    "ChakraImpact"
+  ],
+  "animation_frames": 24,
+  "frame_ms": 100,
+  "native_sheets": "*-1x.png",
+  "scene": "Illustrative, not in-game footage",
+  "actor_height_reference": {
+    "Zabuza": 126,
+    "Haku": 105,
+    "player_marker": 42
+  },
+  "no_gameplay_or_collision_changed_by_preview": true
+}

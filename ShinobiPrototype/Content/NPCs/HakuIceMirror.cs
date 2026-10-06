@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common;
+using ShinobiPrototype.Common.Systems;
 
 namespace ShinobiPrototype.Content.NPCs;
 
@@ -79,6 +80,7 @@ public sealed class HakuIceMirror : ModNPC
     {
         if (Main.netMode == NetmodeID.Server)
             return;
+        WaveVfxBursts.Spawn(WaveVfxBursts.Kind.MirrorShatter, NPC.Center, NPC.height * 1.4f);
         for (int i = 0; i < count; i++)
             Dust.NewDustPerfect(NPC.Center + Main.rand.NextVector2Circular(18f, 30f),
                 DustID.IceTorch, Main.rand.NextVector2Circular(3f, 3f), 30,
@@ -89,6 +91,15 @@ public sealed class HakuIceMirror : ModNPC
     {
         HakuBoss owner = Owner();
         bool glowing = owner != null && owner.MirrorGlowing((int)NPC.ai[1]);
+        if (WaveVfx.Ready("IceMirror"))
+        {
+            Texture2D silhouette = glowing
+                ? ClientVisualAssets.Frame(ClientVisualAssets.Npcs, "Haku_Idle", 0, 4) : null;
+            WaveVfx.Mirror(spriteBatch, NPC.Center, new Vector2(NPC.width, NPC.height),
+                NPC.localAI[0], 1f - NPC.life / (float)NPC.lifeMax, glowing ? 1f : 0f,
+                frenzy: owner?.LastStand == true, silhouette: silhouette);
+            return false;
+        }
         float fade = NPC.localAI[0];
         float pulse = glowing ? 0.85f + (float)Math.Sin(Main.GlobalTimeWrappedHourly * 18f) * 0.15f : 0.8f;
         Color tint = (glowing ? new Color(235, 252, 255) : new Color(145, 225, 255)) * (pulse * fade);
