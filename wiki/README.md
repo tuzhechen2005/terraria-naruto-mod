@@ -10,7 +10,17 @@
 python3 -m http.server 8765 --bind 127.0.0.1 --directory wiki/site
 ```
 
-浏览器打开 `http://127.0.0.1:8765/`。已经生成的页面无需 Node.js、数据库或联网服务。`wiki/site/` 整个目录可作为静态站点发布；尚未配置公开托管。
+浏览器打开 `http://127.0.0.1:8765/`。已经生成的页面无需 Node.js、数据库或联网服务。
+
+## 公开访问与发布
+
+公开地址：**https://tuzhechen2005.github.io/terraria-naruto-mod/**。任何人无需 GitHub 账号即可访问；电脑与手机使用同一个链接，本机预览服务可以关闭。
+
+GitHub Pages 的 Source 使用 **GitHub Actions**。`.github/workflows/wiki-pages.yml` 在 `main` 的站点文件更新后自动检查并发布 `wiki/site/`，也可在 Actions → Publish Wiki → Run workflow 手动重发 `main`。其他开发分支不部署。只发布生成页面与展示素材，不上传模组安装包、本地原声、后台美术交付或开发目录。
+
+当前公开资料是已有 0.4.0 内容快照，依赖清单仍保留原构建提交，近期开发内容尚未全部核对。页面提示由 `publication.json` 的 `notice` 控制；在完整核对并重建后可将其置为空字符串。不要只为通过检查重新生成清单，冒充说明已核对。
+
+发布流程用 `python3 wiki/check.py --site-only` 校验页面、锚点、图片、CSS 图片与项目子路径，明确不宣称源码新鲜度。维护内容时仍运行下方完整检查；源码变化属于内容维护问题，不阻止既有资料快照上线。
 
 ## 更新内容
 
@@ -19,6 +29,7 @@ python3 -m http.server 8765 --bind 127.0.0.1 --directory wiki/site
 - `style.css`、`app.js`：排版、搜索、分类过滤与移动导航。
 - `site/source-manifest.json`：构建依赖文件的 SHA-256，用于检测百科整理后源码或贴图变化。
 - `check.py`：检查所有内部链接、图片路径、页面锚点与源码变化。
+- `publication.json`：网站资料同步状态提示；修改后需要重新生成页面并提交。
 
 生成需要 Python 3 与 Pillow。可在独立虚拟环境安装 Pillow，也可使用 Codex 提供的工作区 Python。
 
@@ -30,6 +41,8 @@ python3 wiki/check.py
 模组改变后，先检查 `check.py` 报告的 `STALE` 文件，核对对应说明，再重新构建。**构建只能同步可提取属性与图片，不会替代人工核对流程和掉落。** 基础属性不包含游戏难度、装备修饰和角色加成。页面源码链接固定到构建时的本地提交，该提交推送前 GitHub 链接可能尚不可访问。
 
 样式、交互脚本、搜索索引和词条贴图均带内容哈希；重新生成后刷新页面即可加载最新资料。
+
+更新核对完成后，提交生成的 `wiki/site/` 并合入 `main`，GitHub Actions 会自动部署。公开发布不等于游戏内验收，也不会将尚未合入主分支的玩法改动一起发布。
 
 ## 收录边界
 

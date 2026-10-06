@@ -112,7 +112,7 @@ Terruto 是一个基于 tModLoader 的《火影忍者》同人模组，将第一
 
 模组运行于 Terraria 1.4.4 对应的 tModLoader。首次游玩需要**新建世界**，木叶村、海边的大桥和考试场地都会在世界生成时建造，旧世界不会自动补上这些内容。目前的试玩与验证以单人模式为主，联机体验尚未验证。游戏中的忍者手册和卡卡西的对话会提供后续任务的线索。游戏内文字有英文和简体中文两种，跟随游戏的语言设置。
 
-中文 [Wiki](wiki/README.md) 收录道具、首领、机制与流程攻略，随当前源码更新。在仓库根目录运行 `python3 -m http.server 8765 --bind 127.0.0.1 --directory wiki/site`，再打开 `http://127.0.0.1:8765/` 查看；目前尚未公开托管。
+中文 [Wiki 已在 GitHub Pages 公开上线](https://tuzhechen2005.github.io/terraria-naruto-mod/)，无需登录即可浏览。收录道具、首领、机制与流程攻略；当前公开的是 0.4.0 已整理资料，近期开发改动尚未全部同步。[维护与本地预览说明](wiki/README.md)；网站更新合入 `main` 后自动发布。
 
 从源码构建时，将仓库中的 `ShinobiPrototype/` 放入或链接到 tModLoader 的 `ModSources/` 目录，再进入游戏的「Workshop → Develop Mods」，选择 Build + Reload。
 
