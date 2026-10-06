@@ -1,5 +1,14 @@
 # 当前工作交接
 
+## 2026-10-06 Codex：PR合并前审查与修复
+
+- 用户授权审查两个PR，合格则批准并合并。PR1已以merge commit合入main（6287c067740383be71cbbd7b56834152c7f9b3c8）；其CI通过，选定卡卡西v5/伊鲁卡游戏图与当前开发图字节一致。PR2已从PR1分支改为main，独立审查工作树合入最新main后检查，无冲突，Wiki发布文件保留。
+- PR2旧头5aa94a3仍带已否定鬼影与已知绘制问题。补回13f2516的般若运行时恢复、146f450的Wave私有预乘缓存、0db2f38的两处MagicPixel源矩形修复；预乘算式直接留在缓存转换内，不引入后续SlashSweepRules/斩击逻辑。更新catalog/安装脚本的混合说明、交付与美术交接，素材未重画，不改判定/玩法。
+- 文字检查0问题、14组规则及完整模组编译通过，0错误、2条旧KonohaDump警告；BuildMod=false，未打包或改变当前游戏包。16张软RGBA/透明RGB与预乘数值范围通过；diff检查通过。验证日志/tmp/shinobi-two-pr-verification.log，文字检查hjson依赖仅放/tmp/shinobi-two-pr-review-deps。
+- 当前账号tuzhechen2005为PR作者，GitHub拒绝自我Approve；PR1已留下审查评论，按用户授权合并。PR2本修复提交推送后再核对最终CI、留言并合并，不能把旧提交CI当作新提交已通过。
+- 后续斩击/水浪实验、新skill与CLAUDE入口仍在codex/vfx-animation-study，不在本次两PR范围。完整M11、GPU美术/联机/性能未验收，助手未启动游戏，无后台美术请求。
+
+
 ## 2026-10-05 Codex：两个PR与M11特效（当前）
 
 - 用户要求卡卡西回到上一版；游戏和预览已恢复v5修眼后的v3/v4步态。v6只存档，不能重新接入。首份PR： https://github.com/tuzhechen2005/terraria-naruto-mod/pull/1 ，分支codex/npc-art-and-wave-boss-design，提交f7c0159，包含NPC交付/skill/M11定稿及此前本地未推送的72个提交；未合并。

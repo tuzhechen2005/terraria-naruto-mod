@@ -1,7 +1,7 @@
 {
   "spec": "specs/M11_波之国双首领战重设计.spec.md#9",
   "runtime_folder": "Assets/Vfx/Wave",
-  "blend": "premultiplied AlphaBlend through tML content loading",
+  "blend": "straight RGBA source; private runtime premultiplied copy for AlphaBlend",
   "textures": [
     {
       "canvas": [

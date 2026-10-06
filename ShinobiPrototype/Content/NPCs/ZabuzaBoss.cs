@@ -1087,7 +1087,7 @@ public sealed class ZabuzaBoss : ModNPC
         return false;
     }
 
-    // Red demon flames rising from the body behind the sprite once the demon awakens.
+    // Keep the established purple Hannya apparition behind Zabuza after awakening.
     private void DrawDemonAura(SpriteBatch spriteBatch, Vector2 screenPos)
     {
         if (!InMistPhase)
@@ -1102,13 +1102,6 @@ public sealed class ZabuzaBoss : ModNPC
         };
         if (state == ZabuzaCombatRules.MistTransition && t < burstStart)
             return;
-        if (WaveVfx.Ready("DemonGhost"))
-        {
-            bool pressing = state == ZabuzaCombatRules.SlashRecovery && t <= ZabuzaCombatRules.SlashActiveTicks;
-            WaveVfx.Ghost(spriteBatch, NPC.Bottom, pressing ? t / ZabuzaCombatRules.SlashActiveTicks
-                : 0.5f + (float)Math.Sin(t * 0.08f) * 0.25f, pressing, NPC.spriteDirection);
-            return;
-        }
         Color color = Color.White * (NPC.Opacity * (LastStand ? 0.95f : 0.82f));
         if (burstStart >= 0f && t - burstStart < 18f &&
             BossSprites.TryDraw(spriteBatch, "Zabuza", "AuraBurst",

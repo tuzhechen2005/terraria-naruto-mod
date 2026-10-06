@@ -74,7 +74,8 @@ public static class WaveVfx
         Texture2D pixel = TextureAssets.MagicPixel.Value;
         for (int side = -1; side <= 1; side += 2)
             batch.Draw(pixel, from + normal * laneWidth * 0.5f * side - Main.screenPosition,
-                null, color * alpha, angle, Vector2.Zero, new Vector2(length, 2f), SpriteEffects.None, 0f);
+                new Rectangle(0, 0, 1, 1), color * alpha, angle, Vector2.Zero,
+                new Vector2(length, 2f), SpriteEffects.None, 0f);
     }
 
     // Centers and width are the caller's actual damage corridor. The caller

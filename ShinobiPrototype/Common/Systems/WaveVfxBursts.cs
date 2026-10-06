@@ -89,7 +89,8 @@ public sealed class WaveVfxBursts : ModSystem
             Vector2 view = new Vector2(Main.screenWidth, Main.screenHeight) / zoom;
             Vector2 topLeft = (new Vector2(Main.screenWidth, Main.screenHeight) - view) * 0.5f;
             float fade = Math.Min(darkTicks / 6f, (18 - darkTicks) / 3f);
-            batch.Draw(TextureAssets.MagicPixel.Value, topLeft - Vector2.One * 8f, null,
+            batch.Draw(TextureAssets.MagicPixel.Value, topLeft - Vector2.One * 8f,
+                new Rectangle(0, 0, 1, 1),
                 Color.Black * (0.2f * Math.Clamp(fade, 0f, 1f) *
                     ShinobiClientConfig.Instance.WaveVfxStrength / 100f), 0f, Vector2.Zero,
                 view + Vector2.One * 16f, SpriteEffects.None, 0f);

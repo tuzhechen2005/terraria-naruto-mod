@@ -34,7 +34,7 @@ def inspect(path,size):
 
 def main():
     catalog={'spec':'specs/M11_波之国双首领战重设计.spec.md#9',
-        'runtime_folder':'Assets/Vfx/Wave','blend':'premultiplied AlphaBlend through tML content loading',
+        'runtime_folder':'Assets/Vfx/Wave','blend':'straight RGBA source; private runtime premultiplied copy for AlphaBlend',
         'textures':[],'short_loops':'art/deliveries/wave-vfx-review-v1',
         'not_a_complete_M11_gameplay_implementation':True}
     checked=[]

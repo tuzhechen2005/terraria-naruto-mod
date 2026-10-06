@@ -1,5 +1,9 @@
 # Claude ↔ Codex 美术交接
 
+## PR合并前修正（2026-10-06）
+
+再不斩背后恢复原日本般若Aura/AuraBurst，DemonGhost/DemonPress只存档，不重新接入；保留长角、斜眼、獠牙、尖下颌和细长轮廓。Wave软透明源图保持普通RGBA，由ClientVisualAssets创建私有预乘副本，人物不做此转换。MagicPixel线/压暗明确取1×1区域。后续斩击/水浪小样与新skill仍在codex/vfx-animation-study，不包含在本次两个PR中。
+
 ## 再不斩与白新版战斗美术（2026-10-05 特效已交付，本体/逻辑待制作）
 
 - 以 [`M11 完整设计`](</Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/specs/M11_波之国双首领战重设计.spec.md>) 第 4、9 节为准：本体可见高约玩家 3 倍 / 2.5 倍，人物保持像素方向；水龙、冰镜、鬼人查克拉采用动画式流体与柔光，危险主体同样允许柔边与半透明。
