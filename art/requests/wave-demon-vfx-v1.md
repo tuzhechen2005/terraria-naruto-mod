@@ -1,6 +1,6 @@
 # M11 再不斩鬼人查克拉与暴走刀迹
 
-状态：requested。分支codex/wave-boss-vfx，基准f7c0159。用户只授权M11已有特效。后台只写art/deliveries/wave-demon-vfx-v1/，不修改源码、请求、Git及其他交付。
+状态：delivered，鬼影/压下/旋转刀迹/接刀冲击已接入。PR #2： https://github.com/tuzhechen2005/terraria-naruto-mod/pull/2 。分支codex/wave-boss-vfx，基准f7c0159。用户只授权M11已有特效。后台只写art/deliveries/wave-demon-vfx-v1/，不修改源码、请求、Git及其他交付。不要重复submit。
 
 读imagegen技能、M11第8.1和9节、美术交接的新标准。只制作特效，不改忍者角色，不新增招式。紫色鬼人查克拉为烟焰，主体允许柔边和半透明。鬼影是威吓的恶鬼形查克拉，不能像一个额外有实体攻击判定的Boss，也不要只有紫色球。
 

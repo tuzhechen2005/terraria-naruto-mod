@@ -1,6 +1,6 @@
 # M11 再不斩水遁与刀光特效素材
 
-状态：requested。分支codex/wave-boss-vfx，基准f7c0159。用户明确要求另开分支，只制作M11文档已有的双首领特效并开PR。你是此请求的后台美术助手，**只写art/deliveries/wave-water-vfx-v1/**，不要改源码、请求、Git或其他交付。不要提交PR。无需批准、无需调研其他模组。
+状态：delivered，资源已打包，现有聚势/水花已接入；完整龙身/路线待M11逻辑。PR #2： https://github.com/tuzhechen2005/terraria-naruto-mod/pull/2 。分支codex/wave-boss-vfx，基准f7c0159。用户明确要求另开分支，只制作M11文档已有的双首领特效并开PR。后台美术助手只写art/deliveries/wave-water-vfx-v1/，不要改源码、请求、Git或其他交付。不要重复submit。
 
 先读imagegen技能、specs/M11_波之国双首领战重设计.spec.md第5、9节及art/AGENT_HANDOFF.md新标准。城镇NPC skill不适用于这些特效。不要漫游旧美术批次或全仓库代码。
 

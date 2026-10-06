@@ -1,6 +1,6 @@
 # M11 白的冰镜、寒气与千本特效素材
 
-状态：requested。分支codex/wave-boss-vfx，基准f7c0159。用户授权制作M11已有特效并开第二PR。后台只写art/deliveries/wave-ice-vfx-v1/，不要改源码、请求、其他交付或Git。
+状态：delivered，现有冰镜/千本装饰已接入，M11阵列/调度待逻辑。PR #2： https://github.com/tuzhechen2005/terraria-naruto-mod/pull/2 。分支codex/wave-boss-vfx，基准f7c0159。用户授权制作M11已有特效并开第二PR。后台只写art/deliveries/wave-ice-vfx-v1/，不要改源码、请求、其他交付或Git。不要重复submit。
 
 读imagegen技能、M11第6、8.2、9节及art/AGENT_HANDOFF.md新标准；别读全仓库旧稿。城镇NPC硬alpha/眼型规范不适用。仅画特效，不画白本体、不新增忍术。
 
