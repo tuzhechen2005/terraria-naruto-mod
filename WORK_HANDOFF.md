@@ -1,6 +1,30 @@
 # 当前工作交接
 
-本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。Boss 重设计已由 Codex 整理为 **M11 定稿文档，待实施**；NPC 最新进展见下方 **2026-10-05 Claude Code：伊鲁卡全套动作接入、卡卡西样张**。后面保留此前开发快照。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
+本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。NPC 最新进展见下方 **卡卡西走路与眼部修复、新NPC第一批样张**；Boss 重设计已整理为 **M11 定稿文档，待实施**。后面保留此前开发快照。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
+
+## 2026-10-05 Codex：卡卡西走路连续性再次修复（已接入，未实机）
+
+**后续决定：用户要求保留刚刚上一版，即v5修眼后的v3/v4循环。已恢复游戏贴图和预览到v5。v6与stable_frames仅存档，不作为当前接入版本。用户要求先为现有NPC/skill/M11文档和全部本轮交付开PR，再另开分支只制作M11列出的双首领特效并开第二个PR。**
+
+- 用户指出v5循环闪烁、未对齐。实际PNG存在两个半循环眼高y29/y27的2px跳变、头形与马甲版型变化；之前仅腰轴对齐不充分。v5不得继续称作视觉验收通过。
+- `kakashi-walk-stable-v6` 已delivered，无后台任务。一次imagegen生成完整六姿势，固定复用认可Idle头/脖子/领口 `(20,14,52,37)`；原图、提示词、14帧和脚本在对应交付目录。
+- **当前最终14帧**在 `art/deliveries/npc-direct-pixel-round1/kakashi_stable_frames/`。根 `stabilize_kakashi.py`应用共同身体色板，并复用认可Idle胸口内区 `(35,37,42,47)`，alpha/肩臂/腰髋/腿几何不变。PNG/GIF/APNG的头部与胸口内区逐像素固定，其他8帧byte-identical。
+- 组表时传 `--final-frames art/deliveries/npc-direct-pixel-round1/kakashi_stable_frames`；不传仍生成历史v5。Kakashi_game.png与游戏Kakashi.png已替换六Walk；其他6行、头像、水牢、C#不变。最终表翻转/+2px位移逐行通过。
+- 预览GIF公用色板，另有无损 `kakashi_walk.png` APNG；网页来源更新，JS语法通过，浏览器未实测。最终 `./scripts/verify-mac.sh` 通过（0错误、两条旧KonohaDump警告；打包仍有未知图片类型提示，未定位）；实机/无头未运行。下一步在游戏重载后检查左右行走、6→1循环与停止切Idle。
+- Skill补充多锚点与全循环连续性检查；validator通过。其他NPC、Boss文档保持原样。
+
+## 2026-10-05 Codex：卡卡西走路与眼部修复、新NPC第一批样张（已接入，未实机）
+
+- 用户反馈卡卡西走路上下身分离，要求优化并用 `terraria-npc-pixel-art` 开始其他NPC。后续明确新眼睛的大黑块是**卡卡西**；已恢复其认可站姿的眼部，不给其他NPC统一眼型。
+- 定位：游戏确实消费v2帧，80×960/1倍和帧顺序正确；v2将别帧躯干覆盖目标腿部，腰髋未匹配。v3整体重做走路，再由v4补对侧步态。统一腰轴后六帧为v3的01/02/04+v4的三姿势，只整体平移，保留内部身体连接。
+- **当前最终素材入口**：`art/deliveries/npc-direct-pixel-round1/DELIVERY.md`、`Kakashi_game.png`、`kakashi_walk.gif`、`preview.html`。最终完整14帧在 `art/deliveries/kakashi-eye-restore-v5/frames/`；round1的 `kakashi_frames/` 仅为修眼前输入，不能误接入。
+- 六帧眼部各改51–56像素，来自已认可v2 Idle局部，在各自小矩形内合成；眼部外、alpha、躯干、腿相位与脚底均不变。游戏 `Kakashi.png` 已更新，其他6行、头像、水牢两帧与C#代码未改。已核对最终表12行、左向翻转与整体脚底+2位移逐像素一致。
+- **其他NPC已开始**：`hiruzen-direct-pixel-v1` 三代站姿（80×80，57高，细长眼/白胡须/烟斗），`toolshop-direct-pixel-v1` 忍具店老板站姿（80×80，62高，发髻/胡须/酒红上衣/围裙）；均为skill直接像素流程的候选，未接入或扩动画。并排图 `npc-direct-pixel-round1/new_npc_comparison_3x.png`。
+- 五个请求 `kakashi-walk-repair-v3`、`kakashi-walk-phase-v4`、`kakashi-eye-restore-v5`、`hiruzen-direct-pixel-v1`、`toolshop-direct-pixel-v1` 均 delivered，**无后台美术任务在跑**。各交付有源图、提示词和导出/局部合成参数；不重复submit。
+- Skill已补腰髋接续、本角色已认可眉眼逐帧对照，并修正伊鲁卡/卡卡西已接入事实；skill validator通过。原NPC画风入口更新；没有更改其他角色眼睛格数。
+- 检查：PNG尺寸/脚底/透明RGB/二值alpha/镜像/无裁切、局部外不变、未改动作原样、GIF六帧、JS语法与静态引用通过。最终 `./scripts/verify-mac.sh` 通过（文本0、规则通过、完整构建0错误、两条KonohaDump提示）；日志有未定位的“Image loading failed: unknown image type”运行提示，见round1/verify-mac.log。**无头加载和游戏内实机均未运行**。内置浏览器禁止file协议，未做页面浏览器实测，未绕过限制。
+- 分支main，基准HEAD `6333e31`。本轮未提交：Kakashi.png、skill、art/AGENT_HANDOFF.md的NPC状态更新、此交接段、五个新请求及交付目录、round1整合目录。此前M11与旧规格优先级的未提交文档保持原样，未混入源码或清理。
+- 下一步：用户重载后看卡卡西左右走路/停止切Idle、眼睛、脚贴地和实际节奏；针对明确问题局部修。三代与店老板先看站姿，再按认可底稿扩动作；其余NPC尚未制作新样张。Boss实施继续读M11，不把本轮NPC修复视为Boss已开发。
 
 ## 2026-10-05 Codex：再不斩与白完整重设计定稿（仅文档）
 

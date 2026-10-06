@@ -1,0 +1,136 @@
+{
+  "source": "source/generated_walk_sheet.png",
+  "canvas": [
+    80,
+    80
+  ],
+  "scale": 0.10934744268077601,
+  "baseline_y": 75,
+  "frames": [
+    {
+      "frame": "Kakashi_01_Walk.png",
+      "source_x": [
+        71,
+        349
+      ],
+      "source_bbox_in_cell": [
+        0,
+        84,
+        279,
+        651
+      ],
+      "scale": 0.10934744268077601,
+      "paste_xy": [
+        24,
+        14
+      ],
+      "vest_center_x": 147.0
+    },
+    {
+      "frame": "Kakashi_02_Walk.png",
+      "source_x": [
+        445,
+        694
+      ],
+      "source_bbox_in_cell": [
+        0,
+        84,
+        250,
+        651
+      ],
+      "scale": 0.10934744268077601,
+      "paste_xy": [
+        23,
+        14
+      ],
+      "vest_center_x": 158.0
+    },
+    {
+      "frame": "Kakashi_03_Walk.png",
+      "source_x": [
+        782,
+        1049
+      ],
+      "source_bbox_in_cell": [
+        0,
+        84,
+        268,
+        651
+      ],
+      "scale": 0.10934744268077601,
+      "paste_xy": [
+        23,
+        14
+      ],
+      "vest_center_x": 154.0
+    },
+    {
+      "frame": "Kakashi_04_Walk.png",
+      "source_x": [
+        1147,
+        1388
+      ],
+      "source_bbox_in_cell": [
+        0,
+        82,
+        242,
+        651
+      ],
+      "scale": 0.10934744268077601,
+      "paste_xy": [
+        23,
+        14
+      ],
+      "vest_center_x": 156.0
+    },
+    {
+      "frame": "Kakashi_05_Walk.png",
+      "source_x": [
+        1493,
+        1767
+      ],
+      "source_bbox_in_cell": [
+        0,
+        84,
+        275,
+        652
+      ],
+      "scale": 0.10934744268077601,
+      "paste_xy": [
+        23,
+        14
+      ],
+      "vest_center_x": 157.5
+    },
+    {
+      "frame": "Kakashi_06_Walk.png",
+      "source_x": [
+        1857,
+        2117
+      ],
+      "source_bbox_in_cell": [
+        0,
+        84,
+        261,
+        651
+      ],
+      "scale": 0.10934744268077601,
+      "paste_xy": [
+        23,
+        14
+      ],
+      "vest_center_x": 152.0
+    }
+  ],
+  "unchanged_source": "/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/art/deliveries/kakashi-direct-pixel-anim-v2/frames",
+  "unchanged_frames": [
+    "Kakashi_00_Idle.png",
+    "Kakashi_07_Jump.png",
+    "Kakashi_08_Sit.png",
+    "Kakashi_09_Throw.png",
+    "Kakashi_10_Throw.png",
+    "Kakashi_11_Throw.png",
+    "Kakashi_Trapped_0.png",
+    "Kakashi_Trapped_1.png"
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "input": "/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/art/deliveries/hiruzen-direct-pixel-v1/Hiruzen_Source.png",
+  "sourceBox": [
+    289,
+    204,
+    987,
+    1299
+  ],
+  "canvas": [
+    80,
+    80
+  ],
+  "grid": [
+    36,
+    57
+  ],
+  "pixel": 1,
+  "scale": 0.052054794520547946,
+  "samplePhase": [
+    0.5,
+    0.5
+  ],
+  "alphaThreshold": 128,
+  "alphaValues": [
+    0,
+    255
+  ],
+  "sourceFacing": "right",
+  "baselineExclusive": 76,
+  "actualBaselineExclusive": 76,
+  "actualBodyHeight": 57,
+  "visibleBox": [
+    22,
+    19,
+    58,
+    76
+  ],
+  "displayScale": 1
+}

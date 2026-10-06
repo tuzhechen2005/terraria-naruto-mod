@@ -1,0 +1,72 @@
+{
+  "waist_axis_target": 38.25,
+  "transforms": [
+    {
+      "slot": 1,
+      "source": "art/deliveries/kakashi-walk-repair-v3/frames/Kakashi_01_Walk.png",
+      "source_sha256": "4c25879b148f26860c2d3b780f3fc974f8d4aa6246dbf6292f00f8efd8e97bdd",
+      "source_waist_axis": 39.5,
+      "translate_x": -1,
+      "translate_y": 0,
+      "final_waist_axis": 38.5
+    },
+    {
+      "slot": 2,
+      "source": "art/deliveries/kakashi-walk-repair-v3/frames/Kakashi_02_Walk.png",
+      "source_sha256": "7f6447098824f6387c888f95b117e130a6b8216ebb8a43c9dc5aaf9fe78d6197",
+      "source_waist_axis": 36.5,
+      "translate_x": 2,
+      "translate_y": 0,
+      "final_waist_axis": 38.5
+    },
+    {
+      "slot": 3,
+      "source": "art/deliveries/kakashi-walk-repair-v3/frames/Kakashi_04_Walk.png",
+      "source_sha256": "ea0225615311721892ea359f87693b859b1d5ab5db0f94ac4169f23b60fceadc",
+      "source_waist_axis": 36.0,
+      "translate_x": 2,
+      "translate_y": 0,
+      "final_waist_axis": 38.0
+    },
+    {
+      "slot": 4,
+      "source": "art/deliveries/kakashi-walk-phase-v4/frames/Kakashi_OppositeContact.png",
+      "source_sha256": "8261626c094a769e582e5f788dccb69e913b10b67df696f30bc0362d906910de",
+      "source_waist_axis": 40.5,
+      "translate_x": -2,
+      "translate_y": 0,
+      "final_waist_axis": 38.5
+    },
+    {
+      "slot": 5,
+      "source": "art/deliveries/kakashi-walk-phase-v4/frames/Kakashi_OppositePassing.png",
+      "source_sha256": "a1927db6943d54422ff2a1d74c34f188f219701e1f4066646a34a7a5280bae7c",
+      "source_waist_axis": 39.5,
+      "translate_x": -1,
+      "translate_y": 0,
+      "final_waist_axis": 38.5
+    },
+    {
+      "slot": 6,
+      "source": "art/deliveries/kakashi-walk-phase-v4/frames/Kakashi_ReturnLift.png",
+      "source_sha256": "d8de4872977a08fbedba8ec857c0ea4dd72751eeb009a1aa29bbeb632dead658",
+      "source_waist_axis": 38.5,
+      "translate_x": 0,
+      "translate_y": 0,
+      "final_waist_axis": 38.5
+    }
+  ],
+  "preserved_frames": [
+    "Kakashi_00_Idle",
+    "Kakashi_07_Jump",
+    "Kakashi_08_Sit",
+    "Kakashi_09_Throw",
+    "Kakashi_10_Throw",
+    "Kakashi_11_Throw",
+    "Kakashi_Trapped_0",
+    "Kakashi_Trapped_1"
+  ],
+  "eye_restore": "art/deliveries/kakashi-eye-restore-v5/frames",
+  "final_frame_directory": "art/deliveries/kakashi-eye-restore-v5/frames",
+  "game_sheet": "Kakashi_game.png"
+}
