@@ -33,6 +33,13 @@ Check(AutoSubstitutes(1, false, true) && !AutoSubstitutes(0, false, true) && !Au
 Check(TickLogs(0, 2, LogRegenTicks - 1, LogRegenTicks) == (1, 0), "A log comes back after 20 s");
 Check(TickLogs(1, 2, 0, LogRegenTicks, LogRegenPerHitTicks) == (1, 1 + LogRegenPerHitTicks), "Landing a hit brings the next log sooner");
 Check(TickLogs(2, 2, 300, LogRegenTicks) == (2, 0), "At the cap nothing builds up");
+Check(!WorthALog(9, 100) && WorthALog(10, 100) && !WorthALog(39, 400) && WorthALog(40, 400),
+    "A hit below a tenth of max life (after defence) lands as normal; logs are kept for hits that hurt");
+Check(LogRegenMultiplier(0, 400) == 1f && Math.Abs(LogRegenMultiplier(120, 400) - 1.3f) < 0.001f && LogRegenMultiplier(900, 400) == 2f,
+    "A log that took a big hit comes back more slowly: base x (1 + damage / max life), at most twice as long");
+Check(LogRegenTicksFor(LogRegenTicks, 1.3f) == 1560 && LogRegenTicksFor(LogRegenTicks, 1f + BindLogShare) == 1560 &&
+      LogRegenTicksFor(LogRegenTicks, 0.5f) == LogRegenTicks,
+    "Taking the burial (30%) or a bind costs 26 s; nothing is quicker than 20 s");
 Check(StealthTicks == 300 && StealthDamageBonus > 0f, "Five seconds of stealth after a blink, the next hit stronger");
 
 Check(ShouldShowHint(false, 0, SubstitutionHintSpacingTicks), "The first log taken explains the key");
@@ -88,3 +95,12 @@ Check(SealRules.LightningTrailTicks == 180 && SealRules.LightningTrailHitTicks =
 Check(SealRules.FireballBurstsOn(true, 50, 40) && SealRules.FireballBurstsOn(false, 200, 40) && !SealRules.FireballBurstsOn(false, 199, 40),
     "The great fireball bursts on a boss or a big enemy, and only scorches small fry as it rolls through them");
 Check(SealRules.ChidoriWallTiles == 3, "Chidori goes through walls up to three tiles thick");
+float meter = 0f;
+for (int i = 0; i < ToolStealthFillTicks; i++)
+    meter = TickToolStealth(meter, true);
+Check(meter >= 0.999f && ToolStealthFillTicks == 720 && TickToolStealth(1f, true) == 1f, "A ninja tool in hand fills its stealth in twelve seconds bare, never past full");
+float geared = 0f;
+for (int i = 0; i < 480; i++)
+    geared = TickToolStealth(geared, true, 1.5f);
+Check(geared >= 0.999f, "Ninja-tool gear speeds it up (1.5x: eight seconds)");
+Check(TickToolStealth(0.5f, false) == 0.5f, "Put away, the meter waits");

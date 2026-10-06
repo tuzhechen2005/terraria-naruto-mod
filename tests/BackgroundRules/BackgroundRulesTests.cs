@@ -1,4 +1,6 @@
 using static ShinobiPrototype.Common.BackgroundLayoutRules;
+using ShinobiPrototype.Common;
+using System.Security.Cryptography;
 
 static void Check(bool condition, string name)
 {
@@ -57,4 +59,15 @@ foreach (string png in Directory.GetFiles(backgrounds, "*.png"))
         stream.ReadExactly(header);
     int width = header[16] << 24 | header[17] << 16 | header[18] << 8 | header[19];
     Check(width == 1024, $"{Path.GetFileName(png)} is 1024 pixels wide");
+    if (Path.GetFileNameWithoutExtension(png) is string name && name.EndsWith("Close"))
+    {
+        var baked = BackgroundLayoutData.Close(name[..^5]);
+        int height = header[20] << 24 | header[21] << 16 | header[22] << 8 | header[23];
+        Check(baked.Width == width && baked.Height == height, $"{name} baked dimensions match the art");
+        string hash = Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(png))).ToLowerInvariant();
+        Check(baked.Sha256 == hash, $"{name} placement is current (regenerate with scripts/export_background_layout.py after art changes)");
+        Check(baked.GroundRow >= -1 && baked.GroundRow < height, $"{name} ground row is inside the image");
+    }
 }
+Check(BackgroundLayoutData.Coverage == GroundCoverage, "Baked ground coverage matches the placement rule");
+Check(BackgroundLayoutData.Close("Missing").GroundRow == -1, "Unknown region has no baked lift");

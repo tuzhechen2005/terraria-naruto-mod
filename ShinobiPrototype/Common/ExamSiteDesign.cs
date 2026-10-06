@@ -133,8 +133,8 @@ public sealed class ExamSiteDesign
         // Banners hang from the lower crossbeam.
         d.Places.Add(new KPlace(-3, -GateHeight + 4, KFix.Banner, Style: 0));
         d.Places.Add(new KPlace(2, -GateHeight + 4, KFix.Banner, Style: 0));
-        d.Places.Add(new KPlace(-GatePostInner - 4, -1, KFix.Sign, "第四十四演习场\n——死亡森林"));
-        d.Places.Add(new KPlace(GatePostInner + 3, -1, KFix.Sign, "危险·禁止入内\n中忍考试第二试进行中"));
+        d.Places.Add(new KPlace(-GatePostInner - 4, -1, KFix.Sign, "Sign.ForestGate"));
+        d.Places.Add(new KPlace(GatePostInner + 3, -1, KFix.Sign, "Sign.ForestClosed"));
         // The proctor's hut, door facing the gate.
         for (int y = -1; y >= -6; y--)
         {
@@ -153,9 +153,9 @@ public sealed class ExamSiteDesign
         d.Places.Add(new KPlace(HutX0 + 5, -1, KFix.Chair));
         d.Places.Add(new KPlace(HutX0 + 6, -6, KFix.Lantern));
         d.Places.Add(new KPlace(HutX1 + 6, -1, KFix.Sign,
-            "第二试　生存演习\n一、领取天之卷或地之卷，夺取另一卷\n二、带齐两卷进入中央塔\n三、不限时，生死自负"));
-        d.Buildings.Add(new KBuilding("第四十四演习场入口", -upper - 1, upper + 1, -GateHeight - 4));
-        d.Buildings.Add(new KBuilding("监考小屋", HutX0, HutX1, -10));
+            "Sign.ForestRules"));
+        d.Buildings.Add(new KBuilding("ForestGate", -upper - 1, upper + 1, -GateHeight - 4));
+        d.Buildings.Add(new KBuilding("ProctorHut", HutX0, HutX1, -10));
         return d;
     }
 
@@ -187,7 +187,7 @@ public sealed class ExamSiteDesign
         foreach (int x in new[] { x0, x0 + 1, x1 - 1, x1 })
             d.Door(x, 0);
         d.Places.RemoveAll(p => p.Fix == KFix.Door && (p.Dx == x0 + 1 || p.Dx == x1 - 1));
-        d.Arena = new KRoom(x0 + 2, x1 - 2, hallCeiling + 1, -1, "中央塔大厅");
+        d.Arena = new KRoom(x0 + 2, x1 - 2, hallCeiling + 1, -1, "TowerHall");
 
         // Galleries along both walls, railed, with steps up to them.
         const int gallery = -12;
@@ -268,9 +268,9 @@ public sealed class ExamSiteDesign
         }
         d.Roof(-8, 8, floor - 5, KMat.RedShingle, 4);
         d.Places.Add(new KPlace(x0 + 4, -1, KFix.Sign,
-            "天无智慧，则当求知以备之；\n地无体力，则当奔走以求之。\n天地双开，则险道亦成正道。"));
-        d.Places.Add(new KPlace(x0 - 4, -1, KFix.Sign, "中央塔\n——带齐天、地两卷入内"));
-        d.Buildings.Add(new KBuilding("中央塔", x0, x1, floor - 9));
+            "Sign.TowerPoem"));
+        d.Places.Add(new KPlace(x0 - 4, -1, KFix.Sign, "Sign.Tower"));
+        d.Buildings.Add(new KBuilding("CentralTower", x0, x1, floor - 9));
         return d;
     }
 
@@ -303,7 +303,7 @@ public sealed class ExamSiteDesign
                 d.Set(x, y, KMat.Leaf);
         }
         d.Places.Add(new KPlace(0, -1, KFix.Chest));
-        d.Buildings.Add(new KBuilding("空心巨树", -trunkHalf, trunkHalf, top - 10));
+        d.Buildings.Add(new KBuilding("HollowTree", -trunkHalf, trunkHalf, top - 10));
         return d;
     }
 
@@ -312,7 +312,7 @@ public sealed class ExamSiteDesign
     {
         ExamSiteDesign d = new(ExamSiteKind.Marker, 1, 3, 6);
         d.Ground(KMat.JungleGrass, KMat.Mud);
-        d.Places.Add(new KPlace(0, -1, KFix.Sign, "危险\n禁止入内——第四十四演习场"));
+        d.Places.Add(new KPlace(0, -1, KFix.Sign, "Sign.TreeDanger"));
         return d;
     }
 
@@ -354,7 +354,7 @@ public sealed class ExamSiteDesign
         d.Ground(KMat.Grass, KMat.Dirt);
         for (int x = -StadiumHalf; x <= StadiumHalf; x++)
             d.Set(x, 0, Math.Abs(x) <= FieldHalf ? KMat.Stucco : KMat.Slab);
-        d.Arena = new KRoom(-FieldHalf, FieldHalf, -d.ClearHeight + 2, -1, "考试会场");
+        d.Arena = new KRoom(-FieldHalf, FieldHalf, -d.ClearHeight + 2, -1, "StadiumField");
         foreach (int side in new[] { -1, 1 })
         {
             // Stands: each row two tiles higher and two tiles further out.
@@ -386,8 +386,8 @@ public sealed class ExamSiteDesign
         for (int x = -FieldHalf; x <= FieldHalf; x++)
             for (int y = -1; y >= -12; y--)
                 d.SetWall(x, y, y % 3 == 0 ? KWall.Slab : KWall.Stucco);
-        d.Places.Add(new KPlace(-StadiumHalf - 4, -1, KFix.Sign, "中忍考试 · 正式赛会场"));
-        d.Buildings.Add(new KBuilding("考试会场", -StadiumHalf - 1, StadiumHalf + 1, -4 - 2 * StandRows - 1));
+        d.Places.Add(new KPlace(-StadiumHalf - 4, -1, KFix.Sign, "Sign.Stadium"));
+        d.Buildings.Add(new KBuilding("Stadium", -StadiumHalf - 1, StadiumHalf + 1, -4 - 2 * StandRows - 1));
         return d;
     }
 }

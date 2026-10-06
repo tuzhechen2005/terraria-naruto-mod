@@ -247,7 +247,7 @@ internal static class KonohaBuilder
                 WorldGen.PlaceObject(x, y, TileID.Beds, mute: true, direction: 1);
                 break;
             case KFix.Sign:
-                PlaceSign(x, y, place.Text);
+                PlaceSign(x, y, Loc.Get(place.Text));
                 break;
             case KFix.Painting:
                 WorldGen.PlaceObject(x, y, TileID.Painting3X3, mute: true, style: PaintingStyles[place.Style % PaintingStyles.Length]);

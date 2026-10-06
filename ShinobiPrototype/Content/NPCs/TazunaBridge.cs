@@ -39,28 +39,7 @@ public sealed class TazunaBridge : ModNPC
 
     public override bool CheckActive() => false;
 
-    private static readonly string[] Lines =
-    {
-        "我是造桥的达兹纳。这座桥修通了，波之国才能活下去。",
-        "卡多那家伙封锁了海路，船进不来，大家连饭都快吃不上了。",
-        "雾隐的忍者常在起雾的时候出没，就在桥这一带的海边。",
-        "桥断在那里好久了……工人们都不敢来了。",
-        "这座桥全是石头砌的。一块一块，都是镇上的人扛上去的。",
-        "起重机上还吊着一块石头呢——那天工人们一看见雾里的人影，扔下就跑了。",
-        "我外孙伊那利说，这世上根本没有英雄。……我倒希望他是错的。",
-        "（喝了一口酒）哈……别看我这样，我可是这个国家最好的造桥工。",
-        "对面小岛上立着鸟居。以前渔民出海前，都会去拜一拜。",
-    };
-
-    private const string FirstMeeting =
-        "哦？你就是卡卡西带来的忍者？我是造桥的达兹纳，这个国家最好的造桥工。" +
-        "这座桥修通了，波之国才能活下去……路上小心点，海边这一带不太平。";
-
-    private const string Confession =
-        "……鬼之兄弟？连雾隐的中忍都来了……看来瞒不住了。\n" +
-        "委托的时候我说了谎。这根本不是什么 C 级任务——海运大亨卡多想要我的命，他雇了忍者。\n" +
-        "桥修通了，他对波之国的封锁就完了。可这个穷国家……付不起 A 级任务的钱。拜托了，忍者。\n" +
-        "……对了，这是前几天夜里在小屋门口捡到的，上面刻着雾隐的记号。你拿着吧。";
+    private const int LineCount = 9;   // TazunaBridge.Line1..9
 
     public override string GetChat()
     {
@@ -69,39 +48,39 @@ public sealed class TazunaBridge : ModNPC
         {
             case WaveStage.FindTazuna when !StoryWorld.MetTazuna:
                 StoryWorld.RecordTazunaTalk(false);
-                return FirstMeeting;
+                return Loc.Get("TazunaBridge.FirstMeeting");
             case WaveStage.ReportToTazuna:
                 StoryWorld.RecordTazunaTalk(true);
                 // The third Mist insignia (with the brothers' two): one the Mist ninja dropped by his hut.
                 player.QuickSpawnItem(player.GetSource_Misc("TazunaConfession"), ModContent.ItemType<MistInsignia>());
-                Main.NewText("任务等级上调为 A 级。达兹纳交给你一枚雾隐标记。", 255, 190, 90);
-                return Confession;
+                Main.NewText(Loc.Get("TazunaBridge.RankRaised"), 255, 190, 90);
+                return Loc.Get("TazunaBridge.Confession");
         }
 
         List<string> situational = new();
         if (!Main.dayTime)
-            situational.Add("天黑了，雾更浓了。晚上最好别一个人上桥。");
+            situational.Add(Loc.Get("TazunaBridge.Night"));
         if (Main.raining)
-            situational.Add("下雨天，雾隐的人最爱出来……你小心点。");
+            situational.Add(Loc.Get("TazunaBridge.Rain"));
         switch (player.GetModPlayer<StoryPlayer>().WaveStage)
         {
             case WaveStage.GetStronger:
-                situational.Add("卡卡西先生说，卡多雇来的是雾隐的鬼人……你可别逞强，先把本事练好。");
+                situational.Add(Loc.Get("TazunaBridge.GetStronger"));
                 break;
             case WaveStage.Lake:
-                situational.Add("回镇上的路要经过湖边……那种地方起了雾，可就什么都看不见了。");
+                situational.Add(Loc.Get("TazunaBridge.Lake"));
                 break;
             case WaveStage.Bridge:
-                situational.Add("你说再不斩被人带走了？……（脸色发白）那家伙要是还活着，这座桥就永远修不成了。");
+                situational.Add(Loc.Get("TazunaBridge.Bridge"));
                 break;
         }
         if (player.GetModPlayer<MistEncounterPlayer>().SawPreview)
-            situational.Add("你也看见了吧？雾里那两个人……就是卡多雇来的忍者。桥一天修不完，他们就守在那里。");
+            situational.Add(Loc.Get("TazunaBridge.SawPreview"));
         if (player.CountItem(ModContent.ItemType<MistInsignia>()) >= 3)
-            situational.Add("你身上那是雾隐的标记？……看来你是认真的。拜托了，忍者。");
+            situational.Add(Loc.Get("TazunaBridge.Insignia"));
         return situational.Count > 0 && Main.rand.NextBool()
             ? Main.rand.Next(situational)
-            : Main.rand.Next(Lines);
+            : Loc.Pick("TazunaBridge.Line", LineCount);
     }
 
     public override void AI()

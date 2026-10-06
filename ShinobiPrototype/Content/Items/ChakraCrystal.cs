@@ -32,7 +32,7 @@ public sealed class ChakraCrystal : ModItem
         if (!player.GetModPlayer<ChakraPlayer>().TryUseCrystal())
             return false;
         if (player.whoAmI == Main.myPlayer)
-            CombatText.NewText(player.getRect(), new Color(45, 170, 235), $"查克拉上限 +{ChakraRules.CrystalBonus}");
+            CombatText.NewText(player.getRect(), new Color(45, 170, 235), Loc.Get("Chakra.CrystalUsed", ChakraRules.CrystalBonus));
         return true;
     }
 }

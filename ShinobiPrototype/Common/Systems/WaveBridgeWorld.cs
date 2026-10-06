@@ -91,7 +91,7 @@ public sealed class WaveBridgeWorld : ModSystem
 
     private static void Generate(GenerationProgress progress, GameConfiguration configuration)
     {
-        progress.Message = "修建波之国大桥";
+        progress.Message = Loc.Get("WorldGen.Bridge");
         if (BridgeBuilder.TryFindWorldSite(out BridgeSite site))
         {
             Site = BridgeBuilder.Build(site, finished: false, sync: false);
@@ -104,7 +104,7 @@ public sealed class WaveBridgeWorld : ModSystem
     {
         if (Site.HasValue)
         {
-            reason = "这个世界已经有大桥了。";
+            reason = Loc.Get("Bridge.AlreadyBuilt");
             return false;
         }
         if (!BridgeBuilder.CheckObstacles(site, out reason))
@@ -133,7 +133,7 @@ public sealed class WaveBridgeWorld : ModSystem
         BridgeBuilder.Finish(site, sync: true);
         Finished = true;
         SyncWorld();
-        Announce("大桥完工了。海上的雾，散去了。", new Color(150, 220, 255));
+        Announce("Wave.BridgeFinished", new Color(150, 220, 255));
     }
 
     // Before the win, the builder stands in his hut (he is not saved with the world, so he is re-placed when
@@ -201,11 +201,11 @@ public sealed class WaveBridgeWorld : ModSystem
             NetMessage.SendData(MessageID.WorldData);
     }
 
-    private static void Announce(string text, Color color)
+    private static void Announce(string key, Color color)
     {
-        if (Main.netMode == NetmodeID.Server)
-            ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            Main.NewText(Loc.Get(key), color);
         else
-            Main.NewText(text, color);
+            Loc.Broadcast(color, key);
     }
 }

@@ -32,7 +32,9 @@ export DOTNET_ROOT="$(dirname "$dotnet_x64")"
 export PATH="$temp_dir:$DOTNET_ROOT:$PATH"
 
 cd "$project_root"
-for suite in ChakraRules StoryRules KonohaDesign StyleCoreRules BackgroundRules BridgeRules WaveLootRules DemonBrotherRules ExamRules ChallengeRules ZabuzaCombatRules DebugModeRules WaveDuoRules; do
+# Player-facing text only in the localization files, the same keys in both languages.
+python3 scripts/check_text.py
+for suite in ChakraRules StoryRules KonohaDesign StyleCoreRules BackgroundRules BridgeRules WaveLootRules DemonBrotherRules ExamRules ChallengeRules ZabuzaCombatRules DebugModeRules WaveDuoRules EnemyDamageRules; do
   "$dotnet_x64" run --project "tests/$suite/$suite.Tests.csproj"
 done
 "$dotnet_x64" build ShinobiPrototype/ShinobiPrototype.csproj \

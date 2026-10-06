@@ -10,5 +10,6 @@
     <Compile Include="WaveDuoRulesTests.cs" />
     <Compile Include="../../ShinobiPrototype/Common/WaveDuoRules.cs" Link="WaveDuoRules.cs" />
     <Compile Include="../../ShinobiPrototype/Common/ZabuzaCombatRules.cs" Link="ZabuzaCombatRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/EnemyDamageRules.cs" Link="EnemyDamageRules.cs" />
   </ItemGroup>
 </Project>

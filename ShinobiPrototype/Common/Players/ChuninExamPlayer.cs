@@ -63,8 +63,7 @@ public sealed class ChuninExamPlayer : ModPlayer
         int copper = ChuninExamRules.WrittenReward(correct);
         if (copper > 0)
             Player.QuickSpawnItem(Player.GetSource_Misc("WrittenExam"), ItemID.SilverCoin, copper / 100);
-        Main.NewText($"第一试合格（前九题答对 {correct} 题，得 {copper / 100} 银币）。第二试：死亡森林——" +
-                     $"到丛林的第四十四演习场入口领取卷轴。{ExamSiteWorld.GateHint(Player)}", Color.LightGreen);
+        Main.NewText(Loc.Get("Exam.WrittenPassed", correct, copper / 100, ExamSiteWorld.GateHint(Player)), Color.LightGreen);
     }
 
     public void GiveUpWritten()
@@ -84,8 +83,7 @@ public sealed class ChuninExamPlayer : ModPlayer
             return;
         GateSquadDone = true;
         SquadsBeaten++;
-        Main.NewText($"倒在地上的考生怀里，露出一角{ScrollName(Issued)}——和你的一样。\n" +
-                     $"考生：“……哼，想要{ScrollName(ChuninExamRules.Other(Issued))}？去塔那边碰碰运气吧……雨……”", 180, 200, 170);
+        Main.NewText(Loc.Get("Exam.GateSquad", ScrollName(Issued), ScrollName(ChuninExamRules.Other(Issued))), 180, 200, 170);
     }
 
     // Took part in the encounter with Orochimaru (he left: held off, held out against, or the player fell). The first
@@ -107,7 +105,7 @@ public sealed class ChuninExamPlayer : ModPlayer
             return;
         vialPending = false;
         Player.QuickSpawnItem(Player.GetSource_Misc("Orochimaru"), ModContent.ItemType<Content.Items.StyleCores.SharinganCore1>());
-        Main.NewText("……地上还滚着一支试管，里面泡着一只红色的眼睛。", new Color(190, 150, 230));
+        Main.NewText(Loc.Get("Exam.Vial"), new Color(190, 150, 230));
     }
 
     // A squad met anywhere else in the forest: an optional fight, no scroll, no announcement.
@@ -117,7 +115,7 @@ public sealed class ChuninExamPlayer : ModPlayer
             SquadsBeaten++;
     }
 
-    public static string ScrollName(ExamScroll scroll) => scroll == ExamScroll.Heaven ? "天之卷" : "地之卷";
+    public static string ScrollName(ExamScroll scroll) => Loc.Get(scroll == ExamScroll.Heaven ? "Handbook.Exam.Heaven" : "Handbook.Exam.Earth");
 
     // The last of the Rain genin fell with the character in the fight.
     public void CreditRainTrio()
@@ -125,7 +123,7 @@ public sealed class ChuninExamPlayer : ModPlayer
         if (Stage != ExamStage.ForestHunt || RainAmbushDone)
             return;
         RainAmbushDone = true;
-        GiveOtherScroll("雨隐的三人组倒下了，他们带着的正是你缺的那一卷");
+        GiveOtherScroll(Loc.Get("Exam.RainTrioDown"));
     }
 
     private void GiveOtherScroll(string why)
@@ -135,8 +133,7 @@ public sealed class ChuninExamPlayer : ModPlayer
         if (type <= 0 || HasBothScrolls)
             return;
         Player.QuickSpawnItem(Player.GetSource_Misc("ExamScroll"), type);
-        Main.NewText($"{why}：得到{(other == ExamScroll.Heaven ? "天之卷" : "地之卷")}！带齐两卷去丛林中部的中央塔。" +
-                     ExamSiteWorld.TowerHint(Player), Color.LightGreen);
+        Main.NewText(Loc.Get("Exam.GotScroll", why, ScrollName(other), ExamSiteWorld.TowerHint(Player)), Color.LightGreen);
     }
 
     // Mitarashi Anko hands over one of the two scrolls at the gate (specs/M2_中忍考试篇.spec.md 3.2).
@@ -155,8 +152,8 @@ public sealed class ChuninExamPlayer : ModPlayer
             return;
         PrelimsPassed = true;
         Main.NewText(Stage == ExamStage.Finals
-            ? $"预选赛合格！正式赛：到木叶城墙外的考试会场{ExamSiteWorld.StadiumHint(Player)}。"
-            : $"预选赛合格！正式赛前先去变强（击败骷髅王，或生命上限达到 {ChuninExamRules.FinalsLifeThreshold}）。",
+            ? Loc.Get("Exam.PrelimsPassedFinals", ExamSiteWorld.StadiumHint(Player))
+            : Loc.Get("Exam.PrelimsPassedTraining", ChuninExamRules.FinalsLifeThreshold),
             Color.LightGreen);
     }
 
@@ -181,14 +178,14 @@ public sealed class ChuninExamPlayer : ModPlayer
         ExamStage stage = Stage;
         // A line when the finals open, as quiet as vanilla's progress messages.
         if (lastStage == ExamStage.Training && stage == ExamStage.Finals)
-            Main.NewText("木叶的街上贴出了告示：中忍考试正式赛，即将开始。", new Color(255, 220, 150));
+            Main.NewText(Loc.Get("Exam.FinalsPosted"), new Color(255, 220, 150));
         lastStage = stage;
         if (stage == ExamStage.ForestHunt && ExamSiteWorld.InArena(ExamSiteWorld.Tower, Player.Center) &&
                  ChuninExamRules.HasBoth(Player.CountItem(ModContent.ItemType<HeavenScroll>()),
                      Player.CountItem(ModContent.ItemType<EarthScroll>())))
         {
             TowerReached = true;
-            Main.NewText("天地双开——第二试合格。大厅里的监考官正等着你。", Color.LightGreen);
+            Main.NewText(Loc.Get("Exam.TowerReached"), Color.LightGreen);
         }
     }
 

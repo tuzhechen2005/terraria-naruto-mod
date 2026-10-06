@@ -1,0 +1,86 @@
+{
+  "source": "source/generated_Iruka_Idle_B.png",
+  "finalSource": "source/Iruka_B_eye_two_cells.png",
+  "mouthEditBox": [
+    656,
+    620,
+    720,
+    652
+  ],
+  "eyeFaceEditBox": [
+    612,
+    470,
+    708,
+    636
+  ],
+  "eyeHeightScreenPixels": 4,
+  "sourceBox": [
+    180,
+    80,
+    820,
+    1452
+  ],
+  "samplePhase": [
+    0.8,
+    0.5
+  ],
+  "exports": [
+    {
+      "label": "native",
+      "canvas": [
+        64,
+        80
+      ],
+      "grid": [
+        14,
+        31
+      ],
+      "pixel": 2,
+      "bodyHeight": 62,
+      "baselineExclusive": 76,
+      "displayScale": 1,
+      "alpha": [
+        0,
+        255
+      ]
+    },
+    {
+      "label": "legacy",
+      "canvas": [
+        56,
+        56
+      ],
+      "grid": [
+        11,
+        23
+      ],
+      "pixel": 2,
+      "bodyHeight": 46,
+      "baselineExclusive": 54,
+      "displayScale": 1.358695652173913,
+      "alpha": [
+        0,
+        255
+      ]
+    },
+    {
+      "label": "final",
+      "canvas": [
+        64,
+        80
+      ],
+      "grid": [
+        29,
+        62
+      ],
+      "pixel": 1,
+      "bodyHeight": 62,
+      "baselineExclusive": 76,
+      "displayScale": 1,
+      "alpha": [
+        0,
+        255
+      ]
+    }
+  ]
+}

@@ -9,5 +9,6 @@
   <ItemGroup>
     <Compile Include="BackgroundRulesTests.cs" />
     <Compile Include="../../ShinobiPrototype/Common/BackgroundLayoutRules.cs" Link="BackgroundLayoutRules.cs" />
+    <Compile Include="../../ShinobiPrototype/Common/BackgroundLayoutData.cs" Link="BackgroundLayoutData.cs" />
   </ItemGroup>
 </Project>

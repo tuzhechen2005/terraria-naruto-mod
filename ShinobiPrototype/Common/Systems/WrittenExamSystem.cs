@@ -108,7 +108,7 @@ internal sealed class WrittenExamState : UIState
         close.OnLeftClick += (_, _) =>
         {
             if (index < ChuninExamRules.WrittenQuestions)
-                Main.NewText("你离开了考场。笔试随时可以重新开始。", 200, 200, 200);
+                Main.NewText(Loc.Get("WrittenExam.LeftRoom"), 200, 200, 200);
             WrittenExamSystem.Close();
         };
         panel.Append(close);
@@ -144,13 +144,13 @@ internal sealed class WrittenExamState : UIState
             return;
         }
         ExamQuestion question = WrittenExamBank.Questions[questions[index]];
-        header.SetText($"中忍考试 · 第一试　　第 {index + 1} / 10 题");
-        AddText(question.Text, 0f, 1f);
+        header.SetText(Loc.Get("WrittenExam.Header", index + 1));
+        AddText(Loc.Get(question.Text), 0f, 1f);
         int[] order = ChuninExamRules.Draw(question.Options.Length, question.Options.Length, Main.rand.Next);
         for (int i = 0; i < order.Length; i++)
         {
             int option = order[i];
-            AddButton($"{(char)('A' + i)}. {question.Options[option]}", 70f + i * 52f, () =>
+            AddButton($"{(char)('A' + i)}. {Loc.Get(question.Options[option])}", 70f + i * 52f, () =>
             {
                 if (option == 0)
                     correct++;
@@ -163,28 +163,28 @@ internal sealed class WrittenExamState : UIState
 
     private void ShowTenth()
     {
-        header.SetText("中忍考试 · 第一试　　第 10 题");
-        AddText(WrittenExamBank.TenthIntro, 0f, 0.9f);
-        AddButton("接受第十题", 200f, () =>
+        header.SetText(Loc.Get("WrittenExam.HeaderTenth"));
+        AddText(Loc.Get(WrittenExamBank.TenthIntro), 0f, 0.9f);
+        AddButton(Loc.Get("WrittenExam.Accept"), 200f, () =>
         {
             Main.LocalPlayer.GetModPlayer<ChuninExamPlayer>().PassWritten(correct);
             SoundEngine.PlaySound(SoundID.Item4);
             ShowEnd(WrittenExamBank.TenthAccepted);
         });
-        AddButton("放弃", 256f, () =>
+        AddButton(Loc.Get("WrittenExam.GiveUp"), 256f, () =>
         {
             Main.LocalPlayer.GetModPlayer<ChuninExamPlayer>().GiveUpWritten();
-            Main.NewText("你在第十题放弃了。明天天亮后可以再来重考。", 250, 200, 120);
+            Main.NewText(Loc.Get("WrittenExam.GaveUpNote"), 250, 200, 120);
             ShowEnd(WrittenExamBank.TenthGaveUp);
         });
     }
 
-    private void ShowEnd(string text)
+    private void ShowEnd(string key)
     {
         content.RemoveAllChildren();
-        header.SetText("中忍考试 · 第一试");
-        AddText(text, 0f, 0.9f);
-        AddButton("离开考场", 250f, WrittenExamSystem.Close);
+        header.SetText(Loc.Get("WrittenExam.HeaderEnd"));
+        AddText(Loc.Get(key), 0f, 0.9f);
+        AddButton(Loc.Get("WrittenExam.Leave"), 250f, WrittenExamSystem.Close);
     }
 
     private void AddText(string text, float top, float scale)

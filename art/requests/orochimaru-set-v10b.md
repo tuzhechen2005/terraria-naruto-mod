@@ -1,0 +1,19 @@
+# 素材请求：orochimaru-set-v10b
+
+- 状态：requested
+- 提出者及提交号：Claude Code（用户 2026-10-02：v9/v10 底稿“完美，就这样做吧”）
+- 资产类型：Boss 全套之二——招式帧与引帧（`<动作>In_0` 是从站立过渡到招式第一帧的那一帧）
+- **底稿（必须作为图像参考）**：`art/deliveries/orochimaru-base-v10/Orochimaru_Idle_0.png`。**每一帧都要和它是同一个人**：脸（金色竖瞳、紫色眼影、细阴笑）、头发、衣服配色、描边、色阶、身高全部照它；头部直接从底稿取，随姿势平移或稍微倾斜，**每帧都看得到脸和眼睛**（v5b 的教训：招式帧画成侧脸、头发盖脸，游戏里一出招就像换了个人）。
+- **规格**（见 `art/AGENT_HANDOFF.md` 的“Boss 分辨率”）：人物帧画布 224×136，1 个美术像素 = 1 个屏幕像素，游戏里不放大，**不按 2×2 网格**；人体中线 x=112，脚底最低行 y=131；面朝右，透明背景，Alpha 只有 0/255；颜色用底稿的调色板。
+- **姿势参考**（只参考动作，不参考画风和比例）：`art/deliveries/orochimaru-set-v5a/`、`art/deliveries/orochimaru-set-v5c/` 中同名的帧。
+- 画风：达兹纳 `art/deliveries/tazuna-npc-v1/` 的画法（深色外描边、硬色阶、左上受光、无噪点），精度按本规格，保留底稿的细节，不要简化。
+- 流程：图像生成参照底稿和姿势参考画出姿势 → 缩到本规格 → 对照底稿逐像素修整（脸、手、发丝、腰带结），清掉杂色和零散单点。
+- 文件：
+  - `Orochimaru_HandsIn_0`、`Orochimaru_Hands_0`～`_2`：潜影蛇手——双袖向前甩出，袖口张开（蛇本身另画，不要画进来）；
+  - `Orochimaru_DashIn_0`、`Orochimaru_Dash_0`～`_1`：贴地蛇行冲刺，身体压得很低几乎平贴，**脸朝前方、眼睛看得到**；
+  - `Orochimaru_WindIn_0`、`Orochimaru_Wind_0`～`_1`：风遁·大突破——吸气后仰，再向前猛吐（风另画）；也用于吐毒和吐草薙剑；
+  - `Orochimaru_NeckIn_0`、`Orochimaru_Neck_0`：伸颈——身体站定前倾；**Neck_0 脖子以上不画**（头和脖子由 NeckHead/NeckSegment 拼接，从领口接出），NeckIn_0 画完整的头；
+  - `Orochimaru_SealIn_0`、`Orochimaru_Seal_0`～`_1`：五行封印——一手五指张开向前推出，指尖位置留出来放紫色火焰；
+  - `Orochimaru_SummonIn_0`、`Orochimaru_Summon_0`～`_1`：通灵之术——咬破拇指后一手按向地面，半蹲。
+- 交付：全部放根下，源图 `source/`；`preview.png` 所有帧与底稿并排（1 倍、3 倍），另附每帧头部与底稿头部的 4 倍并排对比。
+- 交付后接入提交号：待填

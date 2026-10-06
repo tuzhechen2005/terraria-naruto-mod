@@ -38,6 +38,14 @@ public static class ChakraRules
     public const int BlinkImmuneTicks = 30;
     public const int StealthTicks = 300;
     public const float StealthDamageBonus = 0.3f;
+
+    // Ninja tools build their own stealth (specs/装备与忍术系统.spec.md): held, the meter fills in twelve seconds bare
+    // (user, 2026-10-03: four was far too quick), sooner with ninja-tool gear (`speed`, e.g. 1.5 for eight seconds),
+    // attacking or not; a hit that gets through empties it. Full, the next throw is the tool's stealth throw.
+    public const int ToolStealthFillTicks = 720;
+
+    public static float TickToolStealth(float meter, bool holdingTool, float speed = 1f) =>
+        holdingTool ? Math.Min(1f, meter + Math.Max(0f, speed) / ToolStealthFillTicks) : meter;
     public const int SubstitutionMaxHints = 3;
     public const int SubstitutionHintSpacingTicks = 1800;
     // Kakashi's drill still trains a press just before the hit: this long a standby after the press.
@@ -84,6 +92,22 @@ public static class ChakraRules
     // Whether a hit is taken by a log: an enemy's hit, a log left, and no sealed chakra points.
     public static bool AutoSubstitutes(int logs, bool sealedPoints, bool fromEnemy) => logs > 0 && !sealedPoints && fromEnemy;
 
+    // Logs are kept for hits that hurt (specs/敌方伤害标准.spec.md, user 2026-10-04): a hit below a tenth of max life,
+    // after defence, lands as normal; a slime's bump no longer spends one. Shadow clones and the Sharingan's foresight
+    // follow the same line; warned binds (the sand coffin, the killing intent) are taken whatever they deal.
+    public const int LogThresholdPercent = 10;
+
+    public static bool WorthALog(int damage, int maxLife) => damage * 100 >= maxLife * LogThresholdPercent;
+
+    // A log comes back more slowly the more it took: base time x (1 + damage / max life), the share capped at 1. A bind
+    // counts as three tenths of max life (a big attack's worth). Each log spent waits its own time, in order.
+    public const float BindLogShare = 0.3f;
+
+    public static float LogRegenMultiplier(int damageTaken, int maxLife) =>
+        1f + Math.Clamp(maxLife > 0 ? damageTaken / (float)maxLife : 0f, 0f, 1f);
+
+    public static int LogRegenTicksFor(int baseTicks, float multiplier) => (int)Math.Round(baseTicks * Math.Max(1f, multiplier));
+
     // One tick of log recovery (plus any ticks earned by hits): progress builds to the next log; at the cap it waits.
     public static (int Logs, int Progress) TickLogs(int logs, int maxLogs, int progress, int regenTicks, int bonusTicks = 0)
     {
@@ -116,9 +140,9 @@ public static class ChakraRules
         PracticeOutcome.TooLate;
 
     public static string PracticeVerdict(int substituted, int total) =>
-        substituted * 8 >= total * 7 ? "已经很熟练了。实战里也要这么冷静。" :
-        substituted * 2 >= total ? "还行。再练几次，身体自己就会记住时机。" :
-        "看苦无，不要看我。再来一次吧。";
+        substituted * 8 >= total * 7 ? "Drill.VerdictGreat" :
+        substituted * 2 >= total ? "Drill.VerdictOkay" :
+        "Drill.VerdictPoor";
 
     // After a log takes a hit, a few times, until the player has used the key themselves.
     public static bool ShouldShowHint(bool mastered, int hintsShown, int ticksSinceLastHint) =>

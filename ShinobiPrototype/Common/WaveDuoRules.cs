@@ -28,7 +28,6 @@ public static class WaveDuoRules
     public const float CageRadius = 320f;
     public const int CageMirrorLife = 60;
     public const int CageMirrorsToBreak = 4;
-    public const int CageBoundaryDamage = 10;
     public const int CageBoundaryHurtCooldown = 30;
     public const int CageStaggerTicks = 90;
     public const int CageEndTicks = 30;
@@ -57,8 +56,6 @@ public static class WaveDuoRules
     // Zabuza frenzy after Haku falls.
     public const float ZabuzaFrenzyDamageTakenMultiplier = 1.25f;
     public const float ZabuzaFrenzyDashMultiplier = 1.16f;
-    public const int KunaiDashDamage = 22;
-    public const int ThrownSwordDamage = 34;
 
     public static bool HakuMayAttack(int zabuzaState) =>
         zabuzaState != ZabuzaCombatRules.MistTransition;
@@ -154,7 +151,6 @@ public static class WaveDuoRules
         return relative < ThousandNeedleGapSize;
     }
 
-    public static int SoftenedDamage(int baseDamage) => (baseDamage * 9 + 5) / 10;
     public static bool EncounterComplete(bool hakuDefeated, bool zabuzaDefeated) =>
         hakuDefeated && zabuzaDefeated;
     public static byte NormalizeLegacyWaveFlags(bool hakuDefeated, bool zabuzaDefeated) =>

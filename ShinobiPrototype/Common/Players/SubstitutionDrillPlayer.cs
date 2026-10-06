@@ -36,9 +36,7 @@ public sealed class SubstitutionDrillPlayer : ModPlayer
         gap = ChakraRules.PracticeGapMinTicks;
         promptCooldown = 0;
         Mentor.DrillTarget = Player.whoAmI;
-        Main.NewText($"卡卡西：我会朝你扔 {ChakraRules.PracticeThrows} 支苦无，瞄准的时间每次都不一样。" +
-                     $"站到离我 {ChakraRules.PracticeMinRangeTiles}–{ChakraRules.PracticeMaxRangeTiles} 格的地方，" +
-                     "盯住苦无，在它快到身上时按替身键。练习用的苦无不会让木头自己替你挨，全看你的时机；练习期间不耗木头和查克拉。",
+        Main.NewText(Loc.Get("Drill.Start", ChakraRules.PracticeThrows, ChakraRules.PracticeMinRangeTiles, ChakraRules.PracticeMaxRangeTiles),
             255, 220, 120);
     }
 
@@ -58,7 +56,7 @@ public sealed class SubstitutionDrillPlayer : ModPlayer
         if (Player.dead || Player.Distance(mentor.Center) > ChakraRules.PracticeLeashTiles * 16f)
         {
             Stop();
-            Main.NewText("卡卡西：跑那么远，练习就先到这里吧。", 255, 220, 120);
+            Main.NewText(Loc.Get("Drill.TooFarStop"), 255, 220, 120);
             return;
         }
 
@@ -76,10 +74,10 @@ public sealed class SubstitutionDrillPlayer : ModPlayer
         switch (ChakraRules.CheckPracticeThrow(Player.Distance(mentor.Center) / 16f, cooldown))
         {
             case ChakraRules.PracticeReadiness.TooClose:
-                Prompt(mentor, $"离远一点（{ChakraRules.PracticeMinRangeTiles} 格以上）");
+                Prompt(mentor, Loc.Get("Drill.BackOff", ChakraRules.PracticeMinRangeTiles));
                 return;
             case ChakraRules.PracticeReadiness.TooFar:
-                Prompt(mentor, "再靠近一点");
+                Prompt(mentor, Loc.Get("Drill.ComeCloser"));
                 return;
             case ChakraRules.PracticeReadiness.CoolingDown:
                 return;
@@ -115,21 +113,21 @@ public sealed class SubstitutionDrillPlayer : ModPlayer
         gap = Main.rand.Next(ChakraRules.PracticeGapMinTicks, ChakraRules.PracticeGapMaxTicks + 1);
         (string text, Color color) = outcome switch
         {
-            ChakraRules.PracticeOutcome.Substituted => ("替身成功！", new Color(255, 215, 120)),
-            ChakraRules.PracticeOutcome.TooEarly => ("早了！", new Color(150, 200, 255)),
-            ChakraRules.PracticeOutcome.TooLate => ("晚了！", new Color(255, 130, 120)),
-            _ => ("躲开了——这次试试用替身术", Color.LightGray),
+            ChakraRules.PracticeOutcome.Substituted => (Loc.Get("Drill.Success"), new Color(255, 215, 120)),
+            ChakraRules.PracticeOutcome.TooEarly => (Loc.Get("Drill.Early"), new Color(150, 200, 255)),
+            ChakraRules.PracticeOutcome.TooLate => (Loc.Get("Drill.Late"), new Color(255, 130, 120)),
+            _ => (Loc.Get("Drill.Dodged"), Color.LightGray),
         };
         if (outcome == ChakraRules.PracticeOutcome.Substituted)
             substituted++;
-        CombatText.NewText(Player.getRect(), color, $"{text}（{thrown}/{ChakraRules.PracticeThrows}）");
+        CombatText.NewText(Player.getRect(), color, Loc.Get("Drill.Count", text, thrown, ChakraRules.PracticeThrows));
     }
 
     private void Finish(NPC mentor)
     {
-        string verdict = ChakraRules.PracticeVerdict(substituted, thrown);
+        string verdict = Loc.Get(ChakraRules.PracticeVerdict(substituted, thrown));
         Stop();
-        Main.NewText($"卡卡西：{thrown} 支里替身成功 {substituted} 支。{verdict}", 255, 220, 120);
+        Main.NewText(Loc.Get("Drill.Result", thrown, substituted, verdict), 255, 220, 120);
         CombatText.NewText(mentor.getRect(), Color.White, $"{substituted}/{thrown}");
     }
 

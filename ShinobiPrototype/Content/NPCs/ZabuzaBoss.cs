@@ -130,9 +130,9 @@ public sealed class ZabuzaBoss : ModNPC
             ZabuzaCombatRules.KunaiDash;
         // Dashes go straight through terrain, like the Eye of Cthulhu's; EndDash puts him back on open ground.
         NPC.noTileCollide = state is ZabuzaCombatRules.DashActive or ZabuzaCombatRules.DashChainActive;
-        NPC.damage = state == ZabuzaCombatRules.KunaiDash
-            ? WaveDuoRules.SoftenedDamage(WaveDuoRules.KunaiDashDamage)
-            : NPC.noGravity ? WaveDuoRules.SoftenedDamage(InMistPhase ? 48 : 32) : 0;
+        // A dash hurts through its blade (ZabuzaDashHitbox) only, never his body as well: one hit per attack
+        // (specs/敌方伤害标准.spec.md). The kunai dash, with no blade, is his body.
+        NPC.damage = state == ZabuzaCombatRules.KunaiDash ? EnemyDamage.Contact(NPC, EnemyDamageRules.Zabuza.KunaiDash) : 0;
         Lighting.AddLight(NPC.Center, InMistPhase ? (LastStand ? 0.6f : 0.46f) : 0.16f,
             InMistPhase ? (LastStand ? 0.18f : 0.12f) : 0.21f,
             InMistPhase ? (LastStand ? 0.78f : 0.64f) : 0.26f);
@@ -180,7 +180,7 @@ public sealed class ZabuzaBoss : ModNPC
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
                             ModContent.ProjectileType<ZabuzaSlash>(),
-                            WaveDuoRules.SoftenedDamage(32), 0f,
+                            EnemyDamage.Projectile(EnemyDamageRules.Zabuza.Slash), 0f,
                             Main.myPlayer, NPC.whoAmI, NPC.ai[2]);
                     SoundEngine.PlaySound(SoundID.Item1, NPC.Center);
                     NPC.localAI[0]++;
@@ -223,7 +223,7 @@ public sealed class ZabuzaBoss : ModNPC
                             new Vector2(NPC.ai[2] * (InMistPhase ? 12f : 10f),
                                 slope * (InMistPhase ? 12f : 10f)),
                             ModContent.ProjectileType<ZabuzaWaterWave>(),
-                            WaveDuoRules.SoftenedDamage(26), 0f, Main.myPlayer,
+                            EnemyDamage.Projectile(EnemyDamageRules.Zabuza.WaterWave), 0f, Main.myPlayer,
                             InMistPhase ? 1f : 0f);
                     SoundEngine.PlaySound(SoundID.Item21, NPC.Center);
                     NPC.localAI[0]++;
@@ -289,7 +289,7 @@ public sealed class ZabuzaBoss : ModNPC
                     if (Main.netMode != NetmodeID.MultiplayerClient)
                         Projectile.NewProjectile(NPC.GetSource_FromAI(), spawn, aim * 9f,
                             ModContent.ProjectileType<ZabuzaWaterDragon>(),
-                            WaveDuoRules.SoftenedDamage(34), 0f, Main.myPlayer,
+                            EnemyDamage.Projectile(EnemyDamageRules.Zabuza.WaterDragon), 0f, Main.myPlayer,
                             InMistPhase ? 1f : 0f);
                     SoundEngine.PlaySound(SoundID.Item21, NPC.Center);
                     NPC.localAI[0]++;
@@ -419,7 +419,7 @@ public sealed class ZabuzaBoss : ModNPC
                             ZabuzaCombatRules.SwordThrowSpeed;
                         Projectile.NewProjectile(NPC.GetSource_FromAI(), spawn, velocity,
                             ModContent.ProjectileType<ZabuzaThrownSword>(),
-                            WaveDuoRules.SoftenedDamage(WaveDuoRules.ThrownSwordDamage), 0f,
+                            EnemyDamage.Projectile(EnemyDamageRules.Zabuza.ThrownSword), 0f,
                             Main.myPlayer, NPC.whoAmI);
                     }
                     SoundEngine.PlaySound(SoundID.Item7, NPC.Center);
@@ -678,7 +678,7 @@ public sealed class ZabuzaBoss : ModNPC
             Vector2 velocity = (baseAngle + i * 0.17f).ToRotationVector2() * 8.5f;
             Projectile.NewProjectile(NPC.GetSource_FromAI(), spawn, velocity,
                 ModContent.ProjectileType<ZabuzaWaterNeedle>(),
-                WaveDuoRules.SoftenedDamage(20), 0f, Main.myPlayer,
+                EnemyDamage.Projectile(EnemyDamageRules.Zabuza.NeedleFan), 0f, Main.myPlayer,
                 InMistPhase ? 1f : 0f);
         }
     }
@@ -724,7 +724,7 @@ public sealed class ZabuzaBoss : ModNPC
             Projectile.NewProjectile(NPC.GetSource_FromAI(), spawn,
                 new Vector2((volley - 1) * 0.35f, 9.5f),
                 ModContent.ProjectileType<ZabuzaWaterNeedle>(),
-                WaveDuoRules.SoftenedDamage(22), 0f, Main.myPlayer,
+                EnemyDamage.Projectile(EnemyDamageRules.Zabuza.NeedleRain), 0f, Main.myPlayer,
                 InMistPhase ? 1f : 0f);
         }
     }
@@ -773,7 +773,7 @@ public sealed class ZabuzaBoss : ModNPC
             Vector2 direction = angle.ToRotationVector2();
             Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + direction * 42f,
                 direction * 7.2f, ModContent.ProjectileType<ZabuzaWaterNeedle>(),
-                WaveDuoRules.SoftenedDamage(19), 0f, Main.myPlayer,
+                EnemyDamage.Projectile(EnemyDamageRules.Zabuza.NeedleSpiral), 0f, Main.myPlayer,
                 InMistPhase ? 1f : 0f);
         }
         if (volley % 2 == 0)
@@ -806,7 +806,7 @@ public sealed class ZabuzaBoss : ModNPC
         // One blade hitbox per dash (a chained dash starts a new one once the old one has ended with the re-aim).
         if (Main.netMode != NetmodeID.MultiplayerClient)
             Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero,
-                ModContent.ProjectileType<ZabuzaDashHitbox>(), WaveDuoRules.SoftenedDamage(InMistPhase ? 48 : 32), 0f,
+                ModContent.ProjectileType<ZabuzaDashHitbox>(), EnemyDamage.Projectile(InMistPhase ? EnemyDamageRules.Zabuza.DemonDash : EnemyDamageRules.Zabuza.Dash), 0f,
                 Main.myPlayer, NPC.whoAmI);
     }
 
@@ -1258,10 +1258,9 @@ public sealed class ZabuzaBoss : ModNPC
         WaveRewards.Settle(lastBoss);
         if (Main.netMode == NetmodeID.Server)
             NetMessage.SendData(MessageID.WorldData);
-        const string message = "再不斩与白已被击败。波之国主线完成，中忍考试现已开放。";
-        if (Main.netMode == NetmodeID.Server)
-            ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(message), new Color(100, 220, 160));
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            Main.NewText(Loc.Get("Wave.Complete"), 100, 220, 160);
         else
-            Main.NewText(message, 100, 220, 160);
+            Loc.Broadcast(new Color(100, 220, 160), "Wave.Complete");
     }
 }

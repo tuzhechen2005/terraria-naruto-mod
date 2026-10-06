@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NPC 像素图 · 卡卡西走路修复与新角色</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#181e26;color:#e8e6dd;font:15px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif}main{max-width:1080px;margin:auto;padding:32px 24px}h1{font-size:28px;margin:0 0 8px}h2{font-size:21px;margin:30px 0 10px}p{color:#b6bec7;margin:6px 0 16px}a{color:#a5d6b0}button{color:inherit;background:#303b46;border:1px solid #516171;border-radius:6px;padding:7px 14px;cursor:pointer;margin-right:8px}button.active{background:#51694e}.panel{border:1px solid #3c4652;border-radius:10px;background:#242c35;padding:18px;margin-top:16px}.row{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-end}.sprite{width:auto;height:80px;image-rendering:pixelated}.stage{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:30px;min-height:150px;padding:24px;border-radius:6px}.light{background:#d9d9cf;color:#202831}.dark{background:#303740;color:#e8e6dd}.figure{text-align:center;margin:0}figcaption{font-size:13px;margin-top:8px}canvas,img{image-rendering:pixelated}canvas{width:240px;height:240px;max-width:100%;background:#303740;border-radius:6px}.status{color:#d0baa0}.controls{margin-bottom:15px}.wrap{overflow:auto}.walk-label{font-weight:600}.note{font-size:13px;color:#a6b0bb}footer{margin:26px 0;color:#9ba9b6}
+</style>
+<main>
+<h1>NPC 像素图</h1>
+<p>卡卡西走路修复，以及三代火影、忍具店老板的站立样张。</p>
+<section class="panel">
+<h2 style="margin-top:0">卡卡西 · 走路循环</h2>
+<p>同步查看改前、改后，重点观察腰部连接、骨盆位置和两腿交替。</p>
+<div class="controls"><button id="play" class="active">暂停</button><button id="slow">慢放</button><button id="normal" class="active">正常速度</button></div>
+<div class="row"><figure class="figure"><canvas id="before" width="80" height="80"></canvas><figcaption class="walk-label">改前</figcaption></figure><figure class="figure"><canvas id="after" width="80" height="80"></canvas><figcaption class="walk-label">改后</figcaption></figure></div>
+<p class="note" id="walkstatus">加载走路帧…</p>
+<div class="wrap"><img src="kakashi_walk.gif" width="320" height="240" alt="卡卡西走路：真实尺寸与3倍循环"></div>
+<p class="note">上方为素材回放，游戏内脚底位置、光照与实际走路速度需另行确认。</p>
+</section>
+<section class="panel">
+<h2 style="margin-top:0">新 NPC · 真实游戏尺寸</h2>
+<p>三代比其他角色略矮；眼睛按每个人单独设计。两张新站姿均为候选，尚未替换游戏贴图。</p>
+<div class="controls"><button id="one" class="active">1 倍</button><button id="three">3 倍</button></div>
+<div class="stage light" id="light"></div><div class="stage dark" id="dark" style="margin-top:14px"></div>
+<p><a href="../hiruzen-direct-pixel-v1/preview.html">三代细节预览</a> · <a href="../toolshop-direct-pixel-v1/preview.html">忍具店老板细节预览</a></p>
+</section>
+<footer>画风沿用已认可的伊鲁卡。卡卡西保留站立与其他动作，本轮修复走路。</footer>
+</main>
+<script>
+const people=[['伊鲁卡','../../../skills/terraria-npc-pixel-art/assets/approved-iruka-right.png'],['卡卡西','../kakashi-direct-pixel-anim-v2/frames/Kakashi_00_Idle.png'],['三代火影','../hiruzen-direct-pixel-v1/Hiruzen_Idle_Right.png'],['忍具店老板','../toolshop-direct-pixel-v1/ToolShopkeeper_Idle_Right.png']];
+for(const id of ['light','dark']) for(const [name,path] of people){const f=document.createElement('figure');f.className='figure';const im=document.createElement('img');im.className='sprite';im.src=path;im.alt=name;const t=document.createElement('figcaption');t.textContent=name;f.append(im,t);document.getElementById(id).append(f)}
+function scale(n){document.querySelectorAll('.sprite').forEach(im=>{im.style.width=(im.naturalWidth||80)*n+'px';im.style.height=80*n+'px'});document.getElementById('one').classList.toggle('active',n===1);document.getElementById('three').classList.toggle('active',n===3)}
+document.getElementById('one').onclick=()=>scale(1);document.getElementById('three').onclick=()=>scale(3);
+let paused=false,delay=130,index=0,last=0,ready=false;const old=[],fixed=[];
+function load(path){return new Promise((resolve,reject)=>{const im=new Image;im.onload=()=>resolve(im);im.onerror=reject;im.src=path})}
+Promise.all([Promise.all(Array.from({length:6},(_,i)=>load('../kakashi-direct-pixel-anim-v2/frames/Kakashi_'+String(i+1).padStart(2,'0')+'_Walk.png'))),Promise.all(Array.from({length:6},(_,i)=>load('../kakashi-eye-restore-v5/frames/Kakashi_'+String(i+1).padStart(2,'0')+'_Walk.png')))]).then(([a,b])=>{old.push(...a);fixed.push(...b);ready=true;draw();document.getElementById('walkstatus').textContent='六帧循环 · 同步播放 · 3 倍显示'}).catch(()=>document.getElementById('walkstatus').textContent='走路素材尚未就绪，请稍后刷新。');
+function draw(){for(const [id,frames] of [['before',old],['after',fixed]]){const c=document.getElementById(id).getContext('2d');c.imageSmoothingEnabled=false;c.clearRect(0,0,80,80);c.drawImage(frames[index],0,0)}}
+function tick(t){if(ready&&!paused&&t-last>=delay){index=(index+1)%6;draw();last=t}requestAnimationFrame(tick)}requestAnimationFrame(tick);
+document.getElementById('play').onclick=()=>{paused=!paused;document.getElementById('play').textContent=paused?'播放':'暂停';document.getElementById('play').classList.toggle('active',!paused)};
+function speed(ms){delay=ms;document.getElementById('slow').classList.toggle('active',ms===350);document.getElementById('normal').classList.toggle('active',ms===130)}document.getElementById('slow').onclick=()=>speed(350);document.getElementById('normal').onclick=()=>speed(130);
+</script>
+</html>

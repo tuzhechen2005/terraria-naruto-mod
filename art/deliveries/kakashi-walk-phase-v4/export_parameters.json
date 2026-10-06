@@ -1,0 +1,70 @@
+{
+  "source_size": [
+    2172,
+    724
+  ],
+  "canvas": [
+    80,
+    80
+  ],
+  "baseline_y": 75,
+  "scale": 0.09702660406885759,
+  "sample_phase": [
+    0.5,
+    0.5
+  ],
+  "alpha_threshold": 128,
+  "panels": {
+    "OppositeContact": {
+      "source_box_in_panel": [
+        170,
+        41,
+        556,
+        680
+      ],
+      "sampled_size": [
+        37,
+        62
+      ],
+      "frame_offset": [
+        21,
+        14
+      ],
+      "file": "frames/Kakashi_OppositeContact.png"
+    },
+    "OppositePassing": {
+      "source_box_in_panel": [
+        238,
+        41,
+        520,
+        680
+      ],
+      "sampled_size": [
+        27,
+        62
+      ],
+      "frame_offset": [
+        26,
+        14
+      ],
+      "file": "frames/Kakashi_OppositePassing.png"
+    },
+    "ReturnLift": {
+      "source_box_in_panel": [
+        218,
+        43,
+        564,
+        680
+      ],
+      "sampled_size": [
+        34,
+        62
+      ],
+      "frame_offset": [
+        23,
+        14
+      ],
+      "file": "frames/Kakashi_ReturnLift.png"
+    }
+  }
+}

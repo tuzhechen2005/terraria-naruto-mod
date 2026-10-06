@@ -35,7 +35,7 @@ public sealed class ChakraCrystalWorld : ModSystem
 
     private static void Generate(GenerationProgress progress, GameConfiguration configuration)
     {
-        progress.Message = "凝结查克拉结晶";
+        progress.Message = Loc.Get("WorldGen.ChakraCrystals");
         PlaceCrystals(sync: false);
         crystalsPlaced = true;
     }

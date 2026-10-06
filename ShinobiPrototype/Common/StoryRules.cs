@@ -58,15 +58,13 @@ public static class StoryRules
         width >= LakeMinWidth && depth >= LakeMinDepth;
 
     // Where the nearest lake lies, for the objective text.
-    public static string Direction(int dx) => dx < 0 ? "西" : "东";
+    public static string Direction(int dx) => dx < 0 ? "Dir.West" : "Dir.East";   // a text key (Loc)
 
     // The ambush: numbers are first values for testing in play.
     public const int PrisonLife = 1800;
     public const int PrisonDefense = 8;
     public const int CloneCount = 3;
     public const int CloneLife = 140;
-    public const int CloneContactDamage = 22;
-    public const int CloneSlashDamage = 26;
     public const int CloneReformTicks = 360;
     public const float AbortRangeTiles = 100f;
     public const int RetryCooldownTicks = 3600;

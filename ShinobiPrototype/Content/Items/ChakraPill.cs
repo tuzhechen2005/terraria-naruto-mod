@@ -30,7 +30,7 @@ public sealed class ChakraPill : ModItem
     public override bool? UseItem(Player player)
     {
         player.GetModPlayer<ChakraPlayer>().Restore(ChakraRules.PillRestore);
-        player.AddBuff(ModContent.BuffType<ChakraSickness>(), ChakraRules.PillSicknessTicks);
+        player.AddBuff(ModContent.BuffType<ChakraSickness>(), player.GetModPlayer<ChakraPlayer>().PillSicknessTicks);
         if (player.whoAmI == Main.myPlayer)
             CombatText.NewText(player.getRect(), new Microsoft.Xna.Framework.Color(45, 170, 235), ChakraRules.PillRestore);
         return true;

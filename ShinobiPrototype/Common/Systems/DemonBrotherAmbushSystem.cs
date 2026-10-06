@@ -58,7 +58,7 @@ public sealed class DemonBrotherAmbushSystem : ModSystem
             target = player.whoAmI;
             warnTicks = DemonBrotherRules.AmbushWarnTicks;
             cooldown = DemonBrotherRules.AmbushRetryTicks;
-            Tell(player, Language.GetTextValue("Mods.ShinobiPrototype.Dialogue.DemonBrothersWarn"));
+            Tell(player, "Mods.ShinobiPrototype.Dialogue.DemonBrothersWarn");
             return;
         }
     }
@@ -77,12 +77,5 @@ public sealed class DemonBrotherAmbushSystem : ModSystem
             (int)player.Bottom.Y, ModContent.NPCType<DemonBrotherGozu>());
     }
 
-    private static void Tell(Player player, string text)
-    {
-        Color color = new(255, 190, 90);
-        if (Main.netMode == NetmodeID.Server)
-            ChatHelper.SendChatMessageToClient(NetworkText.FromLiteral(text), color, player.whoAmI);
-        else
-            Main.NewText(text, color);
-    }
+    private static void Tell(Player player, string key) => Loc.SendTo(player, new Color(255, 190, 90), key);
 }

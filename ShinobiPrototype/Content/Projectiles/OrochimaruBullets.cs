@@ -126,11 +126,15 @@ public sealed class VenomGlob : ModProjectile
 
     public override void OnHitPlayer(Player target, Player.HurtInfo info) => target.AddBuff(BuffID.Poisoned, 4 * 60);
 
+    // ai[0]: the pool's spawn damage, set by Orochimaru so the weak-player reduction reaches the pool too.
+    private int PoolDamage => Projectile.ai[0] > 0f ? (int)Projectile.ai[0]
+        : EnemyDamage.Projectile(EnemyDamageRules.Orochimaru.VenomPool);
+
     public override void OnKill(int timeLeft)
     {
         if (Main.myPlayer == Projectile.owner)
             Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Bottom, Vector2.Zero, ModContent.ProjectileType<VenomPool>(),
-                ExamBossRules.VenomPoolDamage, 0f, Projectile.owner);
+                PoolDamage, 0f, Projectile.owner);
         if (!Main.dedServ)
             for (int i = 0; i < 10; i++)
                 Dust.NewDustPerfect(Projectile.Center, DustID.Venom, Main.rand.NextVector2Circular(2.5f, 2.5f), 0, default, 1.3f);
@@ -188,7 +192,7 @@ public sealed class VenomPool : ModProjectile
 // ai[0] is the angle; the projectile sits at the root of the blade.
 public sealed class KusanagiBlade : ModProjectile
 {
-    public const int AimTicks = 34;
+    public const int AimTicks = EnemyDamageRules.Orochimaru.KusanagiAimTicks;
     private const int StrikeTicks = 14;
 
     public override string Texture => "ShinobiPrototype/Content/Projectiles/HakuSenbon";

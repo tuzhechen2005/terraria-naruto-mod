@@ -80,7 +80,7 @@ public sealed class SealSlotsUI : ModSystem
             else
                 ItemSlot.MouseHover(ref slot, ItemSlot.Context.InventoryItem);
             if (slot.IsAir)
-                Main.hoverItemName = $"{count} 印位：放 {count} 印的结印卷轴，按【{ShinobiKeybinds.SealKeyName(count)}】施展";
+                Main.hoverItemName = Loc.Get("Seal.SlotHover", count, ShinobiKeybinds.SealKeyName(count));
         }
         return true;
     }

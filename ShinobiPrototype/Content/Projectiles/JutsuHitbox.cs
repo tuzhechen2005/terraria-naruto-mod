@@ -301,12 +301,19 @@ public sealed class JutsuHitbox : ModProjectile
         return distance <= radius && farthest >= radius - 28f;
     }
 
+    // Each cast lands on a player at most once, however long it lingers (specs/敌方伤害标准.spec.md).
+    private PlayerHits hits;
+
+    public override bool CanHitPlayer(Player target) => hits == null || !hits.Has(target);
+
+    public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) => (hits ??= new PlayerHits()).Mark(target);
+
     public override void OnHitPlayer(Player target, Player.HurtInfo info)
     {
         JutsuStatusPlayer status = target.GetModPlayer<JutsuStatusPlayer>();
         switch (Kind)
         {
-            case JutsuKind.EchoDrill:
+            case JutsuKind.EchoDrill or JutsuKind.ImpactSlam:
                 status.Ring(ExamBossRules.TinnitusTicks);
                 break;
             case JutsuKind.GentleFist:

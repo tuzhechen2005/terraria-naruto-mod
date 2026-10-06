@@ -1,0 +1,26 @@
+{
+  "generated_input": "/Users/tuzhechen/Documents/ChatGPT/\u6cf0\u62c9\u745e\u4e9a\u706b\u5f71\u6a21\u7ec4/art/deliveries/kakashi-walk-stable-v6/frames",
+  "final_frames": "/Users/tuzhechen/Documents/ChatGPT/\u6cf0\u62c9\u745e\u4e9a\u706b\u5f71\u6a21\u7ec4/art/deliveries/npc-direct-pixel-round1/kakashi_stable_frames",
+  "approved_head_region": [
+    20,
+    14,
+    52,
+    37
+  ],
+  "approved_chest_interior": [
+    35,
+    37,
+    42,
+    47
+  ],
+  "shared_generated_body_palette_colors": 32,
+  "alpha_geometry_unchanged": true,
+  "changed_pixels": [
+    756,
+    752,
+    707,
+    767,
+    744,
+    654
+  ]
+}

@@ -343,11 +343,10 @@ public sealed class WaterPrison : ModNPC
 
     private static void Broadcast(string key, Color color)
     {
-        string text = Language.GetTextValue($"Mods.ShinobiPrototype.Dialogue.{key}");
-        if (Main.netMode == NetmodeID.Server)
-            ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), color);
+        if (Main.netMode == NetmodeID.MultiplayerClient)
+            Main.NewText(Language.GetTextValue($"Mods.ShinobiPrototype.Dialogue.{key}"), color);
         else
-            Main.NewText(text, color);
+            Loc.Broadcast(color, $"Mods.ShinobiPrototype.Dialogue.{key}");
     }
 
     private static void Splash(Vector2 at, int count)
@@ -455,14 +454,14 @@ public sealed class WaterPrison : ModNPC
         if (ModContent.HasAsset(trapped))
         {
             Texture2D tex = ModContent.Request<Texture2D>(trapped).Value;
-            spriteBatch.Draw(tex, NPC.Center + bob - screenPos, null, light, 0f, tex.Size() / 2f, NpcSheet.ScaleFor(NpcSheet.KakashiBody), flip, 0f);
+            spriteBatch.Draw(tex, NPC.Center + bob - screenPos, null, light, 0f, tex.Size() / 2f, NpcSheet.KakashiScale, flip, 0f);
             return;
         }
         // Without the trapped frames (kakashi-trapped-v2): his jump frame from the town sheet, tilted.
         Texture2D sheet = TextureAssets.Npc[ModContent.NPCType<Kakashi>()].Value;
         int height = sheet.Height / 12;
         Rectangle source = new(0, 7 * height, sheet.Width, height);
-        spriteBatch.Draw(sheet, NPC.Center + bob - screenPos, source, light, 0.25f * -Side, source.Size() / 2f, NpcSheet.ScaleFor(NpcSheet.KakashiBody),
+        spriteBatch.Draw(sheet, NPC.Center + bob - screenPos, source, light, 0.25f * -Side, source.Size() / 2f, NpcSheet.KakashiScale,
             flip, 0f);
     }
 

@@ -29,8 +29,8 @@ public sealed class NejiChallengeScroll : ModItem
         if (NPC.AnyNPCs(ModContent.NPCType<Neji>()) || NPC.AnyNPCs(ModContent.NPCType<Gaara>()))
             return false;
         ExamStage stage = player.GetModPlayer<ChuninExamPlayer>().Stage;
-        string refusal = stage < ExamStage.Finals ? "宁次：……等正式赛开始，我们再在会场见。"
-            : !ExamSiteWorld.InArena(ExamSiteWorld.Stadium, player.Center) ? "宁次在考试会场等你。到场地中央再用。"
+        string refusal = stage < ExamStage.Finals ? Loc.Get("Neji.TooEarly")
+            : !ExamSiteWorld.InArena(ExamSiteWorld.Stadium, player.Center) ? Loc.Get("Neji.WrongPlace")
             : null;
         if (refusal == null)
             return true;

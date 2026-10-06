@@ -23,9 +23,7 @@ internal static class BossSprites
     public static readonly Canvas Haku = new(144, 96, 72, 92);
     public static readonly Canvas HakuEmerge = new(160, 96, 80, 92); // frames include the mirror
 
-    private static string AssetPath(string name) => $"ShinobiPrototype/Content/NPCs/{name}";
-
-    public static bool Has(string name) => ModContent.HasAsset(AssetPath(name));
+    public static bool Has(string name) => ClientVisualAssets.Has(ClientVisualAssets.Npcs, name);
 
     // rotation and stretch (x, y on top of scale) pivot on the feet; sink draws the figure that many art pixels lower,
     // with what would be under the ground cut away.
@@ -34,10 +32,9 @@ internal static class BossSprites
         Vector2 screenPos, float scale = 1f, float rotation = 0f, Vector2? stretch = null, float sink = 0f)
     {
         int index = ((frame % frameCount) + frameCount) % frameCount;
-        string path = AssetPath($"{prefix}_{action}_{index}");
-        if (!ModContent.HasAsset(path))
+        Texture2D texture = ClientVisualAssets.Frame(ClientVisualAssets.Npcs, $"{prefix}_{action}", index, frameCount);
+        if (texture == null)
             return false;
-        Texture2D texture = ModContent.Request<Texture2D>(path).Value;
         bool facingRight = direction >= 0;
         Vector2 position = worldBottom - screenPos;
         position = new Vector2((float)Math.Round(position.X), (float)Math.Round(position.Y));

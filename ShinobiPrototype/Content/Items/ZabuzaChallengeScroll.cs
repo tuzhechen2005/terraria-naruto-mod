@@ -32,9 +32,8 @@ public sealed class ZabuzaChallengeScroll : ModItem
             return true;
 
         if (player.whoAmI == Main.myPlayer)
-            Main.NewText(anotherBossActive ? "白或再不斩正在场上，不能重复召唤。"
-                : !WaveBridgeWorld.Site.HasValue ? "这个世界还没有大桥——先找卡卡西要达兹纳的施工图，把桥建起来。"
-                : "卷轴上的字迹被雾气晕开了……再不斩在断桥等着你。到海边的大桥一带再展开它。", 250, 150, 100);
+            Main.NewText(Loc.Get(anotherBossActive ? "Wave.AlreadyFighting"
+                : !WaveBridgeWorld.Site.HasValue ? "Wave.NoBridge" : "Wave.ScrollWrongPlace"), 250, 150, 100);
         return false;
     }
 

@@ -59,8 +59,8 @@ public sealed class SoundNinjaToken : ExamRematchItem
     protected override int BossType => ModContent.NPCType<Dosu>();
     protected override ExamSite? Site => ExamSiteWorld.Tower;
     protected override ExamStage ReachedAt => ExamStage.Prelims;
-    protected override string WrongPlace => "预选赛在死亡森林的中央塔大厅举行。进了大厅再用。";
-    protected override string TooEarly => "你还没走到预选赛。先通过第二试。";
+    protected override string WrongPlace => Loc.Get("Dosu.WrongPlace");
+    protected override string TooEarly => Loc.Get("Dosu.TooEarly");
 
     public override void AddRecipes()
     {
@@ -78,8 +78,8 @@ public sealed class SandGourd : ExamRematchItem
     protected override int BossType => ModContent.NPCType<Gaara>();
     protected override ExamSite? Site => ExamSiteWorld.Stadium;
     protected override ExamStage ReachedAt => ExamStage.Finals;
-    protected override string WrongPlace => "我爱罗在木叶城墙外的考试会场。到场地上再用。";
-    protected override string TooEarly => "正式赛还没轮到你。";
+    protected override string WrongPlace => Loc.Get("Gaara.WrongPlace");
+    protected override string TooEarly => Loc.Get("Gaara.TooEarly");
 
     public override void AddRecipes() =>
         CreateRecipe().AddIngredient(ItemID.SandBlock, 50).AddIngredient(ItemID.Bone, 10)

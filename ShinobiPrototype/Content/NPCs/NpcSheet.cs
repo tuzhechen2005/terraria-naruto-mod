@@ -20,7 +20,9 @@ internal static class NpcSheet
     // Every story NPC stands as tall on screen as Ibiki, his 50-pixel body at 1.25 (user, 2026-10-01: Kakashi looked
     // small beside him). Pass the idle frame's body height in pixels; drawing stays anchored at the feet.
     public const float StoryHeight = 50f * 1.25f;
-    public const int KakashiBody = 46;
+    // Kakashi's sheet (kakashi-direct-pixel-anim, skills/terraria-npc-pixel-art) is drawn at its final size; the water
+    // prison and the proctors' stand-in use the same scale.
+    public const float KakashiScale = 1f;
 
     public static float ScaleFor(int bodyPixels) => StoryHeight / bodyPixels;
 

@@ -51,7 +51,7 @@ public abstract class DemonBrother : ModNPC
         NPC.width = 26;
         NPC.height = 46;
         NPC.lifeMax = DemonBrotherRules.LifeMax;
-        NPC.damage = DemonBrotherRules.ContactDamage;
+        NPC.damage = EnemyDamageRules.Brothers.Contact;
         NPC.defense = 6;
         NPC.knockBackResist = 0.25f;
         NPC.aiStyle = -1;
@@ -79,7 +79,7 @@ public abstract class DemonBrother : ModNPC
                       WaveBridgeWorld.DistanceToBridgeTiles(player.Center) < BridgeRules.FogReachTiles;
         bool alive = NPC.AnyNPCs(Type) || NPC.AnyNPCs(PartnerType);
         return DemonBrotherRules.SpawnAllowed(found, Main.raining, inMist, StoryWorld.WaveComplete, alive,
-            player.ZoneOverworldHeight) ? DemonBrotherRules.SpawnChance : 0f;
+            player.ZoneOverworldHeight, player.ZoneBeach) ? DemonBrotherRules.SpawnChance : 0f;
     }
 
     // Gōzu brings Meizu with him, on the far side of the player: the pincer.
@@ -118,8 +118,8 @@ public abstract class DemonBrother : ModNPC
         if (hurtTicks > 0)
             hurtTicks--;
         Timer++;
-        NPC.damage = State == ChainWarn ? 0 :
-            State == Swipe ? (int)(DemonBrotherRules.ContactDamage * 1.5f) : DemonBrotherRules.ContactDamage;
+        NPC.damage = EnemyDamage.Contact(NPC, State == ChainWarn ? 0 :
+            State == Swipe ? EnemyDamageRules.Brothers.Swipe : EnemyDamageRules.Brothers.Contact);
 
         switch ((int)State)
         {
@@ -230,7 +230,7 @@ public abstract class DemonBrother : ModNPC
             !DemonBrotherRules.ChainHurts(true, Vector2.Distance(a, b)) ||
             !Collision.CheckAABBvLineCollision(player.position, player.Size, a, b))
             return;
-        player.Hurt(PlayerDeathReason.ByNPC(NPC.whoAmI), DemonBrotherRules.ChainDamage,
+        EnemyDamage.Hurt(player, PlayerDeathReason.ByNPC(NPC.whoAmI), EnemyDamageRules.Brothers.Chain,
             player.Center.X >= NPC.Center.X ? 1 : -1);
     }
 
@@ -266,8 +266,15 @@ public abstract class DemonBrother : ModNPC
         NPC.frame.Y = frame * frameHeight;
     }
 
-    public override void ModifyNPCLoot(NPCLoot npcLoot) =>
+    // A Mist insignia each; about one fight in three, the chain gauntlet (tier one, specs/装备与忍术系统.spec.md).
+    public override void ModifyNPCLoot(NPCLoot npcLoot)
+    {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<MistInsignia>()));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Items.Weapons.DemonChainGauntlet>(), GauntletOneIn));
+    }
+
+    // Each brother rolls, so one in six each makes about one fight in three.
+    private const int GauntletOneIn = 6;
 
     // The second brother down raises the mission to A rank (once per world).
     public override void OnKill()
@@ -278,7 +285,7 @@ public abstract class DemonBrother : ModNPC
         string text = Language.GetTextValue("Mods.ShinobiPrototype.Dialogue.DemonBrothersDown");
         if (Main.netMode == NetmodeID.Server)
         {
-            ChatHelper.BroadcastChatMessage(NetworkText.FromLiteral(text), new Color(255, 190, 90));
+            Loc.Broadcast(new Color(255, 190, 90), "Mods.ShinobiPrototype.Dialogue.DemonBrothersDown");
             NetMessage.SendData(MessageID.WorldData);
         }
         else

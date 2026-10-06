@@ -34,7 +34,7 @@ Check(ScrollCraftable(false, true, false, true), "A character who missed the pre
 Check(IsLake(2000, 4200, 20, 5), "A wide pond inland is a lake");
 Check(!IsLake(200, 4200, 60, 30) && !IsLake(4000, 4200, 60, 30), "The oceans are not lakes");
 Check(!IsLake(2000, 4200, 8, 5) && !IsLake(2000, 4200, 20, 2), "Puddles are not lakes");
-Check(Direction(-5) == "西" && Direction(5) == "东", "Direction words");
+Check(Direction(-5) == "Dir.West" && Direction(5) == "Dir.East", "Direction text keys");
 
 Check(IntroZabuzaAppear < IntroKakashiArrive && IntroKakashiArrive < PrisonFormed && PrisonFormed < ClonesFormed,
     "The opening runs Zabuza, Kakashi, prison, clones");

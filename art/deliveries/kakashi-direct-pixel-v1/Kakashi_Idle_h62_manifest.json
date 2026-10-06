@@ -1,0 +1,39 @@
+{
+  "input": "/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/art/deliveries/kakashi-direct-pixel-v1/source/kakashi-generated-edited.png",
+  "sourceBox": [
+    362,
+    318,
+    796,
+    1339
+  ],
+  "canvas": [
+    80,
+    80
+  ],
+  "grid": [
+    26,
+    62
+  ],
+  "pixel": 1,
+  "scale": 0.06072477962781587,
+  "samplePhase": [
+    0.8,
+    0.5
+  ],
+  "alphaThreshold": 128,
+  "alphaValues": [
+    0,
+    255
+  ],
+  "sourceFacing": "right",
+  "baselineExclusive": 76,
+  "actualBaselineExclusive": 76,
+  "actualBodyHeight": 62,
+  "visibleBox": [
+    27,
+    14,
+    53,
+    76
+  ],
+  "displayScale": 1
+}

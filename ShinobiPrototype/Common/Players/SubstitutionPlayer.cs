@@ -14,8 +14,9 @@ namespace ShinobiPrototype.Common.Players;
 // use in a boss fight, where all attention goes to moving). An enemy's hit takes a log instead of the player, with
 // nothing to press: the player is swapped to one side and the log falls where they stood. A warned bind (the sand
 // coffin closing, the killing intent falling) takes a log the same way; caught without one, the player is caught.
-// Logs come back slowly, a little sooner for every hit landed. The key spends two logs on purpose for a blink in the
-// direction held, into five seconds of stealth (StealthPlayer). Sealed chakra points (Neji) stop both. Kakashi's
+// Logs come back slowly, a little sooner for every hit landed. Only hits that hurt take a log (at least a tenth of max
+// life), and a log that took a big hit comes back more slowly (specs/敌方伤害标准.spec.md). The key spends two logs on
+// purpose for a blink in the direction held, into five seconds of stealth (StealthPlayer). Sealed chakra points (Neji) stop both. Kakashi's
 // drill still trains a press just before a hit (its own free standby).
 public sealed class SubstitutionPlayer : ModPlayer
 {
@@ -24,6 +25,11 @@ public sealed class SubstitutionPlayer : ModPlayer
     private int ticksSinceActivation;
     private int logProgress;
     private int hitBonusTicks;
+    // How slowly each spent log comes back (ChakraRules.LogRegenMultiplier), oldest first: the head is the next log.
+    private readonly System.Collections.Generic.List<float> refills = new();
+
+    // /m0 logs off: no log takes a hit, to feel a fight's real damage (single-player testing).
+    public static bool DebugLogsOff { get; set; }
 
     public int Cooldown { get; private set; }
     public bool Mastered { get; private set; }
@@ -32,8 +38,13 @@ public sealed class SubstitutionPlayer : ModPlayer
     // Extra logs from equipment, reset every tick (accessories and armour add to it in UpdateEquip).
     public int ExtraLogs { get; set; }
     public int MaxLogs => ChakraRules.StartingLogs + ExtraLogs;
+    // Faster log recovery from equipment (1.15 = 15% faster), reset every tick.
+    public float LogRegenSpeed { get; set; } = 1f;
     // How far the next log has come back, 0 to 1 (the HUD).
-    public float NextLog => Logs >= MaxLogs ? 1f : logProgress / (float)Player.GetModPlayer<StyleCorePlayer>().LogRegenTicks;
+    public float NextLog => Logs >= MaxLogs ? 1f : logProgress / (float)NextLogTicks;
+
+    private int NextLogTicks => (int)(ChakraRules.LogRegenTicksFor(Player.GetModPlayer<StyleCorePlayer>().LogRegenTicks,
+        refills.Count > 0 ? refills[0] : 1f) / System.Math.Max(0.1f, LogRegenSpeed));
 
     public override void Initialize()
     {
@@ -43,16 +54,22 @@ public sealed class SubstitutionPlayer : ModPlayer
         HintsShown = 0;
         Logs = ChakraRules.StartingLogs;
         logProgress = 0;
+        refills.Clear();
         ticksSinceHint = ChakraRules.SubstitutionHintSpacingTicks;
         ticksSinceActivation = ChakraRules.PracticeEarlyWindowTicks + 1;
     }
 
-    public override void ResetEffects() => ExtraLogs = 0;
+    public override void ResetEffects()
+    {
+        ExtraLogs = 0;
+        LogRegenSpeed = 1f;
+    }
 
     public override void OnRespawn()
     {
         Logs = MaxLogs;
         logProgress = 0;
+        refills.Clear();
     }
 
     public override void ProcessTriggers(TriggersSet triggersSet)
@@ -73,8 +90,15 @@ public sealed class SubstitutionPlayer : ModPlayer
             ticksSinceActivation++;
         if (Logs > MaxLogs)
             Logs = MaxLogs;
-        (Logs, logProgress) = ChakraRules.TickLogs(Logs, MaxLogs, logProgress,
-            Player.GetModPlayer<StyleCorePlayer>().LogRegenTicks, hitBonusTicks);
+        // One refill waiting per missing log (equipment may have changed how many there are).
+        while (refills.Count > MaxLogs - Logs)
+            refills.RemoveAt(refills.Count - 1);
+        while (refills.Count < MaxLogs - Logs)
+            refills.Add(1f);
+        int before = Logs;
+        (Logs, logProgress) = ChakraRules.TickLogs(Logs, MaxLogs, logProgress, NextLogTicks, hitBonusTicks);
+        if (Logs > before && refills.Count > 0)
+            refills.RemoveAt(0);
         hitBonusTicks = 0;
     }
 
@@ -92,7 +116,7 @@ public sealed class SubstitutionPlayer : ModPlayer
         JutsuStatusPlayer status = Player.GetModPlayer<JutsuStatusPlayer>();
         if (status.SubstitutionSealed)
         {
-            CombatText.NewText(Player.getRect(), new Color(170, 200, 255), "点穴：查克拉被封，结不了印");
+            CombatText.NewText(Player.getRect(), new Color(170, 200, 255), Loc.Get("Status.SealedNoJutsu"));
             return;
         }
 
@@ -115,15 +139,15 @@ public sealed class SubstitutionPlayer : ModPlayer
             case ChakraRules.Activation.CoolingDown:
                 return;
             case ChakraRules.Activation.NoLog:
-                CombatText.NewText(Player.getRect(), new Color(200, 170, 110), $"木头不够（要 {ChakraRules.SubstitutionLogs} 根）");
+                CombatText.NewText(Player.getRect(), new Color(200, 170, 110), Loc.Get("Substitution.NoLogs", ChakraRules.SubstitutionLogs));
                 return;
             case ChakraRules.Activation.NotEnoughChakra:
-                CombatText.NewText(Player.getRect(), new Color(120, 180, 255), "查克拉不足");
+                CombatText.NewText(Player.getRect(), new Color(120, 180, 255), Loc.Get("Chakra.NotEnough"));
                 return;
         }
 
         chakra.TrySpend(cost);
-        Logs -= ChakraRules.SubstitutionLogs;
+        Spend(ChakraRules.SubstitutionLogs, 1f);
         Cooldown = ChakraRules.SubstitutionCooldownTicks;
         Mastered = true;
         // A blink the way the player is heading (or facing), into stealth; any seals being formed are dropped.
@@ -140,19 +164,24 @@ public sealed class SubstitutionPlayer : ModPlayer
         int away = info.HitDirection != 0 ? info.HitDirection : -Player.direction;
         // Sharingan foresight: the first hit while it lasts is substituted without spending a log.
         StyleCorePlayer styles = Player.GetModPlayer<StyleCorePlayer>();
+        bool fromEnemy = info.DamageSource.SourceNPCIndex >= 0 || info.DamageSource.SourceProjectileType > 0;
+        // A light hit lands as normal: logs, clones and foresight are kept for hits that hurt.
+        if (!ChakraRules.WorthALog(info.Damage, Player.statLifeMax2))
+            return false;
         if (styles.ForesightTicks > 0)
         {
             styles.ForesightTook(AttackerOf(info));
             Substitute(away, ChakraRules.SubstitutionImmuneTicks);
             return true;
         }
-        bool fromEnemy = info.DamageSource.SourceNPCIndex >= 0 || info.DamageSource.SourceProjectileType > 0;
         // A shadow clone (Clone Jutsu) takes it before any log.
         if (fromEnemy && ShadowClone.TakeHit(Player))
             return true;
-        if (!ChakraRules.AutoSubstitutes(Logs, Player.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed, fromEnemy))
+        if (DebugLogsOff ||
+            !ChakraRules.AutoSubstitutes(Logs, Player.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed, fromEnemy))
             return false;
-        Logs--;
+        Spend(1, ChakraRules.LogRegenMultiplier(info.Damage, Player.statLifeMax2));
+        DebugDamagePlayer.Report(Player, info, Loc.Get("Debug.TakenByLog"));
         Substitute(away, ChakraRules.SubstitutionImmuneTicks);
         Hint();
         return true;
@@ -164,11 +193,21 @@ public sealed class SubstitutionPlayer : ModPlayer
     {
         if (ShadowClone.TakeHit(Player))
             return true;
-        if (!ChakraRules.AutoSubstitutes(Logs, Player.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed, true))
+        if (DebugLogsOff || !ChakraRules.AutoSubstitutes(Logs, Player.GetModPlayer<JutsuStatusPlayer>().SubstitutionSealed, true))
             return false;
-        Logs--;
+        Spend(1, 1f + ChakraRules.BindLogShare);
         Substitute(awayDirection, ChakraRules.SubstitutionImmuneTicks);
         return true;
+    }
+
+    // Logs spent, each to come back after the base time times `refill`, behind any already on their way back.
+    private void Spend(int count, float refill)
+    {
+        for (int i = 0; i < count && Logs > 0; i++)
+        {
+            Logs--;
+            refills.Add(refill);
+        }
     }
 
     // The enemy behind a hit: the NPC itself, or for a projectile the nearest enemy (the likely thrower).
@@ -218,7 +257,7 @@ public sealed class SubstitutionPlayer : ModPlayer
 
         Player.SetImmuneTimeForAllTypes(immuneTicks);
         SoundEngine.PlaySound(SoundID.DoubleJump, Player.Center);
-        CombatText.NewText(Player.getRect(), new Color(200, 170, 110), "替身术！");
+        CombatText.NewText(Player.getRect(), new Color(200, 170, 110), Loc.Get("Substitution.Cast"));
     }
 
     private bool FindLanding(int awayDirection, out Vector2 landing)
@@ -253,9 +292,8 @@ public sealed class SubstitutionPlayer : ModPlayer
             return;
         HintsShown++;
         ticksSinceHint = 0;
-        Main.NewText($"提示：木头替你挡下了这一击（还剩 {Logs} 根，会慢慢恢复，打中敌人恢复得快一点）。" +
-            $"按【{ShinobiKeybinds.SubstitutionKeyName()}】可以主动替身：用两根木头朝移动方向瞬移，潜伏 5 秒，下一击必定暴击。",
-            255, 220, 120);
+        Main.NewText(Loc.Get("Substitution.Hint", Logs, ShinobiKeybinds.SubstitutionKeyName(), ChakraRules.SubstitutionLogs,
+            ChakraRules.StealthTicks / 60), 255, 220, 120);
     }
 
     public override void SaveData(TagCompound tag)

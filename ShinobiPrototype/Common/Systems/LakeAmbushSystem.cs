@@ -163,11 +163,11 @@ public sealed class LakeAmbushSystem : ModSystem
             if (nearest is not Lake best || Math.Abs(lake.CenterX - px) < Math.Abs(best.CenterX - px))
                 nearest = lake;
         if (nearest is not Lake found)
-            return "去地表找一片湖（不是海）。";
+            return Loc.Get("Lake.FindOne");
         int dx = found.CenterX - px;
         return Math.Abs(dx) < 30
-            ? "你身边就有一片湖。"
-            : $"离你最近的湖在{StoryRules.Direction(dx)}边。";
+            ? Loc.Get("Lake.Here")
+            : Loc.Get("Lake.Nearest", Loc.Get(StoryRules.Direction(dx)));
     }
 
     // The nearest lake's middle, for the quest tracker.

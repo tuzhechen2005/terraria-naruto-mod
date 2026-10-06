@@ -2,6 +2,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common.Systems;
+using ShinobiPrototype.Common;
 
 namespace ShinobiPrototype.Content.Items;
 
@@ -27,7 +28,7 @@ public sealed class BridgeBlueprint : ModItem
 
         if (WaveBridgeWorld.Site.HasValue)
         {
-            Main.NewText("这个世界已经有大桥了。", 250, 200, 120);
+            Main.NewText(Loc.Get("Bridge.AlreadyBuilt"), 250, 200, 120);
             return true;
         }
         if (!BridgeBuilder.TryPlanFromPlayer(player, out BridgeSite site, out string reason))
@@ -44,7 +45,7 @@ public sealed class BridgeBlueprint : ModItem
         if (!BridgeBlueprintNet.IsConfirming(site))
         {
             BridgeBlueprintNet.ShowOutline(site, blocked: false);
-            Main.NewText("施工图上画出了大桥的轮廓（绿色）。确认没问题的话，站在原地再用一次施工图开始建造。", 150, 220, 255);
+            Main.NewText(Loc.Get("Bridge.Outline"), 150, 220, 255);
             return true;
         }
 

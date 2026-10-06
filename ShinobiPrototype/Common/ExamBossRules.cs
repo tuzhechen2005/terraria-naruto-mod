@@ -12,17 +12,11 @@ public static class ExamBossRules
     // --- Dosu (prelims): about seven tenths of Zabuza (1800 life after the Eye), a little later in the game.
     public const int DosuLife = 2200;
     public const int DosuDefense = 8;
-    public const int DosuContactDamage = 24;
-    public const int DosuDrillDamage = 30;
-    public const int DosuWaveDamage = 22;
     public const int DosuDrillWindupTicks = 45;
     public const int DosuWaveWindupTicks = 40;
     public const float DosuWaveKnockback = 11f;
     // Five techniques (user, 2026-10-01: two were far too few beside Zabuza), one phase; under half life every windup
     // is shorter and the sound wave comes twice.
-    public const int DosuQuakeDamage = 24;
-    public const int DosuRingDamage = 20;
-    public const int DosuLeapDamage = 34;
     public const int DosuQuakeWindupTicks = 40;
     public const int DosuRingWindupTicks = 60;
     public const int DosuLeapWindupTicks = 30;
@@ -59,14 +53,9 @@ public static class ExamBossRules
     public const int GaaraDefense = 14;
     public const float ShieldPhaseTwo = 0.5f;     // the sand armour cracks
     public const float ShieldPhaseThree = 0.25f;  // the partial transformation
-    public const int ShurikenDamage = 24;
     public const int CoffinWarnTicks = 60;
     public const int CoffinRadiusPx = 56;
     public const int CoffinHoldTicks = 90;     // caught: this long to substitute out before the Sand Burial
-    public const int BurialDamage = 70;
-    public const int SandWaveDamage = 34;
-    public const int SandArmDamage = 44;
-    public const int AirBulletDamage = 38;
 
     public static int GaaraPhase(int life, int lifeMax)
     {
@@ -96,11 +85,9 @@ public static class ExamBossRules
     // His bullets, thicker once the armour cracks: the sand shuriken fan, the quicksand (marked spots on the ground,
     // then pillars of sand) and the pellets of sand he flicks while walking.
     public static int ShurikenFan(int phase) => phase >= 2 ? 7 : 5;
-    public const int QuicksandDamage = 32;
     public const int QuicksandWarnTicks = 50;
     public const int QuicksandGapPx = 96;
     public static int QuicksandSpots(int phase) => phase >= 2 ? 5 : 3;
-    public const int SandPelletDamage = 18;
     public static int PelletEvery(int phase) => phase >= 2 ? 40 : 65;
 
     // Faster once the armour cracks, faster again when transformed.
@@ -109,13 +96,10 @@ public static class ExamBossRules
     // --- Neji (optional sparring).
     public const int NejiLife = 4000;
     public const int NejiDefense = 12;
-    public const int PalmDamage = 30;
-    public const int RotationDamage = 26;
     public const int RotationRadiusPx = 90;
     public const int RotationTicks = 60;
     public const int SixtyFourWarnTicks = 70;
     public const int SixtyFourRadiusPx = 120;
-    public const int SixtyFourDamage = 64;
     // Chakra point seals: each takes this much maximum chakra; at full stacks substitution is sealed for a while.
     public const int SealChakraPerStack = 20;
     public const int SealMaxStacks = 3;
@@ -148,14 +132,9 @@ public static class ExamBossRules
         diff = MathF.IEEERemainder(diff, MathF.PI * 2f);
         return MathF.Abs(diff) <= KillingIntentHalfAngle;
     }
-    public const int SnakeHandDamage = 41;
     public const int SnakeHandReachPx = 560;
-    public const int SnakeDashDamage = 46;
-    public const int WindBlastDamage = 36;
     public const float WindBlastKnockback = 14f;
-    public const int NeckBiteDamage = 50;
     // The Five Elements Seal: the chakra stops coming back for a while (natural and on-hit recovery; pills still work).
-    public const int FiveSealDamage = 29;
     public const int FiveSealTicks = 480;
     // The shed skin calls him back for another try at the eye (the first meeting always leaves it).
     public const float SharinganVialChance = 0.25f;
@@ -166,22 +145,14 @@ public static class ExamBossRules
     // The giant snake: summoned once, when he is down to three quarters or a while into the fight.
     public const float GiantSnakeAt = 0.75f;
     public const int GiantSnakeAfterTicks = 35 * 60;
-    public const int GiantSnakeDamage = 55;
     public const int GiantSnakeWarnTicks = 90;
 
-    // Bullets (user, 2026-10-02: Terraria bosses fight with projectiles; more of them, more often). Damage numbers above
-    // were raised by a fifth at the same time. The second half of the fight (after Manda) is denser.
-    public const int SwarmDamage = 26;
-    public const int VenomDamage = 24;
-    public const int VenomPoolDamage = 14;
+    // Bullets (user, 2026-10-02: Terraria bosses fight with projectiles; more of them, more often). The second half of
+    // the fight (after Manda) is denser. Every damage number is in EnemyDamageRules (specs/敌方伤害标准.spec.md).
     public const int VenomPoolTicks = 5 * 60;
-    public const int SnakeRainDamage = 26;
-    public const int KusanagiDamage = 52;
     public const int KusanagiReachPx = 760;
-    public const int BarrageDamage = 18;
     public const int OrochimaruDecideTicks = 35;   // between techniques: a short walk (eased a little, user 2026-10-02)
     public const int OrochimaruRecoveryTicks = 28;
-    public const float OrochimaruWindupScale = 0.67f;
 
     public static int SwarmCount(bool secondHalf) => secondHalf ? 7 : 5;
     public static int SnakeRainCount(bool secondHalf) => secondHalf ? 7 : 5;

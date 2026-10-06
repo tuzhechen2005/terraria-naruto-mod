@@ -64,7 +64,7 @@ public sealed class Kakashi : ModNPC
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
         NPC.knockBackResist = 0.5f;
-        NPC.scale = NpcSheet.ScaleFor(NpcSheet.KakashiBody);
+        NPC.scale = NpcSheet.KakashiScale;
     }
 
     public override bool CanTownNPCSpawn(int numTownNPCs) => true;
@@ -83,12 +83,6 @@ public sealed class Kakashi : ModNPC
 
     public override string GetChat()
     {
-        string[] greetings =
-        {
-            "哟。",
-            "……（合上手里的橙色小书）哟。",
-            "抱歉来晚了，我在人生的道路上迷路了。",
-        };
         Player player = Main.LocalPlayer;
         string objective = player.GetModPlayer<StoryPlayer>().CurrentObjective();
 
@@ -97,11 +91,7 @@ public sealed class Kakashi : ModNPC
         if (exam.OrochimaruDone && !exam.KakashiHeardOrochimaru)
         {
             exam.KakashiHeardOrochimaru = true;
-            return "……喂喂，你那脸色是怎么回事。\n\n" +
-                   "（听你说完，他把小书收了起来）长头发，蛇一样的眼睛，脖子还能伸那么长……那家伙是大蛇丸。" +
-                   "木叶出去的叛忍，以前的三忍之一。\n\n" +
-                   "……老实说，你还能站在这里，运气相当不错哦。这件事我会报告火影大人。" +
-                   "考试照常考——不过下次再看见那双眼睛，别逞强，掉头就跑。";
+            return Loc.Get("Kakashi.HeardOrochimaru");
         }
 
         // Characters made before the handbook existed (or who lost it) get one from him.
@@ -109,7 +99,7 @@ public sealed class Kakashi : ModNPC
         if (!player.HasItem(handbook))
         {
             player.QuickSpawnItem(NPC.GetSource_FromThis(), handbook);
-            return "哟。你的忍者手册呢？……拿着，别再弄丢了。任务、忍术、查克拉的事都记在里面。\n\n" + objective;
+            return Loc.Get("Kakashi.Handbook") + "\n\n" + objective;
         }
 
         // Worlds made before the bridge existed: hand over Tazuna's blueprint (again, if it was lost).
@@ -117,8 +107,7 @@ public sealed class Kakashi : ModNPC
         if (!WaveBridgeWorld.Site.HasValue && !player.HasItem(blueprint))
         {
             player.QuickSpawnItem(NPC.GetSource_FromThis(), blueprint);
-            return "哟。造桥的达兹纳托我把这个交给你——他的施工图。这片海边还没有他的桥。" +
-                   "到海滩上面朝大海用一次，看看轮廓；没问题的话原地再用一次，桥就立起来了。\n\n" + objective;
+            return Loc.Get("Kakashi.Blueprint") + "\n\n" + objective;
         }
 
         // Wave Country done: back to the Leaf, and the recommendation for the Chūnin Exams (M2 spec, section 2).
@@ -132,23 +121,23 @@ public sealed class Kakashi : ModNPC
         if (exam.Stage == ExamStage.Written && !player.HasItem(recommendation))
         {
             player.QuickSpawnItem(NPC.GetSource_FromThis(), recommendation);
-            return "推荐书弄丢了？……拿着，这是补的。别再丢了。\n\n" + objective;
+            return Loc.Get("Kakashi.LostRecommendation") + "\n\n" + objective;
         }
         int challenge = ModContent.ItemType<NejiChallengeScroll>();
         if (exam.Stage is ExamStage.Finals or ExamStage.Done && !player.HasItem(challenge))
         {
             player.QuickSpawnItem(NPC.GetSource_FromThis(), challenge);
-            return "日向家的那个孩子——宁次，托我带句话：正式赛开始以后，他想在会场和你切磋一场。" +
-                   "去不去随你。\n\n" + objective;
+            return Loc.Get("Kakashi.NejiChallenge") + "\n\n" + objective;
         }
         if (exam.Stage == ExamStage.NoVillage)
-            return "辛苦了。……本来该回木叶了，可这片土地上没有木叶。中忍考试只能在有木叶的世界里参加。\n\n" + objective;
+            return Loc.Get("Kakashi.NoVillage") + "\n\n" + objective;
 
-        return $"{Main.rand.Next(greetings)}\n\n{objective}";
+        return Loc.Get($"Kakashi.Greeting{Main.rand.Next(1, GreetingCount + 1)}") + "\n\n" + objective;
     }
 
-    public const string RecommendationLine =
-        "哟，辛苦了。……好了，回村子吧。啊对了——中忍考试，我把你的名字报上去了。嘛……要是怕了，现在后悔也还来得及。";
+    private const int GreetingCount = 3;   // Kakashi.Greeting1..3
+
+    public static string RecommendationLine => Loc.Get("Kakashi.Recommendation");
 
     // Once the Wave epilogue ends: the server (or single player) flickers him in beside the player nearest the bridge
     // who has not had the recommendation yet, wherever they have got to; each such player gets the line and the
@@ -198,7 +187,7 @@ public sealed class Kakashi : ModNPC
             return;
         exam.Recommend();
         local.QuickSpawnItem(local.GetSource_Misc("KakashiRecommendation"), ModContent.ItemType<ExamAdmissionScroll>());
-        Main.NewText("卡卡西：" + RecommendationLine, new Color(200, 210, 230));
+        Main.NewText(Loc.Get("Kakashi.Says", RecommendationLine), new Color(200, 210, 230));
         // He opens the conversation himself once he stands beside the player: the line, with the ride home on a button
         // (user, 2026-09-30). Opening it the same tick he was moved broke the chat drawing.
         pendingTalkTicks = 20 * 60;
@@ -242,8 +231,8 @@ public sealed class Kakashi : ModNPC
 
     public override void SetChatButtons(ref string button, ref string button2)
     {
-        button = "指点";
-        button2 = RideButton(Main.LocalPlayer) ?? "练习替身术";
+        button = Loc.Get("Kakashi.ButtonTips");
+        button2 = RideButton(Main.LocalPlayer) ?? LessonButton(Main.LocalPlayer) ?? Loc.Get("Kakashi.ButtonDrill");
     }
 
     // From the recommendation until the written test is passed he takes the player where the test is, in one Body
@@ -253,10 +242,19 @@ public sealed class Kakashi : ModNPC
     {
         if (KonohaWorld.Site is not KonohaSite site || player.GetModPlayer<ChuninExamPlayer>().Stage != ExamStage.Written)
             return null;
-        return FarFromVillage(player, site) ? "回村" : "去忍者学校";
+        return Loc.Get(FarFromVillage(player, site) ? "Kakashi.ButtonHome" : "Kakashi.ButtonAcademy");
     }
 
     private static bool OffersRideHome(Player player) => RideButton(player) != null;
+
+    // His three lessons (KakashiLessonPlayer), once Tazuna has come clean; the substitution drill once they are done.
+    private static string LessonButton(Player player)
+    {
+        KakashiLessonPlayer lessons = player.GetModPlayer<KakashiLessonPlayer>();
+        return KakashiLessonPlayer.Open && lessons.Next != KakashiLesson.Done
+            ? Loc.Get("Kakashi.ButtonLesson", Loc.Get($"Lesson.{lessons.Next}.Name"))
+            : null;
+    }
 
     private static bool FarFromVillage(Player player, KonohaSite site) =>
         System.Math.Abs(player.Center.X / 16f - site.CenterX) > KonohaDesign.HalfWidth + 60;
@@ -269,7 +267,7 @@ public sealed class Kakashi : ModNPC
         NpcChatCloser.CloseNextTick();
         bool far = FarFromVillage(Main.LocalPlayer, site);
         // From afar: the gate. Inside the village: the street just west of the Academy, by its door.
-        int academy = KonohaWorld.Design.Buildings.FindIndex(b => b.Name == "忍者学校");
+        int academy = KonohaWorld.Design.Buildings.FindIndex(b => b.Name == KonohaBuildings.Academy);
         Vector2 gate = far || academy < 0
             ? new(site.CenterX * 16f + 8f, site.GroundY * 16f)
             : new((site.X(KonohaWorld.Design.Buildings[academy].X0) - 2 + 0.5f) * 16f, site.GroundY * 16f);
@@ -284,7 +282,7 @@ public sealed class Kakashi : ModNPC
             NPC.Bottom = gate + new Vector2(-player.direction * 48f, 0f);
             NPC.velocity = Vector2.Zero;
         }
-        Main.NewText(far ? "卡卡西：……瞬身之术。到了——欢迎回来。" : "卡卡西：喏，忍者学校。主考官在教室里等你。", new Color(200, 210, 230));
+        Main.NewText(Loc.Get(far ? "Kakashi.RideHome" : "Kakashi.RideAcademy"), new Color(200, 210, 230));
     }
 
     public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -299,30 +297,27 @@ public sealed class Kakashi : ModNPC
 
         if (OffersRideHome(Main.LocalPlayer))
             RideHome();
+        else if (LessonButton(Main.LocalPlayer) != null)
+            Main.npcChatText = Main.LocalPlayer.GetModPlayer<KakashiLessonPlayer>().Ask();
         else
             StartPractice();
     }
 
+    private const int TipCount = 7;   // Kakashi.Tip1..7; the first names the substitution key
+
     private static string[] Tips()
     {
-        string key = ShinobiKeybinds.SubstitutionKeyName();
-        return new[]
-        {
-            $"替身术：你身上备着几根木头，挨打的时候它们会替你挨，人已经换到旁边了；用掉了要过好一阵才回来，省着点。按【{key}】是主动替身——花两根木头朝你跑的方向一闪，藏起来，下一刀就是要害。想练按键的时机，点“练习替身术”。",
-            "查克拉会自己慢慢恢复，刚用完术的几秒会慢一些。打中敌人也能回一点，不管你用刀、弓、魔法还是召唤物。",
-            "蘑菇配太阳花，在工作台能做兵粮丸，一口回 40 查克拉。应急用的，别想着连着吃。",
-            "地下洞穴里有发蓝光的查克拉结晶，就像生命水晶那样，用了能让查克拉上限变高。下矿的时候留意一下。",
-            "雾隐的人在离村子远的地方活动，海边尤其多。拿到他们的标记，就能追到再不斩。",
-            "水牢术困住的人，从里面是破不开的。要是哪天我被关进去了——从外面打。",
-            "我说过的这些，忍者手册里都记着，随时翻。",
-        };
+        string[] tips = new string[TipCount];
+        for (int i = 0; i < TipCount; i++)
+            tips[i] = Loc.Get($"Kakashi.Tip{i + 1}", ShinobiKeybinds.SubstitutionKeyName());
+        return tips;
     }
 
     private void StartPractice()
     {
         Player player = Main.LocalPlayer;
         NpcChatCloser.CloseNextTick();
-        CombatText.NewText(NPC.getRect(), Color.White, "看好了——");
+        CombatText.NewText(NPC.getRect(), Color.White, Loc.Get("Kakashi.DrillStart"));
         player.GetModPlayer<SubstitutionDrillPlayer>().Start(NPC.whoAmI);
     }
 

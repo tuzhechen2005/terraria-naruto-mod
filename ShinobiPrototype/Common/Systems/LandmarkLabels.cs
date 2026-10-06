@@ -17,20 +17,24 @@ public static class Landmarks
 {
     public readonly record struct Landmark(string Name, Vector2 RoofWorld);
 
-    private static readonly string[] VillageNames = { "阿吽大门", "火影楼", "忍者学校", "一乐拉面", "木叶医院", "第三演习场" };
+    private static readonly string[] VillageNames =
+    {
+        KonohaBuildings.Gate, KonohaBuildings.HokageTower, KonohaBuildings.Academy, KonohaBuildings.Ichiraku, KonohaBuildings.Hospital,
+        KonohaBuildings.TrainingGround3,
+    };
 
     public static IEnumerable<Landmark> All()
     {
         if (KonohaWorld.Site is KonohaSite site)
             foreach (KBuilding building in KonohaWorld.Design.Buildings)
                 if (System.Array.IndexOf(VillageNames, building.Name) >= 0)
-                    yield return new Landmark(building.Name,
+                    yield return new Landmark(Loc.Get("Place." + building.Name),
                         new Vector2((site.X((building.X0 + building.X1) / 2) + 0.5f) * 16f, site.Y(building.Top) * 16f));
         foreach (ExamSite exam in ExamSiteWorld.All())
         {
             ExamSiteDesign design = ExamSiteWorld.Design(exam.Kind, exam.Dir);
             foreach (KBuilding building in design.Buildings)
-                yield return new Landmark(building.Name,
+                yield return new Landmark(Loc.Get("Place." + building.Name),
                     new Vector2((exam.CenterX + (building.X0 + building.X1) / 2 + 0.5f) * 16f, (exam.GroundY + building.Top) * 16f));
         }
     }

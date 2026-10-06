@@ -89,7 +89,7 @@ public sealed class StyleCorePlayer : ModPlayer
         if (StyleCoreRules.GatesForcedShut(Gates, Player.statLife, Player.statLifeMax2))
         {
             CloseGates();
-            CombatText.NewText(Player.getRect(), new Color(120, 230, 120), "身体到极限了——门关上了");
+            CombatText.NewText(Player.getRect(), new Color(120, 230, 120), Loc.Get("Style.GatesClosed"));
         }
         if (Gates > 0 && Main.rand.NextBool(3))
             Dust.NewDust(Player.position, Player.width, Player.height, DustID.GreenTorch, 0f, -2f, 0, default, 1.2f);
@@ -116,14 +116,14 @@ public sealed class StyleCorePlayer : ModPlayer
             return;
         if (Worn is not StyleCore core)
         {
-            Main.NewText("未装备流派核心。", 200, 200, 200);
+            Main.NewText(Loc.Get("Style.NoCore"), 200, 200, 200);
             return;
         }
         ChakraPlayer chakra = Player.GetModPlayer<ChakraPlayer>();
         int cost = core.TechniqueCost(Player);
         if (!StyleCoreRules.CanUseTechnique(core.School, Cooldown, chakra.Chakra, cost))
         {
-            Main.NewText(Cooldown > 0 ? "流派奥义冷却中。" : "查克拉不足。", 200, 200, 200);
+            Main.NewText(Loc.Get(Cooldown > 0 ? "Style.Cooldown" : "Chakra.NotEnoughStop"), 200, 200, 200);
             return;
         }
         if (cost > 0 && !chakra.TrySpend(cost))
@@ -136,7 +136,7 @@ public sealed class StyleCorePlayer : ModPlayer
     public void StartForesight(int ticks)
     {
         ForesightTicks = ticks;
-        CombatText.NewText(Player.getRect(), new Color(230, 60, 60), "看破！");
+        CombatText.NewText(Player.getRect(), new Color(230, 60, 60), Loc.Get("Style.Foresight"));
     }
 
     public void ForesightTook(int attackerNpc)
@@ -168,8 +168,7 @@ public sealed class StyleCorePlayer : ModPlayer
             return;
         }
         Gates = next;
-        string[] names = { "", "开门", "休门", "生门" };
-        CombatText.NewText(Player.getRect(), new Color(120, 230, 120), $"八门遁甲·{names[Gates]}——开！", true);
+        CombatText.NewText(Player.getRect(), new Color(120, 230, 120), Loc.Get("Style.GateOpen", Loc.Get($"Style.Gate{Gates}")), true);
         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item74, Player.Center);
     }
 
@@ -192,7 +191,7 @@ public sealed class StyleCorePlayer : ModPlayer
     {
         rotationTicks = StyleCoreRules.RotationTicks;
         Player.SetImmuneTimeForAllTypes(StyleCoreRules.RotationTicks);
-        CombatText.NewText(Player.getRect(), new Color(200, 220, 255), "八卦掌·回天！", true);
+        CombatText.NewText(Player.getRect(), new Color(200, 220, 255), Loc.Get("Neji.Rotation"), true);
         Terraria.Audio.SoundEngine.PlaySound(SoundID.Item60, Player.Center);
         float radius = StyleCoreRules.RotationRadiusTiles * 16f;
         foreach (NPC npc in Main.ActiveNPCs)
@@ -223,7 +222,7 @@ public sealed class StyleCorePlayer : ModPlayer
         if (!holds)
             return;
         VowCalled = true;
-        Main.NewText("卡卡西：……哦？你拿到那东西了啊。三代大人叫你去火影楼一趟——别让老人家等太久哦。", 200, 210, 230);
+        Main.NewText(Loc.Get("Kakashi.VowCall"), 200, 210, 230);
     }
 
     public override void SaveData(TagCompound tag)

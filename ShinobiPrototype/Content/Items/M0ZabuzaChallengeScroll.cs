@@ -28,7 +28,7 @@ public sealed class M0ZabuzaChallengeScroll : ModItem
             return true;
 
         if (player.whoAmI == Main.myPlayer)
-            Main.NewText("白或再不斩正在场上，不能重复召唤。", 250, 150, 100);
+            Main.NewText(Loc.Get("Wave.AlreadyFighting"), 250, 150, 100);
         return false;
     }
 

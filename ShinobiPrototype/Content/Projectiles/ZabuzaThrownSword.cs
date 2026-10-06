@@ -38,6 +38,12 @@ public sealed class ZabuzaThrownSword : ModProjectile
         }
         NPC owner = Main.npc[ownerIndex];
         Projectile.localAI[1]++;
+        // Out and back may each hit once (M10; specs/敌方伤害标准.spec.md): turning round clears who was hit.
+        if (Projectile.ai[1] == 1f && !sawReturn)
+        {
+            sawReturn = true;
+            hits?.Clear();
+        }
         if (Projectile.ai[1] == 0f)
         {
             Projectile.localAI[0] += Projectile.velocity.Length();
@@ -67,6 +73,13 @@ public sealed class ZabuzaThrownSword : ModProjectile
                 DustID.Shadowflame, -Projectile.velocity * 0.1f, 60,
                 new Color(190, 100, 255), 1.1f).noGravity = true;
     }
+
+    private PlayerHits hits;
+    private bool sawReturn;
+
+    public override bool CanHitPlayer(Player target) => hits == null || !hits.Has(target);
+
+    public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) => (hits ??= new PlayerHits()).Mark(target);
 
     public override bool PreDraw(ref Color lightColor)
     {

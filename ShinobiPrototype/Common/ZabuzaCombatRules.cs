@@ -98,7 +98,8 @@ public static class ZabuzaCombatRules
     public const int PortraitSize = 44;
     public const float BossBarIconScale = 28f / PortraitSize;
     public const int DashActiveTicks = 18;
-    public const int DashReaimTicks = 18;
+    // At least the big-attack warning between chained dashes (specs/敌方伤害标准.spec.md; was 18).
+    public const int DashReaimTicks = EnemyDamageRules.BigTelegraphTicks;
     public const int DashRecoveryTicks = 44;
 
     public const int FrenzyAwakenTicks = 60;
@@ -163,7 +164,8 @@ public static class ZabuzaCombatRules
     // off level, leading the player's movement, passing through terrain like the Eye of Cthulhu, and lasting long
     // enough to reach the player and overshoot. (Before: nearly flat, stopped by the floor after three ticks, 18
     // ticks long.)
-    public static int DashWindupTicks(bool demonPhase) => demonPhase ? 20 : 26;
+    // The demon-phase dash was 20 ticks; a big attack is warned at least 24 (specs/敌方伤害标准.spec.md).
+    public static int DashWindupTicks(bool demonPhase) => demonPhase ? EnemyDamageRules.BigTelegraphTicks : 26;
     // Second pass (user, 2026-09-29: "too short, even in the first form"): longer and faster at every stage and
     // growing through the fight. Stage 0 = first form, 1 = demon (mist) phase, 2 = frenzy after Haku falls
     // (frenzy also multiplies speed by WaveDuoRules.ZabuzaFrenzyDashMultiplier).

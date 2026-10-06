@@ -23,14 +23,8 @@ public sealed class HakuForest : ModNPC
     private const float SpawnChanceValue = 0.012f;
     private const float NearBridgeTiles = 250f;
 
-    private static readonly string[] Lines =
-    {
-        "早上好。你是……这附近的人吗？我在采药。这片林子里的草，治伤很有用。",
-        "我有一个很重要的人。为了他，我什么都愿意做。",
-        "你有重要的人吗？……人在想要守护重要的人的时候，才能变得真正强大。",
-        "你一定会变强的。我们……也许还会再见面。",
-    };
-    private const string Parting = "对了——我是男孩子哦。";
+    private const int LineCount = 4;   // HakuForest.Line1..4, then HakuForest.Parting
+    private static string Line(int index) => Loc.Get($"HakuForest.Line{index + 1}");
 
     private int line;
     private bool talked;
@@ -75,22 +69,22 @@ public sealed class HakuForest : ModNPC
     {
         talked = true;
         Main.LocalPlayer.GetModPlayer<MistEncounterPlayer>().MeetForestBoy();
-        return Lines[Math.Min(line, Lines.Length - 1)];
+        return Line(Math.Min(line, LineCount - 1));
     }
 
     public override void SetChatButtons(ref string button, ref string button2) =>
-        button = line < Lines.Length - 1 ? "继续" : "告别";
+        button = Loc.Get(line < LineCount - 1 ? "HakuForest.Continue" : "HakuForest.Farewell");
 
     public override void OnChatButtonClicked(bool firstButton, ref string shopName)
     {
         if (!firstButton)
             return;
-        if (++line < Lines.Length)
+        if (++line < LineCount)
         {
-            Main.npcChatText = Lines[line];
+            Main.npcChatText = Line(line);
             return;
         }
-        Main.npcChatText = Parting;
+        Main.npcChatText = Loc.Get("HakuForest.Parting");
         State = Leave;
         Timer = 0f;
         NPC.netUpdate = true;

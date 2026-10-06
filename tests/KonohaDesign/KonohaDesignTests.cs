@@ -122,7 +122,7 @@ Check(d.Buildings.All(b => b.X0 >= -KonohaDesign.HalfWidth - 1 && b.X1 <= Konoha
 Check(d.Cells.All(c => Math.Abs(c.Dx) <= KonohaDesign.HalfWidth + 1), "No tiles beyond the walls");
 Check(!Solid(0, -1) && !Solid(0, -2) && !Solid(0, -3) && Solid(0, 0), "The spawn under the gate is open ground");
 bool passable = Enumerable.Range(-KonohaDesign.HalfWidth, 2 * KonohaDesign.HalfWidth + 1)
-    .All(x => !Solid(x, -1) || d.Buildings.Any(b => b.Name is not ("西墙" or "东墙" or "阿吽大门") && x >= b.X0 && x <= b.X1));
+    .All(x => !Solid(x, -1) || d.Buildings.Any(b => b.Name is not (KonohaBuildings.WestWall or KonohaBuildings.EastWall or KonohaBuildings.Gate) && x >= b.X0 && x <= b.X1));
 Check(passable, "The main street is walkable end to end outside buildings (gate and wall passages open)");
 foreach (var p in d.Places.Where(p => p.Fix == KFix.LampPost)) foreach (var b in d.Buildings.Where(b => p.Dx >= b.X0 - 1 && p.Dx <= b.X1 + 1)) Console.WriteLine($"  lamp {p.Dx} in {b.Name} {b.X0}..{b.X1}");
 Check(d.Places.Where(p => p.Fix == KFix.LampPost).All(p => !d.Buildings.Any(b => p.Dx >= b.X0 - 1 && p.Dx <= b.X1 + 1)),

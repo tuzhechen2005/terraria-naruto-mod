@@ -85,7 +85,7 @@ public sealed class DeathForestSystem : ModSystem
                 orochimaruCooldown = ChuninExamRules.OrochimaruRetryTicks;
                 orochimaruWarn = ChuninExamRules.OrochimaruWarnTicks;
                 orochimaruTarget = player.whoAmI;
-                Tell(player, "林子里忽然没了虫鸣……");
+                Tell(player, "Forest.Silence");
             }
             // The Rain genin wait until Orochimaru has been met.
             if (exam.OrochimaruDone && rainCooldown <= 0 && rainWarn < 0 && ExamSiteWorld.RainClearing is Vector2 clearing &&
@@ -95,7 +95,7 @@ public sealed class DeathForestSystem : ModSystem
                 rainCooldown = ChuninExamRules.RainAmbushRetryTicks;
                 rainWarn = ChuninExamRules.RainAmbushWarnTicks;
                 rainTarget = player.whoAmI;
-                Tell(player, "林间下起了细雨……头顶的树枝上，撑开了三把伞。");
+                Tell(player, "Forest.RainComing");
             }
             UpdateRoaming(player, exam, candidate);
         }
@@ -119,7 +119,7 @@ public sealed class DeathForestSystem : ModSystem
         SpawnMember(type, player.Bottom + new Vector2(dir * 18 * 16f, 0f), squad, code);
         SpawnMember(type, player.Bottom + new Vector2(dir * 21 * 16f, 0f), squad, code);
         SpawnMember(type, player.Bottom + new Vector2(-dir * 10 * 16f, 0f), squad, code);
-        Tell(player, "……树上有人。");
+        Tell(player, "Forest.SomeoneInTrees");
     }
 
     // A lone Grass candidate walks out of the trees ahead, towards the tower.
@@ -157,7 +157,7 @@ public sealed class DeathForestSystem : ModSystem
             type, 0, code, 0f, 0f, squad);
         if (third < Main.maxNPCs && Collision.SolidCollision(Main.npc[third].position, MemberWidth, MemberHeight))
             SpawnMember(type, player.Bottom + new Vector2(5 * 16f, 0f), squad, code, Main.npc[third]);
-        Tell(player, "雨隐的考生：“你的卷轴，我们收下了。”");
+        Tell(player, "Forest.RainAmbush");
     }
 
     // Roaming squads, once the first encounter is behind the player: each player still short of a scroll on the
@@ -206,12 +206,5 @@ public sealed class DeathForestSystem : ModSystem
         NPC.NewNPC(new EntitySource_WorldEvent(), (int)bottom.X, (int)bottom.Y, type, 0, code, 0f, 0f, squad);
     }
 
-    private static void Tell(Player player, string text)
-    {
-        Color color = new(170, 190, 255);
-        if (Main.netMode == NetmodeID.Server)
-            ChatHelper.SendChatMessageToClient(NetworkText.FromLiteral(text), color, player.whoAmI);
-        else
-            Main.NewText(text, color);
-    }
+    private static void Tell(Player player, string key) => Loc.SendTo(player, new Color(170, 190, 255), key);
 }

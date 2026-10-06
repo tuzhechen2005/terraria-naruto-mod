@@ -1,0 +1,891 @@
+text check: 0 problem(s)
+PASS Crystals start at 100 and add 20 each
+PASS Pre-Hardmode maximum is 200
+PASS Crystals stop working at the cap
+PASS Natural regen: 3/s after casting, 10/s otherwise
+PASS Any number of hits in one second restores at most 5
+PASS A single hit restores 2, trimmed at the cap
+PASS A blink is ready with 15 chakra and two logs
+PASS A blink needs 15 chakra
+PASS A blink takes two logs
+PASS No second blink on the same press
+PASS The key is never kept waiting: logs, not a cooldown, set the pace
+PASS Two logs to start, one back every 20 s, a tenth of a second sooner per hit
+PASS A log takes an enemy's hit by itself, unless none is left or the chakra points are sealed; falls and lava are not dodged
+PASS A log comes back after 20 s
+PASS Landing a hit brings the next log sooner
+PASS At the cap nothing builds up
+PASS A hit below a tenth of max life (after defence) lands as normal; logs are kept for hits that hurt
+PASS A log that took a big hit comes back more slowly: base x (1 + damage / max life), at most twice as long
+PASS Taking the burial (30%) or a bind costs 26 s; nothing is quicker than 20 s
+PASS Five seconds of stealth after a blink, the next hit stronger
+PASS The first log taken explains the key
+PASS No hint once the player has used the key
+PASS At most three hints
+PASS Hints are spaced apart
+PASS Landing tries level ground away from the attacker first
+PASS Away side is tried before the attacker's side
+PASS Direction flips with the hit
+PASS Drill substitutions are free
+PASS Jutsu is ready again before the next drill kunai
+PASS Drill works with empty chakra
+PASS Drill timing varies between throws
+PASS Closest kunai is in the air longer than the standby window, so it can be read
+PASS Kakashi waits when the player is too close
+PASS Kakashi waits when the player is too far
+PASS No new throw while substitution cools down
+PASS Throws when in range and ready
+PASS An aimed kunai waits for both its windup and the cooldown
+PASS Too-far waiting happens before the drill is abandoned
+PASS Standby at impact is a success
+PASS Pressed recently but expired: too early
+PASS No recent press: too late
+PASS Drill summary depends on the score
+PASS A seal every quarter second, six after a second and a half, never more
+PASS Letting go fires the highest slot reached
+PASS An empty slot falls back to the next one down, never up
+PASS The seals shown are those of the slot being worked towards
+PASS The great fireball swells from a mouthful to thirteen tiles across in half a second, then holds
+PASS It rolls on for some thirty tiles
+PASS Chidori gathers for 1.5 s, then charges forty tiles
+PASS While it gathers the player creeps on and the crackle strikes all round, five tiles, every quarter second, for a fifth of the blow
+PASS The great techniques: 6 s and 40 chakra, 10 s and 60 chakra
+PASS Lightning chakra lingers 3 s, striking every quarter second for a tenth of the blow
+PASS The great fireball bursts on a boss or a big enemy, and only scorches small fry as it rolls through them
+PASS Chidori goes through walls up to three tiles thick
+PASS A ninja tool in hand fills its stealth in twelve seconds bare, never past full
+PASS Ninja-tool gear speeds it up (1.5x: eight seconds)
+PASS Put away, the meter waits
+PASS A new world starts by finding Tazuna
+PASS After meeting him, scout for Mist ninja
+PASS The brothers down sends the player back to Tazuna, met or not
+PASS The lake waits until the player is ready
+PASS After the lake: the bridge, then the fight
+PASS A finished Wave Country is done
+PASS The lake done moves on even if earlier flags are missing
+PASS Ready: the Eye down or 200 max life
+PASS The mist preview waits for the lake
+PASS Once Zabuza has been fought, no more figures in the mist
+PASS Scroll recipe: after the lake and the preview, always once done
+PASS A character who missed the preview can still craft once Zabuza has been fought
+PASS A wide pond inland is a lake
+PASS The oceans are not lakes
+PASS Puddles are not lakes
+PASS Direction text keys
+PASS The opening runs Zabuza, Kakashi, prison, clones
+PASS Kakashi speaks from inside the prison
+PASS The ending runs senbon, fall, Haku, vanish, Kakashi's deduction
+PASS A failed ambush waits at least a minute
+PASS No snow before it starts
+PASS Snow thickens gradually to full fall
+PASS Snow thins out before the scene ends
+PASS The lines start once the walker is on their feet, so they are spoken walking
+PASS Near: lying, rising, walking, then standing beside the other until the words are said
+PASS Near: the collapse comes after the last words
+PASS Far: still walking after the words, collapsing on arrival
+PASS One slow pace, as long as the distance takes
+PASS Too far to reach: the walker falls on the way
+PASS The snow and the narration follow the collapse
+PASS At least 45 homes (has 48)
+PASS HokageTower [-57..-44, -5..-1] is closed in by solid tiles, doors and platforms
+PASS HokageTower [-57..-44, -5..-1] has a door or a platform
+PASS HokageTower [-57..-44, -5..-1] meets the vanilla size rule (112 with frame)
+PASS HokageTower [-57..-44, -5..-1] has background wall everywhere
+PASS HokageTower [-57..-44, -5..-1] has a table, a chair and a lantern
+PASS HokageTower [-57..-44, -5..-1] lantern hangs from solid ceiling on both halves
+PASS HokageTower [-57..-44, -5..-1] has no tiles inside
+PASS HokageTower [-42..-29, -5..-1] is closed in by solid tiles, doors and platforms
+PASS HokageTower [-42..-29, -5..-1] has a door or a platform
+PASS HokageTower [-42..-29, -5..-1] meets the vanilla size rule (112 with frame)
+PASS HokageTower [-42..-29, -5..-1] has background wall everywhere
+PASS HokageTower [-42..-29, -5..-1] has a table, a chair and a lantern
+PASS HokageTower [-42..-29, -5..-1] lantern hangs from solid ceiling on both halves
+PASS HokageTower [-42..-29, -5..-1] has no tiles inside
+PASS HokageTower [-57..-44, -11..-7] is closed in by solid tiles, doors and platforms
+PASS HokageTower [-57..-44, -11..-7] has a door or a platform
+PASS HokageTower [-57..-44, -11..-7] meets the vanilla size rule (112 with frame)
+PASS HokageTower [-57..-44, -11..-7] has background wall everywhere
+PASS HokageTower [-57..-44, -11..-7] has a table, a chair and a lantern
+PASS HokageTower [-57..-44, -11..-7] lantern hangs from solid ceiling on both halves
+PASS HokageTower [-57..-44, -11..-7] has no tiles inside
+PASS HokageTower [-42..-29, -11..-7] is closed in by solid tiles, doors and platforms
+PASS HokageTower [-42..-29, -11..-7] has a door or a platform
+PASS HokageTower [-42..-29, -11..-7] meets the vanilla size rule (112 with frame)
+PASS HokageTower [-42..-29, -11..-7] has background wall everywhere
+PASS HokageTower [-42..-29, -11..-7] has a table, a chair and a lantern
+PASS HokageTower [-42..-29, -11..-7] lantern hangs from solid ceiling on both halves
+PASS HokageTower [-42..-29, -11..-7] has no tiles inside
+PASS HokageTower [-57..-44, -17..-13] is closed in by solid tiles, doors and platforms
+PASS HokageTower [-57..-44, -17..-13] has a door or a platform
+PASS HokageTower [-57..-44, -17..-13] meets the vanilla size rule (112 with frame)
+PASS HokageTower [-57..-44, -17..-13] has background wall everywhere
+PASS HokageTower [-57..-44, -17..-13] has a table, a chair and a lantern
+PASS HokageTower [-57..-44, -17..-13] lantern hangs from solid ceiling on both halves
+PASS HokageTower [-57..-44, -17..-13] has no tiles inside
+PASS HokageTower [-42..-29, -17..-13] is closed in by solid tiles, doors and platforms
+PASS HokageTower [-42..-29, -17..-13] has a door or a platform
+PASS HokageTower [-42..-29, -17..-13] meets the vanilla size rule (112 with frame)
+PASS HokageTower [-42..-29, -17..-13] has background wall everywhere
+PASS HokageTower [-42..-29, -17..-13] has a table, a chair and a lantern
+PASS HokageTower [-42..-29, -17..-13] lantern hangs from solid ceiling on both halves
+PASS HokageTower [-42..-29, -17..-13] has no tiles inside
+PASS HokageTower [-57..-29, -27..-19] is closed in by solid tiles, doors and platforms
+PASS HokageTower [-57..-29, -27..-19] has a door or a platform
+PASS HokageTower [-57..-29, -27..-19] meets the vanilla size rule (341 with frame)
+PASS HokageTower [-57..-29, -27..-19] has background wall everywhere
+PASS HokageTower [-57..-29, -27..-19] has a table, a chair and a lantern
+PASS HokageTower [-57..-29, -27..-19] lantern hangs from solid ceiling on both halves
+PASS HokageTower [-57..-29, -27..-19] has no tiles inside
+PASS Academy [-93..-81, -5..-1] is closed in by solid tiles, doors and platforms
+PASS Academy [-93..-81, -5..-1] has a door or a platform
+PASS Academy [-93..-81, -5..-1] meets the vanilla size rule (105 with frame)
+PASS Academy [-93..-81, -5..-1] has background wall everywhere
+PASS Academy [-93..-81, -5..-1] has a table, a chair and a lantern
+PASS Academy [-93..-81, -5..-1] lantern hangs from solid ceiling on both halves
+PASS Academy [-93..-81, -5..-1] has no tiles inside
+PASS Academy [-79..-67, -5..-1] is closed in by solid tiles, doors and platforms
+PASS Academy [-79..-67, -5..-1] has a door or a platform
+PASS Academy [-79..-67, -5..-1] meets the vanilla size rule (105 with frame)
+PASS Academy [-79..-67, -5..-1] has background wall everywhere
+PASS Academy [-79..-67, -5..-1] has a table, a chair and a lantern
+PASS Academy [-79..-67, -5..-1] lantern hangs from solid ceiling on both halves
+PASS Academy [-79..-67, -5..-1] has no tiles inside
+PASS Academy [-93..-81, -11..-7] is closed in by solid tiles, doors and platforms
+PASS Academy [-93..-81, -11..-7] has a door or a platform
+PASS Academy [-93..-81, -11..-7] meets the vanilla size rule (105 with frame)
+PASS Academy [-93..-81, -11..-7] has background wall everywhere
+PASS Academy [-93..-81, -11..-7] has a table, a chair and a lantern
+PASS Academy [-93..-81, -11..-7] lantern hangs from solid ceiling on both halves
+PASS Academy [-93..-81, -11..-7] has no tiles inside
+PASS Academy [-79..-67, -11..-7] is closed in by solid tiles, doors and platforms
+PASS Academy [-79..-67, -11..-7] has a door or a platform
+PASS Academy [-79..-67, -11..-7] meets the vanilla size rule (105 with frame)
+PASS Academy [-79..-67, -11..-7] has background wall everywhere
+PASS Academy [-79..-67, -11..-7] has a table, a chair and a lantern
+PASS Academy [-79..-67, -11..-7] lantern hangs from solid ceiling on both halves
+PASS Academy [-79..-67, -11..-7] has no tiles inside
+PASS HouseA [-132..-123, -5..-1] is closed in by solid tiles, doors and platforms
+PASS HouseA [-132..-123, -5..-1] has a door or a platform
+PASS HouseA [-132..-123, -5..-1] meets the vanilla size rule (84 with frame)
+PASS HouseA [-132..-123, -5..-1] has background wall everywhere
+PASS HouseA [-132..-123, -5..-1] has a table, a chair and a lantern
+PASS HouseA [-132..-123, -5..-1] lantern hangs from solid ceiling on both halves
+PASS HouseA [-132..-123, -5..-1] has no tiles inside
+PASS HouseA [-121..-112, -5..-1] is closed in by solid tiles, doors and platforms
+PASS HouseA [-121..-112, -5..-1] has a door or a platform
+PASS HouseA [-121..-112, -5..-1] meets the vanilla size rule (84 with frame)
+PASS HouseA [-121..-112, -5..-1] has background wall everywhere
+PASS HouseA [-121..-112, -5..-1] has a table, a chair and a lantern
+PASS HouseA [-121..-112, -5..-1] lantern hangs from solid ceiling on both halves
+PASS HouseA [-121..-112, -5..-1] has no tiles inside
+PASS HouseA [-132..-123, -11..-7] is closed in by solid tiles, doors and platforms
+PASS HouseA [-132..-123, -11..-7] has a door or a platform
+PASS HouseA [-132..-123, -11..-7] meets the vanilla size rule (84 with frame)
+PASS HouseA [-132..-123, -11..-7] has background wall everywhere
+PASS HouseA [-132..-123, -11..-7] has a table, a chair and a lantern
+PASS HouseA [-132..-123, -11..-7] lantern hangs from solid ceiling on both halves
+PASS HouseA [-132..-123, -11..-7] has no tiles inside
+PASS HouseA [-121..-112, -11..-7] is closed in by solid tiles, doors and platforms
+PASS HouseA [-121..-112, -11..-7] has a door or a platform
+PASS HouseA [-121..-112, -11..-7] meets the vanilla size rule (84 with frame)
+PASS HouseA [-121..-112, -11..-7] has background wall everywhere
+PASS HouseA [-121..-112, -11..-7] has a table, a chair and a lantern
+PASS HouseA [-121..-112, -11..-7] lantern hangs from solid ceiling on both halves
+PASS HouseA [-121..-112, -11..-7] has no tiles inside
+PASS HouseA [-132..-123, -17..-13] is closed in by solid tiles, doors and platforms
+PASS HouseA [-132..-123, -17..-13] has a door or a platform
+PASS HouseA [-132..-123, -17..-13] meets the vanilla size rule (84 with frame)
+PASS HouseA [-132..-123, -17..-13] has background wall everywhere
+PASS HouseA [-132..-123, -17..-13] has a table, a chair and a lantern
+PASS HouseA [-132..-123, -17..-13] lantern hangs from solid ceiling on both halves
+PASS HouseA [-132..-123, -17..-13] has no tiles inside
+PASS HouseA [-121..-112, -17..-13] is closed in by solid tiles, doors and platforms
+PASS HouseA [-121..-112, -17..-13] has a door or a platform
+PASS HouseA [-121..-112, -17..-13] meets the vanilla size rule (84 with frame)
+PASS HouseA [-121..-112, -17..-13] has background wall everywhere
+PASS HouseA [-121..-112, -17..-13] has a table, a chair and a lantern
+PASS HouseA [-121..-112, -17..-13] lantern hangs from solid ceiling on both halves
+PASS HouseA [-121..-112, -17..-13] has no tiles inside
+PASS HouseB [-161..-152, -5..-1] is closed in by solid tiles, doors and platforms
+PASS HouseB [-161..-152, -5..-1] has a door or a platform
+PASS HouseB [-161..-152, -5..-1] meets the vanilla size rule (84 with frame)
+PASS HouseB [-161..-152, -5..-1] has background wall everywhere
+PASS HouseB [-161..-152, -5..-1] has a table, a chair and a lantern
+PASS HouseB [-161..-152, -5..-1] lantern hangs from solid ceiling on both halves
+PASS HouseB [-161..-152, -5..-1] has no tiles inside
+PASS HouseB [-150..-141, -5..-1] is closed in by solid tiles, doors and platforms
+PASS HouseB [-150..-141, -5..-1] has a door or a platform
+PASS HouseB [-150..-141, -5..-1] meets the vanilla size rule (84 with frame)
+PASS HouseB [-150..-141, -5..-1] has background wall everywhere
+PASS HouseB [-150..-141, -5..-1] has a table, a chair and a lantern
+PASS HouseB [-150..-141, -5..-1] lantern hangs from solid ceiling on both halves
+PASS HouseB [-150..-141, -5..-1] has no tiles inside
+PASS HouseB [-161..-152, -11..-7] is closed in by solid tiles, doors and platforms
+PASS HouseB [-161..-152, -11..-7] has a door or a platform
+PASS HouseB [-161..-152, -11..-7] meets the vanilla size rule (84 with frame)
+PASS HouseB [-161..-152, -11..-7] has background wall everywhere
+PASS HouseB [-161..-152, -11..-7] has a table, a chair and a lantern
+PASS HouseB [-161..-152, -11..-7] lantern hangs from solid ceiling on both halves
+PASS HouseB [-161..-152, -11..-7] has no tiles inside
+PASS HouseB [-150..-141, -11..-7] is closed in by solid tiles, doors and platforms
+PASS HouseB [-150..-141, -11..-7] has a door or a platform
+PASS HouseB [-150..-141, -11..-7] meets the vanilla size rule (84 with frame)
+PASS HouseB [-150..-141, -11..-7] has background wall everywhere
+PASS HouseB [-150..-141, -11..-7] has a table, a chair and a lantern
+PASS HouseB [-150..-141, -11..-7] lantern hangs from solid ceiling on both halves
+PASS HouseB [-150..-141, -11..-7] has no tiles inside
+PASS HouseB [-161..-152, -17..-13] is closed in by solid tiles, doors and platforms
+PASS HouseB [-161..-152, -17..-13] has a door or a platform
+PASS HouseB [-161..-152, -17..-13] meets the vanilla size rule (84 with frame)
+PASS HouseB [-161..-152, -17..-13] has background wall everywhere
+PASS HouseB [-161..-152, -17..-13] has a table, a chair and a lantern
+PASS HouseB [-161..-152, -17..-13] lantern hangs from solid ceiling on both halves
+PASS HouseB [-161..-152, -17..-13] has no tiles inside
+PASS HouseB [-150..-141, -17..-13] is closed in by solid tiles, doors and platforms
+PASS HouseB [-150..-141, -17..-13] has a door or a platform
+PASS HouseB [-150..-141, -17..-13] meets the vanilla size rule (84 with frame)
+PASS HouseB [-150..-141, -17..-13] has background wall everywhere
+PASS HouseB [-150..-141, -17..-13] has a table, a chair and a lantern
+PASS HouseB [-150..-141, -17..-13] lantern hangs from solid ceiling on both halves
+PASS HouseB [-150..-141, -17..-13] has no tiles inside
+PASS HouseC [-190..-181, -5..-1] is closed in by solid tiles, doors and platforms
+PASS HouseC [-190..-181, -5..-1] has a door or a platform
+PASS HouseC [-190..-181, -5..-1] meets the vanilla size rule (84 with frame)
+PASS HouseC [-190..-181, -5..-1] has background wall everywhere
+PASS HouseC [-190..-181, -5..-1] has a table, a chair and a lantern
+PASS HouseC [-190..-181, -5..-1] lantern hangs from solid ceiling on both halves
+PASS HouseC [-190..-181, -5..-1] has no tiles inside
+PASS HouseC [-179..-170, -5..-1] is closed in by solid tiles, doors and platforms
+PASS HouseC [-179..-170, -5..-1] has a door or a platform
+PASS HouseC [-179..-170, -5..-1] meets the vanilla size rule (84 with frame)
+PASS HouseC [-179..-170, -5..-1] has background wall everywhere
+PASS HouseC [-179..-170, -5..-1] has a table, a chair and a lantern
+PASS HouseC [-179..-170, -5..-1] lantern hangs from solid ceiling on both halves
+PASS HouseC [-179..-170, -5..-1] has no tiles inside
+PASS HouseC [-190..-181, -11..-7] is closed in by solid tiles, doors and platforms
+PASS HouseC [-190..-181, -11..-7] has a door or a platform
+PASS HouseC [-190..-181, -11..-7] meets the vanilla size rule (84 with frame)
+PASS HouseC [-190..-181, -11..-7] has background wall everywhere
+PASS HouseC [-190..-181, -11..-7] has a table, a chair and a lantern
+PASS HouseC [-190..-181, -11..-7] lantern hangs from solid ceiling on both halves
+PASS HouseC [-190..-181, -11..-7] has no tiles inside
+PASS HouseC [-179..-170, -11..-7] is closed in by solid tiles, doors and platforms
+PASS HouseC [-179..-170, -11..-7] has a door or a platform
+PASS HouseC [-179..-170, -11..-7] meets the vanilla size rule (84 with frame)
+PASS HouseC [-179..-170, -11..-7] has background wall everywhere
+PASS HouseC [-179..-170, -11..-7] has a table, a chair and a lantern
+PASS HouseC [-179..-170, -11..-7] lantern hangs from solid ceiling on both halves
+PASS HouseC [-179..-170, -11..-7] has no tiles inside
+PASS HouseC [-190..-181, -17..-13] is closed in by solid tiles, doors and platforms
+PASS HouseC [-190..-181, -17..-13] has a door or a platform
+PASS HouseC [-190..-181, -17..-13] meets the vanilla size rule (84 with frame)
+PASS HouseC [-190..-181, -17..-13] has background wall everywhere
+PASS HouseC [-190..-181, -17..-13] has a table, a chair and a lantern
+PASS HouseC [-190..-181, -17..-13] lantern hangs from solid ceiling on both halves
+PASS HouseC [-190..-181, -17..-13] has no tiles inside
+PASS HouseC [-179..-170, -17..-13] is closed in by solid tiles, doors and platforms
+PASS HouseC [-179..-170, -17..-13] has a door or a platform
+PASS HouseC [-179..-170, -17..-13] meets the vanilla size rule (84 with frame)
+PASS HouseC [-179..-170, -17..-13] has background wall everywhere
+PASS HouseC [-179..-170, -17..-13] has a table, a chair and a lantern
+PASS HouseC [-179..-170, -17..-13] lantern hangs from solid ceiling on both halves
+PASS HouseC [-179..-170, -17..-13] has no tiles inside
+PASS Ichiraku [27..36, -5..-1] is closed in by solid tiles, doors and platforms
+PASS Ichiraku [27..36, -5..-1] has a door or a platform
+PASS Ichiraku [27..36, -5..-1] meets the vanilla size rule (84 with frame)
+PASS Ichiraku [27..36, -5..-1] has background wall everywhere
+PASS Ichiraku [27..36, -5..-1] has a table, a chair and a lantern
+PASS Ichiraku [27..36, -5..-1] lantern hangs from solid ceiling on both halves
+PASS Ichiraku [27..36, -5..-1] has no tiles inside
+PASS Shop1 [44..54, -5..-1] is closed in by solid tiles, doors and platforms
+PASS Shop1 [44..54, -5..-1] has a door or a platform
+PASS Shop1 [44..54, -5..-1] meets the vanilla size rule (91 with frame)
+PASS Shop1 [44..54, -5..-1] has background wall everywhere
+PASS Shop1 [44..54, -5..-1] has a table, a chair and a lantern
+PASS Shop1 [44..54, -5..-1] lantern hangs from solid ceiling on both halves
+PASS Shop1 [44..54, -5..-1] has no tiles inside
+PASS Shop1 [44..54, -11..-7] is closed in by solid tiles, doors and platforms
+PASS Shop1 [44..54, -11..-7] has a door or a platform
+PASS Shop1 [44..54, -11..-7] meets the vanilla size rule (91 with frame)
+PASS Shop1 [44..54, -11..-7] has background wall everywhere
+PASS Shop1 [44..54, -11..-7] has a table, a chair and a lantern
+PASS Shop1 [44..54, -11..-7] lantern hangs from solid ceiling on both halves
+PASS Shop1 [44..54, -11..-7] has no tiles inside
+PASS Shop2 [61..71, -5..-1] is closed in by solid tiles, doors and platforms
+PASS Shop2 [61..71, -5..-1] has a door or a platform
+PASS Shop2 [61..71, -5..-1] meets the vanilla size rule (91 with frame)
+PASS Shop2 [61..71, -5..-1] has background wall everywhere
+PASS Shop2 [61..71, -5..-1] has a table, a chair and a lantern
+PASS Shop2 [61..71, -5..-1] lantern hangs from solid ceiling on both halves
+PASS Shop2 [61..71, -5..-1] has no tiles inside
+PASS Shop2 [61..71, -11..-7] is closed in by solid tiles, doors and platforms
+PASS Shop2 [61..71, -11..-7] has a door or a platform
+PASS Shop2 [61..71, -11..-7] meets the vanilla size rule (91 with frame)
+PASS Shop2 [61..71, -11..-7] has background wall everywhere
+PASS Shop2 [61..71, -11..-7] has a table, a chair and a lantern
+PASS Shop2 [61..71, -11..-7] lantern hangs from solid ceiling on both halves
+PASS Shop2 [61..71, -11..-7] has no tiles inside
+PASS Shop3 [78..88, -5..-1] is closed in by solid tiles, doors and platforms
+PASS Shop3 [78..88, -5..-1] has a door or a platform
+PASS Shop3 [78..88, -5..-1] meets the vanilla size rule (91 with frame)
+PASS Shop3 [78..88, -5..-1] has background wall everywhere
+PASS Shop3 [78..88, -5..-1] has a table, a chair and a lantern
+PASS Shop3 [78..88, -5..-1] lantern hangs from solid ceiling on both halves
+PASS Shop3 [78..88, -5..-1] has no tiles inside
+PASS Shop3 [78..88, -11..-7] is closed in by solid tiles, doors and platforms
+PASS Shop3 [78..88, -11..-7] has a door or a platform
+PASS Shop3 [78..88, -11..-7] meets the vanilla size rule (91 with frame)
+PASS Shop3 [78..88, -11..-7] has background wall everywhere
+PASS Shop3 [78..88, -11..-7] has a table, a chair and a lantern
+PASS Shop3 [78..88, -11..-7] lantern hangs from solid ceiling on both halves
+PASS Shop3 [78..88, -11..-7] has no tiles inside
+PASS Hospital [95..108, -5..-1] is closed in by solid tiles, doors and platforms
+PASS Hospital [95..108, -5..-1] has a door or a platform
+PASS Hospital [95..108, -5..-1] meets the vanilla size rule (112 with frame)
+PASS Hospital [95..108, -5..-1] has background wall everywhere
+PASS Hospital [95..108, -5..-1] has a table, a chair and a lantern
+PASS Hospital [95..108, -5..-1] lantern hangs from solid ceiling on both halves
+PASS Hospital [95..108, -5..-1] has no tiles inside
+PASS Hospital [110..123, -5..-1] is closed in by solid tiles, doors and platforms
+PASS Hospital [110..123, -5..-1] has a door or a platform
+PASS Hospital [110..123, -5..-1] meets the vanilla size rule (112 with frame)
+PASS Hospital [110..123, -5..-1] has background wall everywhere
+PASS Hospital [110..123, -5..-1] has a table, a chair and a lantern
+PASS Hospital [110..123, -5..-1] lantern hangs from solid ceiling on both halves
+PASS Hospital [110..123, -5..-1] has no tiles inside
+PASS Hospital [95..108, -11..-7] is closed in by solid tiles, doors and platforms
+PASS Hospital [95..108, -11..-7] has a door or a platform
+PASS Hospital [95..108, -11..-7] meets the vanilla size rule (112 with frame)
+PASS Hospital [95..108, -11..-7] has background wall everywhere
+PASS Hospital [95..108, -11..-7] has a table, a chair and a lantern
+PASS Hospital [95..108, -11..-7] lantern hangs from solid ceiling on both halves
+PASS Hospital [95..108, -11..-7] has no tiles inside
+PASS Hospital [110..123, -11..-7] is closed in by solid tiles, doors and platforms
+PASS Hospital [110..123, -11..-7] has a door or a platform
+PASS Hospital [110..123, -11..-7] meets the vanilla size rule (112 with frame)
+PASS Hospital [110..123, -11..-7] has background wall everywhere
+PASS Hospital [110..123, -11..-7] has a table, a chair and a lantern
+PASS Hospital [110..123, -11..-7] lantern hangs from solid ceiling on both halves
+PASS Hospital [110..123, -11..-7] has no tiles inside
+PASS Hospital [95..108, -17..-13] is closed in by solid tiles, doors and platforms
+PASS Hospital [95..108, -17..-13] has a door or a platform
+PASS Hospital [95..108, -17..-13] meets the vanilla size rule (112 with frame)
+PASS Hospital [95..108, -17..-13] has background wall everywhere
+PASS Hospital [95..108, -17..-13] has a table, a chair and a lantern
+PASS Hospital [95..108, -17..-13] lantern hangs from solid ceiling on both halves
+PASS Hospital [95..108, -17..-13] has no tiles inside
+PASS Hospital [110..123, -17..-13] is closed in by solid tiles, doors and platforms
+PASS Hospital [110..123, -17..-13] has a door or a platform
+PASS Hospital [110..123, -17..-13] meets the vanilla size rule (112 with frame)
+PASS Hospital [110..123, -17..-13] has background wall everywhere
+PASS Hospital [110..123, -17..-13] has a table, a chair and a lantern
+PASS Hospital [110..123, -17..-13] lantern hangs from solid ceiling on both halves
+PASS Hospital [110..123, -17..-13] has no tiles inside
+PASS HouseD [133..142, -5..-1] is closed in by solid tiles, doors and platforms
+PASS HouseD [133..142, -5..-1] has a door or a platform
+PASS HouseD [133..142, -5..-1] meets the vanilla size rule (84 with frame)
+PASS HouseD [133..142, -5..-1] has background wall everywhere
+PASS HouseD [133..142, -5..-1] has a table, a chair and a lantern
+PASS HouseD [133..142, -5..-1] lantern hangs from solid ceiling on both halves
+PASS HouseD [133..142, -5..-1] has no tiles inside
+PASS HouseD [144..153, -5..-1] is closed in by solid tiles, doors and platforms
+PASS HouseD [144..153, -5..-1] has a door or a platform
+PASS HouseD [144..153, -5..-1] meets the vanilla size rule (84 with frame)
+PASS HouseD [144..153, -5..-1] has background wall everywhere
+PASS HouseD [144..153, -5..-1] has a table, a chair and a lantern
+PASS HouseD [144..153, -5..-1] lantern hangs from solid ceiling on both halves
+PASS HouseD [144..153, -5..-1] has no tiles inside
+PASS HouseD [133..142, -11..-7] is closed in by solid tiles, doors and platforms
+PASS HouseD [133..142, -11..-7] has a door or a platform
+PASS HouseD [133..142, -11..-7] meets the vanilla size rule (84 with frame)
+PASS HouseD [133..142, -11..-7] has background wall everywhere
+PASS HouseD [133..142, -11..-7] has a table, a chair and a lantern
+PASS HouseD [133..142, -11..-7] lantern hangs from solid ceiling on both halves
+PASS HouseD [133..142, -11..-7] has no tiles inside
+PASS HouseD [144..153, -11..-7] is closed in by solid tiles, doors and platforms
+PASS HouseD [144..153, -11..-7] has a door or a platform
+PASS HouseD [144..153, -11..-7] meets the vanilla size rule (84 with frame)
+PASS HouseD [144..153, -11..-7] has background wall everywhere
+PASS HouseD [144..153, -11..-7] has a table, a chair and a lantern
+PASS HouseD [144..153, -11..-7] lantern hangs from solid ceiling on both halves
+PASS HouseD [144..153, -11..-7] has no tiles inside
+PASS HouseD [133..142, -17..-13] is closed in by solid tiles, doors and platforms
+PASS HouseD [133..142, -17..-13] has a door or a platform
+PASS HouseD [133..142, -17..-13] meets the vanilla size rule (84 with frame)
+PASS HouseD [133..142, -17..-13] has background wall everywhere
+PASS HouseD [133..142, -17..-13] has a table, a chair and a lantern
+PASS HouseD [133..142, -17..-13] lantern hangs from solid ceiling on both halves
+PASS HouseD [133..142, -17..-13] has no tiles inside
+PASS HouseD [144..153, -17..-13] is closed in by solid tiles, doors and platforms
+PASS HouseD [144..153, -17..-13] has a door or a platform
+PASS HouseD [144..153, -17..-13] meets the vanilla size rule (84 with frame)
+PASS HouseD [144..153, -17..-13] has background wall everywhere
+PASS HouseD [144..153, -17..-13] has a table, a chair and a lantern
+PASS HouseD [144..153, -17..-13] lantern hangs from solid ceiling on both halves
+PASS HouseD [144..153, -17..-13] has no tiles inside
+PASS Fixtures do not overlap each other or tiles
+PASS Buildings do not overlap
+PASS Everything stands inside the walls
+PASS No tiles beyond the walls
+PASS The spawn under the gate is open ground
+PASS The main street is walkable end to end outside buildings (gate and wall passages open)
+PASS Lamp posts stand in the open
+PASS The street can be walked from wall to wall (blocked at )
+PASS Doors through the partitions as well as the outer walls
+PASS Only one style core at a time before the second slot
+PASS Two cores once the second slot is open (after Pain), never three
+PASS Technique ready with a core, no cooldown and enough chakra
+PASS No technique without a core
+PASS No technique during cooldown
+PASS No technique without the chakra
+PASS A higher tier includes the lower ones
+PASS Tiers only count within a school
+PASS Life locks at the threshold, never at 0
+PASS The threshold is reached at exactly half
+PASS A burst hit cannot carry the boss past the threshold
+PASS The exit plays out with the boss untouchable
+PASS The Sharingan brings logs back sooner: 20 / 16 / 14 / 12 s
+PASS Foresight lasts four seconds, five from two tomoe
+PASS Each press opens a gate; the press after the third closes
+PASS Opening a gate costs chakra, closing is free
+PASS The gates burn 2 / 4 / 6 life a second
+PASS The gates shut themselves below a fifth of life
+PASS Taijutsu pressure grows with the gates
+PASS Gentle Fist points stack to three
+PASS Ground starts at the first fully opaque row, not at the bushes above it
+PASS A layer with no solid ground has no ground row
+PASS A stray transparent pixel does not push the ground down
+PASS With vanilla's ground row, the corrected close layer lands exactly where vanilla draws its own
+PASS Art whose ground starts lower is lifted by the difference, at draw scale
+PASS Art without solid ground is not lifted
+PASS SnowClose.png is 1024 pixels wide
+PASS SnowClose baked dimensions match the art
+PASS SnowClose placement is current (regenerate with scripts/export_background_layout.py after art changes)
+PASS SnowClose ground row is inside the image
+PASS MyobokuClose.png is 1024 pixels wide
+PASS MyobokuClose baked dimensions match the art
+PASS MyobokuClose placement is current (regenerate with scripts/export_background_layout.py after art changes)
+PASS MyobokuClose ground row is inside the image
+PASS KusaMid.png is 1024 pixels wide
+PASS MyobokuFar.png is 1024 pixels wide
+PASS MyobokuMid.png is 1024 pixels wide
+PASS KusaFar.png is 1024 pixels wide
+PASS MistMid.png is 1024 pixels wide
+PASS SunaFar.png is 1024 pixels wide
+PASS KonohaFar.png is 1024 pixels wide
+PASS KonohaMid.png is 1024 pixels wide
+PASS SunaMid.png is 1024 pixels wide
+PASS MistFar.png is 1024 pixels wide
+PASS SnowFar.png is 1024 pixels wide
+PASS SnowMid.png is 1024 pixels wide
+PASS SunaClose.png is 1024 pixels wide
+PASS SunaClose baked dimensions match the art
+PASS SunaClose placement is current (regenerate with scripts/export_background_layout.py after art changes)
+PASS SunaClose ground row is inside the image
+PASS KusaClose.png is 1024 pixels wide
+PASS KusaClose baked dimensions match the art
+PASS KusaClose placement is current (regenerate with scripts/export_background_layout.py after art changes)
+PASS KusaClose ground row is inside the image
+PASS KonohaClose.png is 1024 pixels wide
+PASS KonohaClose baked dimensions match the art
+PASS KonohaClose placement is current (regenerate with scripts/export_background_layout.py after art changes)
+PASS KonohaClose ground row is inside the image
+PASS MistClose.png is 1024 pixels wide
+PASS MistClose baked dimensions match the art
+PASS MistClose placement is current (regenerate with scripts/export_background_layout.py after art changes)
+PASS MistClose ground row is inside the image
+PASS Baked ground coverage matches the placement rule
+PASS Unknown region has no baked lift
+PASS Open air above the deck is taller than the ice-mirror cage radius
+PASS Unfinished deck is longer than the cage is wide
+PASS Deck is cambered: highest mid-span, level at both ends
+PASS Camber never steps more than one tile
+PASS Arches have hammered undersides
+PASS Finished deck is continuous from the shore to the island
+PASS Before completion the stone deck stops at the break
+PASS Island top is level with the deck
+PASS Scaffolding and crane only before completion
+PASS Piers stand in the water every 14 tiles
+PASS Hut has a door, table and chair from the start
+PASS Hut has no light until the bridge is finished, so no NPC can claim it early
+PASS Hut stands on stilts above the beach
+PASS Hut has a door on both sides
+PASS Hut floor sits four tiles above the levelled beach (gentle beach)
+PASS Hut can be climbed from inland without jumping (gentle beach)
+PASS Hut can be climbed from the beach side (gentle beach)
+PASS Hut floor sits four tiles above the levelled beach (mound and dip)
+PASS Hut can be climbed from inland without jumping (mound and dip)
+PASS Hut can be climbed from the beach side (mound and dip)
+PASS Hut has a tiled roof
+PASS Naruto Bridge sign only once finished
+PASS Island has a torii gate, the Land of Waves sign and a chest
+PASS By day at the default setting the bridge is in mist
+PASS Night or rain thickens it
+PASS Density is capped
+PASS Setting tops out at 200%
+PASS Full mist over the ramp and hut
+PASS Mist is gone a little past the beach
+PASS Mist thins with distance
+PASS Setting scales or disables the mist
+PASS Preview beats happen in order
+PASS Preview lasts about fourteen seconds
+PASS Preview mist rises, holds and clears
+PASS Preview starts only near the broken end
+PASS The pair appear over the water a little beyond the scaffolding, short of the island
+PASS A mist figure is never fully clear
+PASS Once faded in, a figure never quite disappears until it leaves
+PASS Figures fade in and out
+PASS Only a trace of detail shows through the silhouette
+PASS Sightings: after the preview, before the win, at night or in rain, near the break, once per night
+PASS Sightings stand on the water past the scaffolding, short of the island
+PASS Senbon warning: once, with three insignia, near the break
+PASS Every win drops at least one class weapon
+PASS About one win in five drops a second weapon
+PASS The second weapon is never the same as the first
+PASS All four weapons are equally likely
+PASS Each boss mask drops about one win in seven
+PASS They ambush in rain or in the sea mist
+PASS Not before the player has found a Mist insignia
+PASS Not in clear weather away from the mist
+PASS Once Wave Country is done, only in the rain on the beach
+PASS Only one pair at a time
+PASS Only on the surface
+PASS The brothers take opposite sides of the player
+PASS Chain sweep needs the cooldown over, the player between them and a sensible gap
+PASS The chain sweep is telegraphed for at least half a second
+PASS A slack chain does not hurt
+PASS The rush carries each brother past the middle
+PASS The first ambush is certain in the bridge mist once an insignia is found
+PASS After the first win they only come at random
+PASS Needs an insignia and the sea mist
+PASS Not while a pair is out or during the retry wait
+PASS A warning first, and a minute before trying again
+PASS The exams wait for Wave Country
+PASS A world without the Leaf cannot host the exams
+PASS First the recommendation from Kakashi
+PASS Then the written test
+PASS Then the Area 44 gate for a scroll
+PASS Holding a scroll: take the other
+PASS At the tower with both: the prelims
+PASS Too weak for the finals: train
+PASS Strong enough: the finals
+PASS Once Gaara has fallen in the world, the exams are over for everyone
+PASS Orochimaru waits for the world's evil boss or 300 life
+PASS The finals wait for Skeletron or 400 life
+PASS The written test pays per right answer, nine at most
+PASS Nine different questions are drawn every time
+PASS Shuffling four options keeps all four
+PASS The bank holds at least thirty questions
+PASS Every question has four different answers
+PASS No question appears twice
+PASS Giving up at the tenth question waits for the next dawn
+PASS The scroll to take is always the other one
+PASS Either scroll can be handed out
+PASS Both scrolls are needed
+PASS A squad carries the scroll by chance, the fifth always
+PASS The squad past the gate waits at its spot, once, while hunting
+PASS The Rain genin wait in their clearing for someone still short of a scroll
+PASS Squads only come for someone hunting on the jungle surface
+PASS No squad once both scrolls are in hand, nor while another squad is about
+PASS The first squad comes after a short while, the next ones after a longer one
+PASS No core, no vow
+PASS The first vow is free
+PASS Vowing twice changes nothing
+PASS Changing school names the fee first
+PASS Changing school costs ten gold
+PASS A chapter's rewards work only for one's own school
+PASS Gate: everything inside the cleared site
+PASS Gate: a player can walk straight through along the ground
+PASS Gate: solid ground all the way across
+PASS Tower: everything inside the cleared site
+PASS Tower: a player can walk straight through along the ground
+PASS Tower: solid ground all the way across
+PASS Stadium: everything inside the cleared site
+PASS Stadium: a player can walk straight through along the ground
+PASS Stadium: solid ground all the way across
+PASS HollowTree: everything inside the cleared site
+PASS HollowTree: a player can walk straight through along the ground
+PASS HollowTree: solid ground all the way across
+PASS Marker: everything inside the cleared site
+PASS Marker: a player can walk straight through along the ground
+PASS Marker: solid ground all the way across
+PASS The tower hall is open and big enough for a bout
+PASS One door each side of the tower hall
+PASS The stadium field is open to the sky and wide enough for Gaara
+PASS Orochimaru waits halfway, after the squad at the gate, until he has been met
+PASS Orochimaru leaves at half life, after the player holds out (sooner for a weaker one), or when the player falls
+PASS A player not yet strong enough takes less from him
+PASS After Manda his bullets come thicker and faster
+PASS About a second between his techniques
+PASS The snake rain leaves gaps wide enough to stand in
+PASS The giant snake comes once: at three quarters life or a while into the fight
+PASS Dosu never uses the same technique twice running
+PASS All five of Dosu's techniques come up across the distances
+PASS Up close he drills, rings or slams the floor
+PASS Under half life Dosu winds up faster and the sound wave comes twice
+PASS Dosu's reversed controls never last longer than two seconds
+PASS Dosu is a mini boss: a little tougher than Zabuza's life, at a later stage
+PASS Gaara: armour cracks at half, partial transformation at a quarter
+PASS The Sand Guard stops hits from the front only, and only while it is up
+PASS Behind the guard a frontal hit loses 90%; he stands three seconds, then two seconds winded
+PASS The guard comes every 8 to 10 seconds
+PASS The guard comes on time or early after heavy frontal damage, and not once he transforms
+PASS Gaara's bullets thicken once the armour cracks
+PASS The quicksand spots are marked long enough and far enough apart to step between
+PASS Gaara speeds up each phase
+PASS Caught in the coffin, there is time to substitute out
+PASS Each chakra point seal takes 20 maximum chakra, three at most
+PASS Three seals stop substitution
+PASS The killing intent catches only those inside the red wedge: in front of him, within about 23 degrees and 40 tiles
+PASS The stare works facing left too, and is shown for a second before it falls
+PASS The giant snake comes before he retreats at half life
+PASS Substitution breaks the sand coffin and the killing intent
+PASS Duo scroll has no prior Haku gate
+PASS Story scroll cannot double-spawn
+PASS Story scroll works at the edge of the bridge mist
+PASS Story scroll does nothing away from the bridge
+PASS Story scroll needs a bridge in the world
+PASS Legacy Haku scroll can start the duo battle
+PASS Legacy Haku scroll cannot double-spawn
+PASS M0 scroll bypasses story gate
+PASS M0 scroll cannot double-spawn
+PASS Blade collision is narrow and sweeps at the player's height
+PASS Body is about twice the player's height; the sword is not part of the body hitbox
+PASS Pixel art is drawn at 1x with no fractional scaling
+PASS Demon form never draws a second full-body silhouette while moving
+PASS Boss survives long enough to expose its multi-pattern phase
+PASS Blade collision ends with the release pose
+PASS Release pose only during damaging slash frames
+PASS Larger wave art has a correspondingly larger hitbox
+PASS Wave and dragon are visibly larger while their collision remains deliberate
+PASS Water needle collision remains smaller than its bright sprite
+PASS Both attacks have readable windups
+PASS Both attacks leave retaliation windows
+PASS Phase switches at half health
+PASS Close range slash
+PASS Long range water wave
+PASS Mist phase alternates at mid range
+PASS Mist phase does not swing outside blade range
+PASS Mist phase does not spawn a wave inside the player
+PASS Approach uses new idle silhouette
+PASS Sword telegraph uses raised cleaver pose
+PASS Visible swing and collision end together
+PASS Water techniques use the hand-sign pose
+PASS Leap only fires once while approaching from the ground
+PASS Chase and leap have distinct animation poses
+PASS Mist phase adds a repositioning beat
+PASS Mist phase unlocks water dragon at range
+PASS Water dragon is never selected at point blank range
+PASS Water dragon has a readable seal windup
+PASS Water aim cannot fire steeply through floors
+PASS Phase one adds a safe-range fan volley
+PASS Mist phase adds rain and spiral patterns
+PASS Dense patterns are gated away from close range
+PASS Bullet patterns have readable lead time
+PASS Dense patterns leave explicit counterattack windows
+PASS Rain leaves a central dodge lane
+PASS Rain lanes sweep across the locked target instead of repeating in place
+PASS Rain fires exactly three spaced volleys
+PASS Mist phase has a second short-leap opportunity
+PASS Ground run uses displacement-driven stride frames without idle flashes
+PASS Dash joins both phases but never starts point blank
+PASS Demon chain dash is faster but has telegraph and recovery
+PASS Low-life demon form increases charge pressure
+PASS Dash aims at the player in any direction up to about 60 degrees and leads their movement
+PASS Dash reaches the player and carries well past them
+PASS Even a point-blank dash covers 250+ px, and reach grows from first form to demon phase to frenzy
+PASS Longest dashes are capped, the cap rising with the stage
+PASS Dash is faster than before the rework
+PASS From behind cover he never casts water jutsu that blocks would stop
+PASS From behind cover at range he dashes through the terrain instead
+PASS Body Flicker when stuck for two seconds or far from the player
+PASS Body Flicker fades out, moves, then fades in
+PASS Dash ignores stale takeoff collision then stops at real walls
+PASS Transition runs kneel, Haku's entrance, then the roar, with a spawn deadline after it
+PASS Zabuza kneels until the roar
+PASS Purple aura builds and bursts with the roar
+PASS Mist thickens while kneeling and thins after the roar
+PASS A lethal hit before the transition leaves Zabuza at half health
+PASS Frenzy rotates slashes, charges and the thrown blade
+PASS Frenzy never uses water techniques
+PASS Thrown blade flies about 25 tiles, then returns
+PASS Throw, kunai charge and catch each have their own pose
+PASS Demon form opens with its signature charge at range
+PASS Demon phase presses faster without eliminating retaliation windows
+PASS Large portrait fits the vanilla boss-bar icon slot
+PASS Ranged projectiles stay alive across the combat screen
+PASS Long-range attacks arrive more often without accelerating point-blank slashes
+PASS Higher ranged cadence retains visible telegraphs and retaliation time
+PASS Toggle on
+PASS Toggle off
+PASS Explicit on is case insensitive
+PASS Explicit off
+PASS Invalid option preserves current state
+PASS Time day
+PASS Time noon
+PASS Time night
+PASS Time midnight
+PASS Time 19:29
+PASS Time 04:29
+PASS Invalid times rejected
+PASS Haku life raised after play (2026-09-30), about half of Zabuza's
+PASS Haku is about 1.6x the player's height and clearly smaller than Zabuza
+PASS Haku enters during the transition but waits until it ends
+PASS Haku strong actions do not overlap Zabuza's dense attacks
+PASS Haku finishes stepping out of the mirror before Zabuza roars
+PASS Haku's spawn tries several spots near both sides and finally Zabuza himself
+PASS Both partners must die in the same encounter
+PASS Old complete saves survive while partial clears reset
+PASS Cage starts only with both alive, Zabuza between attacks, off cooldown
+PASS Cage: about every 15 s, eight mirrors, about 20 tiles radius
+PASS Cage lasts about 8 s or until four mirrors are shattered
+PASS Crossing the cage edge pushes the player back inside; the interior is free
+PASS The edge hurts lightly and not every frame
+PASS Each hop warns, then leaves Haku hittable for half a second
+PASS Needles fly only after the mirror has glowed
+PASS Haku always moves to a different mirror
+PASS Broken mirrors are skipped; no mirrors means no hop
+PASS Mirror slots are spread evenly around the ring
+PASS Frenzy hops faster with more needles, but still warns; broken mirrors return
+PASS Thousand Needles unlocks below 30% life, every ~12 s, with ~0.8 s warning
+PASS Thousand Needles cast 0 leaves a two-needle escape lane
+PASS Thousand Needles cast 1 leaves a two-needle escape lane
+PASS Thousand Needles cast 2 leaves a two-needle escape lane
+PASS Thousand Needles cast 3 leaves a two-needle escape lane
+PASS Thousand Needles cast 4 leaves a two-needle escape lane
+PASS Thousand Needles cast 5 leaves a two-needle escape lane
+PASS Thousand Needles cast 6 leaves a two-needle escape lane
+PASS Thousand Needles cast 7 leaves a two-needle escape lane
+PASS Thousand Needles cast 8 leaves a two-needle escape lane
+PASS Thousand Needles cast 9 leaves a two-needle escape lane
+PASS Frenzied Zabuza drops his guard and takes about 25% more damage
+PASS A projectile is spawned with half (vanilla doubles it on the player), never above the table's number
+PASS Caps: 15% of the baseline for normal attacks and hazards, 30% for big ones
+PASS A phase's tempo shortens a big attack's windup, never below 24 ticks
+PASS Every attack has one row
+PASS Brothers.Contact: 15 within the Normal cap of 15 (baseline 100)
+PASS Brothers.Swipe: 27 within the Big cap of 30 (baseline 100)
+PASS Brothers.Swipe: a big attack warned 24 ticks ahead (>= 24)
+PASS Brothers.Chain: 22 within the Big cap of 30 (baseline 100)
+PASS Brothers.Chain: a big attack warned 36 ticks ahead (>= 24)
+PASS Ronin.Contact: 14 within the Normal cap of 15 (baseline 100)
+PASS Ronin.Slash: 15 within the Normal cap of 15 (baseline 100)
+PASS RogueGenin.Contact: 10 within the Normal cap of 15 (baseline 100)
+PASS RogueGenin.Kunai: 12 within the Normal cap of 15 (baseline 100)
+PASS RogueGenin.Stab: 15 within the Normal cap of 15 (baseline 100)
+PASS WaterClone.Contact: 22 within the Normal cap of 30 (baseline 200)
+PASS WaterClone.Slash: 26 within the Big cap of 60 (baseline 200)
+PASS WaterClone.Slash: a big attack warned 30 ticks ahead (>= 24)
+PASS MirrorCage.Boundary: 10 within the Normal cap of 30 (baseline 200)
+PASS Zabuza.Slash: 48 within the Big cap of 60 (baseline 200)
+PASS Zabuza.Slash: a big attack warned 26 ticks ahead (>= 24)
+PASS Zabuza.WaterWave: 40 within the Big cap of 60 (baseline 200)
+PASS Zabuza.WaterWave: a big attack warned 44 ticks ahead (>= 24)
+PASS Zabuza.WaterDragon: 60 within the Big cap of 60 (baseline 200)
+PASS Zabuza.WaterDragon: a big attack warned 62 ticks ahead (>= 24)
+PASS Zabuza.NeedleFan: 28 within the Big cap of 60 (baseline 200)
+PASS Zabuza.NeedleFan: a big attack warned 34 ticks ahead (>= 24)
+PASS Zabuza.NeedleRain: 28 within the Big cap of 60 (baseline 200)
+PASS Zabuza.NeedleRain: a big attack warned 24 ticks ahead (>= 24)
+PASS Zabuza.NeedleSpiral: 26 within the Big cap of 60 (baseline 200)
+PASS Zabuza.NeedleSpiral: a big attack warned 32 ticks ahead (>= 24)
+PASS Zabuza.Dash: 50 within the Big cap of 60 (baseline 200)
+PASS Zabuza.Dash: a big attack warned 24 ticks ahead (>= 24)
+PASS Zabuza.DemonDash: 60 within the Big cap of 60 (baseline 200)
+PASS Zabuza.DemonDash: a big attack warned 24 ticks ahead (>= 24)
+PASS Zabuza.ThrownSword: 56 within the Big cap of 60 (baseline 200)
+PASS Zabuza.ThrownSword: a big attack warned 34 ticks ahead (>= 24)
+PASS Zabuza.KunaiDash: 20 within the Normal cap of 30 (baseline 200)
+PASS Haku.Needle: 28 within the Big cap of 60 (baseline 200)
+PASS Haku.Needle: a big attack warned 36 ticks ahead (>= 24)
+PASS Haku.MirrorDash: 42 within the Big cap of 60 (baseline 200)
+PASS Haku.MirrorDash: a big attack warned 26 ticks ahead (>= 24)
+PASS Haku.CageFan: 26 within the Normal cap of 30 (baseline 200)
+PASS Haku.FrenzyFan: 28 within the Normal cap of 30 (baseline 200)
+PASS Haku.ExposedNeedle: 24 within the Normal cap of 30 (baseline 200)
+PASS Haku.ThousandNeedles: 38 within the Big cap of 60 (baseline 200)
+PASS Haku.ThousandNeedles: a big attack warned 48 ticks ahead (>= 24)
+PASS Genin.CandidateContact: 26 within the Normal cap of 45 (baseline 300)
+PASS Genin.CandidateStrike: 40 within the Normal cap of 45 (baseline 300)
+PASS Genin.CandidateShuriken: 16 within the Normal cap of 45 (baseline 300)
+PASS Genin.RainContact: 30 within the Normal cap of 45 (baseline 300)
+PASS Genin.RainSenbon: 20 within the Normal cap of 45 (baseline 300)
+PASS Genin.RainUmbrella: 20 within the Big cap of 90 (baseline 300)
+PASS Genin.RainUmbrella: a big attack warned 40 ticks ahead (>= 24)
+PASS Dosu.Drill: 60 within the Big cap of 90 (baseline 300)
+PASS Dosu.Drill: a big attack warned 24 ticks ahead (>= 24)
+PASS Dosu.Wave: 44 within the Big cap of 90 (baseline 300)
+PASS Dosu.Wave: a big attack warned 28 ticks ahead (>= 24)
+PASS Dosu.Quake: 48 within the Big cap of 90 (baseline 300)
+PASS Dosu.Quake: a big attack warned 28 ticks ahead (>= 24)
+PASS Dosu.Ring: 40 within the Big cap of 90 (baseline 300)
+PASS Dosu.Ring: a big attack warned 42 ticks ahead (>= 24)
+PASS Dosu.Leap: 68 within the Big cap of 90 (baseline 300)
+PASS Dosu.Leap: a big attack warned 24 ticks ahead (>= 24)
+PASS Orochimaru.Barrage: 30 within the Normal cap of 45 (baseline 300)
+PASS Orochimaru.GiantSnake: 90 within the Big cap of 90 (baseline 300)
+PASS Orochimaru.GiantSnake: a big attack warned 90 ticks ahead (>= 24)
+PASS Orochimaru.SnakeHands: 80 within the Big cap of 90 (baseline 300)
+PASS Orochimaru.SnakeHands: a big attack warned 24 ticks ahead (>= 24)
+PASS Orochimaru.WindBlast: 50 within the Big cap of 90 (baseline 300)
+PASS Orochimaru.WindBlast: a big attack warned 27 ticks ahead (>= 24)
+PASS Orochimaru.DashBite: 80 within the Big cap of 90 (baseline 300)
+PASS Orochimaru.DashBite: a big attack warned 24 ticks ahead (>= 24)
+PASS Orochimaru.NeckBite: 90 within the Big cap of 90 (baseline 300)
+PASS Orochimaru.NeckBite: a big attack warned 24 ticks ahead (>= 24)
+PASS Orochimaru.FiveSeal: 58 within the Big cap of 90 (baseline 300)
+PASS Orochimaru.FiveSeal: a big attack warned 24 ticks ahead (>= 24)
+PASS Orochimaru.Swarm: 40 within the Normal cap of 45 (baseline 300)
+PASS Orochimaru.Venom: 40 within the Big cap of 90 (baseline 300)
+PASS Orochimaru.Venom: a big attack warned 24 ticks ahead (>= 24)
+PASS Orochimaru.VenomPool: 20 within the Lingering cap of 45 (baseline 300)
+PASS Orochimaru.SnakeRain: 45 within the Big cap of 90 (baseline 300)
+PASS Orochimaru.SnakeRain: a big attack warned 65 ticks ahead (>= 24)
+PASS Orochimaru.Kusanagi: 90 within the Big cap of 90 (baseline 300)
+PASS Orochimaru.Kusanagi: a big attack warned 34 ticks ahead (>= 24)
+PASS Neji.Palm: 50 within the Normal cap of 60 (baseline 400)
+PASS Neji.Rotation: 52 within the Big cap of 120 (baseline 400)
+PASS Neji.Rotation: a big attack warned 24 ticks ahead (>= 24)
+PASS Neji.SixtyFour: 120 within the Big cap of 120 (baseline 400)
+PASS Neji.SixtyFour: a big attack warned 70 ticks ahead (>= 24)
+PASS Gaara.Pellet: 36 within the Normal cap of 60 (baseline 400)
+PASS Gaara.Quicksand: 64 within the Big cap of 120 (baseline 400)
+PASS Gaara.Quicksand: a big attack warned 50 ticks ahead (>= 24)
+PASS Gaara.Shuriken: 44 within the Big cap of 120 (baseline 400)
+PASS Gaara.Shuriken: a big attack warned 24 ticks ahead (>= 24)
+PASS Gaara.Burial: 120 within the Big cap of 120 (baseline 400)
+PASS Gaara.Burial: a big attack warned 40 ticks ahead (>= 24)
+PASS Gaara.SandWave: 68 within the Big cap of 120 (baseline 400)
+PASS Gaara.SandWave: a big attack warned 27 ticks ahead (>= 24)
+PASS Gaara.SandArm: 88 within the Big cap of 120 (baseline 400)
+PASS Gaara.SandArm: a big attack warned 24 ticks ahead (>= 24)
+PASS Gaara.AirBullet: 70 within the Big cap of 120 (baseline 400)
+PASS Gaara.AirBullet: a big attack warned 24 ticks ahead (>= 24)
+PASS A strike that appears beside the player shows its swing for at least 15 ticks
+PASS Baselines follow the story gates: 100, 200 for Zabuza, 300 for the forest, 400 for the finals
+PASS Orochimaru still eases his damage for a player not yet strong enough
+PASS A rogue genin substitutes a hit worth a tenth of its life
+PASS A hit of a third or more (a stealth throw) breaks through, and it substitutes only once
+PASS Ronin are common at night, rogue genin rare
+PASS Iruka never hands out the same mission twice running, and every D-rank mission comes up
+PASS A D-rank mission pays 30 to 60 silver and 1 to 3 tokens (missions can be taken one after another)
+  Determining projects to restore...
+  All projects are up-to-date for restore.
+/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/ShinobiPrototype/Common/Systems/KonohaDump.cs(82,49): warning ChangeMagicNumberToID: 魔法数字 0 应替换为 WallID.None 以提高可读性 (https://github.com/tModLoader/tModLoader/wiki/tModCodeAssist#changemagicnumbertoid) [/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/ShinobiPrototype/ShinobiPrototype.csproj]
+/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/ShinobiPrototype/Common/Systems/KonohaDump.cs(87,35): warning ChangeMagicNumberToID: 魔法数字 0 应替换为 WallID.None 以提高可读性 (https://github.com/tModLoader/tModLoader/wiki/tModCodeAssist#changemagicnumbertoid) [/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/ShinobiPrototype/ShinobiPrototype.csproj]
+  ShinobiPrototype -> /Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/ShinobiPrototype/bin/Debug/net8.0/ShinobiPrototype.dll
+  Reading properties: ShinobiPrototype
+  Building: ShinobiPrototype
+  Edit and continue path: /Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/ShinobiPrototype/bin/Debug/net8.0/ShinobiPrototype.pdb
+  Loading pre-compiled ShinobiPrototype.dll from ShinobiPrototype.dll
+  Packaging: ShinobiPrototype
+  2026-10-05 21:11:49.460 dotnet[1682:32622328] WARN: Image loading failed: unknown image type
+
+Build succeeded.
+
+/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/ShinobiPrototype/Common/Systems/KonohaDump.cs(82,49): warning ChangeMagicNumberToID: 魔法数字 0 应替换为 WallID.None 以提高可读性 (https://github.com/tModLoader/tModLoader/wiki/tModCodeAssist#changemagicnumbertoid) [/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/ShinobiPrototype/ShinobiPrototype.csproj]
+/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/ShinobiPrototype/Common/Systems/KonohaDump.cs(87,35): warning ChangeMagicNumberToID: 魔法数字 0 应替换为 WallID.None 以提高可读性 (https://github.com/tModLoader/tModLoader/wiki/tModCodeAssist#changemagicnumbertoid) [/Users/tuzhechen/Documents/ChatGPT/泰拉瑞亚火影模组/ShinobiPrototype/ShinobiPrototype.csproj]
+    2 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:09.64

@@ -5,7 +5,7 @@
 ## 项目与资料优先级
 
 - 本项目是 Terraria tModLoader 火影模组。唯一源码为本仓库的 `ShinobiPrototype/`；Mac 的 `ModSources/ShinobiPrototype` 是指向它的符号链接。
-- 当前波之国双首领战以 `specs/M9_波之国双首领战.spec.md` 为准。`README.md`、早期 M1/M2 验收文档及 `docs/archive/` 下的旧文档有历史内容，发现冲突时先核对现有代码与较新的规格，再向用户说明。
+- 波之国双首领战新版设计以 `specs/M11_波之国双首领战重设计.spec.md` 为准（2026-10-05 定稿，待实现）；冲突处覆盖 M9/M10，未改部分继续继承。当前实现与新版要求须分开核对，验收见 `tests/M11_波之国双首领战重设计.acceptance.md`。`README.md`、早期 M1/M2 验收文档及 `docs/archive/` 下的旧文档有历史内容，发现冲突时先核对现有代码与较新的规格，再向用户说明。
 - Mac 环境、构建方式和未完成的实机验收见 `DEVELOPMENT_MAC.md`。不要把构建通过写成游戏内验收通过。
 - 长期设计与验收要求放 `specs/`、`tests/`；当前工作进度放 `WORK_HANDOFF.md`。Git 记录已提交的文件变化，交接文档帮助恢复未完成的任务上下文。
 
@@ -22,6 +22,7 @@
 - 在同一工作树切换 Claude/Codex 时，文件和未提交改动直接共享；聊天记忆不会共享。一个时刻只让一个助手修改同一文件或同一功能区域。
 - 修改前检查相关代码和规格。完成后运行与改动相关的测试；需要完整模组验证时运行 `./scripts/verify-mac.sh`。记录实际执行结果，未运行的检查明确写“未运行”。
 - 不要把 `bin/`、`obj/`、`.tmod` 或本地 `.art-bridge/` 状态当作需提交的源码。Git 提交只包含本次任务相关文件；交接前尽量形成可构建的提交，未完成的改动则保持原样并写明范围。
+- 玩家能看到的文字（对白、提示、手册、按钮、告示牌）一律写进 `ShinobiPrototype/Localization/` 的中英两个文件（`Text` 下用 `Loc.Get("区域.名字", 参数)` 读取），不要在代码里写死中文或英文；两份文件的键和 `{0}` 占位符必须一致。`./scripts/verify-mac.sh` 会运行 `scripts/check_text.py` 检查。英文字体没有汉字，也缺少 → 和 • 等符号。
 - 美术请求和交付流程见 `art/AGENT_HANDOFF.md`。需要位图素材时，由当前开发助手写 `art/requests/<请求ID>.md` 并运行 `python3 scripts/art_bridge.py submit <请求ID>`；后台 Codex 只写对应的 `art/deliveries/<请求ID>/`，当前开发助手负责接入、构建和游戏内检查。无需用户转发。
 
 ## 交接给另一位助手

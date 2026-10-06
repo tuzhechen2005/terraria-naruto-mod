@@ -1,0 +1,21 @@
+# 素材请求：kakashi-direct-pixel-anim-v1
+
+- 状态：已交付；10 帧通过，03/04/05 走路与 11 投掷由 v2 重做
+- 提出者及提交号：Claude Code，基于 `7985748`。用户 2026-10-05 选定卡卡西样张的 62 高版本（“选第一个，那个眼白比较多的那一个”），接着出全套动作，做法与伊鲁卡 `iruka-direct-pixel-anim-v1` 相同。
+- **先读 `skills/terraria-npc-pixel-art/SKILL.md`，并参考 `art/deliveries/iruka-direct-pixel-anim-v1/`（`DELIVERY.md`、`export_frames.py`，以及末尾“Claude 修正”一节）。**
+- 资产类型：城镇 NPC 全套动作帧 + 水牢被困两帧
+- **唯一外观基准（必须作为图像参考）**：`art/deliveries/kakashi-direct-pixel-v1/Kakashi_Idle_h62_Right.png`（80×80，总高 62，脚底最后一行 y=75，用户认可）与它的生成源 `art/deliveries/kakashi-direct-pixel-v1/source/kakashi-generated-edited.png`。导出比例与相位见 `Kakashi_Idle_h62_manifest.json`（scale 0.06072…，相位 0.8/0.5；默认相位 0.5/0.5 会丢眼白和瞳孔）。每帧必须是同一个人：刺发、斜戴护额、**这一只眼白和瞳孔都看得见的懒眼**、面罩、马甲、配色。
+- 动作、朝向与帧数（面朝右，NpcSheet 顺序）：
+  - `Kakashi_00_Idle`：就是基准帧，像素不变，只整体平移让马甲中线在 x=40。
+  - `Kakashi_01_Walk`～`06_Walk`：慢悠悠、双手插兜或一手拿橙色小书的散步，6 帧循环，首尾相接，两腿交替。
+  - `Kakashi_07_Jump`：跳起，膝盖收起，脚离地。
+  - `Kakashi_08_Sit`：坐（椅子不画），翻着橙色小书；脚底仍在 y=75。
+  - `Kakashi_09_Throw`～`11_Throw`：投苦无：举臂、甩出（手臂前伸）、收手；苦无不画。
+  - `Kakashi_Trapped_0`、`Kakashi_Trapped_1`：被再不斩水牢困住：蜷身、一手推向前（深蓝手套、张开手指推水球壁）、腿半屈、头发和护额布条向上飘；两帧头相同，手、腿、布条略有变化。**人物居中在 (40,40)**，不贴地，不画水球。
+- 生成与导出：内置 image_gen，以基准源图为参考生成姿势条；**所有帧用基准帧同一比例**；横向用马甲中线对齐 x=40；地面帧脚底 y=75，跳跃离地 4～8 像素。头朝向不变的帧，把基准帧的头部像素原样贴上。
+- **伊鲁卡出过的问题，这次必须避免**：伊鲁卡只贴了下巴以上，下面两行脖子取自生成图，结果走路帧缺脖子、跳和投掷帧脸下又多出一块生成的下巴，用户看出“头和身体分离”。卡卡西贴的头部要**一直包含到面罩下缘接上马甲领口为止**（面罩盖住脖子），并清掉生成图里头部范围内残留的发、肤、面罩像素；但不能误删举起的手臂或伸出去的手。交付 `necks_8x.png`：每帧头到肩部放大 8 倍，Codex 自己逐帧确认面罩下缘接在领口上、没有空隙、没有第二个下巴。
+- 统一画布 80×80，面朝右，透明背景，alpha 只有 0/255，透明像素 RGB 为 0。
+- 交付（`art/deliveries/kakashi-direct-pixel-anim-v1/`）：`frames/` 下 14 张最终小帧（`Kakashi_00_Idle.png`…`Kakashi_11_Throw.png`、`Kakashi_Trapped_0.png`、`Kakashi_Trapped_1.png`）；`source/` 生成原图与提示词；导出脚本；`strip_1x_3x.png`（明暗背景）、`walk.gif`、`heads_6x.png`、`necks_8x.png`；`DELIVERY.md`（来源、比例、相位、贴头矩形、检查结果、没做到的）。
+- 需要避免：脸和基准不同；两只眼都露出；眼白丢失；头和身体分离；走路左右抖；每帧被拉成同样高度；半透明晕边。
+- 验收方式：Claude 拼 `Kakashi.png`（12 帧）+ `Kakashi_Head.png`，水牢两帧单独放，全部 1 倍显示，在游戏里检查。
+- 交付后接入提交号：待填

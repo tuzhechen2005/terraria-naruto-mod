@@ -39,8 +39,8 @@ public abstract class ExamProctor : ModNPC
         NPC.lifeMax = 250;
         NPC.knockBackResist = 0f;
         NPC.noGravity = true;
-        // Their own art is drawn at its final size (64-pixel frames, shown at 1x); Kakashi's stand-in sheet is scaled.
-        NPC.scale = OwnArt ? 1f : NpcSheet.ScaleFor(NpcSheet.KakashiBody);
+        // Their own art is drawn at its final size (64-pixel frames, shown at 1x); so is Kakashi's stand-in sheet.
+        NPC.scale = OwnArt ? 1f : NpcSheet.KakashiScale;
     }
 
     public override bool CanChat() => true;
@@ -83,29 +83,23 @@ public sealed class Anko : ExamProctor
         if (Exam.OrochimaruDone && !Exam.AnkoHeardOrochimaru)
         {
             Exam.AnkoHeardOrochimaru = true;
-            return "……你说什么？长头发，蛇一样的眼睛？\n\n" +
-                   "（她的手不自觉地按住了脖子后面）……那家伙的事，交给我。你只管往塔走——那不是你能应付的对手。";
+            return Loc.Get("Anko.HeardOrochimaru");
         }
         return Chat();
     }
 
     private static string Chat() => Exam.Stage switch
     {
-        ExamStage.ForestGate =>
-            "哟，又来一个送死的。我是第二试的监考官，御手洗红豆。\n\n" +
-            "规矩简单：一人一卷，天之卷或地之卷。从别人手里抢到另一卷，两卷一起带进森林最深处的中央塔。" +
-            "不限时——不过在这片林子里待得越久，就越容易变成虫子的饭。",
-        ExamStage.ForestHunt =>
-            "还在这儿磨蹭？中央塔在林子最深处。……别让我进去给你收尸啊。",
-        < ExamStage.ForestGate =>
-            "第二试的考场。笔试都没过的小鬼，别往里凑。",
-        _ => "居然活着出来了？……呵，有点意思。",
+        ExamStage.ForestGate => Loc.Get("Anko.Rules"),
+        ExamStage.ForestHunt => Loc.Get("Anko.Hurry"),
+        < ExamStage.ForestGate => Loc.Get("Anko.NotYet"),
+        _ => Loc.Get("Anko.Survived"),
     };
 
     public override void SetChatButtons(ref string button, ref string button2)
     {
         if (Exam.Stage == ExamStage.ForestGate)
-            button = "领取卷轴";
+            button = Loc.Get("Anko.ButtonScroll");
     }
 
     public override void OnChatButtonClicked(bool firstButton, ref string shopName)
@@ -113,8 +107,7 @@ public sealed class Anko : ExamProctor
         if (!firstButton || Exam.Stage != ExamStage.ForestGate)
             return;
         Exam.IssueScroll();
-        string mine = ChuninExamPlayer.ScrollName(Exam.Issued);
-        Main.npcChatText = $"（甩过来一个卷轴）{mine}，拿好。\n\n……路上可别偷看里面写了什么哦？会死人的。";
+        Main.npcChatText = Loc.Get("Anko.Issue", ChuninExamPlayer.ScrollName(Exam.Issued));
     }
 }
 
@@ -125,17 +118,15 @@ public sealed class Hayate : ExamProctor
 
     public override string GetChat() => Exam.Stage switch
     {
-        ExamStage.Prelims =>
-            "（咳）……我是预选赛的主考官，月光疾风。\n\n" +
-            "通过第二试的人太多了，所以要在这里先比一场。一对一，打到一方倒下为止。……准备好了，就跟我说。",
-        > ExamStage.Prelims => "（咳）……恭喜。正式赛在一个月后，好好准备。",
-        _ => "（咳）……这里是第二试的终点。带齐天、地两卷再来。",
+        ExamStage.Prelims => Loc.Get("Hayate.Prelims"),
+        > ExamStage.Prelims => Loc.Get("Hayate.Passed"),
+        _ => Loc.Get("Hayate.NotYet"),
     };
 
     public override void SetChatButtons(ref string button, ref string button2)
     {
         if (Exam.Stage == ExamStage.Prelims && !ExamBoutSystem.BoutUnderway)
-            button = "开始预选赛";
+            button = Loc.Get("Hayate.ButtonStart");
     }
 
     public override void OnChatButtonClicked(bool firstButton, ref string shopName)

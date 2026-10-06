@@ -38,13 +38,13 @@ public sealed class JutsuStatusPlayer : ModPlayer
     public void Bind(int ticks)
     {
         BindTicks = System.Math.Max(BindTicks, ticks);
-        CombatText.NewText(Player.getRect(), new Color(230, 200, 130), "沙缚柩！");
+        CombatText.NewText(Player.getRect(), new Color(230, 200, 130), Loc.Get("Status.SandCoffin"));
     }
 
     public void Fear(int ticks)
     {
         FearTicks = System.Math.Max(FearTicks, ticks);
-        CombatText.NewText(Player.getRect(), new Color(200, 60, 80), "杀气……动不了！");
+        CombatText.NewText(Player.getRect(), new Color(200, 60, 80), Loc.Get("Status.KillingIntent"));
     }
 
     public void Ring(int ticks)
@@ -58,14 +58,14 @@ public sealed class JutsuStatusPlayer : ModPlayer
         Seals = ExamBossRules.AddSeal(Seals);
         sealTicks = ExamBossRules.SealTicks;
         CombatText.NewText(Player.getRect(), new Color(170, 200, 255),
-            SubstitutionSealed ? "点穴——查克拉被封住了！" : $"点穴 ×{Seals}");
+            SubstitutionSealed ? Loc.Get("Status.PointsSealed") : Loc.Get("Status.PointSealed", Seals));
     }
 
     // Orochimaru's Five Elements Seal.
     public void SealRegen(int ticks)
     {
         RegenSealTicks = System.Math.Max(RegenSealTicks, ticks);
-        CombatText.NewText(Player.getRect(), new Color(190, 150, 230), "五行封印——查克拉停住了！");
+        CombatText.NewText(Player.getRect(), new Color(190, 150, 230), Loc.Get("Status.FiveSeal"));
     }
 
     // Substitution got the player out.
