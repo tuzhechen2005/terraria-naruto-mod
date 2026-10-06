@@ -29,6 +29,19 @@ public sealed class ShinobiClientConfig : ModConfig
     [Slider]
     public int SeaFogStrength;
 
+    // Decoration only; attack silhouettes and warnings remain visible at zero.
+    [Range(0, 100)]
+    [Increment(10)]
+    [DefaultValue(100)]
+    [Slider]
+    public int WaveVfxStrength;
+
+    [DefaultValue(true)]
+    public bool WaveScreenShake;
+
+    [DefaultValue(true)]
+    public bool WaveBackgroundDim;
+
     // Naruto region backgrounds (the Leaf, Wave Country, the Sand, ...) in place of vanilla's surface backgrounds.
     [DefaultValue(true)]
     public bool RegionBackgrounds;

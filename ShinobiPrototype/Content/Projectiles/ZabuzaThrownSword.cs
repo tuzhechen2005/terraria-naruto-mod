@@ -6,6 +6,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common;
+using ShinobiPrototype.Common.Systems;
 using ShinobiPrototype.Content.NPCs;
 
 namespace ShinobiPrototype.Content.Projectiles;
@@ -58,6 +59,8 @@ public sealed class ZabuzaThrownSword : ModProjectile
             Vector2 toOwner = owner.Center - Projectile.Center;
             if (toOwner.Length() < 40f)
             {
+                WaveVfxBursts.Spawn(WaveVfxBursts.Kind.ChakraCatch, owner.Center, 115f);
+                WaveVfxAudio.Play(WaveVfxAudio.Cue.ChakraCatch, owner.Center);
                 Projectile.Kill();
                 return;
             }
@@ -83,6 +86,7 @@ public sealed class ZabuzaThrownSword : ModProjectile
 
     public override bool PreDraw(ref Color lightColor)
     {
+        WaveVfx.SwordTrail(Main.spriteBatch, Projectile.Center, Projectile.rotation);
         string art = "ShinobiPrototype/Content/Projectiles/ZabuzaThrownSword";
         Texture2D texture = ModContent.HasAsset(art)
             ? ModContent.Request<Texture2D>(art).Value

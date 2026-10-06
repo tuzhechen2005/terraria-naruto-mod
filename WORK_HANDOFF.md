@@ -1,5 +1,25 @@
 # 当前工作交接
 
+## 2026-10-06 Codex：PR合并前审查与修复
+
+- 用户授权审查两个PR，合格则批准并合并。PR1已以merge commit合入main（6287c067740383be71cbbd7b56834152c7f9b3c8）；其CI通过，选定卡卡西v5/伊鲁卡游戏图与当前开发图字节一致。PR2已从PR1分支改为main，独立审查工作树合入最新main后检查，无冲突，Wiki发布文件保留。
+- PR2旧头5aa94a3仍带已否定鬼影与已知绘制问题。补回13f2516的般若运行时恢复、146f450的Wave私有预乘缓存、0db2f38的两处MagicPixel源矩形修复；预乘算式直接留在缓存转换内，不引入后续SlashSweepRules/斩击逻辑。更新catalog/安装脚本的混合说明、交付与美术交接，素材未重画，不改判定/玩法。
+- 文字检查0问题、14组规则及完整模组编译通过，0错误、2条旧KonohaDump警告；BuildMod=false，未打包或改变当前游戏包。16张软RGBA/透明RGB与预乘数值范围通过；diff检查通过。验证日志/tmp/shinobi-two-pr-verification.log，文字检查hjson依赖仅放/tmp/shinobi-two-pr-review-deps。
+- 当前账号tuzhechen2005为PR作者，GitHub拒绝自我Approve；PR1已留下审查评论，按用户授权合并。PR2本修复提交推送后再核对最终CI、留言并合并，不能把旧提交CI当作新提交已通过。
+- 后续斩击/水浪实验、新skill与CLAUDE入口仍在codex/vfx-animation-study，不在本次两PR范围。完整M11、GPU美术/联机/性能未验收，助手未启动游戏，无后台美术请求。
+
+
+## 2026-10-05 Codex：两个PR与M11特效（当前）
+
+- 用户要求卡卡西回到上一版；游戏和预览已恢复v5修眼后的v3/v4步态。v6只存档，不能重新接入。首份PR： https://github.com/tuzhechen2005/terraria-naruto-mod/pull/1 ，分支codex/npc-art-and-wave-boss-design，提交f7c0159，包含NPC交付/skill/M11定稿及此前本地未推送的72个提交；未合并。
+- 当前分支codex/wave-boss-vfx，从f7c0159分出。只制作M11已有特效：三桥接请求wave-water-vfx-v1、wave-ice-vfx-v1、wave-demon-vfx-v1均delivered，无后台任务。
+- 当前交付入口 `art/deliveries/wave-vfx-review-v1/DELIVERY.md`。16张RGBA已装入 `ShinobiPrototype/Assets/Vfx/Wave/`；源图/提示词/短循环在三份交付，原生明暗图/组合GIF/APNG/参数/hash在review目录。
+- 渲染接口 `WaveVfx.cs`，缓存预加载扩展；客户端余波 `WaveVfxBursts.cs`上限64/24帧清理，短震8帧3px/压暗18帧20%；音效 `WaveVfxAudio.cs`仅原版SoundID。客户端装饰/镜头设置中英齐全。
+- 现有刀光、千本亮尖/冰痕/消散、移动残像、镜框/亮镜剪影/裂纹/碎裂/暴走寒光、鬼影/压下、旋转刀迹/接刀环、水遁聚势/水花已接入；水龙释放/破阵/暴走有镜头节点。没有修改伤害、生命、判定、Boss体型、追击、奖励或地形。
+- 完整水龙头身、锁线、瞬身落点、阵列及合击接口/素材已备，需M11同步战斗逻辑用实际路径/阶段调用。当前旧78×32水龙判定未硬套巨大龙身。不能把本轮特效当完整M11重设计实现。
+- `install_wave_vfx.py`与`build_wave_vfx_preview.py`可复现检查/安装/预览；16张机械检查、三份导出重跑与游戏资源字节一致、引用/24帧动画检查通过。最终verify-mac通过：文本0、14组规则通过、构建0错误；两条旧KonohaDump和基线未知图片类型提示仍在，见review/verify-mac.log。游戏/联机/性能实测未运行，组合图不是实机截图。
+- 第二PR已创建： https://github.com/tuzhechen2005/terraria-naruto-mod/pull/2 ，特效实现提交aa5abb9，基底为第一PR分支，让审查只包含特效增量；先合并PR1，再将PR2基底改为main进行合并。本轮只开PR、未合并。当前工作树提交后保持干净，未来工作不要混入Boss逻辑重设计。
+
 本文件供 Claude Code 与 Codex 在同一项目目录切换时恢复任务状态。NPC 最新进展见下方 **卡卡西走路与眼部修复、新NPC第一批样张**；Boss 重设计已整理为 **M11 定稿文档，待实施**。后面保留此前开发快照。接手时还要看用户最新消息、实际文件和 Git 状态；长期规则见 `AGENTS.md`，Mac 环境见 `DEVELOPMENT_MAC.md`。
 
 ## 2026-10-05 Codex：卡卡西走路连续性再次修复（已接入，未实机）

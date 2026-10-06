@@ -4,6 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common;
+using ShinobiPrototype.Common.Systems;
 
 namespace ShinobiPrototype.Content.Projectiles;
 
@@ -37,6 +38,8 @@ public sealed class HakuNeedle : ModProjectile
         Rectangle needle = new(0, 0, texture.Width, texture.Height);
         Vector2 center = Projectile.Center - Main.screenPosition;
         Vector2 origin = new Vector2(needle.Width, needle.Height) * 0.5f;
+        WaveVfx.Needle(Main.spriteBatch, Projectile.Center + Projectile.rotation.ToRotationVector2() *
+            Projectile.width * 0.5f, Projectile.rotation);
         Main.spriteBatch.Draw(texture, center + new Vector2(2f, 2f), needle,
             new Color(25, 90, 170, 210), Projectile.rotation, origin,
             1f, SpriteEffects.None, 0f);
@@ -45,4 +48,7 @@ public sealed class HakuNeedle : ModProjectile
             1f, SpriteEffects.None, 0f);
         return false;
     }
+
+    public override void OnKill(int timeLeft) => WaveVfxBursts.Spawn(WaveVfxBursts.Kind.Frost,
+        Projectile.Center, 34f);
 }

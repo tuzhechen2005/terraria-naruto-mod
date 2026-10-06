@@ -4,6 +4,7 @@ using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 using ShinobiPrototype.Common;
+using ShinobiPrototype.Common.Systems;
 
 namespace ShinobiPrototype.Content.Projectiles;
 
@@ -48,6 +49,7 @@ public sealed class ZabuzaWaterDragon : ModProjectile
         if (Main.netMode == NetmodeID.Server)
             return;
         SoundEngine.PlaySound(SoundID.Splash, Projectile.Center);
+        WaveVfxBursts.Spawn(WaveVfxBursts.Kind.Splash, Projectile.Center, 160f);
         for (int i = 0; i < 12; i++)
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Water);
     }

@@ -96,7 +96,8 @@ public sealed class WaveOverlaySystem : ModSystem
 
     // Drawn by SeaMistOverlay with the sea mist (same veil, sky-lit, over the sea as well).
     public static float BossMistAlpha => 0.42f * fog;
-    public static float FlashAlpha => 0.5f * flash;
+    public static float FlashAlpha => 0.08f * flash *
+        Math.Clamp(ShinobiClientConfig.Instance.WaveVfxStrength, 0, 100) / 100f;
 
     public override void PostUpdateEverything()
     {
@@ -114,7 +115,7 @@ public sealed class WaveOverlaySystem : ModSystem
                 target = 0.3f;
         }
         fog = MathHelper.Lerp(fog, target, 0.05f);
-        flash = Math.Max(0f, flash - 1f / 45f);
+        flash = Math.Max(0f, flash - 1f / 18f);
     }
 
     public override void OnWorldUnload()

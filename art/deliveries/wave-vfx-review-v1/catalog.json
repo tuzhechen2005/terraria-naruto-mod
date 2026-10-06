@@ -1,0 +1,393 @@
+{
+  "spec": "specs/M11_波之国双首领战重设计.spec.md#9",
+  "runtime_folder": "Assets/Vfx/Wave",
+  "blend": "straight RGBA source; private runtime premultiplied copy for AlphaBlend",
+  "textures": [
+    {
+      "canvas": [
+        192,
+        128
+      ],
+      "alpha_bbox": [
+        27,
+        6,
+        164,
+        122
+      ],
+      "semi_transparent_pixels": 11830,
+      "sha256": "16401d44910c249347c72adf7f6d7256e26e5f13429a40694b10dae677902317",
+      "name": "WaterDragonHead",
+      "delivery": "wave-water-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": true,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        96.0,
+        64.0
+      ]
+    },
+    {
+      "canvas": [
+        256,
+        96
+      ],
+      "alpha_bbox": [
+        50,
+        6,
+        205,
+        90
+      ],
+      "semi_transparent_pixels": 10987,
+      "sha256": "9474de39b0de7164cb41ad40e59b3fca0b300275b0a90004c893419a040feeec",
+      "name": "WaterDragonBody",
+      "delivery": "wave-water-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": true,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        128.0,
+        48.0
+      ]
+    },
+    {
+      "canvas": [
+        192,
+        192
+      ],
+      "alpha_bbox": [
+        14,
+        6,
+        177,
+        186
+      ],
+      "semi_transparent_pixels": 24811,
+      "sha256": "fc5fec7982a9885eb589deafb8ad1bda6290383815b9536d1d990a3d6b4cd662",
+      "name": "WaterGather",
+      "delivery": "wave-water-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        96.0,
+        96.0
+      ]
+    },
+    {
+      "canvas": [
+        256,
+        192
+      ],
+      "alpha_bbox": [
+        20,
+        6,
+        236,
+        186
+      ],
+      "semi_transparent_pixels": 30098,
+      "sha256": "71d5fe4b53242b61bcfec85dd88246b2ef747ab3be2a1d7eb00e4bd786892d39",
+      "name": "WaterSlash",
+      "delivery": "wave-water-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        128.0,
+        96.0
+      ]
+    },
+    {
+      "canvas": [
+        256,
+        128
+      ],
+      "alpha_bbox": [
+        27,
+        6,
+        229,
+        122
+      ],
+      "semi_transparent_pixels": 17387,
+      "sha256": "606e0c5c18522e7309450c2deb930f2e274e7a332994e7ecde8989f059d0b05f",
+      "name": "WaterSplash",
+      "delivery": "wave-water-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        128.0,
+        64.0
+      ]
+    },
+    {
+      "canvas": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        6,
+        7,
+        122,
+        120
+      ],
+      "semi_transparent_pixels": 11589,
+      "sha256": "d752bec2627b6d72dc18e7ce5c78e8c8d6a710dc108a9bb550711de519716664",
+      "name": "MistPuff",
+      "delivery": "wave-water-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        64.0,
+        64.0
+      ]
+    },
+    {
+      "canvas": [
+        128,
+        192
+      ],
+      "alpha_bbox": [
+        19,
+        6,
+        108,
+        186
+      ],
+      "semi_transparent_pixels": 6082,
+      "sha256": "17260db679a0f060a6271754376987f680f9bc74f075ea00da589bdd52c8fb2c",
+      "name": "IceMirror",
+      "delivery": "wave-ice-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        64.0,
+        96.0
+      ]
+    },
+    {
+      "canvas": [
+        128,
+        192
+      ],
+      "alpha_bbox": [
+        24,
+        18,
+        104,
+        173
+      ],
+      "semi_transparent_pixels": 3727,
+      "sha256": "d1c2ac8d7b4ced6ab75b4473ade9e865d4f810269c7d9e6747673aa9ba230e47",
+      "name": "MirrorCracks",
+      "delivery": "wave-ice-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        64.0,
+        96.0
+      ]
+    },
+    {
+      "canvas": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        14,
+        8,
+        113,
+        120
+      ],
+      "semi_transparent_pixels": 3672,
+      "sha256": "d7938fffdda3152d71be004ef3ba5c1345e27ff81db39cba9690834969af0102",
+      "name": "MirrorShards",
+      "delivery": "wave-ice-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        64.0,
+        64.0
+      ]
+    },
+    {
+      "canvas": [
+        96,
+        32
+      ],
+      "alpha_bbox": [
+        3,
+        6,
+        93,
+        26
+      ],
+      "semi_transparent_pixels": 1115,
+      "sha256": "3fb7601ff51657f576442c47a05da8bd1a624685a2aedbb5d98efd7fda4c0f0e",
+      "name": "NeedleGlow",
+      "delivery": "wave-ice-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        84,
+        16
+      ]
+    },
+    {
+      "canvas": [
+        128,
+        128
+      ],
+      "alpha_bbox": [
+        12,
+        6,
+        117,
+        122
+      ],
+      "semi_transparent_pixels": 6858,
+      "sha256": "b5e56ad2e5c8048c14d1b38465eab427fd4161d8ccda797b5558bb5cf3c26b2a",
+      "name": "FrostCloud",
+      "delivery": "wave-ice-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        64.0,
+        64.0
+      ]
+    },
+    {
+      "canvas": [
+        128,
+        192
+      ],
+      "alpha_bbox": [
+        10,
+        13,
+        117,
+        177
+      ],
+      "semi_transparent_pixels": 6023,
+      "sha256": "6a37f3010cb63dcb3f00517ef11fee6f58f6cf11125fa8e608af349ef46ed9ed",
+      "name": "MirrorHalo",
+      "delivery": "wave-ice-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        64.0,
+        96.0
+      ]
+    },
+    {
+      "canvas": [
+        256,
+        320
+      ],
+      "alpha_bbox": [
+        8,
+        127,
+        248,
+        300
+      ],
+      "semi_transparent_pixels": 24452,
+      "sha256": "d92fe843b01cc5d8ede26eb089602a5ce08a779b211b38a5bedf03c518cd342e",
+      "name": "DemonGhost",
+      "delivery": "wave-demon-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        128,
+        300
+      ]
+    },
+    {
+      "canvas": [
+        256,
+        320
+      ],
+      "alpha_bbox": [
+        8,
+        131,
+        247,
+        300
+      ],
+      "semi_transparent_pixels": 24990,
+      "sha256": "a86a2264ad185d43a1e5497f7749a403bc20375a2f8a9d7219ce9fbc04fb2ac2",
+      "name": "DemonPress",
+      "delivery": "wave-demon-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        128,
+        300
+      ]
+    },
+    {
+      "canvas": [
+        192,
+        192
+      ],
+      "alpha_bbox": [
+        6,
+        40,
+        185,
+        152
+      ],
+      "semi_transparent_pixels": 9808,
+      "sha256": "f484347dac1c0b1cf193cad113752670e963c95776bc982f2cb6a5a91d00766c",
+      "name": "SwordSpinArc",
+      "delivery": "wave-demon-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        96.0,
+        96.0
+      ]
+    },
+    {
+      "canvas": [
+        192,
+        192
+      ],
+      "alpha_bbox": [
+        8,
+        32,
+        184,
+        160
+      ],
+      "semi_transparent_pixels": 10934,
+      "sha256": "84d4174813012ce366add7b841782f96b11cdb18c74e58a70bbe216e90cdf2c1",
+      "name": "ChakraImpact",
+      "delivery": "wave-demon-vfx-v1",
+      "frames": 1,
+      "animation": "runtime phase/rotation/scale/opacity; retained source remains unchanged",
+      "danger_core": false,
+      "hitbox_owner": "attack logic; no damage is created by textures or rendering",
+      "anchor": [
+        96.0,
+        96.0
+      ]
+    }
+  ],
+  "short_loops": "art/deliveries/wave-vfx-review-v1",
+  "not_a_complete_M11_gameplay_implementation": true
+}
