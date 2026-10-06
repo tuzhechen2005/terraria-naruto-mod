@@ -112,7 +112,7 @@ The Ninja Handbook gives you clues about missions and bosses. During the Forest 
 
 The mod runs on tModLoader for Terraria 1.4.4. **Start a new world** when playing for the first time: the village, coastal bridge, and exam sites are placed during world generation and are not added to existing worlds. Playtesting has focused on single player; multiplayer has not been verified. The Ninja Handbook and Kakashi's dialogue provide clues about where to go next.
 
-The Chinese [Wiki](wiki/README.md) covers items, bosses, mechanics, and story progression. From the repository root, run `python3 -m http.server 8765 --bind 127.0.0.1 --directory wiki/site` and open `http://127.0.0.1:8765/`. The site has not yet been publicly hosted.
+The Chinese [Wiki is publicly available on GitHub Pages](https://tuzhechen2005.github.io/terraria-naruto-mod/) without signing in. It covers items, bosses, mechanics, and story progression; the published 0.4.0 reference has not yet incorporated every recent development change. See [Wiki maintenance](wiki/README.md) for updating and local preview. Committed site updates on `main` deploy automatically.
 
 To build from source, place or symlink the repository's `ShinobiPrototype/` directory in tModLoader's `ModSources/` directory. Open **Workshop → Develop Mods** in the game and select **Build + Reload**.
 
